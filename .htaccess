@@ -1,0 +1,6 @@
+Options -Indexes
+RewriteEngine On
+
+# Serve Laravel from /public so the project root can remain the XAMPP document folder.
+RewriteCond %{REQUEST_URI} !/public(/|$) [NC]
+RewriteRule ^(.*)$ public/$1 [L]

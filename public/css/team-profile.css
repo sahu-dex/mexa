@@ -1,0 +1,22 @@
+:root{color-scheme:dark;--profile-blue:#1978f5;--profile-ink:#eaf3ff;--profile-muted:#a8bfdf}
+*{box-sizing:border-box}
+body.team-profile-page{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 8%,rgba(30,115,226,.22),transparent 38%),linear-gradient(145deg,#06152c,#0a2b53 55%,#06152c);color:var(--profile-ink);font-family:Inter,Arial,sans-serif;line-height:1.6;letter-spacing:.005em}
+.profile-shell{width:min(100% - 32px,820px);margin:0 auto;padding:34px 0 56px}
+.profile-brand{display:inline-flex;align-items:center;gap:12px;margin:0 0 28px;color:#fff;text-decoration:none;font-size:17px;font-weight:800;letter-spacing:.08em}
+.profile-brand span{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#4ea2ff,#1045ce);font-size:23px}
+.profile-card{padding:clamp(22px,5vw,48px);border:1px solid rgba(153,198,255,.2);border-radius:26px;background:linear-gradient(150deg,rgba(17,55,99,.86),rgba(5,24,52,.94));box-shadow:0 28px 80px rgba(0,0,0,.26)}
+.profile-eyebrow{margin:0 0 10px;color:#75b5ff;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}
+.profile-card h1{margin:0;color:#fff;font-size:clamp(28px,5vw,42px);font-weight:800;line-height:1.12;letter-spacing:-.035em}
+.profile-intro{max-width:650px;margin:16px 0 30px;color:var(--profile-muted);font-size:15px;line-height:1.75}
+.profile-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 16px}
+.profile-grid label{display:grid;gap:8px;color:#dbeaff;font-size:13px;font-weight:700}
+.profile-grid input,.profile-grid textarea{width:100%;min-height:46px;padding:12px 14px;border:1px solid rgba(141,184,237,.25);border-radius:12px;background:rgba(2,16,38,.48);color:#fff;font:inherit;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+.profile-grid textarea{resize:vertical;line-height:1.6}
+.profile-grid input:focus,.profile-grid textarea:focus{border-color:#58a9ff;box-shadow:0 0 0 3px rgba(50,136,255,.16)}
+.profile-grid input::placeholder,.profile-grid textarea::placeholder{color:#7f9dbf}
+.profile-wide{grid-column:1/-1}
+.profile-card button{display:flex;align-items:center;justify-content:center;gap:18px;width:100%;min-height:54px;margin-top:26px;border:0;border-radius:14px;background:linear-gradient(100deg,#3189ff,#124cda);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 30px rgba(20,92,220,.3)}
+.profile-card button:hover{filter:brightness(1.08)}
+.profile-status{min-height:24px;margin:12px 0 0;color:#9bc8ff;font-size:13px;text-align:center}
+.profile-note{margin:18px 4px 0;color:#83a4c9;font-size:12px;text-align:center}
+@media(max-width:600px){.profile-shell{width:min(100% - 22px,820px);padding-top:22px}.profile-card{border-radius:20px}.profile-grid{grid-template-columns:1fr;gap:14px}.profile-wide{grid-column:auto}.profile-intro{margin:12px 0 22px;font-size:14px}}

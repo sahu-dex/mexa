@@ -1,0 +1,16 @@
+/.env
+/vendor/
+/storage/*.key
+/storage/testing-mysql/
+/storage/framework/cache/data/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
+/storage/logs/*.log
+/bootstrap/cache/*.php
+/public/storage
+/public/build
+/node_modules
+/.phpunit.cache
+/coverage/
+

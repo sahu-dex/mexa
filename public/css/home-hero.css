@@ -1,0 +1,277 @@
+/* Homepage hero: enlarge the existing artwork and copy while respecting the fixed header. */
+
+/* ---------------------------------------------------------------------------
+   Headline overflow guard (all viewports).
+   #home clips with overflow:hidden, so a headline that is wider than its
+   column used to be cut off at the edges. These rules keep the heading inside
+   its column and let it wrap cleanly instead of ever being clipped.
+   --------------------------------------------------------------------------- */
+#home .hero-title,
+#home .hero-title .hero-line-1,
+#home .hero-title .hero-line-2 {
+  max-width: 100%;
+  white-space: normal !important;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
+}
+
+#home .hero-title .hero-line-2 { text-wrap: balance; }
+
+@media (min-width: 1024px) {
+  #home {
+    --hero-header-height: 96px;
+    --hero-top-gap: clamp(0.75rem, 1.8vh, 1.25rem);
+    --hero-bottom-gap: clamp(0.75rem, 1.7vh, 1.25rem);
+    min-height: calc(100vh - var(--hero-header-height));
+    min-height: calc(100svh - var(--hero-header-height));
+    padding-top: var(--hero-top-gap) !important;
+    padding-bottom: var(--hero-bottom-gap) !important;
+  }
+
+  #home > .container {
+    width: 100% !important;
+    max-width: none !important;
+    padding-left: clamp(1.5rem, 4vw, 4.5rem) !important;
+    padding-right: clamp(1rem, 2.8vw, 2rem) !important;
+  }
+
+  #home .hero-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(320px, min(36vw, 520px)) !important;
+    column-gap: clamp(1.5rem, 3vw, 3rem) !important;
+    grid-template-rows: auto !important;
+    align-content: center !important;
+    align-items: center !important;
+    position: relative;
+    min-height: calc(100vh - var(--hero-header-height) - var(--hero-top-gap) - var(--hero-bottom-gap));
+    min-height: calc(100svh - var(--hero-header-height) - var(--hero-top-gap) - var(--hero-bottom-gap));
+    row-gap: clamp(1.1rem, 2.4vh, 1.65rem) !important;
+  }
+
+  #home .hero-grid > div:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start !important;
+  }
+
+  #home .hero-cta {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: clamp(1.15rem, 1.8vw, 1.5rem) !important;
+  }
+
+  #home .hero-video {
+    position: relative !important;
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    top: auto !important;
+    bottom: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    max-width: 840px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    justify-self: end !important;
+    margin: 0 !important;
+    padding-right: clamp(0.5rem, 1vw, 1rem) !important;
+  }
+
+  #home .hero-title .hero-line-1 {
+    display: block;
+    font-size: clamp(2rem, 3.6vw, 3.55rem) !important;
+    line-height: 1.06 !important;
+  }
+
+  /* Headline line 2: sizes are deliberately ~8% below the old values so the
+     longest line ("THAT GROW YOUR BRAND") fits its column with room to spare
+     instead of spilling out of the clipped hero. One line is kept only from
+     1280px up, where the measured slack is safe; below that it wraps. */
+  #home .hero-title .hero-line-2 {
+    display: block;
+    white-space: normal !important;
+    text-wrap: balance;
+    font-size: clamp(1.95rem, 3.45vw, 3.45rem) !important;
+    line-height: 1.06 !important;
+    margin-top: 0.45rem !important;
+  }
+
+  @media (min-width: 1280px) {
+    #home .hero-title .hero-line-2 {
+      white-space: nowrap !important;
+      font-size: clamp(2.1rem, 3.4vw, 3.4rem) !important;
+    }
+  }
+
+  #home > .container > .hero-grid > div:first-child > p {
+    max-width: 52rem;
+    margin-top: clamp(0.9rem, 1.3vw, 1.25rem) !important;
+    font-size: clamp(1.3rem, 2.15vw, 2rem) !important;
+    line-height: 1.44 !important;
+  }
+
+  #home .hero-cta {
+    gap: clamp(0.75rem, 1.35vw, 1.15rem) !important;
+  }
+
+  #home .hero-cta .hero-btn {
+    width: auto !important;
+    min-height: 54px;
+    padding: 0.7rem clamp(1rem, 1.5vw, 1.35rem) !important;
+    font-size: clamp(0.98rem, 1.05vw, 1.05rem) !important;
+  }
+
+  #home .hero-character {
+    width: 100%;
+    height: min(90vh, calc(100vh - 128px));
+    height: min(90svh, calc(100svh - 128px));
+    min-height: 400px;
+    aspect-ratio: auto;
+  }
+
+  #home .hero-character-img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1359.98px) {
+  #home {
+    --hero-header-height: 82px;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 620px) {
+  #home {
+    --hero-top-gap: 0.5rem;
+    --hero-bottom-gap: 0.75rem;
+  }
+
+  #home .hero-character {
+    height: min(88vh, calc(100vh - 112px));
+    height: min(88svh, calc(100svh - 112px));
+    min-height: clamp(220px, 55vh, 420px);
+    min-height: clamp(220px, 55svh, 420px);
+  }
+}
+
+@media (max-width: 1023.98px) {
+  #home {
+    min-height: calc(100vh - 54px);
+    min-height: calc(100svh - 54px);
+    padding-block: clamp(1rem, 2.8svh, 1.65rem) clamp(1.25rem, 3svh, 2rem) !important;
+  }
+
+  #home > .container {
+    width: 100%;
+    padding-inline: clamp(1rem, 5vw, 2.5rem) !important;
+  }
+
+  #home .hero-grid {
+    gap: clamp(0.9rem, 2.6svh, 1.45rem) !important;
+  }
+
+  #home .hero-title .hero-line-1 {
+    font-size: clamp(1.5rem, 5.9vw, 2.1rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Beat the shared theme clamps below 1024px: the old 8.7vw/9.2vw sizes left
+     the longest line almost touching the clipped edge of #home, which read as
+     "cut off". 8.2vw keeps a real gutter at every phone width. */
+  #home .hero-title .hero-line-2 {
+    font-size: clamp(1.85rem, 8.2vw, 2.6rem) !important;
+    line-height: 1.06 !important;
+    margin-top: 0.3rem !important;
+    white-space: normal !important;
+    text-wrap: balance;
+  }
+
+  #home > .container > .hero-grid > div:first-child > p {
+    max-width: 52rem;
+    margin-top: 0.8rem !important;
+    font-size: clamp(1rem, 0.85rem + 0.5vw, 1.125rem) !important;
+    line-height: 1.65 !important;
+  }
+
+  #home .hero-video {
+    width: 100%;
+    margin-top: 0 !important;
+  }
+
+  #home .hero-character {
+    width: 100%;
+    height: clamp(280px, 43vh, 460px);
+    height: clamp(280px, 43svh, 460px);
+    aspect-ratio: auto;
+  }
+
+  #home .hero-character-img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  #home .hero-cta {
+    gap: 0.8rem !important;
+    margin-top: 0 !important;
+  }
+
+  #home .hero-cta .hero-btn {
+    min-height: 52px;
+    padding-block: 0.8rem !important;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  #home {
+    padding-block: 0.9rem 1.5rem !important;
+  }
+
+  #home > .container {
+    padding-inline: clamp(1rem, 4.5vw, 1.4rem) !important;
+  }
+
+  #home .hero-grid {
+    gap: clamp(0.75rem, 2.2svh, 1.1rem) !important;
+  }
+
+  #home .hero-character {
+    height: clamp(275px, 50vh, 450px);
+    height: clamp(275px, 50svh, 450px);
+  }
+
+  #home .hero-cta {
+    gap: 0.7rem !important;
+  }
+
+  #home .hero-cta .hero-btn {
+    width: 100% !important;
+    min-height: 52px;
+    padding-inline: 1.1rem !important;
+    font-size: 0.98rem !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #home .hero-title .hero-line-1 {
+    font-size: clamp(1.15rem, 6.2vw, 1.5rem) !important;
+  }
+
+  #home .hero-title .hero-line-2 {
+    font-size: 1.7rem !important;
+  }
+
+  #home .hero-character {
+    height: clamp(250px, 45vh, 360px);
+    height: clamp(250px, 45svh, 360px);
+  }
+}
