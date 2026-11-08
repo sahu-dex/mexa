@@ -384,6 +384,11 @@
     height: 96px !important;
     min-height: 96px !important;
     max-height: 96px !important;
+    background: linear-gradient(110deg, rgba(7, 29, 61, 0.98) 0%, rgba(7, 39, 79, 0.98) 58%, rgba(5, 25, 52, 0.99) 100%) !important;
+    border-bottom-color: rgba(164, 205, 252, 0.14) !important;
+    box-shadow: 0 4px 14px rgba(0, 9, 25, 0.2) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
   }
 
   #header > .container {
@@ -442,15 +447,28 @@
   }
 
   #header .header-booking-button {
-    min-height: 52px;
-    padding: 0.8rem 1.7rem;
-    font-size: clamp(15px, 1.22vw, 18px);
+    min-height: 44px;
+    gap: 0.4rem;
+    padding: 0.62rem 1.2rem;
+    border-color: rgba(104, 194, 255, 0.52);
+    background: linear-gradient(115deg, #1479e6 0%, #0a54c7 100%);
+    box-shadow: 0 3px 10px rgba(5, 93, 219, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    font-size: clamp(14px, 1vw, 15px);
   }
 
   #header .header-booking-button svg {
-    width: 18px;
-    height: 18px;
-    flex-basis: 18px;
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+  }
+
+  #header .header-booking-button:hover {
+    filter: brightness(1.03);
+    box-shadow: 0 4px 12px rgba(5, 93, 219, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  #header .nav-desk .nav-ind {
+    box-shadow: 0 0 6px rgba(43, 148, 255, 0.18) !important;
   }
 }
 

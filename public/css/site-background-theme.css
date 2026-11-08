@@ -82,3 +82,26 @@
     background-repeat: no-repeat !important;
     background-attachment: scroll !important;
 }
+
+/* Slightly soften the white shine and blue glow without changing the palette. */
+:is(html.dark, html) body :is(.mh-line2, .hero-title-blue, .hero-line-2, .sv2-hero-title) {
+    text-shadow: 0 7px 22px rgba(8, 124, 240, .17) !important;
+}
+:is(html.dark, html) body :is(.glass-btn-primary, .sv-btn-primary, .wk-btn-primary,
+        .rvx-btn-primary, .adm-btn-primary, .btn-primary, .hero-btn.glass-btn-primary,
+        .header-booking-button) {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .16),
+        0 6px 16px rgba(8, 124, 240, .20) !important;
+}
+:is(html.dark, html) body :is(.glass-btn-primary, .sv-btn-primary, .wk-btn-primary,
+        .rvx-btn-primary, .adm-btn-primary, .btn-primary, .hero-btn.glass-btn-primary,
+        .header-booking-button):hover {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18),
+        0 8px 20px rgba(8, 124, 240, .24) !important;
+}
+:is(html.dark, html) body :is(.apple-glass-card, .svc-card, .pf-card, .pr-card,
+        .tm-card, .tm-perk, .ct-card, .review-card, .rv-card, .pg-card, .sv2-card,
+        .sv2-step, .sp-pkg, .tk-sum, .tk-prev-box, .tk-done-box) {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08),
+        0 12px 30px rgba(2, 10, 26, .32) !important;
+}

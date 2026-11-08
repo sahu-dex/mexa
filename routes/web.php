@@ -15,6 +15,9 @@ Route::get('/admin/login', [AdminController::class, 'loginForm'])->name('admin.l
 Route::post('/admin/login', [AdminController::class, 'login'])->middleware('throttle:8,1');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->middleware('admin');
 
+Route::get('/storage/media/{file}', [ImageUploadController::class, 'show'])
+    ->where('file', '[A-Za-z0-9_-]+\.(jpg|jpeg|png|webp|gif|mp4|webm|ogg)');
+
 Route::prefix('api')->group(function (): void {
     Route::get('/public/content', [SiteApiController::class, 'content']);
     Route::get('/public/services', [SiteApiController::class, 'services']);
@@ -38,6 +41,9 @@ Route::prefix('api')->group(function (): void {
 
         Route::middleware('admin.owner')->group(function (): void {
             Route::put('/state/{section}', [SiteApiController::class, 'updateSection']);
+            Route::get('/media', [ImageUploadController::class, 'index']);
+            Route::post('/media', [ImageUploadController::class, 'store'])->middleware('throttle:20,1');
+            Route::delete('/media/{media}', [ImageUploadController::class, 'destroy']);
             Route::post('/images', [ImageUploadController::class, 'store'])->middleware('throttle:15,1');
             Route::get('/images', [ImageUploadController::class, 'index']);
             Route::get('/video-preview', [SiteApiController::class, 'videoPreview']);

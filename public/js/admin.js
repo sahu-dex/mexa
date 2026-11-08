@@ -7,7 +7,7 @@
   const role = document.querySelector('meta[name="admin-role"]')?.content || 'owner';
   const isOwner = role === 'owner';
   const state = { sections: {}, images: [], videos: [], videoPlacements: [], videoPage: 1, moderators: [], selected: null, editing: null, focusedUrl: null, previewPage: 'home' };
-  const panelNames = { overview: 'Overview', home: 'Home Page Management', services: 'Services', packages: 'Packages', team: 'Team & founder', portfolio: 'Work & videos', 'video-library': 'Video library', reviews: 'Client reviews', approvals: 'Approvals', bookings: 'Booking tickets', settings: 'Site settings', access: 'Access & roles', 'page-editor': 'Visual page editor', media: 'Media library' };
+  const panelNames = { overview: 'Overview', home: 'Home Page Management', service: 'Services page', services: 'Services', work: 'Work page', packages: 'Packages', team: 'Team page', portfolio: 'Work & videos', 'video-library': 'Video library', reviews: 'Reviews page', approvals: 'Approvals', bookings: 'Booking tickets', booking: 'Booking page', settings: 'Site settings', access: 'Access & roles', 'page-editor': 'Visual page editor', media: 'Media library' };
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
@@ -31,7 +31,63 @@
     return data;
   }
 
+  function showSkeleton(selector, count = 3) {
+    const host = $(selector);
+    if (!host) return;
+    host.classList.add('is-loading');
+    host.innerHTML = Array.from({ length: count }, () => '<div class="skeleton-row"><i></i><span><b></b><small></small></span><em></em></div>').join('');
+  }
+
+  function showLoadError(selectors, message) {
+    selectors.forEach((selector) => {
+      const host = $(selector);
+      if (!host) return;
+      host.classList.remove('is-loading');
+      host.innerHTML = `<div class="empty-state">${esc(message)}</div>`;
+    });
+  }
+
+  function uploadMedia(file, onProgress = () => {}) {
+    return new Promise((resolve, reject) => {
+      const body = new FormData();
+      body.append('media', file);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', api('api/admin/media'));
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('X-CSRF-TOKEN', csrf);
+      xhr.upload.addEventListener('progress', (event) => {
+        if (event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+      });
+      xhr.addEventListener('load', () => {
+        let result = {};
+        try { result = JSON.parse(xhr.responseText || '{}'); } catch {}
+        if (xhr.status < 200 || xhr.status >= 300) {
+          reject(new Error(result.message || `Upload failed (${xhr.status}).`));
+          return;
+        }
+        if (!result.asset?.url) {
+          reject(new Error('The server did not return a media URL.'));
+          return;
+        }
+        resolve(result.asset);
+      });
+      xhr.addEventListener('error', () => reject(new Error('Upload failed because the server connection was interrupted.')));
+      xhr.addEventListener('abort', () => reject(new Error('Upload cancelled.')));
+      xhr.send(body);
+    });
+  }
+
+  function setProgress(wrapSelector, progressSelector, labelSelector, value, label) {
+    const wrap = $(wrapSelector);
+    const progress = $(progressSelector);
+    const text = $(labelSelector);
+    if (wrap) wrap.hidden = false;
+    if (progress && value !== null) progress.value = value;
+    if (text && label) text.textContent = label;
+  }
+
   async function loadState() {
+    ['#records-services', '#records-packages', '#records-team', '#records-portfolio', '#records-reviews', '#records-bookings', '#overview-stats'].forEach((selector) => showSkeleton(selector, selector === '#overview-stats' ? 4 : 3));
     try {
       const result = await request('api/admin/state');
       state.sections = result.sections || {};
@@ -43,10 +99,12 @@
       renderAll();
       if (!isOwner) {
         $$('.nav-item').forEach((item) => { item.hidden = !['approvals'].includes(item.dataset.view); });
+        $$('.nav-group').forEach((group) => { group.hidden = !group.querySelector('.nav-item:not([hidden])'); });
         openPanel('approvals');
         loadApprovals();
       }
     } catch (error) {
+      showLoadError(['#records-services', '#records-packages', '#records-team', '#records-portfolio', '#records-reviews', '#records-bookings', '#overview-stats'], 'Could not load this content. Refresh the page and try again.');
       toast(error.message, true);
     }
   }
@@ -77,6 +135,26 @@
     return String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
   }
 
+  function selectorForElement(element) {
+    if (element.id) return `#${CSS.escape(element.id)}`;
+    if (element.classList.length) {
+      const uniqueClassSelector = `${element.tagName.toLowerCase()}.${[...element.classList].map((name) => CSS.escape(name)).join('.')}`;
+      if (element.ownerDocument.querySelectorAll(uniqueClassSelector).length === 1) return uniqueClassSelector;
+    }
+    const parts = [];
+    let node = element;
+    while (node && node.nodeType === 1 && node !== node.ownerDocument.body) {
+      let part = node.tagName.toLowerCase();
+      if (node.classList.length) part += `.${[...node.classList].slice(0, 3).map((name) => CSS.escape(name)).join('.')}`;
+      const siblings = node.parentElement ? [...node.parentElement.children].filter((item) => item.tagName === node.tagName) : [];
+      if (siblings.length > 1) part += `:nth-of-type(${siblings.indexOf(node) + 1})`;
+      parts.unshift(part);
+      node = node.parentElement;
+      if (node?.id) { parts.unshift(`#${CSS.escape(node.id)}`); break; }
+    }
+    return parts.join(' > ');
+  }
+
   function titleOf(row, index) {
     return row?.name || row?.title || row?.serviceName || row?.packageName || row?.ref || `Content item ${index + 1}`;
   }
@@ -103,6 +181,7 @@
   function renderRecords(target, section, path, options = {}) {
     const host = $(target);
     if (!host) return;
+    host.classList.remove('is-loading');
     const rows = path.length ? path.reduce((object, key) => object?.[key], state.sections[section]) : state.sections[section];
     let tools = host._recordTools;
     if (!tools) {
@@ -425,6 +504,7 @@
   function renderVideoLibrary() {
     const host = $('#video-library-records');
     if (!host) return;
+    host.classList.remove('is-loading');
     host.replaceChildren();
     const query = $('#video-library-search')?.value.trim().toLowerCase() || '';
     const filter = $('#video-library-filter')?.value || '';
@@ -467,11 +547,12 @@
   }
 
   async function loadVideos() {
+    showSkeleton('#video-library-records', 3);
     try {
       const result = await request('api/admin/videos');
       state.videos = result.videos || [];
       renderVideoLibrary();
-    } catch (error) { toast(error.message, true); }
+    } catch (error) { showLoadError(['#video-library-records'], 'Could not load videos. Refresh the page and try again.'); toast(error.message, true); }
   }
 
   function openVideoEditor(video = null) {
@@ -481,6 +562,8 @@
     $('#video-record-id').value = video?.id || '';
     $('#video-title').value = video?.title || '';
     $('#video-url').value = video?.url || '';
+    $('#video-file').value = '';
+    $('#video-upload-progress-wrap').hidden = true;
     $('#video-thumbnail-url').value = video?.thumbnail_url || '';
     $('#video-thumbnail-file').value = '';
     $('#video-description').value = video?.description || '';
@@ -526,20 +609,29 @@
     const message = $('#video-library-message');
     message.textContent = 'Saving video…';
     let thumbnailUrl = $('#video-thumbnail-url').value.trim();
+    let videoUrl = $('#video-url').value.trim();
     const file = $('#video-thumbnail-file').files[0];
+    const videoFile = $('#video-file').files[0];
     try {
+      if (videoFile) {
+        message.textContent = 'Uploading video to your website…';
+        setProgress('#video-upload-progress-wrap', '#video-upload-progress', '#video-upload-status', 0, 'Uploading video… 0%');
+        const uploadedVideo = await uploadMedia(videoFile, (percent) => setProgress('#video-upload-progress-wrap', '#video-upload-progress', '#video-upload-status', percent, `Uploading video… ${percent}%`));
+        videoUrl = uploadedVideo.url;
+        $('#video-url').value = videoUrl;
+        setProgress('#video-upload-progress-wrap', '#video-upload-progress', '#video-upload-status', 100, 'Video uploaded to website storage.');
+      }
+      if (!videoUrl) throw new Error('Paste a supported video URL or choose a video file to upload.');
       if (file) {
-        const body = new FormData();
-        body.append('image', file);
-        message.textContent = 'Uploading thumbnail to ImgBB…';
-        const uploaded = await request('api/admin/images', { method: 'POST', body });
-        thumbnailUrl = uploaded.image.url;
+        message.textContent = 'Uploading thumbnail to your website…';
+        const uploaded = await uploadMedia(file);
+        thumbnailUrl = uploaded.url;
         $('#video-thumbnail-url').value = thumbnailUrl;
       }
       const payload = {
         title: $('#video-title').value.trim(),
         description: $('#video-description').value.trim(),
-        url: $('#video-url').value.trim(),
+        url: videoUrl,
         thumbnail_url: thumbnailUrl,
         category: $('#video-category').value.trim(),
         is_featured: $('#video-featured').checked,
@@ -552,6 +644,7 @@
       });
       $('#video-library-form').hidden = true;
       message.textContent = '';
+      $('#video-upload-progress-wrap').hidden = true;
       await loadVideos();
       toast(result.reused ? 'This video already existed; its new placements were added.' : 'Video saved and published.');
     } catch (error) {
@@ -825,7 +918,7 @@
       ['Pending requests', pendingBookings + pendingReviews, `${pendingBookings} bookings · ${pendingReviews} reviews`],
     ].map(([title, value, note]) => `<article class="stat-card"><span>${esc(title)}</span><strong>${esc(value)}</strong><small>${esc(note)}</small></article>`).join('');
     $('#content-health').innerHTML = [
-      ['Website pages', 'Connected'], ['Database content', 'Saved'], ['Image host', 'ImgBB ready when configured'], ['Admin account', 'Password protected'],
+      ['Website pages', 'Connected'], ['Database content', 'Saved'], ['Media storage', 'Website server'], ['Admin account', 'Password protected'],
     ].map(([title, value]) => `<div class="health-row"><span>${esc(title)}</span><b>${esc(value)}</b></div>`).join('');
     $('#pending-bookings').textContent = `${pendingBookings} pending`;
   }
@@ -852,8 +945,13 @@
     const page = $('#editor-page').value;
     const paths = { home: '', service: 'service', work: 'work', reviews: 'reviews', team: 'team', booking: 'book' };
     state.previewPage = page;
-    $('#preview-label').textContent = `${panelNames[page === 'home' ? 'overview' : page] || page} page · click a text item, image or link to select it`;
-    $('#page-preview').src = `${api(paths[page] || '')}?cms_preview=1`;
+    $('#preview-label').textContent = `${panelNames[page] || page} · click a text item, image or link to select it`;
+    const iframe = $('#page-preview');
+    const previewShell = iframe.closest('.preview-shell');
+    previewShell?.classList.add('is-loading');
+    iframe.onload = () => previewShell?.classList.remove('is-loading');
+    iframe.onerror = () => previewShell?.classList.remove('is-loading');
+    iframe.src = `${api(paths[page] || '')}?cms_preview=1`;
     const current = state.sections.settings?.page_content?.[page] || {};
     state.selected = null;
     $('#inspector-form').hidden = true;
@@ -864,9 +962,16 @@
 
   function receiveSelection(event) {
     if (event.origin !== new URL(base).origin || event.data?.type !== 'mexa-cms-select') return;
-    state.selected = event.data;
+    let boxNode = null;
+    try {
+      const frameDocument = $('#page-preview').contentDocument;
+      boxNode = frameDocument?.querySelector(event.data.selector)?.closest('section');
+    } catch {}
+    const boxSelector = boxNode ? selectorForElement(boxNode) : '';
+    const siblingBoxes = boxNode?.parentElement ? [...boxNode.parentElement.children].filter((item) => item.tagName === 'SECTION') : [];
+    state.selected = { ...event.data, boxSelector, boxOrder: Math.max(1, siblingBoxes.indexOf(boxNode) + 1) };
     $('#inspector-title').textContent = `${event.data.tag.toLowerCase()} selected`;
-    $('#inspector-hint').textContent = 'Edit the fields you need. Only the selected page element will change.';
+    $('#inspector-hint').textContent = boxSelector ? 'Edit this item and, if needed, adjust its page section box below.' : 'Edit the fields you need. Only the selected page element will change.';
     $('#inspector-form').hidden = false;
     $('#edit-text').value = event.data.text || '';
     $('#edit-href').value = event.data.href || '';
@@ -874,6 +979,14 @@
     $('#edit-alt').value = event.data.alt || '';
     $('#edit-title').value = event.data.title || '';
     $('#selector-note').textContent = `${event.data.page} · ${event.data.selector}`;
+    const boxControls = $('#box-layout-controls');
+    boxControls.hidden = !boxSelector;
+    if (boxSelector) {
+      const boxOverride = state.sections.settings?.page_content?.[event.data.page]?.[boxSelector] || {};
+      $('#edit-box-visible').checked = ![false, 0, '0'].includes(boxOverride.enabled);
+      $('#edit-box-order').value = Number(boxOverride.order || state.selected.boxOrder);
+      $('#box-selector-note').textContent = `${boxSelector} · ${siblingBoxes.length} sections on this page`;
+    }
   }
 
   async function savePageOverride(event) {
@@ -890,70 +1003,98 @@
     }
     if ($('#edit-title').value.trim()) value.title = $('#edit-title').value.trim();
     settings.page_content[state.selected.page][state.selected.selector] = value;
+    if (state.selected.boxSelector) {
+      const box = settings.page_content[state.selected.page][state.selected.boxSelector] || {};
+      settings.page_content[state.selected.page][state.selected.boxSelector] = {
+        ...box,
+        enabled: $('#edit-box-visible').checked,
+        order: Math.max(1, Number($('#edit-box-order').value || state.selected.boxOrder)),
+      };
+    }
     await saveSection('settings', 'Page change published.');
     $('#page-preview').contentWindow?.location.reload();
   }
 
   async function loadImages() {
+    showSkeleton('#image-gallery', 6);
     try {
-      const result = await request('api/admin/images');
-      state.images = result.images || [];
+      const result = await request('api/admin/media');
+      state.images = result.media || [];
       renderImages();
-    } catch (error) { toast(error.message, true); }
+    } catch (error) { showLoadError(['#image-gallery'], 'Could not load media. Refresh the gallery and try again.'); toast(error.message, true); }
   }
 
   function renderImages() {
     const host = $('#image-gallery');
     if (!host) return;
+    host.classList.remove('is-loading');
     host.replaceChildren();
     if (!state.images.length) {
-      host.innerHTML = '<div class="empty-state">Uploaded images will appear here.</div>';
+      host.innerHTML = '<div class="empty-state">Uploaded images and videos will appear here.</div>';
       return;
     }
     state.images.forEach((image) => {
       const tile = document.createElement('div');
-      tile.className = 'image-tile';
-      tile.innerHTML = `<img src="${esc(image.thumbnail_url || image.url)}" alt="${esc(image.name || 'Uploaded image')}" loading="lazy"><button type="button" title="Copy image URL">Copy image URL</button>`;
-      tile.querySelector('button').addEventListener('click', async () => {
+      tile.className = `image-tile ${String(image.mime_type || '').startsWith('video/') ? 'is-video' : 'is-image'}`;
+      const isVideo = String(image.mime_type || '').startsWith('video/');
+      const preview = isVideo
+        ? `<video src="${esc(image.url)}" preload="metadata" muted playsinline></video><span class="media-type-tag">VIDEO</span>`
+        : `<img src="${esc(image.thumbnail_url || image.url)}" alt="${esc(image.name || 'Uploaded image')}" loading="lazy"><span class="media-type-tag">IMAGE</span>`;
+      const size = image.size_bytes ? `${(Number(image.size_bytes) / (1024 * 1024)).toFixed(1)} MB` : '';
+      tile.innerHTML = `<div class="media-tile-preview">${preview}</div><div class="media-tile-copy"><strong>${esc(image.name || 'Untitled media')}</strong><small>${esc(size)} · ${esc(image.provider || 'media library')}</small></div><div class="media-tile-actions"><button type="button" data-use-media title="Use this file URL">Use URL</button><button type="button" class="delete-button" data-remove-media title="Remove this unused file">Remove</button></div>`;
+      tile.querySelector('[data-use-media]').addEventListener('click', async () => {
         const target = state.focusedUrl;
         if (target && target.isConnected) {
           target.value = image.url;
           target.dispatchEvent(new Event('input', { bubbles: true }));
-          toast('Image URL added to the selected field. Save the content item to publish it.');
+          toast('Media URL added to the selected field. Save the content item to publish it.');
         } else {
-          try { await navigator.clipboard.writeText(image.url); toast('Image URL copied.'); }
-          catch { window.prompt('Copy this ImgBB URL', image.url); }
+          try { await navigator.clipboard.writeText(image.url); toast('Media URL copied.'); }
+          catch { window.prompt('Copy this media URL', image.url); }
         }
+      });
+      tile.querySelector('[data-remove-media]').addEventListener('click', async () => {
+        if (!window.confirm('Remove this file from the website media library? Files currently used on a page cannot be removed.')) return;
+        try {
+          await request(`api/admin/media/${encodeURIComponent(image.id)}`, { method: 'DELETE' });
+          state.images = state.images.filter((item) => String(item.id) !== String(image.id));
+          renderImages();
+          toast('Media removed from the website.');
+        } catch (error) { toast(error.message, true); }
       });
       host.append(tile);
     });
   }
 
-  async function uploadImage(event) {
+  async function uploadMediaFromLibrary(event) {
     event.preventDefault();
-    const file = $('#image-file').files[0];
+    const file = $('#media-file').files[0];
     if (!file) return;
     const status = $('#upload-status');
-    status.textContent = 'Uploading to ImgBB…';
-    const body = new FormData();
-    body.append('image', file);
+    const isVideo = file.type.startsWith('video/');
+    status.textContent = `Uploading ${isVideo ? 'video' : 'image'} to your website…`;
+    setProgress('#upload-progress-wrap', '#upload-progress', '#upload-progress-label', 0, 'Uploading… 0%');
     try {
-      const result = await request('api/admin/images', { method: 'POST', body });
-      state.images.unshift({ ...result.image, name: file.name });
+      const asset = await uploadMedia(file, (percent) => setProgress('#upload-progress-wrap', '#upload-progress', '#upload-progress-label', percent, `Uploading… ${percent}%`));
+      state.images.unshift(asset);
       renderImages();
-      status.textContent = 'Upload complete. Image URL saved in your media library.';
+      status.textContent = `${isVideo ? 'Video' : 'Image'} uploaded and saved in the website media library.`;
       $('#upload-form').reset();
       $('#upload-preview').hidden = true;
-      toast('Image uploaded and saved.');
+      $('#upload-progress-wrap').hidden = true;
+      toast(`${isVideo ? 'Video' : 'Image'} uploaded and saved.`);
       const target = state.focusedUrl;
-      if (target && target.isConnected) target.value = result.image.url;
-    } catch (error) { status.textContent = error.message; toast(error.message, true); }
+      if (target && target.isConnected) {
+        target.value = asset.url;
+        target.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    } catch (error) { status.textContent = error.message; $('#upload-progress-wrap').hidden = true; toast(error.message, true); }
   }
 
   async function previewVideo(event) {
     event.preventDefault();
     try {
-      const result = await request(`api/admin/video-preview?url=${encodeURIComponent($('#video-url').value.trim())}`);
+      const result = await request(`api/admin/video-preview?url=${encodeURIComponent($('#media-video-url').value.trim())}`);
       if (!['iframe', 'video'].includes(result.type)) throw new Error('This link does not have a supported embedded player.');
       window.MexaVideoPreview?.open(result);
     } catch (error) { toast(error.message, true); }
@@ -984,6 +1125,11 @@
     }
     const nav = event.target.closest('[data-view]');
     if (nav) openPanel(nav.dataset.view);
+    const pageShortcut = event.target.closest('[data-page-shortcut]');
+    if (pageShortcut) {
+      $('#editor-page').value = pageShortcut.dataset.pageShortcut;
+      openPanel('page-editor');
+    }
     const jump = event.target.closest('[data-jump]');
     if (jump) openPanel(jump.dataset.jump);
     const add = event.target.closest('[data-add]');
@@ -995,7 +1141,7 @@
   $('#editor-page').addEventListener('change', loadPreview);
   $('#inspector-form').addEventListener('submit', savePageOverride);
   $('#save-record').addEventListener('click', saveRecord);
-  $('#upload-form').addEventListener('submit', uploadImage);
+  $('#upload-form').addEventListener('submit', uploadMediaFromLibrary);
   $('#refresh-images').addEventListener('click', loadImages);
   $('#video-form').addEventListener('submit', previewVideo);
   $('#add-video-record').addEventListener('click', () => openVideoEditor());
@@ -1014,12 +1160,30 @@
   $('#refresh-approvals').addEventListener('click', loadApprovals);
   window.addEventListener('message', receiveSelection);
   document.addEventListener('focusin', (event) => { if (/url|image|photo|thumbnail|video|logo|favicon/i.test(event.target.id || event.target.name || event.target.dataset?.settingKey || event.target.dataset?.key || '')) state.focusedUrl = event.target; });
-  $('#image-file').addEventListener('change', (event) => {
+  $('#media-file').addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (!file) return;
     const preview = $('#upload-preview');
+    const imagePreview = preview.querySelector('img');
+    const isVideo = file.type.startsWith('video/');
     preview.hidden = false;
-    preview.querySelector('img').src = URL.createObjectURL(file);
+    imagePreview.hidden = isVideo;
+    if (isVideo) {
+      imagePreview.removeAttribute('src');
+      let videoPreview = preview.querySelector('video');
+      if (!videoPreview) {
+        videoPreview = document.createElement('video');
+        videoPreview.muted = true;
+        videoPreview.playsInline = true;
+        preview.insertBefore(videoPreview, preview.querySelector('span'));
+      }
+      videoPreview.hidden = false;
+      videoPreview.src = URL.createObjectURL(file);
+    } else {
+      const videoPreview = preview.querySelector('video');
+      if (videoPreview) { videoPreview.hidden = true; videoPreview.removeAttribute('src'); }
+      imagePreview.src = URL.createObjectURL(file);
+    }
     preview.querySelector('span').textContent = file.name;
   });
   loadState();
