@@ -33,7 +33,7 @@ This document is a handoff map for the next developer or coding agent. The appli
 - `/admin/setup` is only for creating the first owner. `/admin` is the authenticated dashboard; login and logout are handled by `AdminController`.
 - `EnsureAdmin` protects signed-in admin routes. `EnsureOwner` protects owner-only editing, uploads, video-library, and moderator management actions.
 - `AdminManagementController` handles review/team approvals and moderator management.
-- `ImageUploadController` sends admin images to ImgBB and saves returned URLs in `media_assets`.
+- `ImageUploadController` stores admin image/video files on the public storage disk, records their URLs and metadata in `media_assets`, and serves registered files through `/storage/media/{file}`.
 - `VideoLibraryController` manages video records and page/service placements.
 - `TeamProfileController` accepts profile proposals through the generated private profile link; proposals require approval before publication.
 
@@ -46,14 +46,14 @@ This document is a handoff map for the next developer or coding agent. The appli
 | Global typography and shared theme | `public/css/site-typography.css`, other `public/css/site-*.css` stylesheets |
 | Service and booking presentation | `resources/views/pages/service.blade.php`, `resources/views/pages/booking.blade.php`, `public/css/service-booking-theme.css` |
 | Work/review video preview | `public/js/video-preview.js`, `public/css/video-preview.css`, `public/css/video-library.css` |
-| Admin UI | `resources/views/admin/dashboard.blade.php`, `public/css/admin.css`, `public/css/admin-management.css`, `public/js/admin.js` |
+| Admin UI | `resources/views/admin/dashboard.blade.php`, `public/css/admin.css`, `public/css/admin-management.css`, `public/css/admin-refresh.css`, `public/js/admin.js` |
 
 Page-level Blade files currently contain legacy inline page markup/scripts as well as external asset references. When editing, prefer a small scoped change; move shared code into a partial only when every affected page is updated together.
 
 ## Local data and configuration
 
 - Database connection is configured in the ignored `.env`; the starter template is `.env.example`.
-- `IMGBB_API_KEY` is read server-side. Never expose it in Blade, JavaScript, page JSON, logs, or commits.
+- `IMGBB_API_KEY` is legacy configuration; new admin uploads use the website's own storage and do not require the key. Never expose credentials in Blade, JavaScript, page JSON, logs, or commits.
 - Initial MySQL setup and deployment guidance are in `README.md`.
 - `database/seeders/data/site-snapshot.json` supplies default site content. The seeder adds missing sections; it is not a substitute for a backup of an existing database.
 - Preserve the current database when working locally. Avoid destructive reset commands and avoid replacing the local `.env` or `APP_KEY`.
