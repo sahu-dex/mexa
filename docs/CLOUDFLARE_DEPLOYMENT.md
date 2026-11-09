@@ -27,6 +27,23 @@ Browser → https://<worker>.<subdomain>.workers.dev (বা custom domain)
         → Remote MySQL/MariaDB  +  (optional) R2 bucket for media
 ```
 
+## ১.১ ⚠️ আগে নিশ্চিত করুন: Workers Paid plan
+
+Containers **শুধু Workers Paid plan-এ** available (Free plan-এ নয়), এবং Free plan-এ `limits.cpu_ms` দিলে API deploy-ই reject করে:
+
+```
+✘ A request to the Cloudflare API (...) failed.
+  CPU limits are not supported for the Free plan. Switch to a paid plan ... [code: 100328]
+```
+
+তাই:
+
+1. **Workers Paid** ($5/month) চালু করুন — [dashboard → Workers plans](https://dash.cloudflare.com/?to=/:account/workers/plans)। এতে 25 GiB-h memory, 375 vCPU-min, 200 GB-h disk included; তারপর usage-based।
+2. `wrangler.jsonc`-এ **`limits` block রাখা হয়নি** ইচ্ছাকৃতভাবে — default 30s CPU ceiling এখানে যথেষ্ট, কারণ ভারী কাজ container-এর ভিতরে PHP করে। Paid plan-এ ইচ্ছা হলে পরে `"limits": { "cpu_ms": 60000 }` যোগ করা যায়।
+3. Plan upgrade করার পর প্রথম deploy-এ কখনো কখনো কয়েক মিনিট propagation লাগে; `100328` বারবার এলে কিছুক্ষণ পরে আবার try করুন।
+
+> Plan ছাড়া কিছুই deploy হবে না — এটি configuration-এর সমস্যা নয়, account-এর plan-এর সীমা।
+
 ## ২. নতুন যোগ হওয়া/পরিবর্তিত ফাইল
 
 | ফাইল | কাজ |
@@ -59,7 +76,7 @@ Browser → https://<worker>.<subdomain>.workers.dev (বা custom domain)
 
 ## ৪. একবারের Cloudflare setup (dashboard)
 
-1. **Workers Paid plan** চালু করুন — Containers এই plan-এ available ($5/month base; memory/CPU/disk usage-based)।
+1. **Workers Paid plan** চালু করুন — এটি বাধ্যতামূলক (§১.১) — Containers এই plan-এ available ($5/month base; memory/CPU/disk usage-based)।
 2. **Durable Objects / Containers** আলাদা করে create করার দরকার নেই; `wrangler deploy` নিজেই তৈরি করে।
 3. **MySQL/MariaDB** ঠিক করুন যেটি Cloudflare থেকে reachable (PlanetScale, Aiven, DigitalOcean Managed MySQL, আপনার cPanel-এর remote MySQL ইত্যাদি)। Database + user আগে তৈরি করে রাখুন; table `entrypoint.sh` নিজেই `migrate --force` দিয়ে বানাবে (শুধু নেই এমন migration apply হয়, কোনো data মুছে যায় না)।
 4. **R2 bucket (recommended)** — `media` bucket বানিয়ে Object Read & Write token নিন, যাতে admin upload করা image/video container restart-এ টিকে থাকে।
@@ -176,7 +193,9 @@ npx wrangler preview base-config secret put APP_KEY   # সব নতুন Prev
 | upload 100 MB-তে আটকে যাচ্ছে | Cloudflare request body limit (Free/Pro 100 MB, Business 200 MB) | বড় video-র জন্য Business plan বা ছোট ফাইল; app-এর নিজের limit 200 MB |
 | `Your Wrangler configuration needs a 'previews' block` | non-production branch-এ `npx wrangler preview` চলছে, কিন্তু `previews` block নেই | `wrangler.jsonc`-এর `previews` block রাখুন (§৫.৩); Preview-এ `vars`/container binding inherit হয় না |
 | Preview-এ `1101` error | `env.MEXA_APP` binding `previews`-এ নেই | `previews.durable_objects.bindings` + `previews.containers` দুটোই দিন |
-| `Worker exceeded CPU time limit` | proxy code-এ বেশি CPU | `limits.cpu_ms` (এখন 60s) যথেষ্ট; সাধারণত হয় না |
+| `CPU limits are not supported for the Free plan [code: 100328]` | account Workers **Free** plan-এ আছে, অথচ config-এ `limits.cpu_ms` (বা Paid-only কোনো feature) আছে | Workers Paid plan চালু করুন (§১.১); `wrangler.jsonc`-এ `limits` block নেই তা নিশ্চিত করুন। `wrangler deploy --dry-run` এই error ধরতে পারে না — এটা শুধু আসল deploy-এ API বলে |
+| `There is no container instance that can be provided…` | plan/region provisioning সদ্য শুরু | Paid plan চালু থাকলে ১–২ মিনিট পরে আবার request করুন |
+| `Worker exceeded CPU time limit` | proxy code-এ অস্বাভাবিক CPU | container-ই আসল কাজ করে; Paid plan-এ `limits.cpu_ms` বাড়ানো যায় |
 
 ## ৯. যা এখনো মেনে চলা জরুরি
 

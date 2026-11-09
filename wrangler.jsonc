@@ -94,11 +94,16 @@
     "MEXA_INACTIVITY_TIMEOUT_MS": "300000"
   },
 
-  // Worker CPU per request (paid plans allow up to 300000). The container does
-  // the heavy lifting; 60s only covers slow cold starts on the boundary.
-  "limits": {
-    "cpu_ms": 60000
-  },
+  // NOTE: no "limits" block on purpose.
+  // `limits.cpu_ms` (and `limits.subrequests`) can only be set on the Workers
+  // Paid plan — the API rejects a Free-plan deploy outright with
+  // "CPU limits are not supported for the Free plan [code: 100328]". The
+  // default 30s CPU ceiling is plenty here because the PHP work happens inside
+  // the container. On Workers Paid, add it back if you want a higher ceiling:
+  //
+  //   "limits": { "cpu_ms": 60000 }
+  //
+  // Containers themselves also require the Workers Paid plan.
 
   // ---------------------------------------------------------------------------
   // Worker Previews (`npx wrangler preview`, used by Cloudflare for non-production
