@@ -37,6 +37,7 @@
 /public/uploads/
 /public/media/
 /node_modules
+/scripts/preview/node_modules/
 /.phpunit.cache
 /coverage/
 /*.sql

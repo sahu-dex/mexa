@@ -8,7 +8,7 @@
 
 > এই অংশ শুধু local development-এর জন্য। cPanel production-এ local URL, server path বা XAMPP default হার্ডকোড করবেন না; [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md) ও `.env.example`-এর placeholder অনুসরণ করুন।
 
-প্রয়োজন: PHP 8.2+, Composer, MySQL/MariaDB, Apache `mod_rewrite` এবং `AllowOverride All`।
+প্রয়োজন: PHP 8.4+, Composer, MySQL/MariaDB, Apache `mod_rewrite` এবং `AllowOverride All`। (Locked `laravel/framework` v12.70-এর base config PHP 8.4-এর `Pdo\Mysql` class ব্যবহার করে — PHP 8.2/8.3-এ `pdo_mysql` loaded থাকলে config load-এর সময়ই fatal error আসে।)
 
 1. প্রজেক্টটি `C:\xampp\htdocs\mexa-motion-blue`-এ রাখুন এবং XAMPP Control Panel থেকে Apache ও MySQL চালু করুন।
 2. phpMyAdmin-এ `mexa_motion` নামে একটি `utf8mb4_unicode_ci` database তৈরি করুন।
@@ -65,7 +65,7 @@ Populated database-এ কখনো `migrate --seed`, `migrate:fresh` বা res
 - Production server-এ `APP_ENV=production`, `APP_DEBUG=false`, HTTPS এবং `SESSION_SECURE_COOKIE=true` ব্যবহার করুন। `APP_KEY` ও database credentials secret হিসেবে রাখুন।
 - Web server-এর document root সাধ্যমত Laravel-এর `public/` directory; storage ও `.env` public web root-এর বাইরে রাখুন। cPanel-এ document root বদলানো না গেলে root `.htaccess` private files deny করে `public/`-এ rewrite করে; `/.well-known/` AutoSSL-র জন্য exempt।
 - নতুন ফাঁকা database-এ `php artisan migrate --force` (Terminal থাকলে) অথবা phpMyAdmin-এ non-destructive [`database/schema/cpanel-mysql.sql`](database/schema/cpanel-mysql.sql) import (Terminal না থাকলে)। Populated database-এ import/migrate/seed/reseed করবেন না।
-- `storage/` ও `bootstrap/cache/` writable রাখুন; PHP 8.2+, Laravel 12 extensions, 200 MB upload limits, `mod_rewrite`/`AllowOverride` ও HTTPS যাচাই করুন। `public/storage` symlink ঐচ্ছিক — custom `/storage/media/{file}` route যথেষ্ট।
+- `storage/` ও `bootstrap/cache/` writable রাখুন; PHP 8.4+, Laravel 12 extensions, 200 MB upload limits, `mod_rewrite`/`AllowOverride` ও HTTPS যাচাই করুন। `public/storage` symlink ঐচ্ছিক — custom `/storage/media/{file}` route যথেষ্ট।
 - Production-এ `.env`-এ cPanel-প্রদত্ত DB host/name/user/password ও real HTTPS `APP_URL` দিন; `.env.example`-এ placeholder আছে, source-এ কোনো local/XAMPP setting হার্ডকোড নেই। বিস্তারিত [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)।
 - MySQL backup নিয়মিত নিন এবং `site_data`, `media_assets`, video tables ও `storage/app/public/media/` অন্তর্ভুক্ত করুন।
 
@@ -89,4 +89,4 @@ Seeder bundled site snapshot-এ থাকা services, founder/team, portfolio,
 
 ## cPanel hosting
 
-cPanel-এ PHP 8.2+/extensions, MySQL, Composer/Terminal, document root, `.htaccess` rewrite, private file protection, permissions, symlink-বিকল্প media route ও `.env` যাচাই করার পূর্ণ ধাপ-ভিত্তিক নির্দেশনা [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)-এ আছে। Terminal/Composer না থাকলেও prebuilt `vendor/`, phpMyAdmin schema import, File Manager ও temporary [`public/cpanel-preflight.php`](public/cpanel-preflight.php) দিয়ে নিরাপদে সেটআপ করা যায়। Production-এ কোনো server path, local URL বা XAMPP-নির্ভর মান হার্ডকোড করা হয়নি; সব environment-নির্ভর মান `.env` থেকে নেওয়া হয়। cPanel-এ নিজে কোনো deployment বা পরিবর্তন করা হয়নি।
+cPanel-এ PHP 8.4+/extensions, MySQL, Composer/Terminal, document root, `.htaccess` rewrite, private file protection, permissions, symlink-বিকল্প media route ও `.env` যাচাই করার পূর্ণ ধাপ-ভিত্তিক নির্দেশনা [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)-এ আছে। Terminal/Composer না থাকলেও prebuilt `vendor/`, phpMyAdmin schema import, File Manager ও temporary [`public/cpanel-preflight.php`](public/cpanel-preflight.php) দিয়ে নিরাপদে সেটআপ করা যায়। Production-এ কোনো server path, local URL বা XAMPP-নির্ভর মান হার্ডকোড করা হয়নি; সব environment-নির্ভর মান `.env` থেকে নেওয়া হয়। cPanel-এ নিজে কোনো deployment বা পরিবর্তন করা হয়নি।
