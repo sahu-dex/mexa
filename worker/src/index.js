@@ -252,7 +252,7 @@ export default {
           "MEXA MOTION is starting or temporarily unavailable.",
           "",
           `Reason: ${error?.message ?? "unknown error"}`,
-          "Check Workers & Pages -> mexa-motion -> Logs, then retry in a few seconds.",
+          "Check Workers & Pages -> mexa -> Logs, then retry in a few seconds.",
         ].join("\n"),
         {
           status: 503,

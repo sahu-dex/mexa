@@ -80,7 +80,7 @@ Containers **শুধু Workers Paid plan-এ** available (Free plan-এ ন�
 2. **Durable Objects / Containers** আলাদা করে create করার দরকার নেই; `wrangler deploy` নিজেই তৈরি করে।
 3. **MySQL/MariaDB** ঠিক করুন যেটি Cloudflare থেকে reachable (PlanetScale, Aiven, DigitalOcean Managed MySQL, আপনার cPanel-এর remote MySQL ইত্যাদি)। Database + user আগে তৈরি করে রাখুন; table `entrypoint.sh` নিজেই `migrate --force` দিয়ে বানাবে (শুধু নেই এমন migration apply হয়, কোনো data মুছে যায় না)।
 4. **R2 bucket (recommended)** — `media` bucket বানিয়ে Object Read & Write token নিন, যাতে admin upload করা image/video container restart-এ টিকে থাকে।
-5. Cloudflare dashboard-এ পুরোনো ভুল **Pages** প্রজেক্টটি থাকলে সেটি delete/ignore করুন; deploy হবে Worker-এ (`Worker name` = `mexa-motion`, চাইলে বদলানো যাবে)।
+5. Cloudflare dashboard-এ পুরোনো ভুল **Pages** প্রজেক্টটি থাকলে সেটি delete/ignore করুন; deploy হবে Worker-এ (`Worker name` = `mexa` — `wrangler.jsonc`-এর `"name"` এবং dashboard-এর Worker name একই থাকতে হবে)।
 
 ## ৫. Deploy করার ধাপ
 
@@ -106,7 +106,7 @@ npx wrangler secret list          # শুধু নাম দেখাবে, �
 npx wrangler deploy
 ```
 
-প্রথম deploy ৫–১৫ মিনিট লাগতে পারে (image build + push + container provisioning)। শেষে `https://mexa-motion.<your-subdomain>.workers.dev` পাওয়া যাবে।
+প্রথম deploy ৫–১৫ মিনিট লাগতে পারে (image build + push + container provisioning)। শেষে `https://mexa.<your-subdomain>.workers.dev` পাওয়া যাবে।
 
 ### ৫.২ Cloudflare dashboard (Git connect) দিয়ে
 
@@ -119,13 +119,13 @@ npx wrangler deploy
 | Root directory | `/` |
 | Non-production deploy command | `npx wrangler preview` (Cloudflare-এর নতুন default) |
 
-এরপর dashboard-এর **Settings → Variables and Secrets** থেকে `APP_KEY`, `DB_*`, `R2_*` secret হিসেবে দিন (`wrangler.jsonc`-এর non-secret vars এমনিতেই apply হবে)।
+এরপর dashboard-এর **Settings → Variables and Secrets** থেকে `APP_KEY`, `DB_*`, `R2_*` secret হিসেবে দিন (`wrangler.jsonc`-এর non-secret vars এমনিতেই apply হবে), এবং **Settings → Build → API token**-এ নিশ্চিত করুন যে build token-এ **Account → Containers: Edit** permission দেওয়া আছে (§৮.১ দেখুন)।
 
 > **Docker requirement:** `wrangler.jsonc`-এ image `Dockerfile` path হিসেবে দেওয়া, তাই `npx wrangler deploy` চালানোর মেশিনে (বা Workers Builds environment-এ) Docker-কম্প্যাটিবল engine থাকতে হবে। Docker ছাড়া deploy করতে চাইলে image আগে বানিয়ে Cloudflare registry-তে push করুন, তারপর `wrangler.jsonc`-এ `images.app.dockerfile`-এর বদলে digest-pinned reference দিন:
 >
 > ```jsonc
 > "images": {
->   "app": { "image": "registry.cloudflare.com/<ACCOUNT_ID>/mexa-motion@sha256:<DIGEST>" }
+>   "app": { "image": "registry.cloudflare.com/<ACCOUNT_ID>/mexa@sha256:<DIGEST>" }
 > }
 > ```
 >
@@ -176,13 +176,15 @@ npx wrangler preview base-config secret put APP_KEY   # সব নতুন Prev
 
 - `APP_URL` ফাঁকা রাখলে Laravel request থেকেই host/scheme নেয় (Worker `X-Forwarded-Host/Proto` পাঠায়, `TRUSTED_PROXIES=*`) — তাই `workers.dev` URL আর custom domain দুটোই কাজ করে।
 - Cookie গুলো `Secure; HttpOnly; SameSite=Lax` থাকে, কারণ `SESSION_SECURE_COOKIE=true`।
-- Custom domain যোগ করলে `Workers & Pages → mexa-motion → Settings → Domains & Routes → Add custom domain`।
+- Custom domain যোগ করলে `Workers & Pages → mexa → Settings → Domains & Routes → Add custom domain`।
 
 ## ৮. সমস্যা ও সমাধান
 
 | Error / লক্ষণ | কারণ | সমাধান |
 |---|---|---|
 | `Could not detect a directory containing static files…` | Pages/Static Assets খোঁজা হচ্ছিল, প্রজেক্ট PHP | এই setup অনুসরণ করুন: `wrangler.jsonc` + `Dockerfile` + `npx wrangler deploy` (Pages নয়) |
+| `Failed to match Worker name. Your config file is using the Worker name "…", but the CI system expected "mexa". Overriding using the CI provided Worker name.` | `wrangler.jsonc`-এর `"name"` আর dashboard-এর আসল Worker name মিলছে না | `wrangler.jsonc`-এ `"name"` ঠিক Worker-এর নামের সমান (`"mexa"`) রাখুন। অমিল থাকলে Workers Builds সাময়িকভাবে CI-প্রদত্ত নাম দিয়ে override করে এবং config আপডেট করতে স্বয়ংক্রিয়ভাবে একটি Pull Request খুলতে চেষ্টা করে |
+| `A request to the Cloudflare API (/accounts/.../containers/me) failed.` *(কোনো HTTP status বা response body ছাড়া)* | **Account-side সমস্যা** (config-এর সমস্যা নয়): (১) account এখনো Workers **Free** plan-এ, অথবা (২) Workers Builds API token-এ **Account → Containers: Edit** নেই | (১) **Settings → Workers Paid** চালু করুন ও propagation-এর জন্য কয়েক মিনিট অপেক্ষা করে build retry করুন; (২) `Workers & Pages → mexa → Settings → Build → API token`-এ গিয়ে token edit/regenerate করে **Account → Containers: Edit** যোগ করুন ("Cloudflare Images: Edit" আলাদা permission — ওটি নয়)। বিস্তারিত §৮.১ দেখুন |
 | `The Docker CLI is needed to build the configured image…` | Docker engine চলছে না | Docker Desktop/Colima চালু করুন, অথবা `WRANGLER_DOCKER_BIN`/`DOCKER_HOST` সেট করুন; অথবা আগেই বানানো registry image ব্যবহার করুন |
 | `APP_KEY is not set` (container log) | secret আপলোড হয়নি | `npx wrangler secret put APP_KEY` |
 | `migrations failed` | DB unreachable/wrong credential | `DB_*` secret, remote access, firewall/IP allowlist যাচাই করুন |
@@ -196,6 +198,39 @@ npx wrangler preview base-config secret put APP_KEY   # সব নতুন Prev
 | `CPU limits are not supported for the Free plan [code: 100328]` | account Workers **Free** plan-এ আছে, অথচ config-এ `limits.cpu_ms` (বা Paid-only কোনো feature) আছে | Workers Paid plan চালু করুন (§১.১); `wrangler.jsonc`-এ `limits` block নেই তা নিশ্চিত করুন। `wrangler deploy --dry-run` এই error ধরতে পারে না — এটা শুধু আসল deploy-এ API বলে |
 | `There is no container instance that can be provided…` | plan/region provisioning সদ্য শুরু | Paid plan চালু থাকলে ১–২ মিনিট পরে আবার request করুন |
 | `Worker exceeded CPU time limit` | proxy code-এ অস্বাভাবিক CPU | container-ই আসল কাজ করে; Paid plan-এ `limits.cpu_ms` বাড়ানো যায় |
+
+### ৮.১ `/containers/me` API ব্যর্থতা — কেন হয় ও কীভাবে সমাধান করবেন (account-side)
+
+Docker image সফলভাবে build/export ও Worker upload হওয়ার পর deploy-এর শেষ ধাপে যদি নিচের error দেখা যায় (যেখানে কোনো HTTP status code বা response body থাকে না):
+
+```
+✘ A request to the Cloudflare API (/accounts/<ACCOUNT_ID>/containers/me) failed.
+```
+
+এটি **`wrangler.jsonc`, `Dockerfile` বা কোডের কোনো সমস্যা নয়** — এটি সম্পূর্ণ **Cloudflare account ও API token-এর (account-side) সীমাবদ্ধতা**, তাই config ফাইল বদলে এটি সমাধান করার চেষ্টা করবেন না। এর পেছনে দুটি কারণ থাকে:
+
+1. **Account এখনো Workers Free plan-এ আছে (Workers Paid আবশ্যক):**
+   Containers চালাতে **Workers Paid** plan বাধ্যতামূলক (যেমন একই Free account-এ আগে `code: 100328` এসেছিল)। কিন্তু Free plan-এ থাকলে `/containers/me` endpoint অনেক সময় স্পষ্ট বার্তা না দিয়ে এই ফাঁকা API ব্যর্থতা দেখায়।
+   - **সমাধান:** Cloudflare Dashboard-এ **Settings → Workers Paid** / [Workers plans](https://dash.cloudflare.com/?to=/:account/workers/plans) থেকে **Workers Paid** চালু করুন। Plan আপগ্রেড করার পর account-এ পরিবর্তন propagate হতে কয়েক মিনিট সময় লাগতে পারে — কয়েক মিনিট অপেক্ষা করে build **Retry** করুন।
+
+2. **Workers Builds API token-এ `Account → Containers: Edit` permission নেই:**
+   Workers Paid চালু থাকার পরেও যদি Workers Builds-এ একই `/containers/me` ব্যর্থতা আসে, তবে CI যে auto-generated build token ব্যবহার করছে তাতে Containers পরিচালনা করার অনুমতি নেই (default তৈরি হওয়া build token-এ অনেক সময় এই permission যুক্ত থাকে না)।
+   - **সমাধান:** Dashboard-এ যান: **Workers & Pages → `mexa` → Settings → Build → API token** → ব্যবহৃত token-টি **Edit** করুন (অথবা নতুন token তৈরি/regenerate করুন) এবং **Account → Containers: Edit** permission যোগ করুন।
+   - **সতর্কতা:** **"Cloudflare Images: Edit"** (`Account → Cloudflare Images: Edit`) সম্পূর্ণ আলাদা সার্ভিসের permission — এটি Container deployment-এর জন্য নয় এবং এটি যোগ করলে সমস্যার সমাধান হবে না। দরকার **Account → Containers: Edit**।
+
+**আসল API response দেখা ও দ্রুত permission যাচাই:**
+
+লুকানো HTTP status code ও পূর্ণ API response দেখতে debug log চালু করে deploy চালান:
+
+```bash
+WRANGLER_LOG=debug npx wrangler deploy
+```
+
+অথবা পুরো deploy না চালিয়েই বর্তমান token ও account-এ Containers API অ্যাক্সেস কাজ করছে কি না তা দ্রুত পরীক্ষা করতে চালান:
+
+```bash
+npx wrangler containers list
+```
 
 ## ৯. যা এখনো মেনে চলা জরুরি
 

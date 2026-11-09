@@ -9,7 +9,7 @@
   //
   // Docs: docs/CLOUDFLARE_DEPLOYMENT.md
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "mexa-motion",
+  "name": "mexa",
   "main": "worker/src/index.js",
   "compatibility_date": "2026-11-09",
   "workers_dev": true,
