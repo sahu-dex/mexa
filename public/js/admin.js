@@ -804,14 +804,15 @@
   }
 
   async function saveHomeCopy() {
-    const settings = state.sections.settings;
+    const settings = state.sections.settings || (state.sections.settings = { content: {}, contact: {}, page_content: {} });
+    settings.content ||= {};
     settings.page_content ||= {}; settings.page_content.home ||= {};
     const overrides = settings.page_content.home;
     $$('[data-home-key]').forEach((input) => {
       const selector = input.dataset.selector;
       const kind = input.dataset.homeKind;
       const value = input.value.trim();
-      if (key === 'services_intro' && value) settings.content.services_intro = value;
+      if (input.dataset.homeKey === 'services_intro' && value) settings.content.services_intro = value;
       if (!value) { if (overrides[selector]) delete overrides[selector][kind === 'label' ? 'label' : kind === 'href' ? 'href' : 'text']; return; }
       overrides[selector] ||= {};
       if (kind === 'label') overrides[selector].label = value;
@@ -827,17 +828,19 @@
     const image = $('#home-bg-image').value.trim();
     const video = $('#home-bg-video').value.trim();
     if (video && !/\.(mp4|webm|ogg)(?:[?#].*)?$/i.test(video)) { toast('Use a direct MP4, WebM, or Ogg video URL for the hero background.', true); return; }
-    state.sections.settings.home_media = { image, video };
+    const settings = state.sections.settings || (state.sections.settings = {});
+    settings.home_media = { image, video };
     await saveSection('settings', 'Homepage hero media updated.');
   }
 
   async function saveHomeSections() {
-    const current = state.sections.settings.home_sections || defaultHomeSections.map(([key, label], index) => ({ key, label, enabled: true, order: index + 1 }));
+    const settings = state.sections.settings || (state.sections.settings = {});
+    const current = settings.home_sections || defaultHomeSections.map(([key, label], index) => ({ key, label, enabled: true, order: index + 1 }));
     const sections = current.map((section, index) => ({ ...section,
       enabled: $(`[data-home-section="${index}"]`)?.checked ?? true,
       order: Number($(`[data-home-order="${index}"]`)?.value || index + 1),
     })).sort((a, b) => a.order - b.order).map((section, index) => ({ ...section, order: index + 1 }));
-    state.sections.settings.home_sections = sections;
+    settings.home_sections = sections;
     await saveSection('settings', 'Homepage section layout updated.');
   }
 
@@ -992,7 +995,7 @@
   async function savePageOverride(event) {
     event.preventDefault();
     if (!state.selected) return;
-    const settings = state.sections.settings;
+    const settings = state.sections.settings || (state.sections.settings = {});
     settings.page_content ||= {};
     settings.page_content[state.selected.page] ||= {};
     const value = { text: $('#edit-text').value };

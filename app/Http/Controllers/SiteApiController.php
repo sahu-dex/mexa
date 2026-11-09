@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\MediaFiles;
 use App\Support\SiteData;
 use App\Support\VideoCatalog;
 use App\Support\VideoEmbed;
@@ -9,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use JsonException;
 
 class SiteApiController extends Controller
 {
@@ -69,7 +71,7 @@ class SiteApiController extends Controller
 
     public function videoResolve(Request $request): JsonResponse
     {
-        $validated = $request->validate(['url' => ['required', 'url', 'max:2048']]);
+        $validated = $request->validate(['url' => ['required', 'url:http,https', 'max:2048']]);
         $result = VideoEmbed::resolve($validated['url']);
         if (!in_array($result['type'], ['iframe', 'video'], true)) {
             return response()->json(['message' => 'This video host does not provide a supported embed. Use a YouTube, Facebook, Google Drive, Vimeo, Dailymotion, Streamable, MP4, WebM, or HLS link.'], 422);
@@ -116,7 +118,7 @@ class SiteApiController extends Controller
             'role' => ['nullable', 'string', 'max:160'],
             'rating' => ['required', 'integer', 'between:1,5'],
             'body' => ['required', 'string', 'min:10', 'max:900'],
-            'photo_url' => ['nullable', 'url', 'max:2048'],
+            'photo_url' => ['nullable', 'url:http,https', 'max:2048'],
         ]);
 
         $rows = SiteData::get('reviews');
@@ -197,7 +199,17 @@ class SiteApiController extends Controller
             return response()->json(['message' => 'The section content must be a JSON object or array.'], 422);
         }
 
-        if (strlen(json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?: '') > 2_000_000) {
+        if (MediaFiles::containsInlineMedia($payload)) {
+            return response()->json(['message' => 'Upload images and videos as files; do not paste file data or data: URLs into content fields.'], 422);
+        }
+
+        try {
+            $encoded = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return response()->json(['message' => 'This section contains characters that cannot be saved as JSON.'], 422);
+        }
+
+        if (strlen($encoded) > 2_000_000) {
             return response()->json(['message' => 'This section is larger than the 2 MB limit.'], 413);
         }
 
@@ -271,6 +283,10 @@ class SiteApiController extends Controller
                     if (!is_array($override)) {
                         return response()->json(['message' => 'Page content overrides must be structured records.'], 422);
                     }
+                    $src = trim((string) ($override['src'] ?? ''));
+                    if ($src !== '' && !MediaFiles::isSafeMediaUrl($src)) {
+                        return response()->json(['message' => 'Page images must use a public HTTP(S) URL or a site-relative path, not inline file data.'], 422);
+                    }
                     $href = trim((string) ($override['href'] ?? ''));
                     if ($href !== '' && !$this->isSafeLink($href)) {
                         return response()->json(['message' => 'Page links must use a safe HTTP(S), mailto, tel, or internal link.'], 422);
@@ -343,14 +359,18 @@ class SiteApiController extends Controller
             }
         }
 
-        SiteData::put($section, $payload);
+        try {
+            SiteData::put($section, $payload);
+        } catch (JsonException) {
+            return response()->json(['message' => 'This section contains characters that cannot be saved as JSON.'], 422);
+        }
 
         return response()->json(['ok' => true, 'section' => $section, 'saved_at' => now()->toIso8601String()]);
     }
 
     public function videoPreview(Request $request): JsonResponse
     {
-        $validated = $request->validate(['url' => ['required', 'url', 'max:2048']]);
+        $validated = $request->validate(['url' => ['required', 'url:http,https', 'max:2048']]);
 
         return response()->json(VideoEmbed::resolve($validated['url']));
     }
