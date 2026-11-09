@@ -2,7 +2,7 @@
 
 ওয়েবসাইটের সব public page Laravel Blade view-এ `resources/views/pages/`-এর মধ্যে আছে। Shared head/video assets এবং mobile booking markup `resources/views/pages/partials/`-এ; reusable CSS/JavaScript `public/`-এ থাকে। Services, packages, team, work/video, reviews, bookings এবং site settings MySQL-এ থাকে। `/admin`-এ login করে visual page editor, content manager ও media library ব্যবহার করুন।
 
-কোন ফাইল কোন অংশ পরিচালনা করে এবং পরবর্তী developer/agent-এর জন্য project rules জানতে [`AGENTS.md`](AGENTS.md) ও [`docs/PROJECT_MAP.md`](docs/PROJECT_MAP.md) দেখুন। cPanel hosting setup-এর জন্য [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md) দেখুন।
+কোন ফাইল কোন অংশ পরিচালনা করে এবং পরবর্তী developer/agent-এর জন্য project rules জানতে [`AGENTS.md`](AGENTS.md) ও [`docs/PROJECT_MAP.md`](docs/PROJECT_MAP.md) দেখুন। cPanel hosting setup-এর জন্য [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md), Cloudflare-এ সরাসরি deploy-এর জন্য [`docs/CLOUDFLARE_DEPLOYMENT.md`](docs/CLOUDFLARE_DEPLOYMENT.md) দেখুন।
 
 ## Local XAMPP setup (development only)
 
@@ -68,6 +68,19 @@ Populated database-এ কখনো `migrate --seed`, `migrate:fresh` বা res
 - `storage/` ও `bootstrap/cache/` writable রাখুন; PHP 8.4+, Laravel 12 extensions, 200 MB upload limits, `mod_rewrite`/`AllowOverride` ও HTTPS যাচাই করুন। `public/storage` symlink ঐচ্ছিক — custom `/storage/media/{file}` route যথেষ্ট।
 - Production-এ `.env`-এ cPanel-প্রদত্ত DB host/name/user/password ও real HTTPS `APP_URL` দিন; `.env.example`-এ placeholder আছে, source-এ কোনো local/XAMPP setting হার্ডকোড নেই। বিস্তারিত [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)।
 - MySQL backup নিয়মিত নিন এবং `site_data`, `media_assets`, video tables ও `storage/app/public/media/` অন্তর্ভুক্ত করুন।
+
+## Cloudflare Workers + Containers deployment
+
+এই site-টি static website নয় — Laravel/Blade/PHP + MySQL চলে, তাই Cloudflare Pages বা Workers Static Assets-এ deploy করা যায় না (`Could not detect a directory containing static files` error-এর কারণ এটাই)। Cloudflare-এ সরাসরি deploy করতে repo-তে `Dockerfile`-ভিত্তিক **Container** setup আছে:
+
+```bash
+npm install
+cp .env.cloudflare.example .dev.vars     # APP_KEY + DB_* (+ ঐচ্ছিক R2_*) মান বসান
+npx wrangler secret bulk .dev.vars
+npx wrangler deploy                       # Docker চালু থাকতে হবে
+```
+
+`wrangler.jsonc` (Worker entry `worker/src/index.js`, container image, Durable Object, non-secret vars), `Dockerfile` + `docker/` (PHP 8.4 + Apache, `public/` document root, `migrate --force`, ঐচ্ছিক R2 media mount) এবং ধাপে ধাপে নির্দেশনা [`docs/CLOUDFLARE_DEPLOYMENT.md`](docs/CLOUDFLARE_DEPLOYMENT.md)-এ আছে। এই setup application code, UI, route, API বা admin flow বদলায় না; cPanel/XAMPP setup আগের মতোই অপরিবর্তিত।
 
 ## Data notes
 

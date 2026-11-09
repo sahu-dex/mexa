@@ -19,6 +19,9 @@ This document is a handoff map for the next developer or coding agent. The appli
 | `routes/web.php` | Named public routes, admin routes, and JSON endpoints under `/api/...` |
 | `storage/` | Runtime logs, sessions, compiled Blade views, and temporary/cache files; keep generated contents out of source commits |
 | `scripts/` | Preview-only router and start script; kept outside `public/` and denied by `.htaccess` |
+| `wrangler.jsonc`, `worker/src/index.js` | Cloudflare Workers + Containers deployment config and the Worker/Durable Object that proxies requests to the Laravel container |
+| `Dockerfile`, `docker/` | PHP 8.4 + Apache image, vhost/php.ini, container entrypoint (env → `.env`, migrations, caches) and the optional R2 media mount |
+| `.env.cloudflare.example` | Secret-only template for `wrangler secret bulk` during Cloudflare deployment |
 
 ## Important entry points
 

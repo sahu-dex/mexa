@@ -1,0 +1,103 @@
+{
+  // MEXA MOTION — Cloudflare Workers + Containers configuration.
+  //
+  // The website is a Laravel 12 / PHP 8.4 application (Blade + MySQL), so it cannot
+  // run as static assets or as JavaScript on the Workers runtime. Cloudflare's
+  // supported way to run it is a Container: `npx wrangler deploy` builds
+  // ./Dockerfile, pushes it to the Cloudflare registry, and routes every request
+  // through worker/src/index.js -> Durable Object -> the PHP/Apache container.
+  //
+  // Docs: docs/CLOUDFLARE_DEPLOYMENT.md
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "mexa-motion",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2026-11-09",
+  "workers_dev": true,
+
+  // Container logs and Worker logs in the dashboard (Workers & Pages -> Logs).
+  "observability": {
+    "enabled": true
+  },
+
+  "containers": [
+    {
+      "class_name": "MexaContainer",
+      // `durable_object` is the current scheduling policy (the `default` policy is deprecated).
+      "scheduling_policy": "durable_object",
+      "images": {
+        "app": {
+          "dockerfile": "Dockerfile",
+          "build_context": "."
+        }
+      }
+    }
+  ],
+
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "MEXA_APP",
+        "class_name": "MexaContainer"
+      }
+    ]
+  },
+
+  "exports": {
+    "MexaContainer": {
+      "type": "durable-object",
+      "storage": "sqlite"
+    }
+  },
+
+  // ---------------------------------------------------------------------------
+  // Non-secret runtime settings. These are forwarded to the container as env vars.
+  // Everything secret (APP_KEY, APP_URL, DB_* credentials, R2 keys) is set with
+  // `npx wrangler secret put <NAME>` — see .env.cloudflare.example.
+  // ---------------------------------------------------------------------------
+  "vars": {
+    "APP_NAME": "Mexa Motion",
+    "APP_ENV": "production",
+    "APP_DEBUG": "false",
+    "APP_TIMEZONE": "Asia/Dhaka",
+    "APP_LOCALE": "en",
+    "APP_FALLBACK_LOCALE": "en",
+
+    // Logs go to the container stdout/stderr so they show up in Cloudflare logs.
+    "LOG_CHANNEL": "stderr",
+    "LOG_LEVEL": "error",
+
+    // Remote MySQL/MariaDB (see docs/CLOUDFLARE_DEPLOYMENT.md § Database).
+    "DB_CONNECTION": "mysql",
+    "DB_PORT": "3306",
+    "DB_CHARSET": "utf8mb4",
+    "DB_COLLATION": "utf8mb4_unicode_ci",
+
+    // The container disk is ephemeral, so sessions must live in the database.
+    "SESSION_DRIVER": "database",
+    "SESSION_TABLE": "sessions",
+    "SESSION_LIFETIME": "120",
+    "SESSION_ENCRYPT": "true",
+    "SESSION_SECURE_COOKIE": "true",
+    "SESSION_HTTP_ONLY": "true",
+    "SESSION_SAME_SITE": "lax",
+
+    // cache/queue stay on the runtime defaults used by the application.
+    "CACHE_STORE": "file",
+    "QUEUE_CONNECTION": "sync",
+    "FILESYSTEM_DISK": "local",
+
+    // Requests reach PHP only through the Worker/Durable Object proxy.
+    "TRUSTED_PROXIES": "*",
+
+    // Container runtime tuning (read by worker/src/index.js and docker/entrypoint.sh).
+    "MEXA_CONTAINER_PORT": "8080",
+    "MEXA_INSTANCE_TYPE": "basic",
+    "MEXA_INACTIVITY_TIMEOUT_MS": "300000"
+  },
+
+  // Worker CPU per request (paid plans allow up to 300000). The container does
+  // the heavy lifting; 60s only covers slow cold starts on the boundary.
+  "limits": {
+    "cpu_ms": 60000
+  }
+}
