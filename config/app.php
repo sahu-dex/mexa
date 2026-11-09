@@ -4,7 +4,8 @@ return [
     'name' => env('APP_NAME', 'Mexa Motion'),
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),
-    'url' => env('APP_URL', 'http://localhost'),
+    // Production must set APP_URL in .env; this is only a non-routable console fallback.
+    'url' => env('APP_URL', 'https://example.invalid'),
     'timezone' => env('APP_TIMEZONE', 'Asia/Dhaka'),
     'locale' => env('APP_LOCALE', 'en'),
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),

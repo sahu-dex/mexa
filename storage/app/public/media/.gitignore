@@ -1,0 +1,3 @@
+# Uploaded image/video binaries are runtime data. Keep them out of Git.
+*
+!.gitignore

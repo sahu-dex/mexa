@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\MediaFiles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -29,25 +30,44 @@ class ImageUploadController extends Controller
 
         $mime = strtolower((string) $file->getMimeType());
         if (str_starts_with($mime, 'image/')) {
-            $request->validate([$field => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif', 'max:8192']]);
+            $request->validate([$field => ['required', 'file', 'image', 'mimetypes:image/jpeg,image/png,image/webp,image/gif', 'max:8192']]);
             $kind = 'image';
         } else {
-            $request->validate([$field => ['required', 'file', 'mimes:mp4,webm,ogg', 'mimetypes:video/mp4,video/webm,video/ogg,application/ogg', 'max:204800']]);
+            $request->validate([$field => ['required', 'file', 'mimetypes:video/mp4,video/webm,video/ogg,application/ogg', 'max:204800']]);
             $kind = 'video';
             if ($mime === 'application/ogg') {
                 $mime = 'video/ogg';
             }
         }
 
-        $extension = strtolower($file->getClientOriginalExtension());
+        // The validated MIME type, not the client-provided name, decides the stored extension.
+        $extension = MediaFiles::extensionForMime($mime);
+        if ($extension === null) {
+            return response()->json(['message' => 'This file type is not supported for website media.'], 422);
+        }
+
         $filename = Str::uuid().'.'.$extension;
-        $path = $file->storeAs('media', $filename, 'public');
-        if (!$path) {
+        $path = 'media/'.$filename;
+
+        try {
+            Storage::disk('public')->makeDirectory('media');
+            $storedPath = $file->storeAs('media', $filename, 'public');
+            if (!$storedPath || !Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+
+                return response()->json(['message' => 'The file could not be saved to the website storage.'], 500);
+            }
+        } catch (Throwable $exception) {
+            Storage::disk('public')->delete($path);
+            report($exception);
+
             return response()->json(['message' => 'The file could not be saved to the website storage.'], 500);
         }
 
         $url = url('/storage/media/'.$filename);
         $name = mb_substr(basename((string) $file->getClientOriginalName()), 0, 255);
+        $name = trim((string) preg_replace('/[\x00-\x1F\x7F]/', '', $name)) ?: 'Uploaded media';
+        $size = (int) $file->getSize();
 
         try {
             $id = DB::table('media_assets')->insertGetId([
@@ -56,7 +76,7 @@ class ImageUploadController extends Controller
                 'provider' => 'local',
                 'name' => $name,
                 'mime_type' => $mime,
-                'size_bytes' => (int) $file->getSize(),
+                'size_bytes' => $size,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -74,8 +94,10 @@ class ImageUploadController extends Controller
             'provider' => 'local',
             'name' => $name,
             'mime_type' => $mime,
-            'size_bytes' => (int) $file->getSize(),
+            'size_bytes' => $size,
             'kind' => $kind,
+            'disk' => 'public',
+            'path' => $path,
         ];
 
         return response()->json(['ok' => true, 'asset' => $asset, 'image' => $kind === 'image' ? $asset : null], 201);
@@ -83,7 +105,7 @@ class ImageUploadController extends Controller
 
     public function show(string $file): BinaryFileResponse
     {
-        abort_unless(preg_match('/^[a-f0-9-]{36}\.(?:jpg|jpeg|png|webp|gif|mp4|webm|ogg)$/i', $file) === 1, 404);
+        abort_unless(MediaFiles::isSafeFilename($file), 404);
 
         $urlSuffix = '/storage/media/'.$file;
         $asset = DB::table('media_assets')->where('provider', 'local')->where('url', 'like', '%'.$urlSuffix)->first();
@@ -109,9 +131,8 @@ class ImageUploadController extends Controller
         }
 
         if ($asset->provider === 'local') {
-            $path = parse_url((string) $asset->url, PHP_URL_PATH) ?: '';
-            $filename = basename($path);
-            if (str_starts_with($path, '/storage/media/') && preg_match('/^[a-f0-9-]{36}\.(?:jpg|jpeg|png|webp|gif|mp4|webm|ogg)$/i', $filename)) {
+            $filename = $this->localFilename((string) $asset->url);
+            if ($filename !== null) {
                 Storage::disk('public')->delete('media/'.$filename);
             }
         }
@@ -119,6 +140,18 @@ class ImageUploadController extends Controller
         DB::table('media_assets')->where('id', $media)->delete();
 
         return response()->json(['ok' => true]);
+    }
+
+    private function localFilename(string $url): ?string
+    {
+        $path = (string) (parse_url($url, PHP_URL_PATH) ?: '');
+        $filename = basename($path);
+        if (!MediaFiles::isSafeFilename($filename)) {
+            return null;
+        }
+
+        // A suffix match also works when APP_URL points to a subfolder installation.
+        return str_ends_with($path, '/storage/media/'.$filename) ? $filename : null;
     }
 
     private function isReferenced(string $url): bool

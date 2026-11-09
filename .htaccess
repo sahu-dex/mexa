@@ -1,6 +1,35 @@
-Options -Indexes
-RewriteEngine On
+# MEXA MOTION / Laravel 12 — cPanel-compatible front-controller guard.
+# Preferred: point the domain document root at public/.
+# If cPanel must use the project root as the web root, this file routes web
+# requests into public/ and denies direct access to private application files.
 
-# Serve Laravel from /public so the project root can remain the XAMPP document folder.
-RewriteCond %{REQUEST_URI} !/public(/|$) [NC]
-RewriteRule ^(.*)$ public/$1 [L]
+<FilesMatch "^\.(env|git|ht|user)">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_autoindex.c>
+    IndexIgnore *
+</IfModule>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # cPanel AutoSSL / certificate validation files must stay reachable.
+    RewriteRule ^\.well-known/ - [L]
+
+    # Private Laravel directories and common source/credential files.
+    RewriteRule ^(app|bootstrap|config|database|docs|resources|routes|scripts|storage|tests|vendor)/ - [F,L]
+    RewriteRule ^(composer\.(json|lock)|artisan|package(-lock)?\.json|phpunit\.xml)(\.dist)?$ - [F,L]
+    RewriteRule \.(sql|log|md|ini|sh|bak|old|key|pem|p12|pfx)$ - [F,L]
+
+    # Serve Laravel from /public when the project root is the web root.
+    RewriteCond %{REQUEST_URI} !/public(/|$) [NC]
+    RewriteCond %{REQUEST_URI} !/\.well-known/ [NC]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

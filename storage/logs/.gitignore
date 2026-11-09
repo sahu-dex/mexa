@@ -1,0 +1,4 @@
+# Runtime files are ignored; keep this directory in Git.
+*
+!.gitignore
+!.htaccess

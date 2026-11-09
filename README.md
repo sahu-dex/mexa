@@ -2,9 +2,11 @@
 
 ওয়েবসাইটের সব public page Laravel Blade view-এ `resources/views/pages/`-এর মধ্যে আছে। Shared head/video assets এবং mobile booking markup `resources/views/pages/partials/`-এ; reusable CSS/JavaScript `public/`-এ থাকে। Services, packages, team, work/video, reviews, bookings এবং site settings MySQL-এ থাকে। `/admin`-এ login করে visual page editor, content manager ও media library ব্যবহার করুন।
 
-কোন ফাইল কোন অংশ পরিচালনা করে এবং পরবর্তী developer/agent-এর জন্য project rules জানতে [`AGENTS.md`](AGENTS.md) ও [`docs/PROJECT_MAP.md`](docs/PROJECT_MAP.md) দেখুন।
+কোন ফাইল কোন অংশ পরিচালনা করে এবং পরবর্তী developer/agent-এর জন্য project rules জানতে [`AGENTS.md`](AGENTS.md) ও [`docs/PROJECT_MAP.md`](docs/PROJECT_MAP.md) দেখুন। cPanel hosting setup-এর জন্য [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md) দেখুন।
 
-## XAMPP setup
+## Local XAMPP setup (development only)
+
+> এই অংশ শুধু local development-এর জন্য। cPanel production-এ local URL, server path বা XAMPP default হার্ডকোড করবেন না; [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md) ও `.env.example`-এর placeholder অনুসরণ করুন।
 
 প্রয়োজন: PHP 8.2+, Composer, MySQL/MariaDB, Apache `mod_rewrite` এবং `AllowOverride All`।
 
@@ -17,12 +19,14 @@
    C:\xampp\php\php.exe C:\xampp\php\composer.phar install
    ```
 
-5. Laravel key তৈরি করে schema ও মূল website content import করুন:
+5. Laravel key তৈরি করে শুধু নতুন ফাঁকা database-এ schema প্রয়োগ করুন:
 
    ```powershell
    C:\xampp\php\php.exe artisan key:generate
-   C:\xampp\php\php.exe artisan migrate --seed
+   C:\xampp\php\php.exe artisan migrate --force
    ```
+
+   `migrate --seed` শুধুমাত্র একেবারে নতুন ফাঁকা database-র ক্ষেত্রে ঐচ্ছিক; populated database-এ কখনো চালাবেন না। `SiteData::defaults()` bundled `site-snapshot.json` থেকে starter content দেখায়, তাই seed ছাড়াও পেজ দেখা যায়।
 
 6. ব্রাউজারে `http://localhost/mexa-motion-blue` খুলুন। প্রথমে `/admin/setup`-এ admin account তৈরি করুন; এরপর `http://localhost/mexa-motion-blue/admin` থেকে sign in করুন। Setup একবার account তৈরি হলে বন্ধ হয়ে যায়।
 
@@ -48,20 +52,41 @@ Admin dashboard-এর **Video library** থেকে YouTube, Facebook, Google 
 
 Video player desktop ও mobile-এ responsive। Direct media native browser controls দিয়ে চলে; HLS-এর জন্য Safari-এর native playback ব্যবহার হয় এবং অন্য সমর্থিত browser-এ hls.js player যুক্ত হয়। Video host-এর embed permission, privacy setting এবং CORS policy playback প্রভাবিত করতে পারে। YouTube-এর thumbnail স্বয়ংক্রিয়ভাবে পাওয়া গেলে সেটি ব্যবহার হয়; অন্য source-এর thumbnail Admin থেকে দেওয়া যায়। অচেনা host-কে iframe-এ না ঢুকিয়ে নিরাপদ external link হিসেবে দেখানো হয়।
 
-নতুন database schema প্রয়োগ করতে XAMPP MySQL চালু করে project root-এ চালান:
+নতুন ফাঁকা database-এ schema প্রয়োগ করতে XAMPP MySQL চালু করে project root-এ চালান:
 
 ```powershell
-C:\xampp\php\php.exe artisan migrate --seed
+C:\xampp\php\php.exe artisan migrate --force
 ```
+
+Populated database-এ কখনো `migrate --seed`, `migrate:fresh` বা reseed করবেন না। cPanel-এ Terminal না থাকলে [`database/schema/cpanel-mysql.sql`](database/schema/cpanel-mysql.sql) phpMyAdmin দিয়ে import করুন ([`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md))।
 
 ## Deployment
 
 - Production server-এ `APP_ENV=production`, `APP_DEBUG=false`, HTTPS এবং `SESSION_SECURE_COOKIE=true` ব্যবহার করুন। `APP_KEY` ও database credentials secret হিসেবে রাখুন।
-- Web server-এর document root হবে Laravel-এর `public/` directory; storage ও `.env` public web root-এর বাইরে রাখুন।
-- Deploy করার আগে `php artisan migrate --force` চালিয়ে `storage/` ও `bootstrap/cache/` directory-তে write permission দিন। PHP-FPM/Apache এবং reverse proxy-তে বড় video upload গ্রহণের সীমাও যাচাই করুন।
-- MySQL backup নিয়মিত নিন এবং `site_data` ও `media_assets` table অন্তর্ভুক্ত করুন।
+- Web server-এর document root সাধ্যমত Laravel-এর `public/` directory; storage ও `.env` public web root-এর বাইরে রাখুন। cPanel-এ document root বদলানো না গেলে root `.htaccess` private files deny করে `public/`-এ rewrite করে; `/.well-known/` AutoSSL-র জন্য exempt।
+- নতুন ফাঁকা database-এ `php artisan migrate --force` (Terminal থাকলে) অথবা phpMyAdmin-এ non-destructive [`database/schema/cpanel-mysql.sql`](database/schema/cpanel-mysql.sql) import (Terminal না থাকলে)। Populated database-এ import/migrate/seed/reseed করবেন না।
+- `storage/` ও `bootstrap/cache/` writable রাখুন; PHP 8.2+, Laravel 12 extensions, 200 MB upload limits, `mod_rewrite`/`AllowOverride` ও HTTPS যাচাই করুন। `public/storage` symlink ঐচ্ছিক — custom `/storage/media/{file}` route যথেষ্ট।
+- Production-এ `.env`-এ cPanel-প্রদত্ত DB host/name/user/password ও real HTTPS `APP_URL` দিন; `.env.example`-এ placeholder আছে, source-এ কোনো local/XAMPP setting হার্ডকোড নেই। বিস্তারিত [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)।
+- MySQL backup নিয়মিত নিন এবং `site_data`, `media_assets`, video tables ও `storage/app/public/media/` অন্তর্ভুক্ত করুন।
 
 ## Data notes
 
 Seeder bundled site snapshot-এ থাকা services, founder/team, portfolio, demo video এবং public review content database-এ আনে। আগের browser-local booking/review state শুধু সেই browser-এ ছিল, তাই অন্য browser-এর সেই পুরোনো state সার্ভারে ফেরানো যায় না; নতুন submission MySQL-এ সংরক্ষিত হয়।
 
+
+## Data ownership, backup and safety
+
+- **মূল ডাটা MySQL-এ:** সাইটের লেখা, settings, services, packages, team, portfolio, reviews ও bookings `site_data` table-এর `payload` JSON কলামে থাকে; media URL/metadata `media_assets`-এ এবং video records/placements `video_library` ও `video_placements`-এ থাকে। অ্যাডমিন প্যানেল থেকে save হলে সরাসরি এই database-এ লেখা হয়।
+- `database/seeders/data/site-snapshot.json` শুধু নতুন ডাটাবেসের starter/import snapshot ও অনুপস্থিত section-এর fallback। এটি live data store বা backup নয়; অ্যাডমিনের সম্পাদনা এখানে নকল করবেন না। Backup/export হিসেবে timestamped database dump বা JSON export ignored, non-public path-এ (যেমন `storage/app/private/backups/`) রাখুন, যাচাই করে off-server কপি রাখুন এবং GitHub-এ commit করবেন না।
+- আপলোড করা JPG/PNG/WebP/GIF ও MP4/WebM/Ogg ফাইল `public` disk-এর `storage/app/public/media/`-এ UUID নামে সংরক্ষিত হয়; extension validated MIME type থেকে নেওয়া হয়। `/storage/media/{file}` URL তৈরি করে `media_assets`-এ URL, MIME, byte size, provider ও timestamps লেখা হয়। Admin media library-র “Use URL” বা upload response-এর URL পেজের সংশ্লিষ্ট field-এ বসে; সেখান থেকে page override, hero media ও video catalog সেটি public পেজে দেখায়। ফাইলের বাইনারি/`data:` URI JSON, database text field বা source code-এ রাখা হয় না।
+- Legacy Blade template-এ থাকা inline base64 design images static design asset, uploaded media নয়; অনুমোদিত ডিজাইন অক্ষত রাখতে সেগুলো এখানে অপরিবর্তিত রাখা হয়েছে।
+- `.gitignore` এখন `.env` variants, credentials, `storage/app/public/media/`-এর uploaded files, database dump ও backup folder বাদ দেয়। `storage/app/public/media/.gitignore` folder-টি track করে কিন্তু uploaded binaries কখনো Git-এ আসবে না। `.env`, `APP_KEY`, DB password বা `IMGBB_API_KEY` কখনো log/commit করবেন না।
+- কোনো database schema পরিবর্তনের আগে database ও uploaded media-র verified backup নিন, শুধু additive/nullable column বা নতুন table যোগ করুন, পুরনো row থেকে backfill করুন, row count/checksum ও admin/public page যাচাই করুন। Populated database-এ `migrate:fresh`, `truncate` বা `migrate --seed` চালাবেন না। বিস্তারিত plan [`docs/PROJECT_MAP.md`](docs/PROJECT_MAP.md)-এ আছে।
+
+## Cloudflare / reverse-proxy preview
+
+শুধু প্রিভিউ দেখতে ও অ্যাডমিন থেকে আপডেট করতে Cloudflare/Tunnel-এর সামনে Laravel-এর PHP runtime চালাতে হবে; Cloudflare Pages/Workers নিজে PHP/Blade চালায় না। Proxy-aware HTTPS URL/cookie, dynamic preview router ও start script-এর নির্দেশনা [`docs/CLOUDFLARE_PREVIEW.md`](docs/CLOUDFLARE_PREVIEW.md)-এ আছে। `.env`-এ প্রকৃত HTTPS `APP_URL`, `TRUSTED_PROXIES` ও `SESSION_SECURE_COOKIE=true` দিন; localhost বা server path হার্ডকোড করবেন না। Live preview-এর জন্য repo root থেকে `bash scripts/start-preview.sh` চালান।
+
+## cPanel hosting
+
+cPanel-এ PHP 8.2+/extensions, MySQL, Composer/Terminal, document root, `.htaccess` rewrite, private file protection, permissions, symlink-বিকল্প media route ও `.env` যাচাই করার পূর্ণ ধাপ-ভিত্তিক নির্দেশনা [`docs/CPANEL_DEPLOYMENT.md`](docs/CPANEL_DEPLOYMENT.md)-এ আছে। Terminal/Composer না থাকলেও prebuilt `vendor/`, phpMyAdmin schema import, File Manager ও temporary [`public/cpanel-preflight.php`](public/cpanel-preflight.php) দিয়ে নিরাপদে সেটআপ করা যায়। Production-এ কোনো server path, local URL বা XAMPP-নির্ভর মান হার্ডকোড করা হয়নি; সব environment-নির্ভর মান `.env` থেকে নেওয়া হয়। cPanel-এ নিজে কোনো deployment বা পরিবর্তন করা হয়নি।

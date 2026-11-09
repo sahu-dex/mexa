@@ -3,6 +3,8 @@
 namespace App\Support;
 
 use Illuminate\Support\Facades\DB;
+use JsonException;
+use RuntimeException;
 
 class SiteData
 {
@@ -13,7 +15,7 @@ class SiteData
         $rows = DB::table('site_data')->get(['section', 'payload']);
         $data = [];
         foreach ($rows as $row) {
-            $data[$row->section] = json_decode($row->payload, true) ?? [];
+            $data[$row->section] = self::decodePayload((string) $row->payload);
         }
 
         return array_replace(self::defaults(), $data);
@@ -26,7 +28,7 @@ class SiteData
             return self::defaults()[$section] ?? [];
         }
 
-        return json_decode($row, true) ?? [];
+        return self::decodePayload((string) $row);
     }
 
     public static function publishedPackages(): array
@@ -84,13 +86,16 @@ class SiteData
 
     public static function put(string $section, array $payload): void
     {
-        $existing = DB::table('site_data')->where('section', $section)->first(['id']);
-        $values = ['payload' => json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), 'updated_at' => now()];
-        if ($existing) {
-            DB::table('site_data')->where('id', $existing->id)->update($values);
-        } else {
-            DB::table('site_data')->insert($values + ['section' => $section, 'created_at' => now()]);
-        }
+        $json = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
+        $now = now();
+
+        // An atomic upsert preserves the existing row and its created_at value.
+        DB::table('site_data')->upsert([[
+            'section' => $section,
+            'payload' => $json,
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]], ['section'], ['payload', 'updated_at']);
     }
 
     public static function defaults(): array
@@ -101,7 +106,7 @@ class SiteData
         }
 
         $snapshotPath = database_path('seeders/data/site-snapshot.json');
-        $snapshot = is_file($snapshotPath) ? json_decode(file_get_contents($snapshotPath), true) : [];
+        $snapshot = is_file($snapshotPath) ? self::decodePayload((string) file_get_contents($snapshotPath)) : [];
         $content = $snapshot['/api/public/content'] ?? [];
         $contact = $snapshot['/api/public/contact'] ?? [];
         $team = $snapshot['/api/public/team'] ?? ['heading' => 'Our Team', 'intro' => '', 'members' => []];
@@ -154,5 +159,17 @@ class SiteData
         ];
 
         return $defaults;
+    }
+
+    private static function decodePayload(string $payload): array
+    {
+        try {
+            $decoded = json_decode($payload, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $exception) {
+            // Fail loudly instead of returning an empty section that an admin save could overwrite.
+            throw new RuntimeException('Stored site data contains invalid JSON. Restore a verified backup before editing.', 0, $exception);
+        }
+
+        return is_array($decoded) ? $decoded : [];
     }
 }

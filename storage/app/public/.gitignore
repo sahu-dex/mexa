@@ -1,0 +1,5 @@
+# Keep the persistent public disk directory in Git; direct web access is denied.
+*
+!.gitignore
+!.htaccess
+!media/

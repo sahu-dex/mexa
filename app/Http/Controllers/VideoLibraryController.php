@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\MediaFiles;
 use App\Support\SiteData;
 use App\Support\VideoCatalog;
 use App\Support\VideoEmbed;
@@ -52,8 +53,8 @@ class VideoLibraryController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => ['required', 'string', 'max:180'],
             'description' => ['nullable', 'string', 'max:5000'],
-            'url' => ['required', 'url', 'max:2048'],
-            'thumbnail_url' => ['nullable', 'url', 'max:2048'],
+            'url' => ['required', 'url:http,https', 'max:2048'],
+            'thumbnail_url' => ['nullable', 'url:http,https', 'max:2048'],
             'category' => ['nullable', 'string', 'max:120'],
             'is_featured' => ['sometimes', 'boolean'],
             'is_enabled' => ['sometimes', 'boolean'],
@@ -93,6 +94,9 @@ class VideoLibraryController extends Controller
         });
 
         $validated = $validator->validate();
+        if (MediaFiles::containsInlineMedia($validated['url']) || MediaFiles::containsInlineMedia($validated['thumbnail_url'] ?? '')) {
+            throw ValidationException::withMessages(['url' => 'Use an uploaded file URL or a public HTTP(S) link; inline file data is not allowed.']);
+        }
         $url = trim($validated['url']);
         $resolved = VideoEmbed::resolve($url);
         if (!in_array($resolved['type'], ['iframe', 'video'], true)) {
