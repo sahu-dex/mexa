@@ -1,12 +1,11 @@
 # MEXA MOTION — Cloudflare / reverse-proxy preview
 
-> লক্ষ্য **শুধু প্রিভিউ দেখা ও অ্যাডমিন থেকে আপডেট করা**। এটি production/cPanel deployment guide নয়; বর্তমান ডিজাইন, কপি, route, permission বা approval flow বদলানো হয়নি। Cloudflare-এ কোনো deploy বা external change করা হয়নি।
+> লক্ষ্য **শুধু প্রিভিউ দেখা ও অ্যাডমিন থেকে আপডেট করা** — অর্থাৎ নিজের PHP server-এর সামনে Cloudflare proxy/Tunnel বসানো। cPanel production setup-এর জন্য [`CPANEL_DEPLOYMENT.md`](CPANEL_DEPLOYMENT.md) দেখুন; **Cloudflare-এ সরাসরি deploy** করতে চাইলে (Workers + Containers, `npx wrangler deploy`) [`CLOUDFLARE_DEPLOYMENT.md`](CLOUDFLARE_DEPLOYMENT.md) দেখুন। বর্তমান ডিজাইন, কপি, route, permission বা approval flow বদলানো হয়নি।
 
 ## ১. সবচেয়ে গুরুত্বপূর্ণ কথা
 
-MEXA MOTION একটি **Laravel 12 / PHP 8.2+** অ্যাপ। Cloudflare Pages বা Workers শুধু static/JS runtime দেয়; সেখানে সরাসরি PHP/Blade/MySQL চলে না। তাই:
+MEXA MOTION একটি **Laravel 12 / PHP 8.2+** অ্যাপ। Cloudflare Pages বা Workers-এর static/JS runtime-এ সরাসরি PHP/Blade/MySQL চলে না; তাই PHP runtime (Arena live preview, VPS, cPanel, Docker বা Tunnel-এর পেছনের নিজের সার্ভার) আগে চালু থাকতে হবে — **অথবা** repo-তে দেওয়া Docker image-কে Cloudflare Containers-এ চালাতে হবে ([`CLOUDFLARE_DEPLOYMENT.md`](CLOUDFLARE_DEPLOYMENT.md))। এই ডকUMENT-এ প্রথম (প্রিভিউ) পথটাই বর্ণনা করা হয়েছে।
 
-- PHP runtime (Arena live preview, VPS, cPanel, Docker, বা Tunnel-এর পেছনের নিজের সার্ভার) আগে চালু থাকতে হবে।
 - Cloudflare শুধু **proxy / CDN / Tunnel** হিসেবে সামনে থাকবে; browser → HTTPS → Cloudflare → PHP server।
 - Arena-তে চলা port **8000**-এর live preview-ই এখন দেখার জন্য যথেষ্ট। Cloudflare ব্যবহার করলে Tunnel/CDN-এর origin হিসেবে সেই PHP server-কেই দিন, কোনো static export নয়।
 
@@ -64,7 +63,7 @@ PORT=8000 PHP_WASM_CLI=/path/to/php-wasm-cli bash scripts/start-preview.sh
 
 ## ৫. Cloudflare-side settings (প্রিভিউ)
 
-- DNS/proxy বা Tunnel origin হিসেবে PHP server-টিই দিন; Pages/Workers build command হিসেবে Laravel দেবেন না।
+- DNS/proxy বা Tunnel origin হিসেবে PHP server-টিই দিন; Pages/Workers build command হিসেবে Laravel দেবেন না। (Cloudflare Containers দিয়ে binary deploy চাইলে [`CLOUDFLARE_DEPLOYMENT.md`](CLOUDFLARE_DEPLOYMENT.md)।)
 - SSL/TLS: origin-এ valid certificate থাকলে **Full (strict)**; Tunnel ব্যবহার করলে Tunnel-এর নিজস্ব origin setup অনুসরণ করুন। Browser-এ **Always Use HTTPS** চালু রাখুন।
 - `/admin*`, `/api/*`, `/up`, `/storage/media/*` — admin update ও dynamic JSON-এর জন্য Cloudflare cache bypass/low cache rule দিন; Rocket Loader/JS minification preview-এ বন্ধ রাখা নিরাপদ।
 - `/.well-known/` certificate validation path ব্লক করবেন না; source-এর `.htaccess` guard এটি exempt রাখে।

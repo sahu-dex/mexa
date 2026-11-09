@@ -1,6 +1,11 @@
 /.env
 **/.env.*
 !/.env.example
+# Cloudflare Workers: template is tracked, filled-in secret files are not.
+!/.env.cloudflare.example
+/.dev.vars
+/.dev.vars.*
+/.wrangler/
 /vendor/
 **/auth.json
 *credentials*.json
