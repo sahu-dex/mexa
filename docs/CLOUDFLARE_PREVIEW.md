@@ -19,6 +19,7 @@ MEXA MOTION একটি **Laravel 12 / PHP 8.2+** অ্যাপ। Cloudflare
 | `.env.example` | `TRUSTED_PROXIES` placeholder ও নিরাপদ ব্যবহারের নোট যোগ হয়েছে। কোনো secret বা localhost default যোগ করা হয়নি। |
 | `scripts/preview-router.php` | built-in PHP / PHP-WASM server-এর router; project root নিজের অবস্থান থেকে নেয়, কোনো server path হার্ডকোড নেই। |
 | `scripts/start-preview.sh` | `0.0.0.0:$PORT` bind করে, native PHP বা `php-wasm-cli` চিনে নিয়ে preview চালায়; `PORT`, `HOST`, `PHP_WASM_CLI`, `PHP_VERSION` environment variable মানে। |
+| `scripts/preview/` | PHP/Composer-বিহীন sandbox-এর জন্য PHP-WASM preview tooling: `bootstrap.sh` এক কমান্ডে npm deps + GitHub dist থেকে `vendor/` assemble + `.env` + migration + server চালু করে। বিস্তারিত [`scripts/preview/README.md`](../scripts/preview/README.md)-এ। |
 | `.htaccess`, `scripts/.htaccess` | `scripts/` কে public web root থেকে deny করে; project root document root হলেও preview router/start script serve হয় না। |
 | `docs/cloudflare-preview.env.example` | শুধু isolated preview-এর `.env` template; Git-এ `.env` আসবে না। |
 | `README.md`, `AGENTS.md`, `docs/PROJECT_MAP.md` | এই guide-এর link ও preview rule। |
@@ -26,6 +27,14 @@ MEXA MOTION একটি **Laravel 12 / PHP 8.2+** অ্যাপ। Cloudflare
 ## ৩. বর্তমান প্রিভিউ চালু রাখা
 
 Arena-র persistent live preview ইতিমধ্যে port 8000-এ চলছে। নতুন করে চালু করতে হলে repo root থেকে:
+
+PHP/Composer নেই এমন sandbox-এ (এক কমান্ডে সব setup সহ):
+
+```bash
+bash scripts/preview/bootstrap.sh
+```
+
+Native PHP থাকলে:
 
 ```bash
 bash scripts/start-preview.sh
