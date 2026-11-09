@@ -31,7 +31,7 @@ Browser → https://<worker>.<subdomain>.workers.dev (বা custom domain)
 
 | ফাইল | কাজ |
 |---|---|
-| `wrangler.jsonc` | Cloudflare-এর একমাত্র source of truth। Worker entry, container image, Durable Object, `exports`, non-secret `vars`, observability। |
+| `wrangler.jsonc` | Cloudflare-এর একমাত্র source of truth। Worker entry, container image, Durable Object, `exports`, non-secret `vars`, observability, এবং non-production build-এর জন্য `previews` block। |
 | `Dockerfile` | PHP 8.4 + Apache image: `pdo_mysql`, `gd`, `zip`, `opcache`, `exif`, `pcntl`, `bcmath`; `composer install --no-dev`; DocumentRoot `public/`; port 8080। |
 | `docker/apache-vhost.conf` | vhost (port 8080, `public/`, dotfile deny, 250 MB request limit)। |
 | `docker/php.ini` | 512 MB memory, 200 MB upload, OPcache (timestamp check বন্ধ)। |
@@ -100,7 +100,7 @@ npx wrangler deploy
 | Build command | *(ফাঁকা রাখুন — কোনো frontend build নেই)* |
 | Deploy command | `npx wrangler deploy` |
 | Root directory | `/` |
-| Non-production deploy command | `npx wrangler versions upload` |
+| Non-production deploy command | `npx wrangler preview` (Cloudflare-এর নতুন default) |
 
 এরপর dashboard-এর **Settings → Variables and Secrets** থেকে `APP_KEY`, `DB_*`, `R2_*` secret হিসেবে দিন (`wrangler.jsonc`-এর non-secret vars এমনিতেই apply হবে)।
 
@@ -113,6 +113,35 @@ npx wrangler deploy
 > ```
 >
 > `scheduling_policy: durable_object`-এ প্রতিটি image entry-তে `dockerfile` অথবা digest-pinned `image` — দুটোর ঠিক একটি দিতে হয় (`dockerfile` দিলে Wrangler নিজেই image build/push করে)।
+
+### ৫.৩ Worker Previews (non-production branch / pull request)
+
+Cloudflare এখন Worker-এর non-production branch-এর জন্য **`npx wrangler preview`** চালায় (আগের `wrangler versions upload`-এর জায়গায়)। Previews **কোনো top-level সেটিং inherit করে না** — `vars`, container app আর Durable Object binding আলাদাভাবে `previews` block-এ দিতে হয়। এটা করা না থাকলে build এই error-এ থামে:
+
+```
+✘ Your Wrangler configuration needs a `previews` block to run this command.
+```
+
+তাই `wrangler.jsonc`-এ একটি `previews` block যোগ করা আছে:
+
+| `previews`-এ যা আছে | কেন |
+|---|---|
+| `containers` → `image: "./Dockerfile"`, `instance_type`, `max_instances` | প্রতিটি Preview-র জন্য Cloudflare আলাদা container app বানায়। Preview-এ `scheduling_policy: durable_object` **সাপোর্ট করে না** (ওটা শুধু top-level `containers`-এ), তাই Preview classic image/instance policy ব্যবহার করে। |
+| `durable_objects.bindings` → `MEXA_APP` | Worker কোড `env.MEXA_APP` পড়ে; binding না থাকলে Preview-এ **1101 error** হয়। |
+| `vars` | Preview-safe মান (যেমন `APP_NAME`-এ "(Preview)", `LOG_LEVEL=debug`, inactivity 60s)। |
+
+`MEXA_INACTIVITY_TIMEOUT_MS` কম রাখা হয়েছে যাতে Preview container দ্রুত sleep করে (খরচ কম)। Durable Object namespace আর container app প্রতিটি Preview-এর জন্য আলাদা provision হয়, তাই **Preview কখনো production container/data স্পর্শ করে না**।
+
+`worker/src/index.js` দুটো policy-তেই চলে: `ctx.container.images.app` থাকলে (production, `durable_object`) image/instance/env সহ `start()`, না থাকলে (Preview, classic) plain `start()` — image সেক্ষেত্রে `previews.containers` থেকে আসে।
+
+Preview secrets আলাদা করে দিতে হয় (production secret inherit হয় না):
+
+```bash
+npx wrangler preview secret put APP_KEY   --name <branch-name>
+npx wrangler preview base-config secret put APP_KEY   # সব নতুন Preview-এ একবারে
+```
+
+> **সতর্কতা:** Preview container-ও আসল MySQL-এ `migrate --force` চালায় এবং **একই database** ব্যবহার করে (যদি `DB_*` secret একই থাকে)। নিরাপদ থাকতে চাইলে Preview-এ আলাদা database/ইউজার দিন, অথবা CI-তে শুধু production branch-এ `npx wrangler deploy` চালান।
 
 ## ৬. প্রথম deploy-এর পর
 
@@ -145,7 +174,9 @@ npx wrangler deploy
 | Redirect/https:// ভুল host-এ যাচ্ছে | forwarded header/proxy trust | `TRUSTED_PROXIES=*` রাখুন (Worker/Durable Object-ই একমাত্র path) |
 | Admin upload করা media restart-এর পর নেই | container disk ephemeral | R2 secrets দিন (bucket + token), তারপর redeploy |
 | upload 100 MB-তে আটকে যাচ্ছে | Cloudflare request body limit (Free/Pro 100 MB, Business 200 MB) | বড় video-র জন্য Business plan বা ছোট ফাইল; app-এর নিজের limit 200 MB |
-| `Worker exceeded CPU time limit` | proxy code-এ বেশি CPU | `limits.cpu_ms` (এখন 30s) যথেষ্ট; সাধারণত হয় না |
+| `Your Wrangler configuration needs a 'previews' block` | non-production branch-এ `npx wrangler preview` চলছে, কিন্তু `previews` block নেই | `wrangler.jsonc`-এর `previews` block রাখুন (§৫.৩); Preview-এ `vars`/container binding inherit হয় না |
+| Preview-এ `1101` error | `env.MEXA_APP` binding `previews`-এ নেই | `previews.durable_objects.bindings` + `previews.containers` দুটোই দিন |
+| `Worker exceeded CPU time limit` | proxy code-এ বেশি CPU | `limits.cpu_ms` (এখন 60s) যথেষ্ট; সাধারণত হয় না |
 
 ## ৯. যা এখনো মেনে চলা জরুরি
 

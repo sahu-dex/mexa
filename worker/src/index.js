@@ -167,12 +167,20 @@ export class MexaContainer extends DurableObject {
 
     let startedNow = false;
     if (!container.running) {
-      container.start({
-        image: container.images.app,
-        instance: instanceType(this.env),
-        enableInternet: true,
-        env: containerEnv(this.env),
-      });
+      // `durable_object` scheduling policy (production, wrangler.jsonc
+      // "containers"): the image and instance size are chosen here.
+      // Worker Previews create classic container apps instead, where the image
+      // comes from `previews.containers`; start() takes no options there.
+      if (container.images?.app) {
+        container.start({
+          image: container.images.app,
+          instance: instanceType(this.env),
+          enableInternet: true,
+          env: containerEnv(this.env),
+        });
+      } else {
+        container.start();
+      }
       await this.applyInactivityTimeout(container);
       startedNow = true;
     }
