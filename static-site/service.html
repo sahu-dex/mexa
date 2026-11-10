@@ -7067,46 +7067,28 @@ body.mmvp-locked { overflow: hidden !important; }
     color: var(--mm-ink) !important;
   }
 
-  /* Preserve the original brand lockups while matching the reference's type elsewhere. */
-  html body :is(#header .brand-word, #header .brand-word *, #header .brand-tagline,
-    footer .footer-brand-word, footer .footer-brand-word *) {
+  /* Keep the footer wordmark's original brand font. */
+  html body :is(footer .footer-brand-word, footer .footer-brand-word *) {
     font-family: 'MX Jakarta', 'Plus Jakarta Sans', Manrope, system-ui, sans-serif !important;
   }
 
-  /* Turn the existing header container into the reference's floating glass pill. */
+  /* Restore the header and mobile menu typography without changing page content. */
+  html body :is(#header, #mobile-menu) {
+    --mx-font: 'MX Jakarta', 'Plus Jakarta Sans', 'Manrope', system-ui, -apple-system,
+      'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans Bengali', 'Hind Siliguri', sans-serif !important;
+    font-family: var(--mx-font) !important;
+    color: #405a76 !important;
+    line-height: 1.72 !important;
+    letter-spacing: -0.006em !important;
+  }
+
+  /* A soft blue glass header and matching drawer, with the original layout. */
   html body #header.hdr-bar-wrap {
-    background: transparent !important;
-    border-bottom-color: transparent !important;
-    box-shadow: none !important;
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-  }
-  html body #header.hdr-bar-wrap > .container {
-    width: calc(100% - 32px) !important;
-    max-width: 1216px !important;
-    height: calc(100% - 20px) !important;
-    padding-left: 24px !important;
-    padding-right: 24px !important;
-    background: linear-gradient(110deg, rgba(233, 245, 255, .92), rgba(255, 255, 255, .84) 52%, rgba(235, 247, 255, .92)) !important;
-    border: 1px solid rgba(255, 255, 255, .88) !important;
-    border-radius: 9999px !important;
-    box-shadow: 0 8px 32px rgba(17, 82, 223, .09) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
-    backdrop-filter: blur(20px) saturate(140%) !important;
-  }
-  @media (max-width: 1023px) {
-    html body #header.hdr-bar-wrap > .container {
-      width: calc(100% - 20px) !important;
-      height: calc(100% - 8px) !important;
-      padding-left: 14px !important;
-      padding-right: 14px !important;
-      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
-      backdrop-filter: blur(12px) saturate(140%) !important;
-    }
-    /* A closed drawer must sit above the now-transparent header. */
-    html body #mobile-menu-drawer[class~="-translate-y-full"] {
-      transform: translateY(calc(-100% - 54px)) !important;
-    }
+    background: linear-gradient(110deg, rgba(230, 243, 255, .93), rgba(240, 249, 255, .9) 52%, rgba(231, 246, 255, .93)) !important;
+    border-bottom: 1px solid rgba(21, 89, 174, .16) !important;
+    box-shadow: 0 8px 30px rgba(33, 88, 151, .1) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
+    backdrop-filter: blur(20px) saturate(155%) !important;
   }
   html body #header .brand-word .brand-a { color: #0a2858 !important; }
   html body #header .brand-word .brand-b { color: #1152df !important; }
@@ -7121,30 +7103,41 @@ body.mmvp-locked { overflow: hidden !important; }
   }
   html body #header .hdr-bar { background: #0a3185 !important; }
   html body #header .hdr-burger:hover .hdr-bar { background: #1152df !important; }
-  html body #mobile-menu-backdrop { background: rgba(15, 23, 42, .14) !important; }
+  html body #mobile-menu-backdrop { background: rgba(12, 37, 71, .32) !important; }
   html body #mobile-menu-drawer {
-    background: rgba(248, 252, 255, .96) !important;
-    border-color: rgba(255, 255, 255, .8) !important;
+    background: linear-gradient(150deg, rgba(247, 251, 255, .98), rgba(234, 246, 255, .98)) !important;
+    border-color: rgba(21, 89, 174, .12) !important;
     box-shadow: 0 24px 48px rgba(30, 77, 137, .18) !important;
     -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
     backdrop-filter: blur(20px) saturate(145%) !important;
   }
   html body .mm-nav .mm-item {
-    color: #334155 !important;
-    background: rgba(255, 255, 255, .70) !important;
-    border-color: rgba(17, 82, 223, .1) !important;
-    border-radius: 16px !important;
+    color: #183b66 !important;
+    background: rgba(231, 242, 255, .55) !important;
+    border-color: rgba(30, 100, 188, .12) !important;
     box-shadow: none !important;
   }
   html body .mm-nav .mm-item:is(:hover, :focus-visible, .is-active, .active) {
     color: var(--mm-accent) !important;
-    background: rgba(17, 82, 223, .08) !important;
-    border-color: rgba(17, 82, 223, .18) !important;
+    background: #e2efff !important;
+    border-color: rgba(17, 82, 223, .24) !important;
   }
   html body .mm-nav .mm-chev { color: #47709b !important; }
 
+  /* Header actions retain the original blue gradient and responsive shape. */
+  html body :is(.header-booking-button, .mm-booking-button) {
+    color: #fff !important;
+    background: linear-gradient(115deg, #1152df, #1c6bd5) !important;
+    border-color: rgba(17, 82, 223, .24) !important;
+    box-shadow: 0 8px 20px rgba(17, 82, 190, .19) !important;
+  }
+  html body :is(.header-booking-button, .mm-booking-button):hover {
+    background: linear-gradient(115deg, #0d43bf, #155bc7) !important;
+    box-shadow: 0 11px 24px rgba(17, 82, 190, .25) !important;
+  }
+
   /* Buttons on the light field; action buttons inside blue cards are inverted below. */
-  html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
+  html body :is(.glass-btn-primary,
     .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit) {
     color: #fff !important;
     background: rgba(17, 82, 223, .94) !important;
@@ -7152,7 +7145,7 @@ body.mmvp-locked { overflow: hidden !important; }
     border-radius: 9999px !important;
     box-shadow: 0 4px 24px -4px rgba(17, 82, 223, .35) !important;
   }
-  html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
+  html body :is(.glass-btn-primary,
     .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit):hover {
     background: #1152df !important;
     box-shadow: 0 8px 32px -4px rgba(17, 82, 223, .4) !important;
