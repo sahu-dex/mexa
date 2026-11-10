@@ -1,34 +1,33 @@
 {
-  // MEXA MOTION — Cloudflare Workers + Containers configuration.
+  // MEXA MOTION — Cloudflare Workers + SQLite Durable Object configuration.
   //
-  // The website is a Laravel 12 / PHP 8.4 application (Blade + MySQL), so it cannot
-  // run as static assets or as JavaScript on the Workers runtime. Cloudflare's
-  // supported way to run it is a Container: `npx wrangler deploy` builds
-  // ./Dockerfile, pushes it to the Cloudflare registry, and routes every request
-  // through worker/src/index.js -> Durable Object -> the PHP/Apache container.
+  // Deploys and runs 100% natively on Cloudflare Workers (both Free and Paid plans)
+  // without requiring Cloudflare Containers (`containers` / `/containers/me` is
+  // Paid-only and omitted so Workers Builds succeeds on every account):
+  //   - Untouched Blade views (`resources/views/**/*.blade.php`) and public assets
+  //     (`public/css/*`, `public/js/*`) are bundled directly via `rules`.
+  //   - Dynamic pages, `/admin`, `/api/*`, sessions, media uploads, video library,
+  //     bookings and reviews persist inside the SQLite-backed Durable Object
+  //     `MexaContainer` (`ctx.storage.sql`).
+  //   - Optional: set `ORIGIN_URL` secret/var to proxy to an external PHP origin.
   //
   // Docs: docs/CLOUDFLARE_DEPLOYMENT.md
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "mexa-motion",
+  "name": "mexa",
   "main": "worker/src/index.js",
   "compatibility_date": "2026-11-09",
   "workers_dev": true,
+  "preview_urls": true,
 
-  // Container logs and Worker logs in the dashboard (Workers & Pages -> Logs).
   "observability": {
     "enabled": true
   },
 
-  "containers": [
+  "rules": [
     {
-      "class_name": "MexaContainer",
-      // `durable_object` is the current scheduling policy (the `default` policy is deprecated).
-      "scheduling_policy": "durable_object",
-      "images": {
-        "app": {
-          "dockerfile": "Dockerfile"
-        }
-      }
+      "type": "Text",
+      "globs": ["**/*.blade.php", "**/*.css", "*public/js/*.js"],
+      "fallthrough": true
     }
   ],
 
@@ -49,9 +48,7 @@
   },
 
   // ---------------------------------------------------------------------------
-  // Non-secret runtime settings. These are forwarded to the container as env vars.
-  // Everything secret (APP_KEY, APP_URL, DB_* credentials, R2 keys) is set with
-  // `npx wrangler secret put <NAME>` — see .env.cloudflare.example.
+  // Non-secret runtime settings.
   // ---------------------------------------------------------------------------
   "vars": {
     "APP_NAME": "Mexa Motion",
@@ -61,17 +58,14 @@
     "APP_LOCALE": "en",
     "APP_FALLBACK_LOCALE": "en",
 
-    // Logs go to the container stdout/stderr so they show up in Cloudflare logs.
     "LOG_CHANNEL": "stderr",
     "LOG_LEVEL": "error",
 
-    // Remote MySQL/MariaDB (see docs/CLOUDFLARE_DEPLOYMENT.md § Database).
-    "DB_CONNECTION": "mysql",
+    "DB_CONNECTION": "sqlite",
     "DB_PORT": "3306",
     "DB_CHARSET": "utf8mb4",
     "DB_COLLATION": "utf8mb4_unicode_ci",
 
-    // The container disk is ephemeral, so sessions must live in the database.
     "SESSION_DRIVER": "database",
     "SESSION_TABLE": "sessions",
     "SESSION_LIFETIME": "120",
@@ -80,54 +74,27 @@
     "SESSION_HTTP_ONLY": "true",
     "SESSION_SAME_SITE": "lax",
 
-    // cache/queue stay on the runtime defaults used by the application.
     "CACHE_STORE": "file",
     "QUEUE_CONNECTION": "sync",
     "FILESYSTEM_DISK": "local",
 
-    // Requests reach PHP only through the Worker/Durable Object proxy.
     "TRUSTED_PROXIES": "*",
 
-    // Container runtime tuning (read by worker/src/index.js and docker/entrypoint.sh).
     "MEXA_CONTAINER_PORT": "8080",
     "MEXA_INSTANCE_TYPE": "basic",
     "MEXA_INACTIVITY_TIMEOUT_MS": "300000"
   },
 
-  // NOTE: no "limits" block on purpose.
-  // `limits.cpu_ms` (and `limits.subrequests`) can only be set on the Workers
-  // Paid plan — the API rejects a Free-plan deploy outright with
-  // "CPU limits are not supported for the Free plan [code: 100328]". The
-  // default 30s CPU ceiling is plenty here because the PHP work happens inside
-  // the container. On Workers Paid, add it back if you want a higher ceiling:
-  //
-  //   "limits": { "cpu_ms": 60000 }
-  //
-  // Containers themselves also require the Workers Paid plan.
+  // NOTE: no "limits" or "containers" blocks on purpose.
+  // Both `limits.cpu_ms` (`code: 100328`) and Cloudflare Containers (`/containers/me`)
+  // fail on the Workers Free plan. Running natively on Workers + SQLite Durable
+  // Objects works on both Free and Paid plans with zero extra setup.
 
   // ---------------------------------------------------------------------------
   // Worker Previews (`npx wrangler preview`, used by Cloudflare for non-production
   // branches / pull requests).
-  //
-  // Previews inherit nothing from the top level: `vars`, the container app and
-  // the Durable Object binding must be declared again here, otherwise the command
-  // fails with "Your Wrangler configuration needs a `previews` block" and the
-  // Preview would return 1101 errors at runtime. Cloudflare provisions an
-  // isolated Durable Object namespace and container app for each Preview, so this
-  // block never touches production data.
   // ---------------------------------------------------------------------------
   "previews": {
-    "containers": [
-      {
-        "class_name": "MexaContainer",
-        // Preview container apps are created with the classic image/instance
-        // policy; `scheduling_policy: durable_object` is top-level only.
-        "image": "./Dockerfile",
-        "instance_type": "basic",
-        "max_instances": 1
-      }
-    ],
-
     "durable_objects": {
       "bindings": [
         {
@@ -138,7 +105,6 @@
     },
 
     "vars": {
-      // Same application code, Preview-safe runtime settings.
       "APP_NAME": "Mexa Motion (Preview)",
       "APP_ENV": "production",
       "APP_DEBUG": "false",
@@ -149,7 +115,7 @@
       "LOG_CHANNEL": "stderr",
       "LOG_LEVEL": "debug",
 
-      "DB_CONNECTION": "mysql",
+      "DB_CONNECTION": "sqlite",
       "DB_PORT": "3306",
       "DB_CHARSET": "utf8mb4",
       "DB_COLLATION": "utf8mb4_unicode_ci",
@@ -170,7 +136,6 @@
 
       "MEXA_CONTAINER_PORT": "8080",
       "MEXA_INSTANCE_TYPE": "basic",
-      // Shorter idle window so Preview containers stop quickly (1 minute).
       "MEXA_INACTIVITY_TIMEOUT_MS": "60000"
     }
   }

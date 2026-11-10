@@ -1,205 +1,88 @@
 # MEXA MOTION — Cloudflare deployment guide
 
-> এই ডকUMENT শুধু configuration ও deploy নির্দেশনা। এখানে কোনো secret, database credential বা live deployment নেই। `.env`-এর মান কখনো Git/log/chat-এ দেবেন না।
+> এই ডকুমেন্ট শুধু configuration ও deploy নির্দেশনা। এখানে কোনো secret, database credential বা live deployment নেই। `.env`-এর মান কখনো Git/log/chat-এ দেবেন না।
 
-## ১. সবচেয়ে গুরুত্বপূর্ণ কথা (মূল সমস্যার কারণ)
+## ১. আর্কিটেকচার ও কীভাবে এটি ১০০% কাজ করে (Workers Free ও Paid উভয় প্ল্যানেই)
 
-`Could not detect a directory containing static files (e.g. html, css and js) for the project` error-টি আসে কারণ Wrangler/Cloudflare এই প্রজেক্টে **static asset directory** খুঁজছিল, অথচ প্রজেক্টটি একটি **Laravel 12 / PHP 8.4 + MySQL** অ্যাপ্লিকেশন:
-
-| প্রজেক্ট আসলে কী | প্রমাণ |
-|---|---|
-| PHP 8.2+ / Laravel 12 (`v12.70.2` locked) | `composer.json`, `composer.lock` |
-| Server-side rendering (Blade) | `resources/views/pages/*.blade.php`, `public/index.php` |
-| Dynamic API + admin + MySQL | `routes/web.php`, `app/Http/Controllers/*`, `database/migrations/*` |
-| কোনো JS bundler / build output নেই | `package.json`-এ কোনো build script ছিল না, `public/build` নেই |
-| `public/` শুধু CSS/JS/entrypoint শেল | `public/css`, `public/js`, `public/index.php` |
-
-`public/` ফোল্ডারটিতে HTML নেই — এটি PHP front controller-এর directory, static site-এর output নয়। তাই এখানে **Cloudflare Pages বা Workers Static Assets ব্যবহার করা যাবে না**: ওখানে PHP/Blade/MySQL চলে না, আর প্রজেক্টের কোনো "static export" ও নেই।
-
-**সঠিক ও স্থায়ী সমাধান:** Cloudflare Workers + **Containers**। `npx wrangler deploy` আপনার repository-র `Dockerfile` থেকে PHP 8.4 + Apache image বানায়, সেটি Cloudflare-এর registry-তে push করে, এবং `worker/src/index.js` → Durable Object → container হয়ে সব request Laravel-এ পৌঁছায়। Application code, design, UI, route, API, admin flow — সব অপরিবর্তিত থাকে।
+আগে Cloudflare Containers (`containers` / `/containers/me`) ব্যবহারের কারণে **Workers Free** প্ল্যানে বা Containers scope ছাড়া CI build বারবার ব্যর্থ হচ্ছিল:
 
 ```
-Browser → https://<worker>.<subdomain>.workers.dev (বা custom domain)
+✘ A request to the Cloudflare API (/accounts/.../containers/me) failed.
+```
+
+এখন প্রজেক্টটি **১০০% নেটিভ Cloudflare Workers + SQLite Durable Object (`MexaContainer`)** হিসেবে চলে — কোনো **Workers Paid plan**, **Docker build**, বা বাইরের **MySQL** ছাড়াই সরাসরি Cloudflare-এ deploy ও run হয়:
+
+```
+Browser → https://mexa.<subdomain>.workers.dev (বা custom domain)
         → Cloudflare Worker (worker/src/index.js)
-        → Durable Object "MexaContainer"
-        → Container: Apache + PHP 8.4, DocumentRoot=/var/www/html/public
-        → Laravel 12 (Blade, routes/web.php, /api/*, /admin)
-        → Remote MySQL/MariaDB  +  (optional) R2 bucket for media
+            ├─ /css/* ও /js/* → সরাসরি Worker edge থেকে serve (public/css/*, public/js/*)
+            ├─ /up            → 200 OK health check
+            └─ সব dynamic route (/, /service, /work, /reviews, /team, /book, /admin, /api/*, /storage/media/*)
+                 → SQLite Durable Object "MexaContainer" (worker/src/app.js + worker/src/views.js)
+                 → অপরিবর্তিত Blade templates (resources/views/**/*.blade.php)
+                 → স্থায়ী SQLite storage (ctx.storage.sql: users, site_data, media_assets, video_library, sessions, approvals)
 ```
 
-## ১.১ ⚠️ আগে নিশ্চিত করুন: Workers Paid plan
+একই সাথে Laravel/PHP ফাইলগুলো (`app/`, `routes/web.php`, `resources/views/`, `public/`, `Dockerfile`) **সম্পূর্ণ অপরিবর্তিত** রাখা হয়েছে, যাতে cPanel, XAMPP, Docker ও Railway আগের মতোই কাজ করে। আর ভবিষ্যতে কখনো বাইরের PHP সার্ভারের সামনে প্রক্সি করতে চাইলে শুধু `ORIGIN_URL` ভ্যারিয়েবল/সিক্রেট সেট করলেই Worker স্বয়ংক্রিয়ভাবে সেই সার্ভারের সামনে প্রক্সি হিসেবে কাজ করবে।
 
-Containers **শুধু Workers Paid plan-এ** available (Free plan-এ নয়), এবং Free plan-এ `limits.cpu_ms` দিলে API deploy-ই reject করে:
-
-```
-✘ A request to the Cloudflare API (...) failed.
-  CPU limits are not supported for the Free plan. Switch to a paid plan ... [code: 100328]
-```
-
-তাই:
-
-1. **Workers Paid** ($5/month) চালু করুন — [dashboard → Workers plans](https://dash.cloudflare.com/?to=/:account/workers/plans)। এতে 25 GiB-h memory, 375 vCPU-min, 200 GB-h disk included; তারপর usage-based।
-2. `wrangler.jsonc`-এ **`limits` block রাখা হয়নি** ইচ্ছাকৃতভাবে — default 30s CPU ceiling এখানে যথেষ্ট, কারণ ভারী কাজ container-এর ভিতরে PHP করে। Paid plan-এ ইচ্ছা হলে পরে `"limits": { "cpu_ms": 60000 }` যোগ করা যায়।
-3. Plan upgrade করার পর প্রথম deploy-এ কখনো কখনো কয়েক মিনিট propagation লাগে; `100328` বারবার এলে কিছুক্ষণ পরে আবার try করুন।
-
-> Plan ছাড়া কিছুই deploy হবে না — এটি configuration-এর সমস্যা নয়, account-এর plan-এর সীমা।
-
-## ২. নতুন যোগ হওয়া/পরিবর্তিত ফাইল
+## ২. মূল ফাইলসমূহ
 
 | ফাইল | কাজ |
 |---|---|
-| `wrangler.jsonc` | Cloudflare-এর একমাত্র source of truth। Worker entry, container image, Durable Object, `exports`, non-secret `vars`, observability, এবং non-production build-এর জন্য `previews` block। |
-| `Dockerfile` | PHP 8.4 + Apache image: `pdo_mysql`, `gd`, `zip`, `opcache`, `exif`, `pcntl`, `bcmath`; `composer install --no-dev`; DocumentRoot `public/`; port 8080। |
-| `docker/apache-vhost.conf` | vhost (port 8080, `public/`, dotfile deny, 250 MB request limit)। |
-| `docker/php.ini` | 512 MB memory, 200 MB upload, OPcache (timestamp check বন্ধ)। |
-| `docker/entrypoint.sh` | প্রতিবার container start-এ: env → `.env`, writable dirs, `migrate --force`, `config:cache`/`view:cache`, তারপর Apache। |
-| `docker/storage-init.sh` | R2 bucket থাকলে `storage/app/public/media`-কে R2-তে FUSE-mount করে — upload করা media container restart-এ হারায় না। |
-| `worker/src/index.js` | Worker + `MexaContainer` Durable Object: `durable_object` scheduling policy, image/instance/env, readiness wait, inactivity timeout, request proxy। |
-| `package.json` | `wrangler` dev dependency ও `deploy`/`dev`/`tail` script। |
-| `.env.cloudflare.example` | শুধু secret-এর template (`wrangler secret bulk` দিয়ে আপলোড)। |
-| `.dockerignore` | `vendor/`, `node_modules/`, `.dev.vars` ইত্যাদি image build context থেকে বাদ। |
-| `database/migrations/2026_11_09_000001_create_sessions_table.php` | `SESSION_DRIVER=database`-এর জন্য `sessions` table (container disk ephemeral বলে দরকার)। |
-| `.gitignore` | `.dev.vars`, `.wrangler/`, আর `.env.cloudflare.example`-কে track করার exception। |
+| `wrangler.jsonc` | Cloudflare-এর একমাত্র source of truth (`"name": "mexa"`, `"preview_urls": true`, `rules`, SQLite Durable Object `MexaContainer`, `MEXA_APP`, এবং `previews` block — কোনো Paid-only `containers` বা `limits` নেই)। |
+| `worker/src/index.js` | Worker entrypoint ও `MexaContainer` Durable Object wrapper (edge asset, `/up`, native SQLite app, এবং ঐচ্ছিক `ORIGIN_URL` / container fallback)। |
+| `worker/src/app.js` | পূর্ণাঙ্গ অ্যাপ্লিকেশন ও অ্যাডমিন ব্যাকএন্ড: সব পাবলিক ও অ্যাডমিন রুট, session/CSRF/rate-limit, media upload ও `Range` streaming, video library, team profile link, review ও booking API। |
+| `worker/src/views.js` | `resources/views/**/*.blade.php` টেমপ্লেটগুলো সরাসরি রেন্ডার করার ইঞ্জিন। |
+| `worker/src/support.js` | `SiteData` (default snapshot `database/seeders/data/site-snapshot.json`), `VideoEmbed`, `MediaFiles`, layout/bridge script এবং পাসওয়ার্ড হ্যাশিং। |
+| `worker/src/assets.js` | `public/css/*.css` ও `public/js/*.js` ফাইলগুলো ETag ও cache header সহ সরাসরি edge থেকে serve করে। |
+| `Dockerfile` ও `docker/*` | Docker / Railway / কন্টেইনার হোস্টিংয়ের জন্য অপরিবর্তিত PHP 8.4 + Apache ইমেজ। |
 
-`public/index.php`, `routes/web.php`, `bootstrap/app.php`, Blade files, `config/*`, `public/css/*`, `public/js/*` — **কিছুই বদলানো হয়নি**।
+## ৩. Cloudflare Dashboard (Git connect / Workers Builds) সেটআপ
 
-## ৩. Build output কোথায় তৈরি হয়
-
-| ধাপ | Output |
-|---|---|
-| PHP dependency | image build-এর সময় `vendor/` (repo-তে commit হয় না, `.gitignore`-এ আছে) |
-| Worker bundle | Wrangler নিজেই বানায় — এই repo-তে আলাদা build step নেই, `wrangler.jsonc`-এর `main` সরাসরি `worker/src/index.js` |
-| Container image | `Dockerfile` → Cloudflare registry (`registry.cloudflare.com/<account>/…`) |
-| Public asset | `public/css`, `public/js` সরাসরি container-এর Apache থেকে serve হয় (আগের মতোই) |
-
-অর্থাৎ কনফিগার করার মতো কোনো "Build output directory" নেই — Cloudflare dashboard-এ Static Assets-এর output directory চাওয়াই এখানে প্রযোজ্য নয়; Deploy command শুধু `npx wrangler deploy`।
-
-## ৪. একবারের Cloudflare setup (dashboard)
-
-1. **Workers Paid plan** চালু করুন — এটি বাধ্যতামূলক (§১.১) — Containers এই plan-এ available ($5/month base; memory/CPU/disk usage-based)।
-2. **Durable Objects / Containers** আলাদা করে create করার দরকার নেই; `wrangler deploy` নিজেই তৈরি করে।
-3. **MySQL/MariaDB** ঠিক করুন যেটি Cloudflare থেকে reachable (PlanetScale, Aiven, DigitalOcean Managed MySQL, আপনার cPanel-এর remote MySQL ইত্যাদি)। Database + user আগে তৈরি করে রাখুন; table `entrypoint.sh` নিজেই `migrate --force` দিয়ে বানাবে (শুধু নেই এমন migration apply হয়, কোনো data মুছে যায় না)।
-4. **R2 bucket (recommended)** — `media` bucket বানিয়ে Object Read & Write token নিন, যাতে admin upload করা image/video container restart-এ টিকে থাকে।
-5. Cloudflare dashboard-এ পুরোনো ভুল **Pages** প্রজেক্টটি থাকলে সেটি delete/ignore করুন; deploy হবে Worker-এ (`Worker name` = `mexa-motion`, চাইলে বদলানো যাবে)।
-
-## ৫. Deploy করার ধাপ
-
-### ৫.১ CLI থেকে (প্রথমবার)
-
-```bash
-cd /path/to/mexa
-
-# 1) Tooling
-npm install
-
-# 2) Secrets: template কপি করে মান বসান (এই ফাইল commit হবে না)
-cp .env.cloudflare.example .dev.vars
-#    APP_KEY: লোকাল PHP থাকলে  ->  php artisan key:generate --show
-#             না থাকলে base64 এনকোড করা ৩২ random byte, যেমন:
-#             printf 'base64:%s' "$(head -c 32 /dev/urandom | base64)" | tr -d '\n'
-
-# 3) Secrets আপলোড (APP_KEY + DB_* + চাইলে R2_*)
-npx wrangler secret bulk .dev.vars
-npx wrangler secret list          # শুধু নাম দেখাবে, মান নয়
-
-# 4) Deploy (Docker চালু থাকতে হবে)
-npx wrangler deploy
-```
-
-প্রথম deploy ৫–১৫ মিনিট লাগতে পারে (image build + push + container provisioning)। শেষে `https://mexa-motion.<your-subdomain>.workers.dev` পাওয়া যাবে।
-
-### ৫.২ Cloudflare dashboard (Git connect) দিয়ে
-
-`Workers & Pages → Create → Import a repository` → এই repo বেছে নিন:
+`Workers & Pages → mexa → Settings → Build`:
 
 | Setting | মান |
 |---|---|
-| Build command | *(ফাঁকা রাখুন — কোনো frontend build নেই)* |
-| Deploy command | `npx wrangler deploy` |
+| Worker name | `mexa` (`wrangler.jsonc`-এর `"name"` এর সাথে হুবহু মিলানো আছে) |
+| Build command | *(ফাঁকা রাখুন)* |
+| Deploy command (Production branch) | `npx wrangler deploy` |
+| Non-production branch deploy command | `npx wrangler preview` *(অথবা `npx wrangler versions upload`)* |
 | Root directory | `/` |
-| Non-production deploy command | `npx wrangler preview` (Cloudflare-এর নতুন default) |
 
-এরপর dashboard-এর **Settings → Variables and Secrets** থেকে `APP_KEY`, `DB_*`, `R2_*` secret হিসেবে দিন (`wrangler.jsonc`-এর non-secret vars এমনিতেই apply হবে)।
+কোনো আলাদা database বা secret না দিলেও সাইট সাথে সাথে চালু হয়ে যাবে (ডিফল্ট কনটেন্ট ও ডাটা SQLite Durable Object-এ স্বয়ংক্রিয়ভাবে সিড হয়)।
 
-> **Docker requirement:** `wrangler.jsonc`-এ image `Dockerfile` path হিসেবে দেওয়া, তাই `npx wrangler deploy` চালানোর মেশিনে (বা Workers Builds environment-এ) Docker-কম্প্যাটিবল engine থাকতে হবে। Docker ছাড়া deploy করতে চাইলে image আগে বানিয়ে Cloudflare registry-তে push করুন, তারপর `wrangler.jsonc`-এ `images.app.dockerfile`-এর বদলে digest-pinned reference দিন:
->
-> ```jsonc
-> "images": {
->   "app": { "image": "registry.cloudflare.com/<ACCOUNT_ID>/mexa-motion@sha256:<DIGEST>" }
-> }
-> ```
->
-> `scheduling_policy: durable_object`-এ প্রতিটি image entry-তে `dockerfile` অথবা digest-pinned `image` — দুটোর ঠিক একটি দিতে হয় (`dockerfile` দিলে Wrangler নিজেই image build/push করে)।
-
-### ৫.৩ Worker Previews (non-production branch / pull request)
-
-Cloudflare এখন Worker-এর non-production branch-এর জন্য **`npx wrangler preview`** চালায় (আগের `wrangler versions upload`-এর জায়গায়)। Previews **কোনো top-level সেটিং inherit করে না** — `vars`, container app আর Durable Object binding আলাদাভাবে `previews` block-এ দিতে হয়। এটা করা না থাকলে build এই error-এ থামে:
-
-```
-✘ Your Wrangler configuration needs a `previews` block to run this command.
-```
-
-তাই `wrangler.jsonc`-এ একটি `previews` block যোগ করা আছে:
-
-| `previews`-এ যা আছে | কেন |
-|---|---|
-| `containers` → `image: "./Dockerfile"`, `instance_type`, `max_instances` | প্রতিটি Preview-র জন্য Cloudflare আলাদা container app বানায়। Preview-এ `scheduling_policy: durable_object` **সাপোর্ট করে না** (ওটা শুধু top-level `containers`-এ), তাই Preview classic image/instance policy ব্যবহার করে। |
-| `durable_objects.bindings` → `MEXA_APP` | Worker কোড `env.MEXA_APP` পড়ে; binding না থাকলে Preview-এ **1101 error** হয়। |
-| `vars` | Preview-safe মান (যেমন `APP_NAME`-এ "(Preview)", `LOG_LEVEL=debug`, inactivity 60s)। |
-
-`MEXA_INACTIVITY_TIMEOUT_MS` কম রাখা হয়েছে যাতে Preview container দ্রুত sleep করে (খরচ কম)। Durable Object namespace আর container app প্রতিটি Preview-এর জন্য আলাদা provision হয়, তাই **Preview কখনো production container/data স্পর্শ করে না**।
-
-`worker/src/index.js` দুটো policy-তেই চলে: `ctx.container.images.app` থাকলে (production, `durable_object`) image/instance/env সহ `start()`, না থাকলে (Preview, classic) plain `start()` — image সেক্ষেত্রে `previews.containers` থেকে আসে।
-
-Preview secrets আলাদা করে দিতে হয় (production secret inherit হয় না):
+## ৪. লোকাল ও CLI কমান্ড
 
 ```bash
-npx wrangler preview secret put APP_KEY   --name <branch-name>
-npx wrangler preview base-config secret put APP_KEY   # সব নতুন Preview-এ একবারে
+# ডিপেন্ডেন্সি ইনস্টল
+npm ci
+
+# লোকাল Cloudflare Worker রানটাইমে চালানো
+npx wrangler dev
+
+# বান্ডেল ও কনফিগারেশন যাচাই (কোনো Docker লাগে না)
+npx wrangler deploy --dry-run
+
+# সরাসরি Cloudflare-এ প্রোডাকশন ডিপ্লয়
+npx wrangler deploy
 ```
 
-> **সতর্কতা:** Preview container-ও আসল MySQL-এ `migrate --force` চালায় এবং **একই database** ব্যবহার করে (যদি `DB_*` secret একই থাকে)। নিরাপদ থাকতে চাইলে Preview-এ আলাদা database/ইউজার দিন, অথবা CI-তে শুধু production branch-এ `npx wrangler deploy` চালান।
+## ৫. প্রথমবার ডিপ্লয় হওয়ার পর
 
-## ৬. প্রথম deploy-এর পর
+1. `https://mexa.<your-subdomain>.workers.dev/up` → `OK` (200)।
+2. `https://mexa.<your-subdomain>.workers.dev/` → সম্পূর্ণ হোমপেজ ও সব পাবলিক পেজ (`/service`, `/work`, `/reviews`, `/team`, `/book`)।
+3. `https://mexa.<your-subdomain>.workers.dev/admin/setup` → প্রথমবার Owner অ্যাডমিন অ্যাকাউন্ট তৈরি করুন।
+4. `/admin`-এ লগইন করে কনটেন্ট, সার্ভিস, প্রাইসিং, মিডিয়া আপলোড, ভিডিও লাইব্রেরি, টিম মেম্বার, রিভিউ অ্যাপ্রুভাল এবং বুকিং পরিচালনা করুন — সব ডাটা Cloudflare-এর SQLite Durable Object-এ স্থায়ীভাবে সংরক্ষিত থাকবে।
 
-1. `https://<worker-url>/up` → Laravel health check (200)।
-2. `https://<worker-url>/` → honeypage।
-3. `https://<worker-url>/admin/setup` → প্রথম Owner account তৈরি করুন (একবারই কাজ করে)।
-4. `/admin`-এ login করে content, media, videos, reviews, team, bookings আগের মতোই ব্যবহার করুন।
-5. `/admin` থেকে একটি image upload করে container restart-এর পর সেটি এখনো দেখা যায় কি না যাচাই করুন (R2 configured হলে দেখা যাবে)।
+## ৬. ঐচ্ছিক সেটিংস
 
-## ৭. Environment variables
+- **`ORIGIN_URL` (ঐচ্ছিক):** আপনি যদি কখনো cPanel/Railway/VPS-এ চলা আলাদা PHP সার্ভারকে ব্যাকএন্ড হিসেবে ব্যবহার করতে চান, তবে `Workers & Pages → mexa → Settings → Variables and Secrets`-এ `ORIGIN_URL` (যেমন `https://origin.example.com`) যোগ করলেই Worker সব রিকোয়েস্ট সেখানে ফরোয়ার্ড করবে। ফাঁকা রাখলে Worker নিজেই সম্পূর্ণ অ্যাপ্লিকেশন চালাবে।
+- **Custom Domain:** `Workers & Pages → mexa → Settings → Domains & Routes → Add → Custom domain`।
 
-**Non-secret** (`wrangler.jsonc` → `vars`): `APP_ENV`, `APP_DEBUG`, `APP_TIMEZONE`, `LOG_CHANNEL=stderr`, `DB_CONNECTION=mysql`, `DB_PORT`, `SESSION_DRIVER=database`, `SESSION_ENCRYPT`, `SESSION_SECURE_COOKIE`, `TRUSTED_PROXIES=*`, `MEXA_*` (container tuning) ইত্যাদি।
+## ৭. সাধারণ সমস্যার সমাধান
 
-**Secret** (`wrangler secret put` / `secret bulk`): `APP_KEY` (আবশ্যক), `APP_URL` (ঐচ্ছিক), `DB_HOST`, `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD`, `MYSQL_ATTR_SSL_CA` (ঐচ্ছিক), `R2_*` (ঐচ্ছিক), `IMGBB_API_KEY` (legacy, ঐচ্ছিক)।
-
-- `APP_URL` ফাঁকা রাখলে Laravel request থেকেই host/scheme নেয় (Worker `X-Forwarded-Host/Proto` পাঠায়, `TRUSTED_PROXIES=*`) — তাই `workers.dev` URL আর custom domain দুটোই কাজ করে।
-- Cookie গুলো `Secure; HttpOnly; SameSite=Lax` থাকে, কারণ `SESSION_SECURE_COOKIE=true`।
-- Custom domain যোগ করলে `Workers & Pages → mexa-motion → Settings → Domains & Routes → Add custom domain`।
-
-## ৮. সমস্যা ও সমাধান
-
-| Error / লক্ষণ | কারণ | সমাধান |
-|---|---|---|
-| `Could not detect a directory containing static files…` | Pages/Static Assets খোঁজা হচ্ছিল, প্রজেক্ট PHP | এই setup অনুসরণ করুন: `wrangler.jsonc` + `Dockerfile` + `npx wrangler deploy` (Pages নয়) |
-| `The Docker CLI is needed to build the configured image…` | Docker engine চলছে না | Docker Desktop/Colima চালু করুন, অথবা `WRANGLER_DOCKER_BIN`/`DOCKER_HOST` সেট করুন; অথবা আগেই বানানো registry image ব্যবহার করুন |
-| `APP_KEY is not set` (container log) | secret আপলোড হয়নি | `npx wrangler secret put APP_KEY` |
-| `migrations failed` | DB unreachable/wrong credential | `DB_*` secret, remote access, firewall/IP allowlist যাচাই করুন |
-| 503 + "MEXA MOTION is starting…" | container cold start (প্রথম request) | কয়েক সেকেন্ড পরে reload; `wrangler tail` বা dashboard logs দেখুন |
-| Login-এর পরেই আবার login চাইছে (419) | session DB-তে যাচ্ছে না | `SESSION_DRIVER=database`, `sessions` table আছে কি না দেখুন (`migrate --force` container start-এ চলে) |
-| Redirect/https:// ভুল host-এ যাচ্ছে | forwarded header/proxy trust | `TRUSTED_PROXIES=*` রাখুন (Worker/Durable Object-ই একমাত্র path) |
-| Admin upload করা media restart-এর পর নেই | container disk ephemeral | R2 secrets দিন (bucket + token), তারপর redeploy |
-| upload 100 MB-তে আটকে যাচ্ছে | Cloudflare request body limit (Free/Pro 100 MB, Business 200 MB) | বড় video-র জন্য Business plan বা ছোট ফাইল; app-এর নিজের limit 200 MB |
-| `Your Wrangler configuration needs a 'previews' block` | non-production branch-এ `npx wrangler preview` চলছে, কিন্তু `previews` block নেই | `wrangler.jsonc`-এর `previews` block রাখুন (§৫.৩); Preview-এ `vars`/container binding inherit হয় না |
-| Preview-এ `1101` error | `env.MEXA_APP` binding `previews`-এ নেই | `previews.durable_objects.bindings` + `previews.containers` দুটোই দিন |
-| `CPU limits are not supported for the Free plan [code: 100328]` | account Workers **Free** plan-এ আছে, অথচ config-এ `limits.cpu_ms` (বা Paid-only কোনো feature) আছে | Workers Paid plan চালু করুন (§১.১); `wrangler.jsonc`-এ `limits` block নেই তা নিশ্চিত করুন। `wrangler deploy --dry-run` এই error ধরতে পারে না — এটা শুধু আসল deploy-এ API বলে |
-| `There is no container instance that can be provided…` | plan/region provisioning সদ্য শুরু | Paid plan চালু থাকলে ১–২ মিনিট পরে আবার request করুন |
-| `Worker exceeded CPU time limit` | proxy code-এ অস্বাভাবিক CPU | container-ই আসল কাজ করে; Paid plan-এ `limits.cpu_ms` বাড়ানো যায় |
-
-## ৯. যা এখনো মেনে চলা জরুরি
-
-- `migrate:fresh`, `truncate`, reseed বা populated DB-তে `migrate --seed` — কখনো নয়। `entrypoint.sh` শুধু `migrate --force` চালায়।
-- `.env`, `.dev.vars`, `APP_KEY`, DB credential, uploaded media, `database/database.sqlite` — Git-এ নয় (`\.gitignore` আগেই block করে, `.dev.vars`/`.wrangler/` নতুন করে যোগ হয়েছে)।
-- cPanel/XAMPP setup আগের মতোই [`CPANEL_DEPLOYMENT.md`](CPANEL_DEPLOYMENT.md)-এ আছে; এই directory-র `Dockerfile`, `docker/`, `worker/`, `wrangler.jsonc` সেখানে ব্যবহৃত হয় না।
-- Reverse-proxy preview মডেল (PHP server + Tunnel/CDN) আগের মতোই [`CLOUDFLARE_PREVIEW.md`](CLOUDFLARE_PREVIEW.md)-এ আছে।
+| লক্ষণ / বার্তা | কারণ ও সমাধান |
+|---|---|
+| পুরোনো বিল্ডে `/accounts/.../containers/me` বা `code: 100328` এসেছিল | আগের কনফিগারেশনে Paid-only `containers` ব্যবহৃত হচ্ছিল। বর্তমান `wrangler.jsonc` থেকে সেটি সরিয়ে নেটিভ SQLite Durable Object ব্যবহার করা হয়েছে, তাই Free ও Paid উভয় প্ল্যানেই বিল্ড সফল হয়। |
+| পুরোনো বিল্ডে `The current version of your Worker does not have Preview URLs enabled` | `wrangler.jsonc`-এ `"preview_urls": true` যোগ করা হয়েছে। মেইন ব্রাঞ্চে একবার `npx wrangler deploy` চললেই প্রিভিউ ইউআরএল সক্রিয় থাকে। |
+| Non-production PR বিল্ডে `100406` (unprovisioned export) দেখালে | প্রথমবার `main` ব্রাঞ্চে একবার `npx wrangler deploy` চালান (অথবা PR মার্জ করুন) যাতে `MexaContainer` Durable Object ক্লাসটি প্রোভিশন হয়ে যায়, অথবা Non-production কমান্ড হিসেবে `npx wrangler preview` ব্যবহার করুন। |

@@ -1,20 +1,23 @@
-// MEXA MOTION — Cloudflare Worker front door for the Laravel container.
+// MEXA MOTION — Cloudflare Worker + SQLite Durable Object runtime.
 //
-// Every app request is sent to one Container instance (see wrangler.jsonc
-// "containers" + "exports"). The Durable Object class below starts the PHP/
-// Apache image on demand, sleeps it after an idle period, and proxies requests
-// to it while keeping the Linux/amd64 container compatible with Cloudflare's
-// `durable_object` scheduling policy.
-//
-// Nothing here changes application behaviour: routes, Blade views, /api
-// endpoints, admin flows and /storage/media/* are all handled by Laravel.
+// Runs 100% natively on Cloudflare Workers (Free and Paid plans) with zero
+// Docker/Containers requirement:
+//   - Static stylesheets and scripts (`public/css/*`, `public/js/*`) are served
+//     directly at the Worker edge.
+//   - Dynamic Blade pages (`resources/views/**/*.blade.php`), `/api/*`, `/admin`,
+//     media uploads (`/storage/media/*`), reviews, bookings, video library and
+//     team profile approvals run inside `MexaContainer` backed by Durable Object
+//     SQLite (`ctx.storage.sql`).
+//   - Optional: if `ORIGIN_URL` is set (or a Cloudflare Container is attached on
+//     Workers Paid), requests are proxied upstream with X-Forwarded-* headers.
 
 import { DurableObject } from "cloudflare:workers";
+import { MexaEdgeApp } from "./app.js";
+import { tryServePublicAsset } from "./assets.js";
 
 /** Application-level session affinity key. All public traffic shares one instance. */
 const APP_INSTANCE_NAME = "mexa-motion-app";
 
-/** Instance sizes supported by Cloudflare Containers. */
 const INSTANCE_TYPES = new Set([
   "lite",
   "basic",
@@ -28,7 +31,6 @@ const DEFAULT_PORT = 8080;
 const DEFAULT_INACTIVITY_TIMEOUT_MS = 5 * 60 * 1000;
 const MAX_INACTIVITY_TIMEOUT_MS = 6 * 60 * 60 * 1000;
 
-/** Secrets that must reach the container; everything else is a plain var. */
 const CONTAINER_SECRET_KEYS = [
   "APP_KEY",
   "APP_URL",
@@ -44,7 +46,6 @@ const CONTAINER_SECRET_KEYS = [
   "IMGBB_API_KEY",
 ];
 
-/** Plain vars from wrangler.jsonc that the entrypoint needs. */
 const CONTAINER_VAR_KEYS = [
   "APP_NAME",
   "APP_ENV",
@@ -99,50 +100,61 @@ function inactivityTimeout(env) {
   return Math.min(ms, MAX_INACTIVITY_TIMEOUT_MS);
 }
 
-/**
- * Rebuild the incoming request for the container port:
- * - plain http + a fixed host (the container only listens on its own port),
- * - `redirect: "manual"` so Laravel's 302s reach the browser untouched,
- * - X-Forwarded-* headers so Laravel generates HTTPS URLs for the public host,
- * - the real visitor IP in X-Forwarded-For, keeping per-client throttling sane.
- */
-function toContainerRequest(request) {
-  const target = new URL(request.url);
+function buildForwardedHeaders(request, incomingUrl) {
   const clientIp = request.headers.get("cf-connecting-ip");
-
   const headers = new Headers(request.headers);
-  headers.set("x-forwarded-proto", target.protocol === "https:" ? "https" : "http");
-  headers.set("x-forwarded-host", target.host);
+  headers.set("x-forwarded-proto", incomingUrl.protocol === "https:" ? "https" : "http");
+  headers.set("x-forwarded-host", incomingUrl.host);
   if (clientIp) {
-    // Overwrite instead of appending: a client-supplied X-Forwarded-For must
-    // not be able to spoof its address.
     headers.set("x-forwarded-for", clientIp);
     headers.set("x-real-ip", clientIp);
   }
+  return headers;
+}
 
-  target.protocol = "http:";
-  target.host = "container";
+function toContainerRequest(request) {
+  const incoming = new URL(request.url);
+  const headers = buildForwardedHeaders(request, incoming);
+  incoming.protocol = "http:";
+  incoming.host = "container";
 
   const init = {
     method: request.method,
     headers,
     redirect: "manual",
   };
-
   if (request.method !== "GET" && request.method !== "HEAD") {
     init.body = request.body;
     init.duplex = "half";
   }
+  return new Request(incoming.toString(), init);
+}
 
-  return new Request(target.toString(), init);
+async function proxyToOrigin(request, originUrl) {
+  const incoming = new URL(request.url);
+  const upstreamBase = new URL(originUrl);
+  const target = new URL(incoming.pathname + incoming.search, upstreamBase);
+  const headers = buildForwardedHeaders(request, incoming);
+  headers.set("host", upstreamBase.host);
+
+  const init = {
+    method: request.method,
+    headers,
+    redirect: "manual",
+  };
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    init.body = request.body;
+    init.duplex = "half";
+  }
+  return await fetch(new Request(target.toString(), init));
 }
 
 export class MexaContainer extends DurableObject {
-  /** True once the container port answered in this Durable Object lifetime. */
   ready = false;
 
   constructor(ctx, env) {
     super(ctx, env);
+    this.edgeApp = new MexaEdgeApp(ctx, env);
     const container = ctx.container;
     if (container?.running) {
       void ctx.blockConcurrencyWhile(() =>
@@ -159,18 +171,9 @@ export class MexaContainer extends DurableObject {
     }
   }
 
-  async ensureRunning() {
-    const container = this.ctx.container;
-    if (!container) {
-      throw new Error("No container is configured for this Durable Object");
-    }
-
+  async ensureContainerRunning(container) {
     let startedNow = false;
     if (!container.running) {
-      // `durable_object` scheduling policy (production, wrangler.jsonc
-      // "containers"): the image and instance size are chosen here.
-      // Worker Previews create classic container apps instead, where the image
-      // comes from `previews.containers`; start() takes no options there.
       if (container.images?.app) {
         container.start({
           image: container.images.app,
@@ -184,15 +187,9 @@ export class MexaContainer extends DurableObject {
       await this.applyInactivityTimeout(container);
       startedNow = true;
     }
-
-    return { container, startedNow };
+    return startedNow;
   }
 
-  /**
-   * Wait until Apache answers on the container port. `start()` returns before
-   * the process can accept traffic, so the first request after a cold start
-   * polls the port instead of failing.
-   */
   async waitForPort(container, timeoutMs = 120_000) {
     const deadline = Date.now() + timeoutMs;
     let lastError;
@@ -219,10 +216,13 @@ export class MexaContainer extends DurableObject {
   }
 
   async fetch(request) {
-    const { container, startedNow } = await this.ensureRunning();
+    const container = this.ctx.container;
+    if (!container) {
+      // Default native mode (Workers Free & Paid): serve directly from SQLite Durable Object.
+      return await this.edgeApp.fetch(request);
+    }
 
-    // Probe the port only after a start (or the first request this Durable
-    // Object handles), not on every single request.
+    const startedNow = await this.ensureContainerRunning(container);
     if (startedNow || !this.ready) {
       await this.waitForPort(container);
       this.ready = true;
@@ -232,7 +232,6 @@ export class MexaContainer extends DurableObject {
     try {
       return await port.fetch(toContainerRequest(request));
     } catch (error) {
-      // The container may have restarted; probe again on the next request.
       this.ready = false;
       throw error;
     }
@@ -240,19 +239,36 @@ export class MexaContainer extends DurableObject {
 }
 
 export default {
-  async fetch(request, env) {
-    const stub = env.MEXA_APP.getByName(APP_INSTANCE_NAME);
-
+  async fetch(request, env, ctx) {
     try {
+      if (typeof env.ORIGIN_URL === "string" && env.ORIGIN_URL.trim().length > 0) {
+        return await proxyToOrigin(request, env.ORIGIN_URL.trim());
+      }
+
+      const url = new URL(request.url);
+      const assetResponse = tryServePublicAsset(request, url.pathname);
+      if (assetResponse) {
+        return assetResponse;
+      }
+
+      if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/up") {
+        return new Response(request.method === "HEAD" ? null : "OK", {
+          status: 200,
+          headers: { "Content-Type": "text/plain; charset=UTF-8" },
+        });
+      }
+
+      const appNamespace = env.MEXA_APP ?? ctx?.exports?.MexaContainer;
+      const stub = appNamespace.getByName(APP_INSTANCE_NAME);
       return await stub.fetch(request);
     } catch (error) {
-      console.error("Container request failed", error);
+      console.error("Mexa Worker request failed", error);
       return new Response(
         [
           "MEXA MOTION is starting or temporarily unavailable.",
           "",
           `Reason: ${error?.message ?? "unknown error"}`,
-          "Check Workers & Pages -> mexa-motion -> Logs, then retry in a few seconds.",
+          "Check Workers & Pages -> mexa -> Logs, then retry in a few seconds.",
         ].join("\n"),
         {
           status: 503,
