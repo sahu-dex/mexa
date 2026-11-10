@@ -6964,6 +6964,430 @@ body.mmvp-locked { overflow: hidden !important; }
 </style>
 
 
+<style id="mexa-light-blue-theme">
+/* ========================================================================
+   MEXA MOTION — Soft Light Blue / Premium Blue
+   Paint-only theme layer. Existing markup, media, animations and scripts stay
+   intact. Important declarations in a named layer intentionally take priority
+   over the legacy dark-theme rules, including their !important declarations.
+   ======================================================================== */
+@layer mexa-light-blue {
+  :root {
+    color-scheme: light !important;
+    --mm-page: #fafafa;
+    --mm-ink: #0a2858;
+    --mm-copy: #405a76;
+    --mm-muted: #526c88;
+    --mm-accent: #1152df;
+    --mm-deep: #0a3185;
+    --mm-line: rgba(22, 89, 174, .14);
+    --mm-glass: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(241, 248, 255, .82));
+    --mm-card-gradient: linear-gradient(120deg, #0c43b8 0%, #1152d4 54%, #226bd5 100%);
+    --mm-shadow: 0 16px 38px rgba(32, 86, 154, .11), inset 0 1px 0 rgba(255, 255, 255, .86);
+    --mm-shadow-hover: 0 21px 46px rgba(27, 86, 164, .17), inset 0 1px 0 rgba(255, 255, 255, .92);
+    --mx-grad-text: linear-gradient(100deg, #0a3185 0%, #1152df 58%, #256ed4 100%) !important;
+  }
+
+  html { background: var(--mm-page) !important; }
+  html body {
+    color: var(--mm-copy) !important;
+    background: var(--mm-page) !important;
+    background-image: none !important;
+  }
+  /* The supplied background reference: a near-white field with two faint,
+     viewport-fixed, blurred blue/cyan glows. No reference markup is copied. */
+  html body::before, html body::after {
+    content: "" !important;
+    display: block !important;
+    position: fixed !important;
+    width: 50vw !important;
+    height: 50vw !important;
+    border-radius: 50% !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    background-image: none !important;
+    opacity: .3 !important;
+    filter: blur(80px) !important;
+    mix-blend-mode: normal !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  html body::before {
+    top: -10% !important;
+    left: -10% !important;
+    right: auto !important;
+    bottom: auto !important;
+    background-color: rgba(17, 82, 223, .15) !important;
+  }
+  html body::after {
+    top: auto !important;
+    left: auto !important;
+    right: -10% !important;
+    bottom: -10% !important;
+    background-color: rgba(90, 200, 250, .15) !important;
+  }
+  html ::selection { background: #1152df !important; color: #fff !important; }
+  html ::-webkit-scrollbar-track { background: #fafafa !important; }
+  html ::-webkit-scrollbar-thumb { background: #a8c9ed !important; border-color: #fafafa !important; }
+  html ::-webkit-scrollbar-thumb:hover { background: #7eaee5 !important; }
+
+  /* Legible dark-on-light type, with the original brand-blue accents. */
+  html body :is(h1, h2, h3, h4, h5, h6, .text-secondary, .abt-title-dark,
+    .abt-heading, .tk-box-title, .tk-prev-title, .rvx-card-id b,
+    .wk-rc .info b, .t3-join b) { color: var(--mm-ink) !important; }
+  html body :is(p, li, .text-slate-500, .text-slate-600, .text-slate-700,
+    .text-slate-800, .text-slate-900, .mh-desc, .sv2-hero-desc, .abt-text,
+    .rv-quote, .rv-sub, .pr-text, .tm-role, .tm-perk-text, .tm-founder-bio,
+    .rvx-card-text, .tk-box-hint, .tk-prev-note, .t3-desc) {
+    color: var(--mm-copy) !important;
+  }
+  html body :is(small, .tk-counter, .rvx-rate-label, .rvx-form-note,
+    .rvx-card-id small, .rvx-score-meta, .wk-rc .meta, .t3-block-label) {
+    color: var(--mm-muted) !important;
+  }
+  html body :is(.text-primary, .svc-title-blue, .pf-title-blue, .tm-title-blue,
+    .abt-title-blue, .tm-founder-role, .t3-role, .rv-kicker, .ct-kicker,
+    .pg-kicker, .hero-badge-text, .tk-founder-role, .rvx-field > label span) {
+    color: var(--mm-accent) !important;
+  }
+  html body :is(.mh-line1, .hero-line-1) { color: var(--mm-ink) !important; }
+  html body :is(.mh-line2, .hero-title-blue, .sv2-hero-title, .hero-line-2,
+    .abt-title-blue, .tm-founder-role) {
+    background-image: var(--mx-grad-text) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+  }
+  html body :is(.mh-desc strong, .mh-desc b, .hero-sub strong, .hero-sub b) {
+    color: var(--mm-ink) !important;
+  }
+
+  /* A soft blue glass header and matching drawer, with the original layout. */
+  html body #header.hdr-bar-wrap {
+    background: linear-gradient(110deg, rgba(230, 243, 255, .93), rgba(240, 249, 255, .9) 52%, rgba(231, 246, 255, .93)) !important;
+    border-bottom: 1px solid rgba(21, 89, 174, .16) !important;
+    box-shadow: 0 8px 30px rgba(33, 88, 151, .1) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
+    backdrop-filter: blur(20px) saturate(155%) !important;
+  }
+  html body #header .brand-word .brand-a { color: #0a2858 !important; }
+  html body #header .brand-word .brand-b { color: #1152df !important; }
+  html body #header .brand-tagline { color: #526c88 !important; }
+  html body #header .nav-link { color: #234263 !important; }
+  html body #header .nav-link:is(:hover, :focus-visible, .is-active, [aria-current="page"]) {
+    color: var(--mm-accent) !important;
+  }
+  html body #header :is(.nav-ind, .nav-underline::after) {
+    background: linear-gradient(90deg, #1152df, #5ac8fa) !important;
+    box-shadow: none !important;
+  }
+  html body #header .hdr-bar { background: #0a3185 !important; }
+  html body #header .hdr-burger:hover .hdr-bar { background: #1152df !important; }
+  html body #mobile-menu-backdrop { background: rgba(12, 37, 71, .32) !important; }
+  html body #mobile-menu-drawer {
+    background: linear-gradient(150deg, rgba(247, 251, 255, .98), rgba(234, 246, 255, .98)) !important;
+    border-color: rgba(21, 89, 174, .12) !important;
+    box-shadow: 0 24px 48px rgba(30, 77, 137, .18) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
+    backdrop-filter: blur(20px) saturate(145%) !important;
+  }
+  html body .mm-nav .mm-item {
+    color: #183b66 !important;
+    background: rgba(231, 242, 255, .55) !important;
+    border-color: rgba(30, 100, 188, .12) !important;
+    box-shadow: none !important;
+  }
+  html body .mm-nav .mm-item:is(:hover, :focus-visible, .is-active, .active) {
+    color: var(--mm-accent) !important;
+    background: #e2efff !important;
+    border-color: rgba(17, 82, 223, .24) !important;
+  }
+  html body .mm-nav .mm-chev { color: #47709b !important; }
+
+  /* Buttons on the light field; action buttons inside blue cards are inverted below. */
+  html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
+    .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit) {
+    color: #fff !important;
+    background: linear-gradient(115deg, #1152df, #1c6bd5) !important;
+    border-color: rgba(17, 82, 223, .24) !important;
+    box-shadow: 0 8px 20px rgba(17, 82, 190, .19) !important;
+  }
+  html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
+    .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit):hover {
+    background: linear-gradient(115deg, #0d43bf, #155bc7) !important;
+    box-shadow: 0 11px 24px rgba(17, 82, 190, .25) !important;
+  }
+  html body :is(.glass-btn-secondary, .sv-btn-ghost, .wk-btn-ghost, .rvx-btn-ghost,
+    .rvx-mini-btn) {
+    color: #0a3185 !important;
+    background: rgba(255, 255, 255, .72) !important;
+    border: 1px solid rgba(17, 82, 190, .22) !important;
+    box-shadow: 0 6px 18px rgba(40, 92, 155, .08) !important;
+  }
+  html body :is(.glass-btn-secondary, .sv-btn-ghost, .wk-btn-ghost, .rvx-btn-ghost,
+    .rvx-mini-btn):hover { background: #e6f2ff !important; color: #1152df !important; }
+  html body :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid rgba(17, 82, 223, .62) !important;
+    outline-offset: 3px !important;
+  }
+
+  /* Calm glass panels alternate with the stronger blue-gradient cards. */
+  html body :is(.apple-glass-card, .pr-card, .tm-card, .tm-perk, .review-card,
+    .rvx-card, .rvx-form-card, .sv2-card, .sp-pkg, .tk-box, .tk-prev,
+    .tk-founder, .tk-done-box, .t3-card, .wk-rc) {
+    background: var(--mm-glass) !important;
+    border: 1px solid rgba(26, 96, 183, .15) !important;
+    box-shadow: var(--mm-shadow) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(135%) !important;
+    backdrop-filter: blur(16px) saturate(135%) !important;
+  }
+  html body :is(.pr-card, .tm-card, .tm-perk, .review-card, .rvx-card,
+    .sv2-card, .sp-pkg, .t3-card, .wk-rc):hover {
+    border-color: rgba(17, 82, 223, .26) !important;
+    box-shadow: var(--mm-shadow-hover) !important;
+  }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join) {
+    color: #fff !important;
+    background: var(--mm-card-gradient) !important;
+    border: 1px solid rgba(255, 255, 255, .24) !important;
+    box-shadow: 0 17px 36px rgba(17, 73, 164, .19), inset 0 1px 0 rgba(255, 255, 255, .18) !important;
+  }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .t3-join):hover {
+    border-color: rgba(255, 255, 255, .4) !important;
+    box-shadow: 0 22px 42px rgba(17, 73, 164, .26), inset 0 1px 0 rgba(255, 255, 255, .23) !important;
+  }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join)
+    :is(h1, h2, h3, h4, h5, h6, b, strong) { color: #fff !important; text-shadow: none !important; }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join)
+    :is(p, li, span, small, label, div) { color: #edf5ff !important; }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum) :is(i, svg) { color: #fff !important; }
+  html body :is(.svc-icon, .ct-icon) {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .14) !important;
+    border: 1px solid rgba(255, 255, 255, .27) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14) !important;
+  }
+  html body :is(.svc-icon, .ct-icon) :is(i, svg) { color: #fff !important; }
+  html body :is(.sp-pkg.is-hi .sp-buy, .t3-join a) {
+    color: #0a3185 !important;
+    background: #fff !important;
+    border: 1px solid rgba(255, 255, 255, .88) !important;
+    box-shadow: 0 7px 18px rgba(4, 39, 108, .14) !important;
+  }
+  html body :is(.sp-pkg.is-hi .sp-buy, .t3-join a):hover {
+    color: #1152df !important;
+    background: #eef7ff !important;
+  }
+  html body .sp-pkg.is-hi .sp-buy :is(i, svg) { color: #0a3185 !important; }
+  html body :is(.sp-pkg.is-hi .sv-pkg-badge, .tk-sum-quality) {
+    color: #fff !important;
+    background: rgba(255, 255, 255, .17) !important;
+    border: 1px solid rgba(255, 255, 255, .3) !important;
+    box-shadow: none !important;
+  }
+  html body :is(.sp-pkg.is-hi .sv-feats, .tk-sum-feats) { border-color: rgba(255, 255, 255, .22) !important; }
+
+  /* Details on light glass: steps, testimonials, member cards and chips. */
+  html body :is(.pr-step, .tm-perk-ic, .rvx-avatar, .tk-num, .sv2-label,
+    .rvx-count, .rvx-pending-note, .tk-founder-photo) {
+    color: #1152df !important;
+    background: #e4f1ff !important;
+    border: 1px solid rgba(17, 82, 223, .16) !important;
+    box-shadow: none !important;
+  }
+  html body :is(.pr-step, .tm-perk-ic, .rvx-avatar, .tk-num, .sv2-label,
+    .rvx-count, .rvx-pending-note, .tk-founder-photo) :is(i, svg) { color: #1152df !important; }
+  html body .pr-top { background: linear-gradient(90deg, #1152df, #5ac8fa) !important; }
+  html body :is(.rv-story, .rvx-score-stat span, .tk-prev-row span, .tk-prev-kicker,
+    .sv-pkg-meta, .rvx-field > label, .t3-block-label, .tk-sum-kicker) { color: #526c88 !important; }
+  html body :is(.rvx-score b, .rvx-score-stat b, .tk-prev-row b, .sv-pkg-price b,
+    .sv2-deliv b, .tk-q b, .rvx-card-id b) { color: #0a2858 !important; }
+  html body :is(.rvx-score-sep, .rvx-list-head, .rvx-form-head, .tk-prev-row,
+    .sv-feats, .rv-person, hr) { border-color: rgba(26, 96, 183, .14) !important; }
+  html body :is(.rvx-stars, .rv-stars, .rvx-rate i, .fa-star) { color: #e8a90a !important; }
+  /* Improve rating contrast on light surfaces without darkening media badges. */
+  html body :is(.rvx-stars, .rv-stars) i:not(.off) {
+    color: #a15d00 !important;
+    -webkit-text-fill-color: #a15d00 !important;
+  }
+  html body :is(.rvx-stars, .rv-stars) i.off {
+    color: #527396 !important;
+    -webkit-text-fill-color: #527396 !important;
+  }
+  html body :is(.t3-chips li, .tm-founder-skill, .tk-q) {
+    color: #23517d !important;
+    background: #edf6ff !important;
+    border-color: rgba(17, 82, 223, .14) !important;
+  }
+  html body .tk-q.is-on {
+    color: #0a3185 !important;
+    background: #e0efff !important;
+    border-color: #669ded !important;
+    box-shadow: 0 0 0 2px rgba(17, 82, 223, .1) !important;
+  }
+  html body .tk-q .tk-q-price { color: #1152df !important; }
+
+  /* Form controls stay light and readable, including selected and focus states. */
+  html body :is(input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), textarea, select) {
+    color: #16375e !important;
+    background: rgba(255, 255, 255, .9) !important;
+    border: 1px solid rgba(29, 91, 165, .22) !important;
+    box-shadow: inset 0 1px 2px rgba(30, 80, 140, .04) !important;
+  }
+  html body :is(input, textarea)::placeholder { color: #748ca5 !important; }
+  html body :is(input, textarea, select):focus {
+    border-color: #4f8eea !important;
+    box-shadow: 0 0 0 3px rgba(17, 82, 223, .12) !important;
+  }
+  html body :is(.rvx-photo-box, .tk-prev-msg) {
+    color: #526c88 !important;
+    background: rgba(235, 246, 255, .72) !important;
+    border-color: rgba(28, 96, 181, .14) !important;
+    box-shadow: none !important;
+  }
+  html body .rvx-photo-prev { color: #1152df !important; background: #dcecff !important; border-color: rgba(17, 82, 223, .15) !important; }
+  html body .rvx-rate button { background: #edf6ff !important; border-color: rgba(17, 82, 223, .16) !important; }
+
+  /* Keep real photos and video previews untouched; only their frames change. */
+  html body :is(.pf-card, .wk-demo, .wk-short, .sv2-hero-video, .rvx-hero-media,
+    .tm-founder-photo, .t3-media) {
+    border-color: rgba(26, 96, 183, .2) !important;
+    box-shadow: 0 16px 36px rgba(30, 82, 148, .13) !important;
+  }
+  html body .wk-rc .info { background: transparent !important; }
+  html body :is(.wk-demo .cap, .wk-short span) { color: #fff !important; }
+  html body .wk-demo .cap :is(b, small) { color: #fff !important; }
+  html body .pf-tab { color: #526c88 !important; }
+  html body .pf-tab:is(.is-active, :hover) { color: #1152df !important; }
+  html body .pf-tab-ic { color: inherit !important; }
+  html body .abt-photo--empty {
+    background: linear-gradient(145deg, #cfe6ff, #b8d9f8) !important;
+    border-color: rgba(17, 82, 223, .12) !important;
+  }
+  html body .abt-photo-tag { color: #245588 !important; background: rgba(255, 255, 255, .68) !important; border-color: rgba(17, 82, 223, .15) !important; }
+  html body .abt-float { color: #0a3185 !important; background: rgba(255, 255, 255, .88) !important; border-color: rgba(17, 82, 223, .15) !important; box-shadow: var(--mm-shadow) !important; }
+
+  /* Let the same reference background continue behind the footer. */
+  html body footer {
+    color: var(--mm-copy) !important;
+    background: transparent !important;
+    border-color: rgba(26, 96, 183, .13) !important;
+  }
+  html body footer :is(a, p, li) { color: var(--mm-copy) !important; }
+  html body footer a:hover { color: #1152df !important; }
+  html body footer :is(.footer-brand-word, h4) { color: #0a2858 !important; }
+  html body footer .apple-glass-card { color: #1152df !important; }
+  html body footer :is(.footer-brand-word, .footer-brand-word span) {
+    color: #0a2858 !important;
+    -webkit-text-fill-color: #0a2858 !important;
+  }
+  html body footer .apple-glass-card i {
+    color: #1152df !important;
+    -webkit-text-fill-color: #1152df !important;
+  }
+  html body footer .apple-glass-card:hover { background: #1152df !important; }
+  html body footer .apple-glass-card:hover i {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+
+  /* Contrast and interactive states for the original page-specific controls. */
+  html body :is(#header .brand-logo-full, footer img[alt="Mexa Motion M"]) { background: transparent !important; }
+  html body #header .brand-word {
+    background: none !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  html body #header .brand-word .brand-a { -webkit-text-fill-color: #0a2858 !important; }
+  html body #header .brand-word .brand-b { -webkit-text-fill-color: #1152df !important; }
+  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum) :is(i, svg) {
+    -webkit-text-fill-color: #fff !important;
+  }
+  html body .sp-pkg.is-hi .sp-buy :is(i, svg) { -webkit-text-fill-color: #0a3185 !important; }
+  html body :is(.seen-more-link, .tk-crumb a) { color: #1152df !important; }
+  html body :is(.seen-more-link, .tk-crumb a):hover { color: #0a3185 !important; }
+  html body :is(.tk-crumb, .tk-crumb span, .tk-crumb i, .sp-pick span,
+    .sp-pkg:not(.is-hi) .sv-pkg-price span, .rvx-score > span,
+    .rvx-counter) { color: #526c88 !important; }
+  html body .tk-h1 span { color: #1152df !important; }
+  html body .t3-kick { color: #31516f !important; }
+  html body .sp-pkg:not(.is-hi) .sv-pkg-badge {
+    color: #0a3185 !important;
+    background: #dcecff !important;
+    border-color: #b8d5f8 !important;
+    box-shadow: 0 5px 14px rgba(35, 83, 143, .12) !important;
+  }
+  html body .sp-pkg.is-hi .sv-pkg-badge {
+    color: #fff !important;
+    background: #0a3fae !important;
+    border-color: rgba(255, 255, 255, .42) !important;
+  }
+  html body #tk-service {
+    padding-right: 2.5rem !important;
+    background-image: linear-gradient(45deg, transparent 50%, #285589 50%),
+      linear-gradient(135deg, #285589 50%, transparent 50%) !important;
+    background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50% !important;
+    background-size: 6px 6px, 6px 6px !important;
+    background-repeat: no-repeat !important;
+  }
+  html body select option { background: #fff !important; color: #0a2858 !important; }
+  html body .rvx-rate button i { color: #527396 !important; }
+  html body .rvx-rate button:is(.on, :hover) {
+    background: #fff1c9 !important;
+    border-color: #d9a729 !important;
+  }
+  html body .rvx-rate button:is(.on, :hover) i { color: #a15d00 !important; }
+  html body :is(.tk-err, .rvx-err) { color: #9b2632 !important; }
+  html body .tk-err { background: #fff0f0 !important; border-color: #efb4b4 !important; }
+  html body :is(.wk-modal-box, .rvx-modal-box) {
+    background: #f8fcff !important;
+    border: 1px solid rgba(26, 96, 183, .18) !important;
+    box-shadow: 0 24px 65px rgba(11, 46, 96, .28) !important;
+  }
+  html body .wk-modal-box .wk-modal-x {
+    color: #0a3185 !important;
+    -webkit-text-fill-color: #0a3185 !important;
+    background: #fff !important;
+    border: 1px solid #bdd5f0 !important;
+    box-shadow: 0 6px 18px rgba(11, 46, 96, .2) !important;
+  }
+  html body .wk-modal-box .wk-modal-x:hover {
+    color: #1152df !important;
+    -webkit-text-fill-color: #1152df !important;
+    background: #e5f1ff !important;
+  }
+  html body :is(.rvx-modal-tag, .tk-done-ref) {
+    color: #0a3185 !important;
+    background: #e4f1ff !important;
+    border-color: rgba(17, 82, 223, .18) !important;
+  }
+  html body :is(.rvx-modal-box, .tk-done-box) :is(b, strong) { color: #0a2858 !important; }
+  html body .rvx-modal-box button {
+    color: #fff !important;
+    background: linear-gradient(115deg, #1152df, #1c6bd5) !important;
+    border-color: rgba(17, 82, 223, .24) !important;
+  }
+  html body .tk-link {
+    color: #0a3185 !important;
+    background: #eef6ff !important;
+    border-color: rgba(17, 82, 223, .18) !important;
+  }
+  html body .tk-link:hover { background: #dfeeff !important; }
+  html body :is(.rvx-modal-tag i, .tk-done-ref span) { color: #1152df !important; }
+
+  @media (max-width: 768px) {
+    html body::before, html body::after {
+      filter: blur(50px) !important;
+      opacity: .2 !important;
+    }
+  }
+  @media (max-width: 640px) {
+    html body :is(.svc-card, .ct-card, .pr-card, .rvx-card, .sv2-card, .sp-pkg,
+      .tk-box, .tk-sum, .tk-prev, .t3-card) { max-width: 100%; }
+  }
+}
+
+</style>
 </head>
 <body class="font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
 
