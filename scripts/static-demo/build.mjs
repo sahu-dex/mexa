@@ -21,6 +21,7 @@ import { fileURLToPath } from "node:url";
 import { renderPage, ROUTES } from "./blade.mjs";
 import { transformScripts, injectRuntime, replaceOnce } from "./scripts.mjs";
 import { prerender } from "./prerender.mjs";
+import { inlineLocalAssets } from "./inline.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, "../..");
@@ -155,6 +156,12 @@ async function buildPage({ file, template }) {
   html = applyPrerendered(html, captured, template);
   html = injectRuntime(html, template, DATA_SCRIPT);
 
+  // Fold every local stylesheet and script into the page: the shipped document
+  // must not depend on a single sibling file.
+  html = inlineLocalAssets(html, OUT, template).html;
+  const leftover = html.match(/<(?:script[^>]*\bsrc|link[^>]*rel="stylesheet")[^>]*>/gi);
+  if (leftover) throw new Error(`[${template}] external asset left in the page: ${leftover.join(" ")}`);
+
   if (/window\.__MM_SNAPSHOT__|!!\s*\$[a-zA-Z_]|@include\s*\(|\{\{/.test(html)) {
     throw new Error(`[${template}] server syntax left in the static page`);
   }
@@ -163,13 +170,21 @@ async function buildPage({ file, template }) {
   console.log(`  ${file.padEnd(14)} ${(html.length / 1024).toFixed(0)} KB  <- ${template}.blade.php`);
 }
 
+/** The standalone folder must contain the six HTML pages and nothing else. */
+function pruneWorkingFiles() {
+  for (const dir of ["assets", "data"]) rmSync(join(OUT, dir), { recursive: true, force: true });
+}
+
 async function main() {
   mkdirSync(OUT, { recursive: true });
+  // Stylesheets and the content bundle are build inputs: they get inlined into
+  // every page, then deleted so the demo is a set of HTML files only.
   writeDataBundle();
   copyAssets();
   console.log("building static demo pages:");
   for (const page of PAGES) await buildPage(page);
-  console.log("done ->", OUT);
+  pruneWorkingFiles();
+  console.log("done ->", OUT, "(self-contained HTML only)");
 }
 
 main().catch((error) => {

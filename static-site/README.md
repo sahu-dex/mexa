@@ -58,20 +58,22 @@ in `data/site-data.js` and is rendered into the pages from there.
 
 ```
 static-site/
-├── index.html  work.html  service.html  team.html  review.html  book.html
-├── data/
-│   └── site-data.js      # window.__MM_DEMO_DATA__ — all page content
-└── assets/
-    └── css/              # original stylesheets (fonts embedded inside them)
+├── index.html   ← home  (CSS + content + JS all inside this one file)
+├── work.html    ← work
+├── service.html ← service
+├── team.html    ← team
+├── review.html  ← review
+├── book.html    ← booking
+└── README.md
 ```
 
-All page scripts ship inline in each HTML file, and the logo / favicon are
-embedded as `data:` URIs, so the whole demo is just these files. Photography
-and video posters still point at their original CDN URLs — with an internet
-connection they load exactly as designed.
+There is no `assets/` folder and no `data/` folder any more: every stylesheet,
+the content bundle and all page scripts are embedded inside each HTML file, and
+the logo / favicon are `data:` URIs. Each page is genuinely standalone — you
+can copy one file out on its own and it still works.
 
-Keep `data/` next to the HTML files: the pages read `data/site-data.js` for
-their content.
+Photography, video posters and social links still point at their original CDN
+addresses — with an internet connection they load exactly as designed.
 
 ## Rebuilding these pages
 

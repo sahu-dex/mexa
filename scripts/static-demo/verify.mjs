@@ -80,7 +80,17 @@ function check(file, meta) {
   }
 
   /* -- 3 · DOM checks (scripts not executed) ----------------------------- */
-  const dom = new JSDOM(html, { url: "https://demo.local/" + file, runScripts: "outside-only" });
+  // jsdom's CSS engine rejects a few modern rules (@layer, container queries).
+  // That is a parser limitation, never a page problem, so mute just that one.
+  const quiet = new VirtualConsole();
+  quiet.on("jsdomError", (error) => {
+    if (!/Could not parse CSS stylesheet/.test(error.message)) console.error(error.message);
+  });
+  const dom = new JSDOM(html, {
+    url: "https://demo.local/" + file,
+    runScripts: "outside-only",
+    virtualConsole: quiet,
+  });
   const { document } = dom.window;
 
   for (const link of document.querySelectorAll("a[href]")) {
@@ -138,14 +148,22 @@ console.log(`\nStatic demo verification (${join(SITE)})`);
 for (const meta of PAGES) check(meta.file, meta);
 
 /* -- global checks -------------------------------------------------------- */
-if (!existsSync(join(SITE, "data/site-data.js"))) fail("assets", "data bundle missing");
-if (!existsSync(join(SITE, "assets/css")) || !readdirSync(join(SITE, "assets/css")).length) {
-  fail("assets", "assets/css is empty");
+/* The demo is six self-contained documents: no sibling folder may be needed. */
+for (const dir of ["assets", "data"]) {
+  if (existsSync(join(SITE, dir))) fail("assets", `external asset folder shipped: ${dir}/`);
 }
-/* Every UI script ships inline, so assets/js may legitimately be empty — but if
-   anything is there it must not be an admin bundle (checked below). */
-for (const adminFile of ["assets/js/admin.js", "assets/js/video-preview.js", "assets/js/team-profile.js", "assets/css/admin.css", "assets/css/admin-refresh.css", "assets/css/admin-management.css", "assets/css/team-profile.css"]) {
-  if (existsSync(join(SITE, adminFile))) fail("assets", `admin-only file shipped: ${adminFile}`);
+const ALLOWED_FILES = /^(README\.md|(index|work|service|team|review|book)\.html)$/;
+for (const name of readdirSync(SITE)) {
+  if (!ALLOWED_FILES.test(name)) fail("assets", `unexpected file in the demo folder: ${name}`);
+}
+
+/* Every page must carry its own styles, content and scripts. */
+for (const { file } of PAGES) {
+  const html = readFileSync(join(SITE, file), "utf8");
+  if (!/<style\b/i.test(html)) fail(file, "no inlined stylesheet");
+  if (!/__MM_DEMO_DATA__\s*=\s*\{/.test(html)) fail(file, "content bundle not inlined");
+  if (/<link\b[^>]*rel="stylesheet"/i.test(html)) fail(file, "external stylesheet reference left");
+  if (/<script\b[^>]*\bsrc=/i.test(html)) fail(file, "external script reference left");
 }
 
 /* The old server application must not be part of the demo folder. */
