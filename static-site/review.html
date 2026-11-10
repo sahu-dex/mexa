@@ -6989,6 +6989,16 @@ body.mmvp-locked { overflow: hidden !important; }
     color: #0a2858 !important;
     -webkit-text-fill-color: #0a2858 !important;
   }
+  /* Text-only footer wordmark; retain the original logo image in the markup. */
+  html body footer a > img[alt="Mexa Motion M"] { display: none !important; }
+  html body footer .footer-brand-word {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+  html body footer .footer-brand-word > span::before { content: "M"; }
+  @media (min-width: 1024px) {
+    html body footer .footer-brand-word { white-space: nowrap !important; }
+  }
   html body footer .apple-glass-card i {
     color: #1152df !important;
     -webkit-text-fill-color: #1152df !important;
