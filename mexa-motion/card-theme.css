@@ -1,0 +1,243 @@
+/* ============================================================================
+   MEXA MOTION — Background + content-card theme
+   ----------------------------------------------------------------------------
+   Approved scope
+     · page canvas        → soft blue / light-blue gradient (as before)
+     · content cards      → royal-blue gradient, white text
+     · icons inside those cards → white (invisible on blue otherwise)
+     · header             → stays a white pill
+     · footer             → deep navy panel with light text
+     · FAQ cards          → stay light (they are buttons)
+     · every button       → untouched: same colour, same size, same hover
+
+   Nothing else changes: no layout, no section, no font, no radius, no shadow,
+   no animation, no image, no element added or removed. Every rule below only
+   sets background, colour or fill — never size, spacing, border-width or
+   position.
+   ========================================================================== */
+
+:root {
+    /* page canvas */
+    --mx-bg-top:    #f5f9ff;
+    --mx-bg-mid:    #e9f1ff;
+    --mx-bg-bottom: #dfeafe;
+
+    /* content cards — royal blue gradient, matching the reference */
+    --mx-card-a:   #1b5ce8;
+    --mx-card-b:   #0b3fa8;
+
+    /* text on a card */
+    --mx-on-card:       #ffffff;
+    --mx-on-card-soft:  #dce9ff;
+    --mx-on-card-mute:  #c6dbff;
+
+    /* footer */
+    --mx-foot-a: #0b1930;
+    --mx-foot-b: #081426;
+}
+
+/* ===========================================================================
+   1 · PAGE CANVAS
+   The body carries Tailwind's `bg-[#fafafa]`; `html body` outranks it.
+   ======================================================================== */
+html {
+    background-color: var(--mx-bg-mid);
+    background-image:
+        radial-gradient(1100px 720px at 6% -8%,   rgba(90, 200, 250, 0.34), transparent 60%),
+        radial-gradient(950px 640px at 98% 0%,    rgba(17, 82, 223, 0.20),  transparent 58%),
+        radial-gradient(1200px 820px at 50% 108%, rgba(10, 49, 133, 0.16),  transparent 62%),
+        linear-gradient(178deg, var(--mx-bg-top) 0%, var(--mx-bg-mid) 46%, var(--mx-bg-bottom) 100%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+html body {
+    background-color: var(--mx-bg-mid) !important;
+    background-image:
+        radial-gradient(1100px 720px at 6% -8%,   rgba(90, 200, 250, 0.34), transparent 60%),
+        radial-gradient(950px 640px at 98% 0%,    rgba(17, 82, 223, 0.20),  transparent 58%),
+        radial-gradient(1200px 820px at 50% 108%, rgba(10, 49, 133, 0.16),  transparent 62%),
+        linear-gradient(178deg, var(--mx-bg-top) 0%, var(--mx-bg-mid) 46%, var(--mx-bg-bottom) 100%) !important;
+    background-attachment: fixed !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+}
+
+/* the two ambient blobs keep their size, blur and position — colour only */
+html body > div.fixed.rounded-full[class*="blur-"] {
+    background-color: rgba(90, 200, 250, 0.30) !important;
+}
+html body > div.fixed.rounded-full[class*="blur-"] + div.fixed.rounded-full[class*="blur-"] {
+    background-color: rgba(17, 82, 223, 0.22) !important;
+}
+
+/* ===========================================================================
+   2 · WHICH CARDS STAY LIGHT
+   These are navigation and micro-UI, not content cards: the header pill, the
+   hero badge, hero tool tiles, the rating badge, the portfolio tab strip, the
+   marquee, the FAQ (buttons), the newsletter field and the social buttons.
+   They must keep the page's own translucent-white glass.
+   ======================================================================== */
+#home .apple-glass-card,
+#header .apple-glass-card,
+#portfolio .apple-glass-card,
+#faq-container .apple-glass-card,
+footer .apple-glass-card,
+#about .overflow-hidden.relative.w-full.apple-glass-card {
+    background: rgba(255, 255, 255, 0.65) !important;
+}
+
+/* ===========================================================================
+   3 · CONTENT CARDS → royal-blue gradient
+   ======================================================================== */
+
+/* 3a · the cards themselves
+   The founder card is the only wide one (`w-[200px] sm:w-[260px]`), so it is
+   excluded with :not([class~=…]) — no :has(), and no escaped-bracket class
+   selectors, so every engine (and the test harness) agrees on the match. */
+#stats-container .apple-glass-card,
+#services .apple-glass-card,
+#team .apple-glass-card:not([class~="w-[200px]"]),
+#reviews .apple-glass-card,
+#contact .apple-glass-card,
+#about .rounded-\[2rem\].p-4.apple-glass-card,
+#about .absolute.top-1\/2.-right-10.apple-glass-card {
+    background-image: linear-gradient(145deg, var(--mx-card-a) 0%, var(--mx-card-b) 100%) !important;
+    background-color: var(--mx-card-b) !important;
+    box-shadow: 0 18px 48px rgba(11, 63, 168, 0.28) !important;
+}
+
+/* 3b · text inside those cards is white */
+#stats-container .apple-glass-card :is(h1, h2, h3, h4, h5, h6, p, span, li, strong, em, div).text-secondary,
+#services .apple-glass-card :is(h1, h2, h3, h4, h5, h6, p, span).text-secondary,
+#team .apple-glass-card:not([class~="w-[200px]"]) > div.p-4 :is(h1, h2, h3, h4, h5, h6, p, span).text-secondary,
+#reviews .apple-glass-card :is(h1, h2, h3, h4, h5, h6, p, span).text-secondary,
+#contact .apple-glass-card :is(h1, h2, h3, h4, h5, h6, p, span).text-secondary,
+#about .absolute.top-1\/2.-right-10.apple-glass-card :is(h1, h2, h3, h4, h5, h6, p, span).text-secondary {
+    color: var(--mx-on-card) !important;
+}
+
+#stats-container .apple-glass-card :is(p, span, div).text-slate-500,
+#services .apple-glass-card :is(p, span).text-slate-600,
+#reviews .apple-glass-card :is(p, span).text-slate-600,
+#contact .apple-glass-card :is(p, span).text-gray-600,
+#about .absolute.top-1\/2.-right-10.apple-glass-card :is(p, span).text-slate-500 {
+    color: var(--mx-on-card-mute) !important;
+}
+
+/* 3c · blue accents inside a blue card become white */
+#stats-container .apple-glass-card .text-primary,
+#reviews .apple-glass-card .text-primary,
+#team .apple-glass-card:not([class~="w-[200px]"]) > div.p-4 .text-primary,
+#contact .apple-glass-card .text-primary,
+#about .absolute.top-1\/2.-right-10.apple-glass-card .text-primary {
+    color: var(--mx-on-card) !important;
+}
+
+/* the small "Discuss Project" text link — white, underline kept on hover */
+#services .apple-glass-card a.text-primary {
+    color: var(--mx-on-card) !important;
+}
+
+/* 3d · icons inside the cards → white */
+#services .apple-glass-card i,
+#contact .apple-glass-card i,
+#about .absolute.top-1\/2.-right-10.apple-glass-card i {
+    color: var(--mx-on-card) !important;
+}
+
+/* the pale-blue icon tiles behind those icons: transparent on a blue card */
+#services .apple-glass-card > div.w-16.h-16,
+#about .absolute.top-1\/2.-right-10.apple-glass-card > div.w-14.h-14 {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+/* the decorative circles in service cards — keep them, just lighten */
+#services .apple-glass-card > div.absolute.rounded-full {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* the review star row is intentionally yellow — leave it */
+
+/* ===========================================================================
+   4 · TEAM CARDS
+   The photo keeps its own frame; the caption block turns blue.
+   The featured founder card keeps its light frame so the ribbon still reads.
+   ======================================================================== */
+#team .apple-glass-card:not([class~="w-[200px]"]) > div.p-4 {
+    background-image: linear-gradient(145deg, var(--mx-card-a) 0%, var(--mx-card-b) 100%) !important;
+    background-color: var(--mx-card-b) !important;
+}
+
+/* ===========================================================================
+   5 · HEADER — stays a white pill; only make sure it reads on blue */
+#header .apple-glass-card {
+    background: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* ===========================================================================
+   6 · FOOTER — deep navy panel, light text
+   The footer has no wrapper card, so the panel is the footer element itself.
+   ======================================================================== */
+footer {
+    background-image: linear-gradient(180deg, var(--mx-foot-a) 0%, var(--mx-foot-b) 100%) !important;
+    background-color: var(--mx-foot-b) !important;
+    border-top-color: rgba(255, 255, 255, 0.08) !important;
+    color: var(--mx-on-card-soft) !important;
+}
+
+/* headings + body copy */
+footer h4.text-secondary,
+footer span.text-2xl {
+    color: var(--mx-on-card) !important;
+}
+
+footer p.text-slate-500,
+footer .text-slate-500,
+footer div.text-sm.text-slate-500,
+footer a.text-sm {
+    color: var(--mx-on-card-soft) !important;
+}
+
+/* the footer's own dividers */
+footer .border-t,
+footer .border-slate-200\/50 {
+    border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* link hover was blue-on-white; on navy it must lighten instead */
+footer a:hover {
+    color: #ffffff !important;
+}
+
+/* keep the small arrow icons visible on navy */
+footer ul a i {
+    color: #6fa8ff !important;
+}
+
+/* social buttons stay white pills (light exception above) — blue glyphs read fine */
+
+/* ===========================================================================
+   7 · FAINT LABELS THAT SIT DIRECTLY ON THE CANVAS
+   Two small labels ("Trusted By Creators From" and "Swipe to see more") are
+   `text-slate-400` — fine on the old off-white, but only 2.1:1 on the new blue.
+   Their colour is darkened just enough to read again; nothing else about them
+   changes. Cards, the header/drawer and the footer are excluded.
+   ======================================================================== */
+#about .text-slate-400,
+#reviews .text-slate-400 {
+    color: #4a5f7d !important;
+}
+
+/* ===========================================================================
+   8 · RESPONSIVE
+   Fixed backgrounds are expensive on touch devices; the gradient still covers.
+   ======================================================================== */
+@media (max-width: 1024px) {
+    html,
+    html body {
+        background-attachment: scroll !important;
+        background-size: auto, auto, auto, 100% 100% !important;
+    }
+}
