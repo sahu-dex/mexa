@@ -6259,30 +6259,34 @@ body.mmvp-locked { overflow: hidden !important; }
 
 <style id="mexa-light-blue-theme">
 /* ========================================================================
-   MEXA MOTION — Soft Light Blue / Premium Blue
-   Paint-only theme layer. Existing markup, media, animations and scripts stay
-   intact. Important declarations in a named layer intentionally take priority
+   MEXA MOTION — Reference-aligned glass UI
+   Visual tokens and components follow the supplied HTML while existing markup,
+   media, animations and scripts stay intact. Named layers intentionally take priority
    over the legacy dark-theme rules, including their !important declarations.
    ======================================================================== */
 @layer mexa-light-blue {
   :root {
     color-scheme: light !important;
+    --mx-font: 'Poppins', 'Noto Sans Bengali', system-ui, sans-serif !important;
     --mm-page: #fafafa;
-    --mm-ink: #0a2858;
-    --mm-copy: #405a76;
-    --mm-muted: #526c88;
+    --mm-ink: #0a3185;
+    --mm-copy: #475569;
+    --mm-muted: #52647b;
     --mm-accent: #1152df;
     --mm-deep: #0a3185;
     --mm-line: rgba(22, 89, 174, .14);
-    --mm-glass: linear-gradient(145deg, rgba(255, 255, 255, .92), rgba(241, 248, 255, .82));
+    --mm-glass: rgba(255, 255, 255, .68);
     --mm-card-gradient: linear-gradient(120deg, #0c43b8 0%, #1152d4 54%, #226bd5 100%);
-    --mm-shadow: 0 16px 38px rgba(32, 86, 154, .11), inset 0 1px 0 rgba(255, 255, 255, .86);
-    --mm-shadow-hover: 0 21px 46px rgba(27, 86, 164, .17), inset 0 1px 0 rgba(255, 255, 255, .92);
-    --mx-grad-text: linear-gradient(100deg, #0a3185 0%, #1152df 58%, #256ed4 100%) !important;
+    --mm-shadow: 0 8px 32px rgba(17, 82, 223, .06), inset 0 1px 0 rgba(255, 255, 255, .9);
+    --mm-shadow-hover: 0 18px 50px rgba(17, 82, 223, .14), inset 0 1px 0 rgba(255, 255, 255, .95);
+    --mx-grad-text: linear-gradient(135deg, #0a3185, #1152df 55%, #1975be) !important;
   }
 
   html { background: var(--mm-page) !important; }
   html body {
+    font-family: var(--mx-font) !important;
+    line-height: 1.6 !important;
+    letter-spacing: normal !important;
     color: var(--mm-copy) !important;
     background: var(--mm-page) !important;
     background-image: none !important;
@@ -6331,7 +6335,7 @@ body.mmvp-locked { overflow: hidden !important; }
   html body :is(p, li, .text-slate-500, .text-slate-600, .text-slate-700,
     .text-slate-800, .text-slate-900, .mh-desc, .sv2-hero-desc, .abt-text,
     .rv-quote, .rv-sub, .pr-text, .tm-role, .tm-perk-text, .tm-founder-bio,
-    .rvx-card-text, .tk-box-hint, .tk-prev-note, .t3-desc) {
+    .rvx-card-text, .tk-box-hint, .tk-prev-note, .tk-founder-bio, .t3-desc) {
     color: var(--mm-copy) !important;
   }
   html body :is(small, .tk-counter, .rvx-rate-label, .rvx-form-note,
@@ -6356,13 +6360,46 @@ body.mmvp-locked { overflow: hidden !important; }
     color: var(--mm-ink) !important;
   }
 
-  /* A soft blue glass header and matching drawer, with the original layout. */
+  /* Preserve the original brand lockups while matching the reference's type elsewhere. */
+  html body :is(#header .brand-word, #header .brand-word *, #header .brand-tagline,
+    footer .footer-brand-word, footer .footer-brand-word *) {
+    font-family: 'MX Jakarta', 'Plus Jakarta Sans', Manrope, system-ui, sans-serif !important;
+  }
+
+  /* Turn the existing header container into the reference's floating glass pill. */
   html body #header.hdr-bar-wrap {
-    background: linear-gradient(110deg, rgba(230, 243, 255, .93), rgba(240, 249, 255, .9) 52%, rgba(231, 246, 255, .93)) !important;
-    border-bottom: 1px solid rgba(21, 89, 174, .16) !important;
-    box-shadow: 0 8px 30px rgba(33, 88, 151, .1) !important;
-    -webkit-backdrop-filter: blur(20px) saturate(155%) !important;
-    backdrop-filter: blur(20px) saturate(155%) !important;
+    background: transparent !important;
+    border-bottom-color: transparent !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  html body #header.hdr-bar-wrap > .container {
+    width: calc(100% - 32px) !important;
+    max-width: 1216px !important;
+    height: calc(100% - 20px) !important;
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+    background: linear-gradient(110deg, rgba(233, 245, 255, .92), rgba(255, 255, 255, .84) 52%, rgba(235, 247, 255, .92)) !important;
+    border: 1px solid rgba(255, 255, 255, .88) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 8px 32px rgba(17, 82, 223, .09) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+    backdrop-filter: blur(20px) saturate(140%) !important;
+  }
+  @media (max-width: 1023px) {
+    html body #header.hdr-bar-wrap > .container {
+      width: calc(100% - 20px) !important;
+      height: calc(100% - 8px) !important;
+      padding-left: 14px !important;
+      padding-right: 14px !important;
+      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+      backdrop-filter: blur(12px) saturate(140%) !important;
+    }
+    /* A closed drawer must sit above the now-transparent header. */
+    html body #mobile-menu-drawer[class~="-translate-y-full"] {
+      transform: translateY(calc(-100% - 54px)) !important;
+    }
   }
   html body #header .brand-word .brand-a { color: #0a2858 !important; }
   html body #header .brand-word .brand-b { color: #1152df !important; }
@@ -6377,24 +6414,25 @@ body.mmvp-locked { overflow: hidden !important; }
   }
   html body #header .hdr-bar { background: #0a3185 !important; }
   html body #header .hdr-burger:hover .hdr-bar { background: #1152df !important; }
-  html body #mobile-menu-backdrop { background: rgba(12, 37, 71, .32) !important; }
+  html body #mobile-menu-backdrop { background: rgba(15, 23, 42, .14) !important; }
   html body #mobile-menu-drawer {
-    background: linear-gradient(150deg, rgba(247, 251, 255, .98), rgba(234, 246, 255, .98)) !important;
-    border-color: rgba(21, 89, 174, .12) !important;
+    background: rgba(248, 252, 255, .96) !important;
+    border-color: rgba(255, 255, 255, .8) !important;
     box-shadow: 0 24px 48px rgba(30, 77, 137, .18) !important;
     -webkit-backdrop-filter: blur(20px) saturate(145%) !important;
     backdrop-filter: blur(20px) saturate(145%) !important;
   }
   html body .mm-nav .mm-item {
-    color: #183b66 !important;
-    background: rgba(231, 242, 255, .55) !important;
-    border-color: rgba(30, 100, 188, .12) !important;
+    color: #334155 !important;
+    background: rgba(255, 255, 255, .70) !important;
+    border-color: rgba(17, 82, 223, .1) !important;
+    border-radius: 16px !important;
     box-shadow: none !important;
   }
   html body .mm-nav .mm-item:is(:hover, :focus-visible, .is-active, .active) {
     color: var(--mm-accent) !important;
-    background: #e2efff !important;
-    border-color: rgba(17, 82, 223, .24) !important;
+    background: rgba(17, 82, 223, .08) !important;
+    border-color: rgba(17, 82, 223, .18) !important;
   }
   html body .mm-nav .mm-chev { color: #47709b !important; }
 
@@ -6402,20 +6440,22 @@ body.mmvp-locked { overflow: hidden !important; }
   html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
     .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit) {
     color: #fff !important;
-    background: linear-gradient(115deg, #1152df, #1c6bd5) !important;
-    border-color: rgba(17, 82, 223, .24) !important;
-    box-shadow: 0 8px 20px rgba(17, 82, 190, .19) !important;
+    background: rgba(17, 82, 223, .94) !important;
+    border-color: rgba(255, 255, 255, .4) !important;
+    border-radius: 9999px !important;
+    box-shadow: 0 4px 24px -4px rgba(17, 82, 223, .35) !important;
   }
   html body :is(.header-booking-button, .mm-booking-button, .glass-btn-primary,
     .sv-btn-primary, .wk-btn-primary, .rvx-btn-primary, .tk-submit):hover {
-    background: linear-gradient(115deg, #0d43bf, #155bc7) !important;
-    box-shadow: 0 11px 24px rgba(17, 82, 190, .25) !important;
+    background: #1152df !important;
+    box-shadow: 0 8px 32px -4px rgba(17, 82, 223, .4) !important;
   }
   html body :is(.glass-btn-secondary, .sv-btn-ghost, .wk-btn-ghost, .rvx-btn-ghost,
     .rvx-mini-btn) {
     color: #0a3185 !important;
     background: rgba(255, 255, 255, .72) !important;
     border: 1px solid rgba(17, 82, 190, .22) !important;
+    border-radius: 9999px !important;
     box-shadow: 0 6px 18px rgba(40, 92, 155, .08) !important;
   }
   html body :is(.glass-btn-secondary, .sv-btn-ghost, .wk-btn-ghost, .rvx-btn-ghost,
@@ -6425,43 +6465,58 @@ body.mmvp-locked { overflow: hidden !important; }
     outline-offset: 3px !important;
   }
 
-  /* Calm glass panels alternate with the stronger blue-gradient cards. */
-  html body :is(.apple-glass-card, .pr-card, .tm-card, .tm-perk, .review-card,
+  /* Reference-style white glass panels, with a subtle brand-blue edge. */
+  html body :is(.apple-glass-card, .svc-card, .ct-card, .pr-card, .tm-card, .tm-perk, .review-card,
     .rvx-card, .rvx-form-card, .sv2-card, .sp-pkg, .tk-box, .tk-prev,
     .tk-founder, .tk-done-box, .t3-card, .wk-rc) {
     background: var(--mm-glass) !important;
-    border: 1px solid rgba(26, 96, 183, .15) !important;
+    border: 1px solid rgba(17, 82, 223, .10) !important;
     box-shadow: var(--mm-shadow) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(135%) !important;
-    backdrop-filter: blur(16px) saturate(135%) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(20px) !important;
   }
-  html body :is(.pr-card, .tm-card, .tm-perk, .review-card, .rvx-card,
-    .sv2-card, .sp-pkg, .t3-card, .wk-rc):hover {
-    border-color: rgba(17, 82, 223, .26) !important;
+  html body :is(.svc-card, .ct-card, .pr-card, .tm-card, .tm-perk, .review-card,
+    .rvx-card, .rvx-form-card, .sv2-card, .sp-pkg:not(.is-hi), .tk-box, .tk-prev,
+    .tk-founder, .tk-done-box, .t3-card, .wk-rc) {
+    color: var(--mm-copy) !important;
+    border-radius: 24px !important;
+  }
+  html body :is(.svc-card, .review-card, .rvx-card, .tm-card, .t3-card) { border-radius: 28px !important; }
+  html body :is(.pr-card, .svc-card, .ct-card, .tm-card, .tm-perk, .review-card,
+    .rvx-card, .sv2-card, .sp-pkg, .t3-card, .wk-rc):hover {
+    border-color: rgba(17, 82, 223, .18) !important;
     box-shadow: var(--mm-shadow-hover) !important;
   }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join) {
+  html body :is(.svc-card, .ct-card) :is(h1, h2, h3, h4, h5, h6, b, strong) { color: var(--mm-ink) !important; }
+  html body :is(.svc-card, .ct-card) :is(p, li, span, small, label, div) { color: var(--mm-copy) !important; }
+
+  /* Preserve the existing featured blue-gradient panels and their white copy. */
+  html body :is(.sp-pkg.is-hi, .tk-sum, .t3-join) {
     color: #fff !important;
     background: var(--mm-card-gradient) !important;
     border: 1px solid rgba(255, 255, 255, .24) !important;
     box-shadow: 0 17px 36px rgba(17, 73, 164, .19), inset 0 1px 0 rgba(255, 255, 255, .18) !important;
   }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .t3-join):hover {
+  html body :is(.sp-pkg.is-hi, .t3-join):hover {
     border-color: rgba(255, 255, 255, .4) !important;
     box-shadow: 0 22px 42px rgba(17, 73, 164, .26), inset 0 1px 0 rgba(255, 255, 255, .23) !important;
   }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join)
+  html body :is(.sp-pkg.is-hi, .tk-sum, .t3-join)
     :is(h1, h2, h3, h4, h5, h6, b, strong) { color: #fff !important; text-shadow: none !important; }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum, .t3-join)
+  html body :is(.sp-pkg.is-hi, .tk-sum, .t3-join)
     :is(p, li, span, small, label, div) { color: #edf5ff !important; }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum) :is(i, svg) { color: #fff !important; }
+  html body :is(.sp-pkg.is-hi, .tk-sum) :is(i, svg) { color: #fff !important; }
   html body :is(.svc-icon, .ct-icon) {
-    color: #fff !important;
-    background: rgba(255, 255, 255, .14) !important;
-    border: 1px solid rgba(255, 255, 255, .27) !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14) !important;
+    color: #1152df !important;
+    background: rgba(17, 82, 223, .08) !important;
+    border: 1px solid rgba(255, 255, 255, .65) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .05) !important;
   }
-  html body :is(.svc-icon, .ct-icon) :is(i, svg) { color: #fff !important; }
+  html body :is(.svc-icon, .ct-icon) :is(i, svg) {
+    color: #1152df !important;
+    -webkit-text-fill-color: #1152df !important;
+  }
   html body :is(.sp-pkg.is-hi .sp-buy, .t3-join a) {
     color: #0a3185 !important;
     background: #fff !important;
@@ -6603,7 +6658,7 @@ body.mmvp-locked { overflow: hidden !important; }
   }
   html body #header .brand-word .brand-a { -webkit-text-fill-color: #0a2858 !important; }
   html body #header .brand-word .brand-b { -webkit-text-fill-color: #1152df !important; }
-  html body :is(.svc-card, .ct-card, .sp-pkg.is-hi, .tk-sum) :is(i, svg) {
+  html body :is(.sp-pkg.is-hi, .tk-sum) :is(i, svg) {
     -webkit-text-fill-color: #fff !important;
   }
   html body .sp-pkg.is-hi .sp-buy :is(i, svg) { -webkit-text-fill-color: #0a3185 !important; }
@@ -6695,6 +6750,12 @@ body.mmvp-locked { overflow: hidden !important; }
       filter: blur(50px) !important;
       opacity: .2 !important;
     }
+    html body :is(.svc-card, .ct-card, .pr-card, .tm-card, .tm-perk, .review-card,
+      .rvx-card, .rvx-form-card, .sv2-card, .sp-pkg:not(.is-hi), .tk-box, .tk-prev,
+      .tk-founder, .tk-done-box, .t3-card, .wk-rc) {
+      -webkit-backdrop-filter: blur(12px) !important;
+      backdrop-filter: blur(12px) !important;
+    }
   }
   @media (max-width: 640px) {
     html body :is(.svc-card, .ct-card, .pr-card, .rvx-card, .sv2-card, .sp-pkg,
@@ -6702,6 +6763,11 @@ body.mmvp-locked { overflow: hidden !important; }
   }
 }
 
+
+/* Reference-sized portfolio copy; the existing typography layer owns sizing. */
+@layer mx-typography {
+  body .wk-rc .info p { font-size: 14px !important; line-height: 1.625 !important; }
+}
 </style>
 </head>
 <body class="font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
