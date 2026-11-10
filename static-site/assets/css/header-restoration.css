@@ -1,0 +1,558 @@
+/* Consistent public-site header alignment across every page. */
+:is(html.dark, html) body #header.hdr-bar-wrap {
+  position: fixed !important;
+  inset: 0 0 auto !important;
+  z-index: 10001 !important;
+  width: 100% !important;
+  height: 64px !important;
+  min-height: 64px !important;
+  max-height: 64px !important;
+  box-sizing: border-box !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(164, 205, 252, 0.2) !important;
+  border-radius: 0 !important;
+  background: linear-gradient(110deg, rgba(7, 31, 67, 0.98) 0%, rgba(8, 49, 103, 0.97) 58%, rgba(5, 29, 65, 0.98) 100%) !important;
+  box-shadow: 0 8px 22px rgba(0, 9, 25, 0.28) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(135%) !important;
+  backdrop-filter: blur(14px) saturate(135%) !important;
+}
+
+#header > .container {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: clamp(0.75rem, 1.8vw, 1.5rem) !important;
+  width: 100% !important;
+  max-width: 1440px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin-inline: auto !important;
+  padding-inline: clamp(1rem, 4vw, 3.5rem) !important;
+  box-sizing: border-box !important;
+}
+
+#header > .container > .mm-brand-link {
+  grid-column: 1;
+  justify-self: start;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+  min-width: 0 !important;
+  flex: 0 1 auto !important;
+  overflow: visible !important;
+  isolation: auto !important;
+  text-decoration: none !important;
+}
+
+#header .mm-brand-link::after {
+  display: none !important;
+  content: none !important;
+}
+
+#header .brand-logo-badge {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 52px !important;
+  width: 52px !important;
+  height: 44px !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+#header .brand-logo-mark {
+  display: block !important;
+  width: 52px !important;
+  height: 44px !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
+}
+
+#header .brand-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 3px !important;
+  min-width: 0 !important;
+}
+
+#header .brand-word {
+  display: block !important;
+  white-space: nowrap !important;
+  font-size: clamp(18px, 1.45vw, 21px) !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.025em !important;
+}
+
+#header .brand-word .brand-a {
+  color: #f2f7ff !important;
+}
+
+#header .brand-word .brand-b {
+  color: #72aaff !important;
+}
+
+#header .brand-tagline {
+  display: block !important;
+  color: #bed7f7 !important;
+  font-size: 9px !important;
+  font-weight: 600 !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0.14em !important;
+  white-space: nowrap !important;
+}
+
+#header > .container > .nav-desk {
+  grid-column: 2;
+  justify-self: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: clamp(1rem, 2.25vw, 2rem) !important;
+  min-width: max-content;
+  height: 100%;
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+#header .nav-desk .nav-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 100%;
+  padding: 0.25rem 0.1rem !important;
+  color: #dceaff !important;
+  font-size: clamp(13px, 0.95vw, 14px) !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.005em !important;
+  white-space: nowrap !important;
+}
+
+#header .nav-desk .nav-link:hover,
+#header .nav-desk .nav-link.is-active {
+  color: #ffffff !important;
+}
+
+#header > .container > div {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+#header .lang-switch {
+  width: 96px !important;
+  height: 32px !important;
+  min-width: 96px !important;
+  box-sizing: border-box !important;
+  border: 1px solid rgba(154, 198, 246, 0.32) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+#header .lang-btn {
+  color: #d5e6fb !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+#header .lang-btn.is-active {
+  color: #ffffff !important;
+}
+
+#header .header-booking-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 36px;
+  padding: 0.55rem 1rem;
+  border: 1px solid rgba(104, 194, 255, 0.76);
+  border-radius: 999px;
+  background: linear-gradient(115deg, #168cff 0%, #0751d8 100%);
+  box-shadow: 0 5px 16px rgba(5, 93, 219, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+#header .header-booking-button svg {
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+}
+
+#header .header-booking-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  box-shadow: 0 7px 19px rgba(5, 93, 219, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+#header .header-booking-button:focus-visible {
+  outline: 2px solid #8bd8ff;
+  outline-offset: 3px;
+}
+
+@media (min-width: 1024px) and (max-width: 1199.98px) {
+  #header .header-booking-button {
+    gap: 0.35rem;
+    min-height: 34px;
+    padding-inline: 0.72rem;
+    font-size: 11px;
+  }
+}
+
+#header-menu-toggle {
+  display: none !important;
+}
+
+@media (max-width: 1023.98px) {
+  :is(html.dark, html) body #header.hdr-bar-wrap {
+    height: 54px !important;
+    min-height: 54px !important;
+    max-height: 54px !important;
+  }
+
+  #header > .container {
+    display: flex !important;
+    justify-content: space-between !important;
+    gap: 0.75rem !important;
+    padding-inline: clamp(0.9rem, 3vw, 1.5rem) !important;
+  }
+
+  #header > .container > div {
+    display: none !important;
+  }
+
+  #header + div[style*="height: 64px"] {
+    height: 54px !important;
+    min-height: 54px !important;
+  }
+
+  #header > .container > .mm-brand-link {
+    flex: 0 1 auto !important;
+    max-width: calc(100% - 54px);
+    gap: 0.55rem !important;
+  }
+
+  #header .brand-logo-badge {
+    flex-basis: 46px !important;
+    width: 46px !important;
+    height: 39px !important;
+  }
+
+  #header .brand-logo-mark {
+    width: 46px !important;
+    height: 39px !important;
+  }
+
+  #header .brand-word {
+    font-size: clamp(17px, 2.3vw, 20px) !important;
+  }
+
+  #header .brand-tagline {
+    font-size: 8px !important;
+    letter-spacing: 0.12em !important;
+  }
+
+  #header > .container > .nav-desk {
+    display: none !important;
+  }
+
+  #header-menu-toggle {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    height: 42px !important;
+    gap: 5px !important;
+    padding: 7px !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  #header-menu-toggle .hdr-bar {
+    display: block !important;
+    width: 24px !important;
+    height: 2.5px !important;
+    flex: 0 0 2.5px !important;
+    border-radius: 999px !important;
+    background: #f2f7ff !important;
+  }
+}
+
+@media (max-width: 600px) {
+  #header > .container {
+    padding-inline: 1rem !important;
+  }
+
+  #header .brand-logo-badge {
+    flex-basis: 43px !important;
+    width: 43px !important;
+    height: 37px !important;
+  }
+
+  #header .brand-logo-mark {
+    width: 43px !important;
+    height: 37px !important;
+  }
+
+  #header > .container > .mm-brand-link {
+    gap: 0.45rem !important;
+    max-width: calc(100% - 50px);
+  }
+
+  #header .brand-copy {
+    gap: 2px !important;
+  }
+
+  #header .brand-word {
+    font-size: clamp(16px, 4.7vw, 19px) !important;
+  }
+
+  #header .brand-tagline {
+    font-size: 7px !important;
+    letter-spacing: 0.1em !important;
+  }
+}
+
+@media (max-width: 360px) {
+  #header > .container {
+    padding-inline: 0.8rem !important;
+  }
+
+  #header .brand-logo-badge {
+    flex-basis: 39px !important;
+    width: 39px !important;
+  }
+
+  #header .brand-logo-mark {
+    width: 39px !important;
+  }
+
+  #header .brand-word {
+    font-size: 16px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #header .nav-desk .nav-link.is-active,
+  #header .nav-desk .nav-link[aria-current="page"],
+  #header .nav-desk .nav-link:hover,
+  #header .nav-desk .nav-link.is-nav-hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  #header .nav-desk .nav-ind {
+    top: auto !important;
+    bottom: 18px !important;
+    height: 2px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: linear-gradient(90deg, #55b8f3 0%, #1683ff 100%) !important;
+    box-shadow: 0 0 10px rgba(43, 148, 255, 0.3) !important;
+    transition: transform 0.34s cubic-bezier(0.4, 0, 0.2, 1), width 0.34s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.18s ease !important;
+  }
+
+  #header .nav-desk .nav-link {
+    transition: color 0.2s ease !important;
+  }
+}
+
+/* Larger desktop header scale based on the supplied homepage reference. */
+@media (min-width: 1360px) {
+  :is(html.dark, html) body #header.hdr-bar-wrap {
+    height: 96px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
+    background: linear-gradient(110deg, rgba(7, 29, 61, 0.98) 0%, rgba(7, 39, 79, 0.98) 58%, rgba(5, 25, 52, 0.99) 100%) !important;
+    border-bottom-color: rgba(164, 205, 252, 0.14) !important;
+    box-shadow: 0 4px 14px rgba(0, 9, 25, 0.2) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
+  }
+
+  #header > .container {
+    max-width: none !important;
+    padding-inline: clamp(1.5rem, 3.2vw, 3rem) !important;
+    gap: clamp(0.9rem, 1.4vw, 1.3rem) !important;
+  }
+
+  #header .brand-logo-badge,
+  #header .brand-logo-mark {
+    width: 66px !important;
+    height: 57px !important;
+  }
+
+  #header .brand-logo-badge {
+    flex-basis: 66px !important;
+  }
+
+  #header > .container > .mm-brand-link {
+    gap: 0.8rem !important;
+  }
+
+  #header .brand-copy {
+    gap: 5px !important;
+  }
+
+  #header .brand-word {
+    font-size: clamp(22px, 1.8vw, 27px) !important;
+  }
+
+  #header .brand-tagline {
+    font-size: 12px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  #header > .container > .nav-desk {
+    gap: clamp(1rem, 3.5vw, 3.25rem) !important;
+  }
+
+  #header .nav-desk .nav-link {
+    font-size: clamp(16px, 1.4vw, 21px) !important;
+  }
+
+  #header > .container > div {
+    gap: clamp(0.8rem, 1.35vw, 1.25rem) !important;
+  }
+
+  #header .lang-switch {
+    width: 136px !important;
+    min-width: 136px !important;
+    height: 50px !important;
+  }
+
+  #header .lang-btn {
+    font-size: 17px !important;
+  }
+
+  #header .header-booking-button {
+    min-height: 44px;
+    gap: 0.4rem;
+    padding: 0.62rem 1.2rem;
+    border-color: rgba(104, 194, 255, 0.52);
+    background: linear-gradient(115deg, #1479e6 0%, #0a54c7 100%);
+    box-shadow: 0 3px 10px rgba(5, 93, 219, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    font-size: clamp(14px, 1vw, 15px);
+  }
+
+  #header .header-booking-button svg {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
+  }
+
+  #header .header-booking-button:hover {
+    filter: brightness(1.03);
+    box-shadow: 0 4px 12px rgba(5, 93, 219, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  }
+
+  #header .nav-desk .nav-ind {
+    box-shadow: 0 0 6px rgba(43, 148, 255, 0.18) !important;
+  }
+}
+
+@media (min-width: 1024px) and (max-width: 1359.98px) {
+  :is(html.dark, html) body #header.hdr-bar-wrap {
+    height: 82px !important;
+    min-height: 82px !important;
+    max-height: 82px !important;
+  }
+
+  #header > .container {
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+    max-width: none !important;
+    gap: 0.8rem !important;
+    padding-inline: clamp(1rem, 2vw, 1.6rem) !important;
+  }
+
+  #header .brand-logo-badge,
+  #header .brand-logo-mark {
+    width: 50px !important;
+    height: 43px !important;
+  }
+
+  #header .brand-logo-badge {
+    flex-basis: 50px !important;
+  }
+
+  #header > .container > .mm-brand-link {
+    gap: 0.55rem !important;
+  }
+
+  #header .brand-word {
+    font-size: clamp(17px, 1.55vw, 21px) !important;
+  }
+
+  #header .brand-tagline {
+    font-size: 8px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  #header > .container > .nav-desk {
+    gap: clamp(0.55rem, 1.35vw, 1.1rem) !important;
+  }
+
+  #header .nav-desk .nav-link {
+    font-size: clamp(13px, 1.1vw, 15px) !important;
+  }
+
+  #header > .container > div {
+    gap: 0.55rem !important;
+  }
+
+  #header .lang-switch {
+    width: 82px !important;
+    min-width: 82px !important;
+    height: 30px !important;
+  }
+
+  #header .lang-btn {
+    font-size: 10px !important;
+  }
+
+  #header .header-booking-button {
+    min-height: 32px;
+    gap: 0.3rem;
+    padding: 0.4rem 0.55rem;
+    font-size: 10px;
+  }
+
+  #header .header-booking-button svg {
+    width: 12px;
+    height: 12px;
+    flex-basis: 12px;
+  }
+
+  #header + div + div[style*="height: 64px"] {
+    height: 82px !important;
+    min-height: 82px !important;
+  }
+}
+
+@media (min-width: 1360px) {
+  #header + div + div[style*="height: 64px"] {
+    height: 96px !important;
+    min-height: 96px !important;
+  }
+}

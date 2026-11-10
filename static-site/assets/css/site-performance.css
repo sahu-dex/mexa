@@ -1,0 +1,30 @@
+
+
+/* ============================================================================
+   PERFORMANCE — keep the existing paint, remove expensive live backdrop sampling
+   from scrolling content. Overlay drawers/modals keep their original blur.
+   ============================================================================ */
+:is(html.dark, html) body :is(.svc-card, .pf-card, .pr-card, .tm-card, .tm-perk,
+        .ct-card, .pg-card, .review-card, .rv-card, .rvw-card, .rvw-help, .sv-card,
+        .sv-vid, .sv-pkg, .sv-quote, .sp-service, .sp-sum-item, .sp-deliv, .sp-video,
+        .sv2-card, .wk-card, .wk-do-card, .wk-ong, .wk-chan, .t3-card, .rvx-card,
+        .tk-box, .tk-sum, .tk-prev, .cf-founder, .cf-contact, .cf-summary, .abt-float,
+        .yt-card, .apple-glass-card, .rvx-hero-media, .sv2-hero-video, .wk-thumb,
+        .rvx-photo-box, .adm-card, .card, .gate-box) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+:is(html.dark, html) body #header,
+:is(html.dark, html) body #header.hdr-bar-wrap,
+:is(html.dark, html) body .hdr-bar-wrap,
+:is(html.dark, html) body footer {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+/* Work cards / badges / language pill: static surfaces, no live backdrop sampling. */
+:is(html.dark, html) body :is(.wk-rc, .wk-rc-featured, .wk-rc-play, .wk-short-play,
+        .lang-switch, input.apple-glass-card):not(#mm-none) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+.showreel-modal:not(.is-open) .showreel-frame { will-change: auto; }
