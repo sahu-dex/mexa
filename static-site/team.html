@@ -6841,12 +6841,14 @@ body.mmvp-locked { overflow: hidden !important; }
   html body .mx-founder-card > .tm-founder-photo {
     width: 100% !important;
     min-width: 0 !important;
-    aspect-ratio: 16 / 9 !important;
+    aspect-ratio: 1 / 1 !important;
     border: 0 !important;
     border-radius: clamp(14px, 3vw, 28px) !important;
     overflow: hidden !important;
     box-shadow: none !important;
   }
+  /* Keep team member portraits square at every breakpoint. */
+  html body #team-page .t3-card .t3-media { aspect-ratio: 1 / 1 !important; }
   html body .mx-founder-card > :not(.tm-founder-photo) { min-width: 0 !important; }
   html body .mx-founder-card :is(.tm-founder-name, .tm-founder-role, .tm-founder-bio,
     .tm-perk-title, .tm-perk-text, .tm-perk-ic, .t3-block-label) {
