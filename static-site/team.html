@@ -6933,6 +6933,74 @@ body.mmvp-locked { overflow: hidden !important; }
 }
 
 </style>
+
+<style id="mm-subscribe-fix">
+/* ===================== NEWSLETTER / SUBSCRIBE — size, alignment, spacing, responsive ===================== */
+.newsletter-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    width: 100%;
+    margin: 0;
+}
+.newsletter-input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 9999px;
+    padding: 0.85rem 1.15rem;
+    font-size: 0.875rem;
+    line-height: 1.3;
+    color: #334155;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.newsletter-input::placeholder { color: #94A3B8; }
+.newsletter-input:focus {
+    outline: none;
+    border-color: rgba(16, 81, 223, 0.45) !important;
+    box-shadow: 0 0 0 3px rgba(16, 81, 223, 0.12);
+}
+.newsletter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    width: 100%;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: 9999px;
+    padding: 0.85rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform .2s ease, filter .2s ease;
+}
+.newsletter-btn:hover { filter: brightness(1.05); }
+.newsletter-btn:active { transform: scale(0.985); }
+html.dark .newsletter-input { color: #E8F0FF; }
+@media (min-width: 30rem) {
+    .newsletter-form { display: block; position: relative; }
+    .newsletter-input { padding: 0.85rem 7.75rem 0.85rem 1.25rem; }
+    .newsletter-btn {
+        position: absolute;
+        top: 50%;
+        right: 0.35rem;
+        transform: translateY(-50%);
+        width: auto;
+        height: calc(100% - 0.7rem);
+        padding: 0 1.6rem;
+    }
+    .newsletter-btn:active { transform: translateY(-50%) scale(0.97); }
+}
+@media (max-width: 29.98rem) {
+    .newsletter-btn { padding: 0.75rem 1.25rem; font-size: 0.84rem; }
+}
+</style>
 </head>
 <body class="font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
 
@@ -7134,11 +7202,9 @@ Editors, designers and motion artists work as one creative team. Each person bri
                     <div>
                         <h4 class="text-secondary font-bold mb-6">Newsletter</h4>
                         <p class="text-sm text-slate-500 mb-4">Subscribe to get the latest editing tips and special offers.</p>
-                        <form onsubmit="event.preventDefault(); showCustomMessage('Subscribed!');" class="relative">
-                            <input type="email" required placeholder="Your email address" class="w-full apple-glass-card rounded-full px-5 py-3.5 text-sm text-slate-700 focus:outline-none focus:border-primary/50 transition-colors">
-                            <button type="submit" class="absolute right-1.5 top-1.5 bottom-1.5 glass-btn-primary px-5 rounded-full text-sm font-medium">
-                                Subscribe
-                            </button>
+                        <form id="newsletter-form" onsubmit="event.preventDefault(); if (window.handleNewsletterSubscribe) { window.handleNewsletterSubscribe(this); }" class="newsletter-form">
+                            <input type="email" required placeholder="Your email address" aria-label="Your email address" class="newsletter-input apple-glass-card">
+                            <button type="submit" class="newsletter-btn glass-btn-primary">Subscribe</button>
                         </form>
                     </div>
                 </div>
@@ -7386,14 +7452,22 @@ Editors, designers and motion artists work as one creative team. Each person bri
                     icon.classList.toggle('rotate-45');
                 });
             });
-            const newsletterForm = document.querySelector('footer form');
-            if (newsletterForm) {
-                newsletterForm.addEventListener('submit', (e)=>{
-                    e.preventDefault();
-                    showCustomMessage('Subscribed! Thank you.');
-                    newsletterForm.reset();
-                });
-            }
+            window.handleNewsletterSubscribe = function (form) {
+                try {
+                    var input = form.querySelector('input[type="email"]');
+                    var value = input ? String(input.value || '').trim() : '';
+                    var valid = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value);
+                    if (!valid) {
+                        if (window.showCustomMessage) window.showCustomMessage('Please enter a valid email address.');
+                        if (input) input.focus();
+                        return;
+                    }
+                    if (window.showCustomMessage) window.showCustomMessage('Subscribed! Thank you.');
+                    form.reset();
+                } catch (err) {
+                    if (window.showCustomMessage) window.showCustomMessage('Subscribed! Thank you.');
+                }
+            };
         });
         window.showCustomMessage = function(text) {
             const msgBox = document.getElementById('custom-msg-box');
