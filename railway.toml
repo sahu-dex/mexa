@@ -1,0 +1,10 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+startCommand = "/usr/local/bin/docker-entrypoint.sh"
+healthcheckPath = "/api/health.php"
+healthcheckTimeout = 100
+restartPolicyType = "onFailure"
+restartPolicyMaxRetries = 10

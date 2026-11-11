@@ -1,0 +1,9 @@
+# Fallback for Nixpacks (if Dockerfile not used)
+[phases.setup]
+nixPkgs = ["php82", "php82Packages.composer", "apacheHttpd"]
+
+[phases.install]
+cmds = ["mkdir -p storage/logs storage/ratelimits uploads/images uploads/videos && chmod -R 755 storage uploads"]
+
+[start]
+cmd = "bash docker-entrypoint.sh"
