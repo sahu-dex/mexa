@@ -6951,6 +6951,32 @@ body.mmvp-locked { overflow: hidden !important; }
     html body #t3-founder.mx-founder-card .tm-founder-name { font-size: clamp(1.6rem, 2.5vw, 2.15rem) !important; }
     html body #t3-founder.mx-founder-card .tm-founder-role { font-size: .78rem !important; letter-spacing: .12em !important; text-transform: uppercase !important; }
     html body #t3-founder.mx-founder-card .tm-founder-bio { font-size: 1.02rem !important; line-height: 1.6 !important; }
+    /* Keep the two experience/certification boxes compact and even. */
+    html body #t3-founder.mx-founder-card .t3-founder-info > .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: clamp(10px, 1.4vw, 16px) !important;
+      margin-top: clamp(14px, 2vw, 22px) !important;
+    }
+    html body #t3-founder.mx-founder-card .tm-perk {
+      padding: 12px 14px !important;
+      gap: 12px !important;
+      border-radius: 16px !important;
+      align-items: center !important;
+      min-width: 0 !important;
+    }
+    html body #t3-founder.mx-founder-card .tm-perk-title { font-size: .74rem !important; letter-spacing: .05em !important; }
+    html body #t3-founder.mx-founder-card .tm-perk-text { font-size: .8rem !important; margin-top: 2px !important; }
+    html body #t3-founder.mx-founder-card .tm-perk-ic {
+      width: 34px !important; height: 34px !important;
+      flex: 0 0 34px !important; font-size: 15px !important;
+    }
+    html body #t3-founder.mx-founder-card .t3-block-label { font-size: .68rem !important; }
+    html body #t3-founder.mx-founder-card .t3-chips { gap: 6px !important; }
+    html body #t3-founder.mx-founder-card .t3-chips li {
+      font-size: .72rem !important;
+      padding: 5px 12px !important;
+      white-space: nowrap !important;
+    }
   }
 }
 
