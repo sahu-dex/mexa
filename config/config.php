@@ -104,20 +104,7 @@ function env_val(string $key, mixed $default = null): mixed
 define('APP_ENV', strtolower((string) env_val('APP_ENV', 'production')));
 define('APP_DEBUG', APP_ENV === 'development');
 define('APP_NAME', (string) env_val('APP_NAME', 'Mexa Motion'));
-// Railway: if APP_URL not set, auto-detect from request headers (X-Forwarded-Proto/Host)
-$_autoAppUrl = (string) env_val('APP_URL', '');
-if ($_autoAppUrl === '' && PHP_SAPI !== 'cli' && isset($_SERVER['HTTP_HOST'])) {
-    $proto = 'https';
-    if (!empty($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
-        $proto = strtolower((string) $_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https' ? 'https' : 'http';
-    } elseif (!empty($_SERVER['REQUEST_SCHEME'])) {
-        $proto = (string) $_SERVER['REQUEST_SCHEME'];
-    } elseif (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
-        $proto = 'https';
-    }
-    $_autoAppUrl = $proto . '://' . $_SERVER['HTTP_HOST'];
-}
-define('APP_URL', rtrim($_autoAppUrl, '/'));
+define('APP_URL', rtrim((string) env_val('APP_URL', ''), '/'));
 define('APP_TIMEZONE', (string) env_val('APP_TIMEZONE', 'Asia/Dhaka'));
 
 define('MAIL_FROM', (string) env_val('MAIL_FROM', 'noreply@example.com'));

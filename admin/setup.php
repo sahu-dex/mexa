@@ -3,6 +3,10 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/functions.php';
 send_security_headers();
+// Start the session before any HTML is sent. csrf_field() below is called in the
+// middle of the page; on hosts where PHP output_buffering is off the session cookie
+// could no longer be set by then, and every submit failed with "Invalid CSRF token."
+start_secure_session();
 
 if (admins_count() > 0) {
     header('Location: login.php');

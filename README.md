@@ -121,30 +121,16 @@ No administrator password is stored anywhere in the source code or seed files.
 
 ---
 
-## 6. Deploying to cPanel / Shared Hosting (Teacher Final Check)
+## 6. Deploying to cPanel / Shared Hosting
 
-> **Teacher cPanel-এ দেখবেন — Railway শুধু preview.** Full step-by-step Bengali guide: [`CPANEL_DEPLOY_BN.md`](CPANEL_DEPLOY_BN.md)
-
-1. Upload all project files to `public_html/` (or a subdomain document root). Hidden files (`.htaccess`, `config/.htaccess`, `includes/.htaccess`, `pages/.htaccess`, `database/.htaccess`, `storage/.htaccess`, `uploads/.htaccess`) must be included — enable **Show Hidden Files** in File Manager.
-2. In **cPanel → MySQL® Databases**, create database `cpaneluser_mexa` + user `cpaneluser_mexa_app` → grant **ALL PRIVILEGES**.
-3. In **phpMyAdmin**, select the DB → **Import** `database/schema.sql` then `database/seed.sql` (8 tables).
-4. In File Manager, copy `.env.example` → `.env` in `public_html/` and fill `APP_URL`, `DB_HOST=localhost`, `DB_NAME`, `DB_USER`, `DB_PASS` (see `.env.example` for Railway vs cPanel styles).
-5. Set permissions: `storage/`, `uploads/images/`, `uploads/videos/`, `storage/ratelimits/`, `storage/logs/` → `755`; `.env`, `config/*.php` → `640` / `600`.
-6. cPanel → **Select PHP Version** → choose **PHP 8.1+** with `pdo_mysql`, `mbstring`, `fileinfo`, `gd`, `curl`.
-7. Visit `https://yourdomain.com/admin/setup.php` to create the first admin (auto-locks after).
-8. Verify: `https://yourdomain.com/api/health.php` → `{"db":"connected"}` and `admin/diagnostics.php` (after login) shows all green.
-
-**Railway preview vs cPanel production:** Same codebase. `Dockerfile`/`railway.json` are ignored on cPanel. `config/db.php` auto-falls back: `DB_HOST` (cPanel) → `MYSQLHOST`/`DATABASE_URL` (Railway). See also: [`RAILWAY_DEPLOY.md`](RAILWAY_DEPLOY.md).
-
-### Quick cPanel Troubleshooting
-
-| Symptom | Fix |
-|---|---|
-| `Service temporarily unavailable` | `.env` missing or `DB_NAME/DB_USER` empty — check File Manager `public_html/.env` |
-| `Database connection failed` | Wrong `DB_HOST/DB_PASS` or missing privileges — reset in MySQL® Databases |
-| `500` | PHP < 8.0 or missing `mod_rewrite` — select PHP 8.1+ |
-| CSS 404 | `assets/` not uploaded — re-upload with hidden files |
-| `403` on `/.env` not shown | `.htaccess` not active — ask host for `AllowOverride All` |
+1. Upload all project files to `public_html/` (or a subdomain document root).
+2. Ensure hidden files (`.htaccess`, `config/.htaccess`, `includes/.htaccess`, `pages/.htaccess`, `database/.htaccess`, `storage/.htaccess`, `uploads/.htaccess`) are uploaded.
+3. In **cPanel -> MySQL Databases**, create a database and user, grant `ALL PRIVILEGES`, and import `database/schema.sql` followed by `database/seed.sql` in **phpMyAdmin**.
+4. Create `public_html/.env` from `.env.example` with `APP_ENV=production` and `SESSION_COOKIE_SECURE=1`.
+5. Verify directory permissions:
+   - Directories (`uploads/images`, `uploads/videos`, `storage/ratelimits`, `storage/logs`): `755`
+   - `.env` and `config/*.php`: `640` or `600`
+6. Visit `https://yourdomain.com/admin/setup.php` immediately to register your owner admin account.
 
 ### Nginx Equivalent Block (if using Nginx instead of Apache)
 
