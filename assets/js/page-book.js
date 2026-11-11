@@ -174,43 +174,6 @@
         }
     }
 
-    function renderFounder() {
-        var mount = el('tk-founder');
-        if (!mount) return;
-        var founder = null;
-        (SNAP['team'] && SNAP['team'].members || []).forEach(function (m) {
-            if (m && (m.is_founder || /founder/i.test(m.role || ''))) founder = founder || m;
-        });
-        var contact = SNAP['contact'] || {};
-        var name = (founder && founder.name) || contact.founder_name || 'Founder';
-        var role = (founder && founder.role) || contact.founder_role || 'Mexa Motion';
-        var bio = contact.founder_bio || (founder && founder.bio) || '';
-        var photo = (founder && (founder.file_path || founder.photo_url)) || '';
-        var wa = digits((founder && founder.whatsapp) || contact.whatsapp_number || '');
-        var tg = (founder && founder.telegram) || contact.telegram_url || '';
-        var mail = (founder && founder.email) || contact.email || '';
-        var fb = contact.facebook_url || '';
-
-        var links = [];
-        if (wa) links.push('<a class="tk-link is-wa" href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>');
-        if (tg) links.push('<a class="tk-link is-tg" href="' + esc(tg) + '" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>');
-        if (fb) links.push('<a class="tk-link" href="' + esc(fb) + '" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
-        if (mail && mail.indexOf('your-domain.com') === -1 && mail.indexOf('example.com') === -1) {
-            links.push('<a class="tk-link is-mail" href="mailto:' + esc(mail) + '"><i class="fa-solid fa-envelope"></i> Email</a>');
-        }
-
-        mount.innerHTML =
-            '<div class="tk-founder-photo">' +
-                (photo ? '<img src="' + esc(photo) + '" alt="' + esc(name) + '" loading="lazy" decoding="async">' : '<i class="fa-solid fa-user-tie"></i>') +
-            '</div>' +
-            '<div>' +
-                '<h2 class="tk-founder-name">' + esc(name) + '</h2>' +
-                '<p class="tk-founder-role">' + esc(role) + '</p>' +
-                (bio ? '<p class="tk-founder-bio">' + esc(bio) + '</p>' : '') +
-                '<div class="tk-links">' + (links.join('') || '<span class="tk-founder-bio">Contact details will appear here once they are added.</span>') + '</div>' +
-            '</div>';
-    }
-
     document.addEventListener('change', function (e) {
         if (!e.target) return;
         if (e.target.id === 'tk-service') {
@@ -270,7 +233,6 @@
         }
         renderForm();
         refreshAll();
-        renderFounder();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

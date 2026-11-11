@@ -44,10 +44,9 @@ $contactEmail = setting_raw('contact_email', '');
 $emailHref = ($contactEmail !== '' && !str_contains($contactEmail, '@your-domain.com') && !str_contains($contactEmail, '@example.com'))
     ? 'mailto:' . $contactEmail
     : 'book.php';
-$waDigits = preg_replace('/[^\d]/', '', setting_raw('whatsapp_number', ''));
-$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : 'book.php';
-$tgRaw = setting_raw('telegram_url', '');
-$tgHref = $tgRaw !== '' ? $tgRaw : 'book.php';
+$contactLinks = contact_links();
+$waHref = $contactLinks['whatsapp'];
+$tgHref = $contactLinks['telegram'];
 
 include dirname(__DIR__) . '/includes/header.php';
 ?>

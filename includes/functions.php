@@ -260,6 +260,41 @@ function setting_raw(string $key, string $default = ''): string
     return array_key_exists($key, $all) ? $all[$key] : $default;
 }
 
+/**
+ * Resolved founder contact links used by the footer, the home contact cards and
+ * the booking page. Admin settings win; the studio defaults below keep the
+ * buttons working on a fresh install.
+ */
+function contact_links(): array
+{
+    $telegram = trim(setting_raw('social_telegram', '') ?: setting_raw('telegram_url', ''));
+    if ($telegram === '') {
+        $telegram = 'https://t.me/Osman_Graphice';
+    }
+
+    $whatsappRaw = trim(setting_raw('social_whatsapp', '') ?: setting_raw('whatsapp_number', ''));
+    if (preg_match('#^https?://#i', $whatsappRaw) === 1) {
+        $whatsapp = $whatsappRaw;
+    } else {
+        $digits = preg_replace('/[^\d]/', '', $whatsappRaw) ?? '';
+        if ($digits === '') {
+            $digits = '8801575715571';
+        }
+        $whatsapp = 'https://wa.me/' . $digits;
+    }
+
+    $facebook = trim(setting_raw('social_facebook', ''));
+    if ($facebook === '') {
+        $facebook = 'https://www.facebook.com/mexamotion';
+    }
+
+    return [
+        'telegram' => $telegram,
+        'whatsapp' => $whatsapp,
+        'facebook' => $facebook,
+    ];
+}
+
 function save_setting(string $key, string $value, string $group = 'general'): void
 {
     $stmt = db()->prepare(
@@ -864,5 +899,10 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-subscribe-fix.css',
         ],
     ];
-    return array_merge($map[$pageKey] ?? $map['home'], ['assets/css/plus-jakarta-font.css', 'assets/css/premium-design-system.css']);
+    $stylesheets = array_merge($map[$pageKey] ?? $map['home'], ['assets/css/plus-jakarta-font.css', 'assets/css/premium-design-system.css']);
+    if ($pageKey === 'book') {
+        // Loaded last so the unified booking card can refine the premium theme.
+        $stylesheets[] = 'assets/css/book-unified-card.css';
+    }
+    return $stylesheets;
 }

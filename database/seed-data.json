@@ -102,17 +102,17 @@
     },
     {
       "key": "social_facebook",
-      "value": "",
+      "value": "https://www.facebook.com/mexamotion",
       "group": "social"
     },
     {
       "key": "social_telegram",
-      "value": "",
+      "value": "https://t.me/Osman_Graphice",
       "group": "social"
     },
     {
       "key": "social_whatsapp",
-      "value": "",
+      "value": "https://wa.me/8801575715571",
       "group": "social"
     },
     {
@@ -627,12 +627,12 @@
     },
     {
       "key": "contact_whatsapp",
-      "value": "https://wa.me/8801700000000",
+      "value": "https://wa.me/8801575715571",
       "group": "contact"
     },
     {
       "key": "contact_telegram",
-      "value": "https://t.me/mexamotion",
+      "value": "https://t.me/Osman_Graphice",
       "group": "contact"
     },
     {

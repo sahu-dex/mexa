@@ -27,9 +27,9 @@ INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES 
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('founder_role', 'Founder & Lead Mentor', 'contact');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('founder_bio', 'Founder of Mexa Motion — a creative content studio helping creators and brands turn raw footage into visuals that perform.', 'contact');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('welcome_message', 'Thanks for choosing a package. Send me the details of your project and I will personally confirm the timeline before we start.', 'contact');
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_facebook', '', 'social');
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_telegram', '', 'social');
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_whatsapp', '', 'social');
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_facebook', 'https://www.facebook.com/mexamotion', 'social');
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_telegram', 'https://t.me/Osman_Graphice', 'social');
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_whatsapp', 'https://wa.me/8801575715571', 'social');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_youtube', '', 'social');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_instagram', '', 'social');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('social_tiktok', '', 'social');
@@ -132,8 +132,8 @@ INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES 
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('about_photo_3_file_path', 'assets/about/color-grading.jpg', 'about');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_heading', 'Let’s Work Together', 'contact');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_sub', 'Have a project in mind? Send us a message and let’s create something amazing.', 'contact');
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_whatsapp', 'https://wa.me/8801700000000', 'contact');
-INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_telegram', 'https://t.me/mexamotion', 'contact');
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_whatsapp', 'https://wa.me/8801575715571', 'contact');
+INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('contact_telegram', 'https://t.me/Osman_Graphice', 'contact');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('footer_bio', 'Elevating brands through premium video editing and motion graphics. Your vision, expertly crafted.', 'footer');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('newsletter_blurb', 'Subscribe to get the latest editing tips and special offers.', 'newsletter');
 INSERT INTO `settings` (`setting_key`, `setting_value`, `setting_group`) VALUES ('copyright_text', '© 2026 Mexa Motion. All rights reserved.', 'copyright');

@@ -16,10 +16,10 @@ $footerCopy = setting('footer_copyright', '© 2026 Mexa Motion. All rights reser
 $newsHeading = setting('newsletter_heading', 'Newsletter');
 $newsText = setting('newsletter_text', 'Subscribe to get the latest editing tips and special offers.');
 
-$fbUrl = setting_raw('social_facebook', '');
-$tgUrl = setting_raw('social_telegram', '') ?: setting_raw('telegram_url', '');
-$waRaw = preg_replace('/[^\d]/', '', setting_raw('social_whatsapp', '') ?: setting_raw('whatsapp_number', ''));
-$waUrl = $waRaw !== '' ? 'https://wa.me/' . $waRaw : '';
+$contactLinks = contact_links();
+$fbUrl = $contactLinks['facebook'];
+$tgUrl = $contactLinks['telegram'];
+$waUrl = $contactLinks['whatsapp'];
 $ytUrl = setting_raw('social_youtube', '');
 
 $footerServices = db()->query('SELECT `id`, `name` FROM `services` WHERE `is_active` = 1 ORDER BY `sort_order` ASC, `id` ASC LIMIT 5')->fetchAll();

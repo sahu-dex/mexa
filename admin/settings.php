@@ -118,6 +118,14 @@ $s = settings();
                     <input class="adm-input" type="text" name="settings[social_facebook]" value="<?= e($s['social_facebook'] ?? '') ?>">
                 </div>
                 <div class="adm-field">
+                    <label>Telegram URL</label>
+                    <input class="adm-input" type="text" name="settings[social_telegram]" placeholder="https://t.me/username" value="<?= e($s['social_telegram'] ?? '') ?>">
+                </div>
+                <div class="adm-field">
+                    <label>WhatsApp URL or Number</label>
+                    <input class="adm-input" type="text" name="settings[social_whatsapp]" placeholder="https://wa.me/8801XXXXXXXXX" value="<?= e($s['social_whatsapp'] ?? '') ?>">
+                </div>
+                <div class="adm-field">
                     <label>Instagram URL</label>
                     <input class="adm-input" type="text" name="settings[social_instagram]" value="<?= e($s['social_instagram'] ?? '') ?>">
                 </div>
