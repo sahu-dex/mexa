@@ -1,0 +1,25 @@
+Options -Indexes
+
+<FilesMatch "^(\.env(\..*)?|\.git.*|\.htaccess|composer\.(json|lock)|package(-lock)?\.json|README\.md|.*\.sql|.*\.log)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(config|includes|database|storage)(/|$) - [F,L]
+    RewriteRule ^(index|service|work|review|team|book)\.html$ $1.php [R=301,L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+DirectoryIndex index.php

@@ -1,0 +1,2417 @@
+{
+  "settings": [
+    {
+      "key": "site_name",
+      "value": "Mexa Motion",
+      "group": "site"
+    },
+    {
+      "key": "brand_tagline",
+      "value": "Video Editing Agency",
+      "group": "general"
+    },
+    {
+      "key": "meta_title",
+      "value": "Mexa Motion | Professional Video Editing Agency",
+      "group": "seo"
+    },
+    {
+      "key": "meta_description",
+      "value": "Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.",
+      "group": "seo"
+    },
+    {
+      "key": "favicon_file_path",
+      "value": "assets/images/favicon.png",
+      "group": "general"
+    },
+    {
+      "key": "footer_logo_file_path",
+      "value": "assets/images/footer-logo.png",
+      "group": "general"
+    },
+    {
+      "key": "footer_description",
+      "value": "Elevating brands through premium video editing and motion graphics. Your vision, expertly crafted.",
+      "group": "general"
+    },
+    {
+      "key": "footer_copyright",
+      "value": "© 2026 Mexa Motion. All rights reserved.",
+      "group": "general"
+    },
+    {
+      "key": "newsletter_heading",
+      "value": "Newsletter",
+      "group": "general"
+    },
+    {
+      "key": "newsletter_text",
+      "value": "Subscribe to get the latest editing tips and special offers.",
+      "group": "general"
+    },
+    {
+      "key": "notification_email",
+      "value": "admin@your-domain.com",
+      "group": "contact"
+    },
+    {
+      "key": "contact_email",
+      "value": "hello@mexamotion.com",
+      "group": "contact"
+    },
+    {
+      "key": "whatsapp_number",
+      "value": "",
+      "group": "contact"
+    },
+    {
+      "key": "telegram_url",
+      "value": "",
+      "group": "contact"
+    },
+    {
+      "key": "call_number",
+      "value": "",
+      "group": "contact"
+    },
+    {
+      "key": "contact_address",
+      "value": "",
+      "group": "contact"
+    },
+    {
+      "key": "founder_name",
+      "value": "Rowshan Taieen",
+      "group": "contact"
+    },
+    {
+      "key": "founder_role",
+      "value": "Founder & Lead Mentor",
+      "group": "contact"
+    },
+    {
+      "key": "founder_bio",
+      "value": "Founder of Mexa Motion — a creative content studio helping creators and brands turn raw footage into visuals that perform.",
+      "group": "contact"
+    },
+    {
+      "key": "welcome_message",
+      "value": "Thanks for choosing a package. Send me the details of your project and I will personally confirm the timeline before we start.",
+      "group": "contact"
+    },
+    {
+      "key": "social_facebook",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "social_telegram",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "social_whatsapp",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "social_youtube",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "social_instagram",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "social_tiktok",
+      "value": "",
+      "group": "social"
+    },
+    {
+      "key": "hero_line_1",
+      "value": "WE CREATE\nVISUALS",
+      "group": "hero"
+    },
+    {
+      "key": "hero_line_2",
+      "value": "THAT GROW YOUR BRAND",
+      "group": "hero"
+    },
+    {
+      "key": "hero_description",
+      "value": "MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.",
+      "group": "home"
+    },
+    {
+      "key": "hero_character_file_path",
+      "value": "assets/images/hero-character.webp",
+      "group": "home"
+    },
+    {
+      "key": "hero_btn_primary_text",
+      "value": "Our Services",
+      "group": "home"
+    },
+    {
+      "key": "hero_btn_secondary_text",
+      "value": "Booking Now",
+      "group": "home"
+    },
+    {
+      "key": "showreel_video_url",
+      "value": "",
+      "group": "home"
+    },
+    {
+      "key": "stat_1_number",
+      "value": "500",
+      "group": "home"
+    },
+    {
+      "key": "stat_1_label",
+      "value": "Happy Clients",
+      "group": "stat"
+    },
+    {
+      "key": "stat_2_number",
+      "value": "1500",
+      "group": "home"
+    },
+    {
+      "key": "stat_2_label",
+      "value": "Videos Edited",
+      "group": "stat"
+    },
+    {
+      "key": "stat_3_number",
+      "value": "5",
+      "group": "home"
+    },
+    {
+      "key": "stat_3_label",
+      "value": "Years Exp.",
+      "group": "stat"
+    },
+    {
+      "key": "stat_4_number",
+      "value": "20",
+      "group": "home"
+    },
+    {
+      "key": "stat_4_label",
+      "value": "Countries",
+      "group": "stat"
+    },
+    {
+      "key": "home_services_title_1",
+      "value": "Premium Video Editing",
+      "group": "home"
+    },
+    {
+      "key": "home_services_title_2",
+      "value": "Solutions",
+      "group": "home"
+    },
+    {
+      "key": "home_services_subtitle",
+      "value": "We offer a wide range of specialized post-production services tailored to meet the specific needs of modern creators and brands.",
+      "group": "home"
+    },
+    {
+      "key": "home_portfolio_title_1",
+      "value": "Explore Our Recent ",
+      "group": "home"
+    },
+    {
+      "key": "home_portfolio_title_2",
+      "value": "Work & Video Demos",
+      "group": "home"
+    },
+    {
+      "key": "home_portfolio_subtitle",
+      "value": "See real examples of our video editing projects and the quality we deliver. Watch our work and get an idea of what we can create for you.",
+      "group": "home"
+    },
+    {
+      "key": "process_kicker",
+      "value": "How It Works",
+      "group": "process"
+    },
+    {
+      "key": "process_title",
+      "value": "Simple & Transparent Process",
+      "group": "home"
+    },
+    {
+      "key": "process_subtitle",
+      "value": "Four simple steps from raw footage to a publish-ready video.",
+      "group": "home"
+    },
+    {
+      "key": "process_1_title",
+      "value": "Submit Footage",
+      "group": "process"
+    },
+    {
+      "key": "process_1_text",
+      "value": "Upload your raw files via our secure client portal and provide your creative brief.",
+      "group": "process"
+    },
+    {
+      "key": "process_2_title",
+      "value": "Creative Editing",
+      "group": "process"
+    },
+    {
+      "key": "process_2_text",
+      "value": "Our expert team cuts, grades, and adds motion graphics to bring your vision to life.",
+      "group": "process"
+    },
+    {
+      "key": "process_3_title",
+      "value": "Review & Refine",
+      "group": "process"
+    },
+    {
+      "key": "process_3_text",
+      "value": "We send you a draft. You can leave frame-accurate comments for any revisions.",
+      "group": "process"
+    },
+    {
+      "key": "process_4_title",
+      "value": "Final Delivery",
+      "group": "process"
+    },
+    {
+      "key": "process_4_text",
+      "value": "Receive your polished, high-resolution video ready to be published and go viral.",
+      "group": "process"
+    },
+    {
+      "key": "home_reviews_title",
+      "value": "What Our Clients Say",
+      "group": "home"
+    },
+    {
+      "key": "home_reviews_subtitle",
+      "value": "What creators, brands and agencies value most about working with Mexa Motion.",
+      "group": "home"
+    },
+    {
+      "key": "home_team_subtitle",
+      "value": "A passionate team working together to provide the best service for you.",
+      "group": "home"
+    },
+    {
+      "key": "founder_perk_1_title",
+      "value": "6+ Years Exp.",
+      "group": "home"
+    },
+    {
+      "key": "founder_perk_1_text",
+      "value": "Industry Veteran",
+      "group": "home"
+    },
+    {
+      "key": "founder_perk_2_title",
+      "value": "Certified Pro",
+      "group": "home"
+    },
+    {
+      "key": "founder_perk_2_text",
+      "value": "Adobe Workflow Expert",
+      "group": "home"
+    },
+    {
+      "key": "about_title_1",
+      "value": "About",
+      "group": "home"
+    },
+    {
+      "key": "about_title_2",
+      "value": "Mexa Motion",
+      "group": "home"
+    },
+    {
+      "key": "about_heading",
+      "value": "Real people, real timelines, real results",
+      "group": "about"
+    },
+    {
+      "key": "about_paragraph_1",
+      "value": "Our team of professional video editors and motion designers creates high-quality content for YouTubers, businesses, agencies and brands.",
+      "group": "about"
+    },
+    {
+      "key": "about_paragraph_2",
+      "value": "From engaging social media content to cinematic commercials, we focus on videos that capture attention and drive results.",
+      "group": "about"
+    },
+    {
+      "key": "about_rating_badge",
+      "value": "4.9/5 Client Rating",
+      "group": "about"
+    },
+    {
+      "key": "about_image_1_file_path",
+      "value": "assets/about/editing-suite.jpg",
+      "group": "home"
+    },
+    {
+      "key": "about_image_2_file_path",
+      "value": "assets/about/motion-graphics.jpg",
+      "group": "home"
+    },
+    {
+      "key": "about_image_3_file_path",
+      "value": "assets/about/color-grading.jpg",
+      "group": "home"
+    },
+    {
+      "key": "home_contact_title",
+      "value": "Let’s Work Together",
+      "group": "home"
+    },
+    {
+      "key": "home_contact_subtitle",
+      "value": "Have a project in mind? Send us a message and let’s create something amazing.",
+      "group": "home"
+    },
+    {
+      "key": "home_section_hero",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_stats",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_services",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_work",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_process",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_reviews",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_team",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_about",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "home_section_contact",
+      "value": "1",
+      "group": "sections"
+    },
+    {
+      "key": "services_heading",
+      "value": "Our Services",
+      "group": "services"
+    },
+    {
+      "key": "services_intro",
+      "value": "Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.",
+      "group": "pages"
+    },
+    {
+      "key": "show_services",
+      "value": "1",
+      "group": "pages"
+    },
+    {
+      "key": "show_packages",
+      "value": "1",
+      "group": "pages"
+    },
+    {
+      "key": "show_overview",
+      "value": "1",
+      "group": "pages"
+    },
+    {
+      "key": "overview_video_file_path",
+      "value": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+      "group": "pages"
+    },
+    {
+      "key": "overview_poster_file_path",
+      "value": "https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "group": "pages"
+    },
+    {
+      "key": "overview_video_embed_type",
+      "value": "video",
+      "group": "pages"
+    },
+    {
+      "key": "overview_video_provider",
+      "value": "media.w3.org",
+      "group": "pages"
+    },
+    {
+      "key": "review_heading",
+      "value": "Client Review",
+      "group": "review"
+    },
+    {
+      "key": "review_hero_file_path",
+      "value": "assets/images/review-hero.jpg",
+      "group": "review"
+    },
+    {
+      "key": "review_hero_desc",
+      "value": "Honest feedback from creators, shops and brands we edit for. Every review below is read and published by our team — nothing is auto-posted.",
+      "group": "review"
+    },
+    {
+      "key": "team_heading",
+      "value": "Our Team",
+      "group": "team"
+    },
+    {
+      "key": "team_intro",
+      "value": "A small studio of editors, designers and motion artists. Every project is handled by the person who will actually cut it — no account managers in between. Below is the founder and the team you will be working with.",
+      "group": "team"
+    },
+    {
+      "key": "book_heading",
+      "value": "Book your ticket",
+      "group": "pages"
+    },
+    {
+      "key": "book_lead",
+      "value": "Your selected service and package are already loaded. Add your project details and the ticket goes straight to the founder with status Pending.",
+      "group": "pages"
+    },
+    {
+      "key": "site_tagline",
+      "value": "Video Editing Agency",
+      "group": "site"
+    },
+    {
+      "key": "hero_subtitle",
+      "value": "MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.",
+      "group": "hero"
+    },
+    {
+      "key": "hero_cta_primary",
+      "value": "Our Services",
+      "group": "hero"
+    },
+    {
+      "key": "hero_cta_secondary",
+      "value": "Booking Now",
+      "group": "hero"
+    },
+    {
+      "key": "stat_1_value",
+      "value": "500",
+      "group": "stat"
+    },
+    {
+      "key": "stat_2_value",
+      "value": "1500",
+      "group": "stat"
+    },
+    {
+      "key": "stat_3_value",
+      "value": "5",
+      "group": "stat"
+    },
+    {
+      "key": "stat_4_value",
+      "value": "20",
+      "group": "stat"
+    },
+    {
+      "key": "services_tagline",
+      "value": "Video editing that ships on time, every time",
+      "group": "services"
+    },
+    {
+      "key": "services_subtitle",
+      "value": "Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.",
+      "group": "services"
+    },
+    {
+      "key": "services_overview_video_file_path",
+      "value": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+      "group": "services"
+    },
+    {
+      "key": "services_overview_poster_file_path",
+      "value": "https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "group": "services"
+    },
+    {
+      "key": "process_heading",
+      "value": "Simple & Transparent Process",
+      "group": "process"
+    },
+    {
+      "key": "process_sub",
+      "value": "Four simple steps from raw footage to a publish-ready video.",
+      "group": "process"
+    },
+    {
+      "key": "home_reviews_heading",
+      "value": "What Our Clients Say",
+      "group": "home"
+    },
+    {
+      "key": "home_reviews_sub",
+      "value": "What creators, brands and agencies value most about working with Mexa Motion.",
+      "group": "home"
+    },
+    {
+      "key": "home_team_sub",
+      "value": "A passionate team working together to provide the best service for you.",
+      "group": "home"
+    },
+    {
+      "key": "about_title_dark",
+      "value": "About",
+      "group": "about"
+    },
+    {
+      "key": "about_title_blue",
+      "value": "Mexa Motion",
+      "group": "about"
+    },
+    {
+      "key": "about_photo_1_file_path",
+      "value": "assets/about/editing-suite.jpg",
+      "group": "about"
+    },
+    {
+      "key": "about_photo_2_file_path",
+      "value": "assets/about/motion-graphics.jpg",
+      "group": "about"
+    },
+    {
+      "key": "about_photo_3_file_path",
+      "value": "assets/about/color-grading.jpg",
+      "group": "about"
+    },
+    {
+      "key": "contact_heading",
+      "value": "Let’s Work Together",
+      "group": "contact"
+    },
+    {
+      "key": "contact_sub",
+      "value": "Have a project in mind? Send us a message and let’s create something amazing.",
+      "group": "contact"
+    },
+    {
+      "key": "contact_whatsapp",
+      "value": "https://wa.me/8801700000000",
+      "group": "contact"
+    },
+    {
+      "key": "contact_telegram",
+      "value": "https://t.me/mexamotion",
+      "group": "contact"
+    },
+    {
+      "key": "footer_bio",
+      "value": "Elevating brands through premium video editing and motion graphics. Your vision, expertly crafted.",
+      "group": "footer"
+    },
+    {
+      "key": "newsletter_blurb",
+      "value": "Subscribe to get the latest editing tips and special offers.",
+      "group": "newsletter"
+    },
+    {
+      "key": "copyright_text",
+      "value": "© 2026 Mexa Motion. All rights reserved.",
+      "group": "copyright"
+    },
+    {
+      "key": "home_pf_videos",
+      "value": "[\"https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1578022761797-b8636ac1773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\", \"https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=70\"]",
+      "group": "home"
+    },
+    {
+      "key": "home_pf_shorts",
+      "value": "[\"https://images.unsplash.com/photo-1616469829941-c7200edec809?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=70\", \"https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=70\", \"https://images.unsplash.com/photo-1601944179066-29786cb9d32a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=70\", \"https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=70\", \"https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=70\"]",
+      "group": "home"
+    },
+    {
+      "key": "home_reviews_note",
+      "value": "Sample testimonials shown for layout preview — replace with verified client feedback before launch.",
+      "group": "home"
+    }
+  ],
+  "services": [
+    {
+      "id": 5,
+      "name": "Professional Video Editing",
+      "slug": "professional-video-editing",
+      "category": "Editing",
+      "icon": "fa-solid fa-video",
+      "price_from": 45,
+      "subtitle": "Creative, high-quality video editing tailored to your content and brand.",
+      "description": "Creative, high-quality video editing tailored to your content and brand.",
+      "long_description": "This is the core service: we take raw footage and turn it into a finished video that feels intentional from the first frame.\nYou get a story pass, a pacing pass, a colour grade and a sound balance — then clean exports for wherever the video is going.",
+      "deliverables": "Final MP4 (1080p or 4K)\nProject file on request\nStills for thumbnails and socials",
+      "bullet_points": "Story-first edit structure\nColour correction and sound balance\nTitles, captions and lower thirds\nPlatform-ready exports (1080p / 4K)",
+      "file_path": "https://media.w3.org/2010/05/video/movie_300.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/39681078/b-roll-freelancing-macbook-39681078.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "embed_type": "video",
+      "embed_provider": "media.w3.org",
+      "demo_videos_json": "[{\"id\": 4, \"title\": \"Product Launch Promo\", \"description\": \"Thirty-second launch promo with motion graphics and grade.\", \"video_url\": \"https://media.w3.org/2010/05/bunny/trailer.mp4\", \"thumbnail_url\": \"https://images.pexels.com/videos/1536321/free-video-1536321.jpg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200\", \"duration\": \"0:30\", \"embed_provider\": \"media.w3.org\", \"embed_type\": \"video\", \"embed_url\": \"https://media.w3.org/2010/05/bunny/trailer.mp4\"}]",
+      "is_active": 1,
+      "sort_order": 1
+    },
+    {
+      "id": 1,
+      "name": "YouTube Editing",
+      "slug": "youtube-editing",
+      "category": "Editing",
+      "icon": "fa-brands fa-youtube",
+      "price_from": 45,
+      "subtitle": "Retention-focused long-form edits that keep viewers watching till the end.",
+      "description": "Retention-focused long-form edits that keep viewers watching till the end.",
+      "long_description": "A YouTube edit is more than cutting clips together. We build the story first, then cut to a rhythm that survives the first 30 seconds.\nEvery project includes a pacing pass, caption styling, sound balance and a colour pass so the final export looks and sounds intentional on any device.",
+      "deliverables": "Final MP4 (1080p or 4K)\nProject file on request\nThumbnail-ready stills",
+      "bullet_points": "Pacing pass and story structure\nCaptions, titles and lower thirds\nColour correction and sound balance\nPlatform-ready exports (1080p / 4K)",
+      "file_path": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "embed_type": "video",
+      "embed_provider": "media.w3.org",
+      "demo_videos_json": "[{\"id\": 1, \"title\": \"Studio Session\", \"description\": \"Full edit breakdown of a studio interview — cut, grade and sound pass.\", \"video_url\": \"https://media.w3.org/2010/05/video/movie_300.mp4\", \"thumbnail_url\": \"https://images.pexels.com/videos/39681078/b-roll-freelancing-macbook-39681078.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200\", \"duration\": \"0:33\", \"embed_provider\": \"media.w3.org\", \"embed_type\": \"video\", \"embed_url\": \"https://media.w3.org/2010/05/video/movie_300.mp4\"}, {\"id\": 3, \"title\": \"Timeline Craft\", \"description\": \"Narrative documentary cut with a paced voice-over bed.\", \"video_url\": \"https://www.w3schools.com/html/mov_bbb.mp4\", \"thumbnail_url\": \"https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200\", \"duration\": \"0:27\", \"embed_provider\": \"w3schools.com\", \"embed_type\": \"video\", \"embed_url\": \"https://www.w3schools.com/html/mov_bbb.mp4\"}]",
+      "is_active": 1,
+      "sort_order": 2
+    },
+    {
+      "id": 2,
+      "name": "Shorts & Reels",
+      "slug": "shorts-reels",
+      "category": "Editing",
+      "icon": "fa-solid fa-mobile-screen",
+      "price_from": 25,
+      "subtitle": "Punchy vertical cuts for TikTok, Reels and Shorts — built to go viral.",
+      "description": "Punchy vertical cuts for TikTok, Reels and Shorts — built to go viral.",
+      "long_description": "Short-form is a different craft: the hook decides everything. We cut for retention with fast hooks, tight pacing and captions that stay readable on a phone.\nEach delivery lands as a ready-to-upload vertical file with safe margins for every platform.",
+      "deliverables": "9:16 MP4 exports\nCaption file (.srt) on request",
+      "bullet_points": "Hook in the first 2 seconds\nBeat-matched cuts and zooms\nBold on-screen captions\n9:16 exports ready to upload",
+      "file_path": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/8360178/blogger-challenge-content-creating-8360178.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=630",
+      "embed_type": "video",
+      "embed_provider": "w3schools.com",
+      "demo_videos_json": "[{\"id\": 2, \"title\": \"Creator Short\", \"description\": \"A 15-second vertical hook built for Shorts and Reels.\", \"video_url\": \"https://media.w3.org/2010/05/sintel/trailer.mp4\", \"thumbnail_url\": \"https://images.pexels.com/videos/8360178/blogger-challenge-content-creating-8360178.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=630\", \"duration\": \"0:15\", \"embed_provider\": \"media.w3.org\", \"embed_type\": \"video\", \"embed_url\": \"https://media.w3.org/2010/05/sintel/trailer.mp4\"}]",
+      "is_active": 1,
+      "sort_order": 3
+    },
+    {
+      "id": 3,
+      "name": "Motion Graphics",
+      "slug": "motion-graphics",
+      "category": "Design",
+      "icon": "fa-solid fa-wand-magic-sparkles",
+      "price_from": 60,
+      "subtitle": "Custom intros, lower thirds and animated graphics that elevate your brand.",
+      "description": "Custom intros, lower thirds and animated graphics that elevate your brand.",
+      "long_description": "Motion graphics should explain something in half a second. We design clean, on-brand animation that supports the edit instead of competing with it.\nDelivered as ready-to-drop clips in your brand colours, type and pacing.",
+      "deliverables": "Rendered animation clips\nAlpha-channel exports on request",
+      "bullet_points": "Custom vector animation\nLogo reveals and transitions\nTracked callouts and stats\nBrand-consistent styling",
+      "file_path": "https://media.w3.org/2010/05/bunny/trailer.mp4",
+      "thumbnail_path": "https://images.pexels.com/photos/257904/pexels-photo-257904.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "embed_type": "video",
+      "embed_provider": "media.w3.org",
+      "demo_videos_json": "[]",
+      "is_active": 1,
+      "sort_order": 4
+    },
+    {
+      "id": 4,
+      "name": "Thumbnail Design",
+      "slug": "thumbnail-design",
+      "category": "Design",
+      "icon": "fa-solid fa-image",
+      "price_from": 15,
+      "subtitle": "Scroll-stopping, high-CTR thumbnails that boost your click-through rate.",
+      "description": "Scroll-stopping, high-CTR thumbnails that boost your click-through rate.",
+      "long_description": "A thumbnail is a tiny billboard. We design around one clear idea, keep contrast high and typography short so it still reads on a phone.\nYou get two variants per concept so you can test which one earns the click.",
+      "deliverables": "PNG + JPG at 1280×720\nEditable source file",
+      "bullet_points": "Niche-based composition\nReadable text hierarchy\nFace cut-out and colour grading\nTwo variants per concept",
+      "file_path": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      "thumbnail_path": "https://images.pexels.com/photos/3379943/pexels-photo-3379943.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "embed_type": "video",
+      "embed_provider": "interactive-examples.mdn.mozilla.net",
+      "demo_videos_json": "[]",
+      "is_active": 1,
+      "sort_order": 5
+    },
+    {
+      "id": 6,
+      "name": "Brand Videos",
+      "slug": "brand-videos",
+      "category": "Advertising",
+      "icon": "fa-solid fa-layer-group",
+      "price_from": 120,
+      "subtitle": "Promotional and corporate videos that tell your brand story with impact.",
+      "description": "Promotional and corporate videos that tell your brand story with impact.",
+      "long_description": "A brand film is the version of your story that people actually finish watching. We keep it short, specific and visually consistent with your identity.\nThe delivery includes the master film plus cutdowns sized for the platforms you actually post on.",
+      "deliverables": "Master film (1080p / 4K)\nSocial cutdowns",
+      "bullet_points": "Narrative structure and voice-over bed\nBrand colour and type treatment\nMotion graphics package\nMusic licensing guidance",
+      "file_path": "https://www.w3schools.com/html/movie.mp4",
+      "thumbnail_path": "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "embed_type": "video",
+      "embed_provider": "w3schools.com",
+      "demo_videos_json": "[]",
+      "is_active": 1,
+      "sort_order": 6
+    },
+    {
+      "id": 8,
+      "name": "Social Media Ads",
+      "slug": "social-media-ads",
+      "category": "Advertising",
+      "icon": "fa-solid fa-bullhorn",
+      "price_from": 75,
+      "subtitle": "High-converting ad creatives for Facebook, Instagram, TikTok and Reels.",
+      "description": "High-converting ad creatives for Facebook, Instagram, TikTok and Reels.",
+      "long_description": "Paid social lives or dies on the first two seconds. We build each creative around one clear promise, then cut square, vertical and landscape versions so the same idea runs on every placement.\nEvery ad set ships with hook variants, so you can test what actually converts instead of guessing.",
+      "deliverables": "Master ad + placement exports\nHook variant cuts",
+      "bullet_points": "Hook variants for A/B testing\n9:16, 1:1 and 16:9 versions\nBurned-in captions\nSafe-zone checked for each platform",
+      "file_path": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/friday.mp4",
+      "thumbnail_path": "https://images.pexels.com/photos/8108091/pexels-photo-8108091.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "embed_type": "video",
+      "embed_provider": "interactive-examples.mdn.mozilla.net",
+      "demo_videos_json": "[]",
+      "is_active": 1,
+      "sort_order": 7
+    },
+    {
+      "id": 9,
+      "name": "Product Videos",
+      "slug": "product-videos",
+      "category": "Advertising",
+      "icon": "fa-solid fa-box-open",
+      "price_from": 150,
+      "subtitle": "Clean, engaging product showcases that turn viewers into customers.",
+      "description": "Clean, engaging product showcases that turn viewers into customers.",
+      "long_description": "A product video has one job: make the object feel worth owning. We build around clean product moments, add motion callouts for the details that matter and keep the pace short enough to finish.\nDeliverables are sized for both your product page and paid placements.",
+      "deliverables": "Master product video (1080p / 4K)\nSquare and vertical cutdowns",
+      "bullet_points": "Product hero and detail passes\nMotion callouts and labels\nClean background and grade\nCutdowns for ads and product pages",
+      "file_path": "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4",
+      "thumbnail_path": "https://images.pexels.com/photos/66134/pexels-photo-66134.jpeg?auto=compress&cs=tinysrgb&w=1200",
+      "embed_type": "video",
+      "embed_provider": "test-videos.co.uk",
+      "demo_videos_json": "[]",
+      "is_active": 1,
+      "sort_order": 8
+    }
+  ],
+  "packages": [
+    {
+      "service_id": 5,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 179,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 5,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 89,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 5,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 39,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 1,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 179,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 1,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 89,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 1,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 39,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 2,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 100,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 2,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 50,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 2,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 22,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 3,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 239,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 3,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 119,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 3,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 52,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 4,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 60,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 4,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 30,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 4,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 13,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 6,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 478,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 6,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 238,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 6,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 104,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 8,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 299,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 8,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 149,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 8,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 65,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 9,
+      "quality": "premium",
+      "name": "Premium Quality",
+      "price": 597,
+      "currency": "USD",
+      "revisions": "Unlimited revisions",
+      "badge": "Best Value",
+      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
+      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
+      "sort_order": 1,
+      "delivery": "1–2 business days",
+      "highlight": 0
+    },
+    {
+      "service_id": 9,
+      "quality": "high",
+      "name": "High Quality",
+      "price": 297,
+      "currency": "USD",
+      "revisions": "3 revision rounds",
+      "badge": "Most Popular",
+      "description": "Advanced quality — colour, transitions and sound design included.",
+      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
+      "sort_order": 2,
+      "delivery": "2–3 business days",
+      "highlight": 1
+    },
+    {
+      "service_id": 9,
+      "quality": "normal",
+      "name": "Normal Quality",
+      "price": 131,
+      "currency": "USD",
+      "revisions": "1 revision round",
+      "badge": "",
+      "description": "Everyday quality — clean edits with a standard export.",
+      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
+      "sort_order": 3,
+      "delivery": "3–4 business days",
+      "highlight": 0
+    }
+  ],
+  "work_items": [
+    {
+      "title": "Cheap & Best SMM Panel for Facebook",
+      "description": "A full walkthrough of a budget SMM panel — pricing, order flow and what actually works.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Reviews",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=yWyI9QjGmrs",
+      "thumbnail_path": "https://i.ytimg.com/vi/yWyI9QjGmrs/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/yWyI9QjGmrs",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 1,
+      "sort_order": 0,
+      "status": "published"
+    },
+    {
+      "title": "Studio edit — brand spot",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 0,
+      "status": "published"
+    },
+    {
+      "title": "Instagram-এ ভাইরাল হতে চান? SMM4X ব্যবহার করুন!",
+      "description": "How creators use SMM4X to push reach on Instagram, explained step by step in Bangla.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Reviews",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=v-ajDsQ7gzc",
+      "thumbnail_path": "https://i.ytimg.com/vi/v-ajDsQ7gzc/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/v-ajDsQ7gzc",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 1,
+      "status": "published"
+    },
+    {
+      "title": "Timeline & colour pass",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 1,
+      "status": "published"
+    },
+    {
+      "title": "Design Viral News Photo Cards on Mobile",
+      "description": "A complete mobile-only workflow for building news photo cards that get shared.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Design",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=45StyJp778Q",
+      "thumbnail_path": "https://i.ytimg.com/vi/45StyJp778Q/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/45StyJp778Q",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 1,
+      "sort_order": 2,
+      "status": "published"
+    },
+    {
+      "title": "Motion graphics frame",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 2,
+      "status": "published"
+    },
+    {
+      "title": "Top 10 Bengali Fonts for Design",
+      "description": "Ten free Bengali fonts that hold up in real design work, with download links.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Design",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=aFVvRabjNIE",
+      "thumbnail_path": "https://i.ytimg.com/vi/aFVvRabjNIE/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/aFVvRabjNIE",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 3,
+      "status": "published"
+    },
+    {
+      "title": "Cinematic grade",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 3,
+      "status": "published"
+    },
+    {
+      "title": "How I make premium thumbnails",
+      "description": "My thumbnail process — composition, contrast, text hierarchy and export settings.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Design",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=lrpa5jTLLfc",
+      "thumbnail_path": "https://i.ytimg.com/vi/lrpa5jTLLfc/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/lrpa5jTLLfc",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 1,
+      "sort_order": 4,
+      "status": "published"
+    },
+    {
+      "title": "Product film still",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 4,
+      "status": "published"
+    },
+    {
+      "title": "প্রফেশনাল ভিজিটিং কার্ড ডিজাইন",
+      "description": "Professional visiting card design from scratch on a phone.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Design",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=iMoDCX_i-vE",
+      "thumbnail_path": "https://i.ytimg.com/vi/iMoDCX_i-vE/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/iMoDCX_i-vE",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 5,
+      "status": "published"
+    },
+    {
+      "title": "Thumbnail design pass",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 5,
+      "status": "published"
+    },
+    {
+      "title": "মোবাইল দিয়ে ফেস রিটাচিং",
+      "description": "Natural-looking face retouching on mobile without wrecking skin texture.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Design",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=nH_98zsMUpU",
+      "thumbnail_path": "https://i.ytimg.com/vi/nH_98zsMUpU/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/nH_98zsMUpU",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 6,
+      "status": "published"
+    },
+    {
+      "title": "Sound design session",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1578022761797-b8636ac1773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1578022761797-b8636ac1773c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 6,
+      "status": "published"
+    },
+    {
+      "title": "PLPLab v4 — Full Preview & New Features",
+      "description": "Everything new in PLPLab v4, tested end to end.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Apps & Tools",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=VtKVpQdYfws",
+      "thumbnail_path": "https://i.ytimg.com/vi/VtKVpQdYfws/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/VtKVpQdYfws",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 7,
+      "status": "published"
+    },
+    {
+      "title": "Final delivery frame",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Demo Video",
+      "section": "demo",
+      "file_path": "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 7,
+      "status": "published"
+    },
+    {
+      "title": "PLPLab V4 — download & install correctly",
+      "description": "The exact install order so nothing breaks on the first launch.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Apps & Tools",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=9GoqjYTaokU",
+      "thumbnail_path": "https://i.ytimg.com/vi/9GoqjYTaokU/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/9GoqjYTaokU",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 8,
+      "status": "published"
+    },
+    {
+      "title": "Shorts — product reveal",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Shorts",
+      "section": "short",
+      "file_path": "https://images.unsplash.com/photo-1616469829941-c7200edec809?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1616469829941-c7200edec809?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 8,
+      "status": "published"
+    },
+    {
+      "title": "PLPLab v3.1.0 — Remove BG, PDF export & more",
+      "description": "Release breakdown with each new tool demonstrated.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Apps & Tools",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=g3S1auIeZAs",
+      "thumbnail_path": "https://i.ytimg.com/vi/g3S1auIeZAs/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/g3S1auIeZAs",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 9,
+      "status": "published"
+    },
+    {
+      "title": "Shorts — gaming clip",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Shorts",
+      "section": "short",
+      "file_path": "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 9,
+      "status": "published"
+    },
+    {
+      "title": "How to Get Meta Verified for FREE in 2026",
+      "description": "The current Meta Verified flow, with the pitfalls that get applications rejected.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Meta & Social",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=0u7XMgXHLRw",
+      "thumbnail_path": "https://i.ytimg.com/vi/0u7XMgXHLRw/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/0u7XMgXHLRw",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "published"
+    },
+    {
+      "title": "Shorts — talking head",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Shorts",
+      "section": "short",
+      "file_path": "https://images.unsplash.com/photo-1601944179066-29786cb9d32a?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1601944179066-29786cb9d32a?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 10,
+      "status": "published"
+    },
+    {
+      "title": "RedotPay international payment solution",
+      "description": "Setting up and using a RedotPay card for international payments.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Payments",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=iiLBW6M-zwA",
+      "thumbnail_path": "https://i.ytimg.com/vi/iiLBW6M-zwA/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/iiLBW6M-zwA",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 11,
+      "status": "published"
+    },
+    {
+      "title": "Shorts — reel hook",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Shorts",
+      "section": "short",
+      "file_path": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 11,
+      "status": "published"
+    },
+    {
+      "title": "Dual currency virtual card with NID",
+      "description": "Dogpay dual-currency virtual card — signup, limits and real usage.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Payments",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=wgfVu5ds5gQ",
+      "thumbnail_path": "https://i.ytimg.com/vi/wgfVu5ds5gQ/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/wgfVu5ds5gQ",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 12,
+      "status": "published"
+    },
+    {
+      "title": "Shorts — cutdown",
+      "description": "",
+      "kind": "image",
+      "platform": "image",
+      "category": "Shorts",
+      "section": "short",
+      "file_path": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "thumbnail_path": "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=75",
+      "embed_type": "image",
+      "embed_provider": "",
+      "embed_url": "",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 12,
+      "status": "published"
+    },
+    {
+      "title": "টেলিগ্রাম চ্যানেল থেকে ইনকাম",
+      "description": "How Telegram channels actually make money, with realistic numbers.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Tutorials",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=xg--5JqssT0",
+      "thumbnail_path": "https://i.ytimg.com/vi/xg--5JqssT0/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/xg--5JqssT0",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 13,
+      "status": "published"
+    },
+    {
+      "title": "Personal portfolio website from scratch",
+      "description": "Building a portfolio site that actually helps you get client work.",
+      "kind": "video",
+      "platform": "youtube",
+      "category": "Tutorials",
+      "section": "recent",
+      "file_path": "https://www.youtube.com/watch?v=-fRJkWgu4-Y",
+      "thumbnail_path": "https://i.ytimg.com/vi/-fRJkWgu4-Y/maxresdefault.jpg",
+      "embed_type": "iframe",
+      "embed_provider": "youtube",
+      "embed_url": "https://www.youtube-nocookie.com/embed/-fRJkWgu4-Y",
+      "duration": "",
+      "service_name": "",
+      "is_featured": 0,
+      "sort_order": 14,
+      "status": "published"
+    },
+    {
+      "title": "Studio Session",
+      "description": "Full edit breakdown of a studio interview — cut, grade and sound pass.",
+      "kind": "video",
+      "platform": "upload",
+      "category": "Demo Video",
+      "section": "preview",
+      "file_path": "https://media.w3.org/2010/05/video/movie_300.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/39681078/b-roll-freelancing-macbook-39681078.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "embed_type": "video",
+      "embed_provider": "",
+      "embed_url": "https://media.w3.org/2010/05/video/movie_300.mp4",
+      "duration": "0:33",
+      "service_name": "YouTube Editing",
+      "is_featured": 0,
+      "sort_order": 0,
+      "status": "published"
+    },
+    {
+      "title": "Creator Short",
+      "description": "A 15-second vertical hook built for Shorts and Reels.",
+      "kind": "video",
+      "platform": "upload",
+      "category": "Demo Video",
+      "section": "preview",
+      "file_path": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/8360178/blogger-challenge-content-creating-8360178.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=630",
+      "embed_type": "video",
+      "embed_provider": "",
+      "embed_url": "https://media.w3.org/2010/05/sintel/trailer.mp4",
+      "duration": "0:15",
+      "service_name": "Shorts & Reels",
+      "is_featured": 0,
+      "sort_order": 1,
+      "status": "published"
+    },
+    {
+      "title": "Timeline Craft",
+      "description": "Narrative documentary cut with a paced voice-over bed.",
+      "kind": "video",
+      "platform": "upload",
+      "category": "Demo Video",
+      "section": "preview",
+      "file_path": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "embed_type": "video",
+      "embed_provider": "",
+      "embed_url": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "duration": "0:27",
+      "service_name": "YouTube Editing",
+      "is_featured": 0,
+      "sort_order": 2,
+      "status": "published"
+    },
+    {
+      "title": "Product Launch Promo",
+      "description": "Thirty-second launch promo with motion graphics and grade.",
+      "kind": "video",
+      "platform": "upload",
+      "category": "Demo Video",
+      "section": "preview",
+      "file_path": "https://media.w3.org/2010/05/bunny/trailer.mp4",
+      "thumbnail_path": "https://images.pexels.com/videos/1536321/free-video-1536321.jpg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200",
+      "embed_type": "video",
+      "embed_provider": "",
+      "embed_url": "https://media.w3.org/2010/05/bunny/trailer.mp4",
+      "duration": "0:30",
+      "service_name": "Professional Video Editing",
+      "is_featured": 0,
+      "sort_order": 3,
+      "status": "published"
+    }
+  ],
+  "team_members": [
+    {
+      "id": 1,
+      "name": "Rowshan Taieen",
+      "slug": "rowshan-taieen",
+      "role": "Founder & Lead Mentor",
+      "bio": "বাংলাদেশের ইনফরমেটিক কন্টেন্ট এর পুরো প্যাটার্ন পাল্টে দিয়েছি আমি Voice of Dhaka এর হাত ধরে। সাথে বাংলাদেশের টপ সব চ্যানেলে এডিটিং করে যাচ্ছি আর নিজের হাতে তৈরি করা বড় ভিডিও ইন্টারন্যাশনাল মার্কেটপ্লেসে নিজেদের আলাদা জায়গা করে নিয়েছে।",
+      "description": "রোশন তাইয়িন মেক্সা মোশনের প্রতিষ্ঠাতা ও লিড মেন্টর। ছয় বছরের বেশি সময় ধরে বাংলাদেশের টপ চ্যানেলগুলোর এডিটিং টিম পরিচালনা করেছেন, ভয়েস অফ ঢাকার হাত ধরে ইনফরমেটিক কন্টেন্টের প্যাটার্ন বদলে দেওয়ার কাজে যুক্ত ছিলেন। এডিটিং, স্টোরিটেলিং ও টিম লিডিং — তিনটাতেই তাঁর মূল দক্ষতা। স্টুডিওতে তিনিই প্রতিটি প্রজেক্টের ফাইনাল কোয়ালিটি রিভিউ করেন এবং নতুন মেম্বারদের মেন্টরিং করেন।",
+      "skills": "Storytelling\nPremiere Pro\nTeam leadership\nClient communication\nCreative direction\nPost-production strategy",
+      "responsibilities": "সব প্রজেক্টের ফাইনাল কোয়ালিটি রিভিউ\nনতুন ক্লায়েন্টের ব্রিফ ও টাইমলাইন কনফার্ম\nটিম মেম্বারদের মেন্টরিং ও ট্রেনিং\nব্র্যান্ড স্ট্যান্ডার্ড ঠিক রাখা",
+      "file_path": "assets/images/team/member-1-rowshan-taieen.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 1,
+      "is_active": 1,
+      "sort_order": 0
+    },
+    {
+      "id": 2,
+      "name": "Arif Hossain",
+      "slug": "arif-hossain",
+      "role": "Senior Video Editor",
+      "bio": "Long-form edits with a story-first structure and a pacing pass on every cut.",
+      "description": "Dhaka-based editor with seven years behind the timeline, most of them spent cutting long-form for YouTube creators and course sellers. Arif takes raw footage and builds a story with a clear opening, a pace that holds attention past the ten-minute mark and an ending that lands, then hands the cut to colour and sound with clean, labelled project files. His strengths are story structure, pacing and dialogue-driven editing in Premiere Pro. Inside the studio he leads the first cut on every long-form project and mentors the junior editors on retention-focused pacing.",
+      "skills": "Story structure\nPacing & rhythm\nPremiere Pro\nAudio cleanup\nCaption styling",
+      "responsibilities": "Leads the first cut and story pass on long-form projects\nReviews editor drafts before they reach the client\nKeeps project files and export naming consistent\nTrains junior editors on retention-focused pacing",
+      "file_path": "assets/images/team/member-2-arif-hossain.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 1
+    },
+    {
+      "id": 3,
+      "name": "Nusrat Jahan",
+      "slug": "nusrat-jahan",
+      "role": "YouTube Editor",
+      "bio": "Runs the weekly upload cycle — chapters, captions and on-time delivery.",
+      "description": "Nusrat is the editor most clients talk to every week. She runs the upload cycle for creator channels — turning long interviews into watchable chapters, styling captions, cutting dead air and making sure each video is finished before the scheduled publish time without sanding off the creator's own tone. She works fast in Premiere Pro and is unusually good at reading a rough transcript to find the best twenty seconds. In the team she owns weekly delivery and coordinates the publish calendar with clients.",
+      "skills": "Interview editing\nCaption styling\nChapter markers\nThumbnail stills\nWorkflow planning",
+      "responsibilities": "Cuts and delivers weekly channel uploads\nPrepares chapter markers and caption files\nCoordinates the publish schedule with clients\nFlags footage gaps before the edit starts",
+      "file_path": "assets/images/team/member-3-nusrat-jahan.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 2
+    },
+    {
+      "id": 4,
+      "name": "Tanvir Ahmed",
+      "slug": "tanvir-ahmed",
+      "role": "Motion Graphics Designer",
+      "bio": "Builds the animated layer of the brand — reveals, lower thirds, callouts.",
+      "description": "Tanvir brings five years of After Effects work across brand films, ads and creator channels. He designs the animated layer of a video: logo reveals, lower thirds, stat callouts, transitions and the small motion details that make an edit feel expensive, all built around the client's type and colour system. His strengths are vector animation, kinetic type and clean transitions that never distract from the story. He owns the studio's motion template library, so every editor can drop in an intro that already looks on brand.",
+      "skills": "After Effects\nLogo animation\nLower thirds\nVector illustration\nBrand systems",
+      "responsibilities": "Designs intros, transitions and callout animations\nKeeps motion assets on brand and reusable\nExports alpha-channel versions for editors\nMaintains the shared motion template library",
+      "file_path": "assets/images/team/member-4-tanvir-ahmed.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 3
+    },
+    {
+      "id": 5,
+      "name": "Sadia Islam",
+      "slug": "sadia-islam",
+      "role": "Thumbnail Designer",
+      "bio": "One clear idea per thumbnail, two variants for testing.",
+      "description": "Sadia designs the frame that decides whether a video gets watched at all. From a graphic design background with four years of YouTube thumbnails, she works one clear idea per image: high contrast, short readable type and a face expression that matches the promise of the title — always in two variants so clients can test the click. Her toolkit is Photoshop, composition and type hierarchy. She keeps every channel's thumbnails visually consistent and delivers platform-ready 1280×720 exports.",
+      "skills": "Photoshop\nComposition\nTypography\nFace cut-outs\nA/B variants",
+      "responsibilities": "Designs two thumbnail variants per concept\nKeeps a consistent look across a channel\nMatches the thumbnail promise to the video content\nDelivers 1280×720 PNG and JPG exports",
+      "file_path": "assets/images/team/member-5-sadia-islam.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 4
+    },
+    {
+      "id": 6,
+      "name": "Rakib Hasan",
+      "slug": "rakib-hasan",
+      "role": "Colourist & Sound Designer",
+      "bio": "The finishing pass — honest skin tones, clean dialogue, balanced music.",
+      "description": "Rakib is the last person to touch a project before it ships. With six years of grading and mixing, he fixes skin tones, balances exposure between shots, cleans dialogue down to the room tone and sits the music under the voice so nothing fights. He grades in DaVinci Resolve, mixes to platform loudness standards and prepares the final export settings. In the studio he owns the finishing pass, so every delivery leaves with a consistent look and a mix that survives phone speakers.",
+      "skills": "DaVinci Resolve\nColour grading\nNoise removal\nAudio mixing\nLoudness standards",
+      "responsibilities": "Grades every delivery for consistency\nCleans dialogue and balances music beds\nChecks loudness across platforms\nPrepares platform-ready export settings",
+      "file_path": "assets/images/team/member-6-rakib-hasan.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 5
+    },
+    {
+      "id": 7,
+      "name": "Mim Akter",
+      "slug": "mim-akter",
+      "role": "Shorts & Reels Editor",
+      "bio": "Vertical hooks in the first two seconds, captions that stay readable.",
+      "description": "Mim cuts the vertical side of the studio. She started as a creator editing her own Reels and now cuts Shorts, Reels and TikToks for brands and creators full time — hooks in the first two seconds, beat-matched cuts, captions that stay readable on a small screen and safe margins so nothing hides under the app UI. She is fast with vertical framing, hook variants and caption styling. She owns short-form delivery in the team and tests hooks before anything goes out.",
+      "skills": "Vertical editing\nHook writing\nBeat sync\nOn-screen captions\n9:16 exports",
+      "responsibilities": "Cuts verticals from long-form and raw footage\nTests hooks before final delivery\nDelivers 9:16, 1:1 and 16:9 versions\nKeeps caption style consistent per client",
+      "file_path": "assets/images/team/member-7-mim-akter.jpg",
+      "whatsapp": "",
+      "telegram": "",
+      "phone": "",
+      "email": "",
+      "is_founder": 0,
+      "is_active": 1,
+      "sort_order": 6
+    }
+  ],
+  "reviews": [
+    {
+      "name": "James Wilson",
+      "role": "USA - Tech YouTuber",
+      "rating": 5,
+      "body": "Mexa Motion completely transformed my YouTube channel. Their retention editing style boosted my average view duration by 40%. Highly recommend!",
+      "file_path": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Amanda Lee",
+      "role": "UK - Marketing Director",
+      "rating": 5,
+      "body": "The speed and quality of delivery are unmatched. They handled our commercial ad campaign edits flawlessly with zero need for revisions.",
+      "file_path": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Marcus Johnson",
+      "role": "Canada - Podcaster",
+      "rating": 5,
+      "body": "Best investment for my podcast. The sound mixing and the micro-content clips they provide for TikTok have grown my audience massively.",
+      "file_path": "https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Sadia Rahman",
+      "role": "Bangladesh - Food Creator",
+      "rating": 5,
+      "body": "আমার ফুড চ্যানেলের প্রতিটি ভিডিও এখন আরও প্রফেশনাল লাগে। কলার গ্রেডিং আর বি-রোল সিলেকশন দেখে সাবস্ক্রাইবাররাও অবাক হয়।",
+      "file_path": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Daniel Ortega",
+      "role": "Spain - Fitness Coach",
+      "rating": 5,
+      "body": "They turned my long workout sessions into punchy reels that actually convert. My Instagram reach tripled in six weeks.",
+      "file_path": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Nusrat Jahan",
+      "role": "Bangladesh - Lifestyle Vlogger",
+      "rating": 5,
+      "body": "টিমটা খুবই কো-অপারেটিভ। ডেডলাইনের আগেই ডেলিভারি দিয়েছে আর রিভিশন প্রসেসটা একদম সহজ।",
+      "file_path": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Michael Chen",
+      "role": "Singapore - SaaS Founder",
+      "rating": 5,
+      "body": "Our product launch video looked like it came from a big agency. Clean motion graphics, perfect pacing, and great communication throughout.",
+      "file_path": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Emily Carter",
+      "role": "Australia - Course Creator",
+      "rating": 5,
+      "body": "Editing 40+ course lessons sounded terrifying until I found Mexa Motion. Consistent style, fast turnaround, and zero stress.",
+      "file_path": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Rakib Hasan",
+      "role": "Bangladesh - Gaming Creator",
+      "rating": 5,
+      "body": "গেমিং হাইলাইটস এডিটিংয়ে ওরা আসলেই দুর্দান্ত। হুক, ট্রানজিশন আর সাউন্ড ইফেক্টের কম্বিনেশনে ভিউ অনেক বেড়েছে।",
+      "file_path": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Sofia Rossi",
+      "role": "Italy - Fashion Brand",
+      "rating": 5,
+      "body": "The brand videos they produced elevated our whole visual identity. Colour grading and typography were spot on for our audience.",
+      "file_path": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Farhan Ahmed",
+      "role": "Bangladesh - E-commerce Brand Owner",
+      "rating": 5,
+      "body": "Our product ads finally look like the ones big brands put out. The team understood our price point, turned 12 raw clips into 4 clean cutdowns, and delivered two days before launch.",
+      "file_path": "https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Laura Bennett",
+      "role": "USA - Podcast Producer",
+      "rating": 5,
+      "body": "We send raw two-camera episodes every Friday and get back a fully cut episode with chapters, captions and three social clips. I have stopped worrying about our publishing schedule.",
+      "file_path": "https://images.unsplash.com/photo-1548142813-c348350df52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Kenji Watanabe",
+      "role": "Japan - Travel Vlogger",
+      "rating": 5,
+      "body": "Fast turnaround even with the time difference. The colour grading on my Kyoto series matched the mood I described better than my last three editors managed.",
+      "file_path": "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Aisha Al-Mansour",
+      "role": "UAE - Real Estate Marketer",
+      "rating": 5,
+      "body": "They edited nine property walkthroughs in one batch. Clean pacing, music that actually fits the listing, and consistent branding across every video.",
+      "file_path": "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
+      "is_featured": 1,
+      "status": "approved",
+      "created_at": "2026-10-29 12:00:00"
+    },
+    {
+      "name": "Arif Rahman",
+      "role": "Founder · Dcast Media",
+      "rating": 5,
+      "body": "Six hours of raw footage came back as a two-minute film that actually converts. Clear communication, on-time delivery and zero drama — that is rare.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-10-28 09:10:00"
+    },
+    {
+      "name": "Sanjida Parvin",
+      "role": "Beauty brand owner",
+      "rating": 5,
+      "body": "Our skincare demo videos finally look lit and clean. The calls to action are placed exactly where they should be, and the first drop sold out in four days.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-10-21 11:25:00"
+    },
+    {
+      "name": "Hasibul Alam",
+      "role": "Fitness coach",
+      "rating": 5,
+      "body": "Form-check reels with proper text overlays and one consistent look across the whole week. My clients stopped asking which clip was new.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-10-16 08:40:00"
+    },
+    {
+      "name": "Nabila Islam",
+      "role": "Event organiser",
+      "rating": 5,
+      "body": "They captured an entire conference day in ninety seconds without losing the atmosphere. Exactly the recap we briefed, delivered a day early.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-10-09 15:05:00"
+    },
+    {
+      "name": "Md. Arif Hossain",
+      "role": "Facebook ads buyer",
+      "rating": 4,
+      "body": "Four creative variations for testing, all delivered in one batch with different hooks. One revision round was needed, but the turnaround was quick.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-10-02 10:15:00"
+    },
+    {
+      "name": "Sabrina Haque",
+      "role": "Marketing lead",
+      "rating": 5,
+      "body": "We hand over messy brand assets and get back something that looks like a real campaign. The team asks the right questions before they start cutting.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-09-27 13:30:00"
+    },
+    {
+      "name": "Sakib Mahmud",
+      "role": "Podcast host",
+      "rating": 5,
+      "body": "My podcast clips were cut from the genuinely interesting moments, not random highlights. Watch time on the shorts went up almost immediately.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-09-20 09:55:00"
+    },
+    {
+      "name": "Anika Tabassum",
+      "role": "Educator",
+      "rating": 5,
+      "body": "Screen recordings with clean zooms and on-screen highlighting. Students stopped asking the same questions because the explanations finally land.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-09-12 16:20:00"
+    },
+    {
+      "name": "Rifat Hossain",
+      "role": "E-commerce seller",
+      "rating": 5,
+      "body": "The product video explained everything without a single line of on-screen text. Our sales page conversion improved within two weeks of publishing.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-09-05 12:10:00"
+    },
+    {
+      "name": "Tisha Sarker",
+      "role": "Lifestyle blogger",
+      "rating": 5,
+      "body": "Vertical edits for Instagram and TikTok from the same footage, with captions timed properly. I can post daily now without extra shooting.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-08-29 10:45:00"
+    },
+    {
+      "name": "Rezaul Karim",
+      "role": "Small business owner",
+      "rating": 5,
+      "body": "Professional work at a price a small shop can actually afford. They explained every step and never made me feel like a small client.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-08-22 14:35:00"
+    },
+    {
+      "name": "Fahim Shahriar",
+      "role": "Agency creative",
+      "rating": 5,
+      "body": "Reliable partner for overflow work. Files are organised, exports are labelled cleanly, and the project handover takes two minutes instead of an hour.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-08-15 09:05:00"
+    },
+    {
+      "name": "Mehjabin Chowdhury",
+      "role": "Restaurant owner",
+      "rating": 5,
+      "body": "Food videos that actually make people hungry. Colour grading on the dishes is superb and the pacing matches how reels should feel in 2026.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-08-08 18:15:00"
+    },
+    {
+      "name": "Tanvir Ahmed",
+      "role": "YouTube creator · 180K",
+      "rating": 5,
+      "body": "My retention curve changed after three videos. They cut to a rhythm instead of cutting to a beat sheet, and the pacing pass is what sold me.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-08-01 11:50:00"
+    },
+    {
+      "name": "Farhana Akter",
+      "role": "Online course creator",
+      "rating": 4,
+      "body": "Forty lessons edited to one clean template, chapters and lower thirds included. A couple of naming mistakes slipped through, fixed the same day.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-07-25 10:20:00"
+    },
+    {
+      "name": "Imran Kabir",
+      "role": "Startup co-founder",
+      "rating": 5,
+      "body": "Our investor deck video was assembled from a rough script in three days. It looked expensive — which is exactly what we needed before the raise.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-07-18 13:05:00"
+    },
+    {
+      "name": "Nusrat Jahan",
+      "role": "Fashion brand",
+      "rating": 5,
+      "body": "Lookbook edits that match the brand mood instead of fighting it. They asked for the colour references and used them for the whole grading pass.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-07-11 15:40:00"
+    },
+    {
+      "name": "Shahriar Kabir",
+      "role": "Real estate marketer",
+      "rating": 5,
+      "body": "Property walkthroughs with smooth speed ramps and readable price overlays. Enquiries doubled the month we started using these videos in ads.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-07-04 09:35:00"
+    },
+    {
+      "name": "Rumana Islam",
+      "role": "NGO communications",
+      "rating": 5,
+      "body": "Field footage from three districts, edited into one eight-minute documentary with subtitles. Sensitive content handled with real care and respect.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-06-26 12:00:00"
+    },
+    {
+      "name": "Ashiqur Rahman",
+      "role": "Tech reviewer",
+      "rating": 5,
+      "body": "B-roll, spec callouts and clean transitions — the whole package. They send a watermarked review link first, which saves a lot of back-and-forth.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-06-19 17:25:00"
+    },
+    {
+      "name": "Sumaiya Siddiqui",
+      "role": "Wedding filmmaker",
+      "rating": 5,
+      "body": "I outsource all my colour work to them now. Consistent skin tones across four cameras and a turnaround that keeps my own delivery promises.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-06-12 10:30:00"
+    },
+    {
+      "name": "Jahid Hasan",
+      "role": "Gaming creator",
+      "rating": 5,
+      "body": "Good pacing on the montage and strong sound design. I asked for a slightly longer intro on the second pass and it came back exactly as described.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-06-05 19:45:00"
+    },
+    {
+      "name": "Tahmid Chowdhury",
+      "role": "Music producer",
+      "rating": 5,
+      "body": "Visualisers for an album rollout in eleven days. Each track had its own mood but the whole set still looked like one release.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-05-28 08:55:00"
+    },
+    {
+      "name": "Sadia Afrin",
+      "role": "Beauty educator",
+      "rating": 5,
+      "body": "Tutorial edits that keep the useful parts and cut the rest. My average view duration went from forty seconds to nearly two minutes.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-05-21 14:10:00"
+    },
+    {
+      "name": "Rakibul Islam",
+      "role": "Automobile dealer",
+      "rating": 5,
+      "body": "Car review videos shot on a phone, edited like a commercial. The before-and-after difference convinced two of my partners to sign up.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-05-14 11:05:00"
+    },
+    {
+      "name": "Mitu Barua",
+      "role": "Travel creator",
+      "rating": 5,
+      "body": "A week of travel footage became four platform-ready cuts. Music licensing and aspect ratios were handled without me asking.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-05-07 16:50:00"
+    },
+    {
+      "name": "Zahidul Islam",
+      "role": "Head of growth · SaaS",
+      "rating": 5,
+      "body": "Product explainer in three languages, same edit template. Legal changes were applied across all versions in under a day.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-04-29 09:20:00"
+    },
+    {
+      "name": "Farzana Yasmin",
+      "role": "Boutique owner",
+      "rating": 5,
+      "body": "Eid campaign videos that felt premium without a big budget. The team handled everything from the storyboard to the final export.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-04-22 13:45:00"
+    },
+    {
+      "name": "Nazmul Huda",
+      "role": "Documentary producer",
+      "rating": 5,
+      "body": "Long-form assembly edit with a clean paper trail for every revision. That level of organisation is what makes them easy to hire again.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-04-15 10:40:00"
+    },
+    {
+      "name": "Sohana Rahman",
+      "role": "Kids clothing brand",
+      "rating": 5,
+      "body": "Playful edits that still look clean and premium. The first reel went past two hundred thousand views organically — a first for our page.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-04-08 15:15:00"
+    },
+    {
+      "name": "Mahmudul Hasan",
+      "role": "Sports content page",
+      "rating": 4,
+      "body": "Fast cuts with the right highlights, delivered within a day of each match. Occasionally the caption font is small on mobile, but they adjust on request.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-03-31 20:05:00"
+    },
+    {
+      "name": "Ishrat Jahan",
+      "role": "Food blogger",
+      "rating": 5,
+      "body": "Recipe shorts that are easy to follow and beautiful to watch. The recipe card overlay they designed is now part of my channel identity.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-03-24 11:35:00"
+    },
+    {
+      "name": "Sohel Rana",
+      "role": "Furniture brand",
+      "rating": 5,
+      "body": "Product catalogue reels with consistent lighting treatment across forty pieces. It saved us two studio days and looked better than the originals.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-03-17 09:50:00"
+    },
+    {
+      "name": "Afia Chowdhury",
+      "role": "Legal consultant",
+      "rating": 5,
+      "body": "Explainer videos for complicated documents, made genuinely watchable. They translated a dense brief into something my clients actually sit through.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-03-10 14:20:00"
+    },
+    {
+      "name": "Shuvo Das",
+      "role": "Event photographer",
+      "rating": 5,
+      "body": "Same-day recap edits that turn around while the event is still trending. Communication is quick and the pricing is honest and predictable.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-03-03 18:30:00"
+    },
+    {
+      "name": "Lamia Sultana",
+      "role": "Handmade jewellery",
+      "rating": 5,
+      "body": "Macro product clips with a soft luxury finish. It finally looks like the pieces cost what they cost — customers noticed immediately.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-02-24 10:25:00"
+    },
+    {
+      "name": "Rashed Khan",
+      "role": "Digital marketing agency",
+      "rating": 5,
+      "body": "We white-label all video work to them. Client feedback comes back handled, not forwarded, and deadlines have not slipped once in a year.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-02-17 12:15:00"
+    },
+    {
+      "name": "Tania Hossain",
+      "role": "Yoga instructor",
+      "rating": 4,
+      "body": "Calm, well-paced class trailers with subtle background music. Would love a faster first draft, but the final quality is worth the extra day.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-02-10 08:45:00"
+    },
+    {
+      "name": "Kamrul Islam",
+      "role": "Electronics retailer",
+      "rating": 5,
+      "body": "Ad creatives built for testing — different hooks, same brand feel. Our cost per purchase dropped by a third in the first campaign.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-02-03 16:05:00"
+    },
+    {
+      "name": "Priya Sharma",
+      "role": "International client · India",
+      "rating": 5,
+      "body": "Working across time zones was easier than with local vendors. Clear updates, tidy files, and no surprise invoices at the end.",
+      "file_path": "",
+      "is_featured": 0,
+      "status": "approved",
+      "created_at": "2026-01-27 13:55:00"
+    }
+  ]
+}
