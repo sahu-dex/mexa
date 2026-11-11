@@ -1,0 +1,54 @@
+#team .tm-card {
+    padding: 0 !important;
+    overflow: hidden;
+}
+#team .tm-card .tm-photo {
+    width: 100%;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+#team .tm-card .tm-body { padding: 14px 12px 18px; }
+#team .tm-card:hover { transform: translateY(-4px); }
+.tm-perk-ic {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border-radius: 11px;
+}
+.tm-perk-ic .tm-perk-svg { width: 1em; height: 1em; display: block; }
+@media (max-width: 640px) {
+    .tm-perk-ic { width: 34px; height: 34px; flex-basis: 34px; border-radius: 10px; }
+}
+.abt-float-ic,
+.abt-float-ic i { color: #FACC15 !important; }
+#contact .ct-icon {
+    height: auto;
+    font-size: 26px;
+    margin-bottom: 14px;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+footer a img.object-contain.flex-shrink-0[alt="Mexa Motion M"] {
+    height: 22px !important;
+    width: auto !important;
+    margin-right: 0 !important;
+}
+footer .footer-brand-word {
+    margin-left: -9px !important;
+    top: 0 !important;
+    line-height: 1.05;
+}
+@media (max-width: 1023px) {
+    footer a img.object-contain.flex-shrink-0[alt="Mexa Motion M"] {
+        height: 20px !important;
+        position: relative;
+        top: -1px;
+    }
+    footer .footer-brand-word { margin-left: -10px !important; }
+}

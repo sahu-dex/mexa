@@ -1,0 +1,19 @@
+#header .brand-word .brand-a, #header .brand-word .brand-b, #header .brand-tagline {
+  animation:none !important; background:none !important; text-shadow:none !important;
+  -webkit-text-fill-color:currentColor !important;
+}
+#header .mm-brand-link { position:relative !important; overflow:hidden !important; border-radius:5px; isolation:isolate; }
+#header .mm-brand-link .brand-logo-badge, #header .mm-brand-link .brand-copy { position:relative; z-index:1; }
+#header .mm-brand-link::after {
+  content:""; position:absolute; z-index:3; top:-45%; bottom:-45%; left:-75%; width:42%;
+  pointer-events:none; transform:skewX(-22deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.18) 28%,rgba(255,255,255,.82) 50%,rgba(255,255,255,.18) 72%,transparent);
+  animation:mmReferenceLogoSweep 4.8s ease-in-out infinite;
+}
+@keyframes mmReferenceLogoSweep {
+  0%,58% { left:-75%; opacity:0; }
+  65% { opacity:1; }
+  84% { left:135%; opacity:.85; }
+  100% { left:135%; opacity:0; }
+}
+@media (prefers-reduced-motion: reduce) { #header .mm-brand-link::after { animation:none; display:none; } }

@@ -1,0 +1,380 @@
+/* =====================================================================
+   Book a Service — unified booking card
+   Loaded last on the booking page (after premium-design-system.css) so it
+   can refine the shared theme without fighting its !important rules.
+   Contains: founder band + contact buttons + steps 1–3 + order preview.
+   ===================================================================== */
+
+/* ---------- single card ---------- */
+body .tk-book-card {
+    margin-top: 20px;
+    background: #fff;
+    border: 1px solid var(--mx-border, #e3ebfb);
+    border-radius: 24px;
+    box-shadow: 0 22px 60px rgba(25, 75, 165, .12);
+    overflow: hidden;
+}
+
+/* ---------- founder band ---------- */
+body .tk-fdr {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 22px;
+    align-items: center;
+    padding: 24px 28px;
+    background: linear-gradient(120deg, #eef6ff 0%, #f8fbff 55%, #fff 100%);
+    border-bottom: 1px solid var(--mx-border, #e3ebfb);
+}
+
+body .tk-fdr-photo {
+    width: 118px;
+    height: 118px;
+    flex: 0 0 auto;
+    border-radius: 22px;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    background: #eaf2ff;
+    border: 4px solid #fff;
+    box-shadow: 0 12px 30px rgba(25, 75, 165, .18);
+    color: var(--mx-primary, #1051df);
+    font-size: 32px;
+}
+
+body .tk-fdr-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+body .tk-fdr-info {
+    min-width: 0;
+}
+
+body .tk-fdr-eyebrow {
+    display: block;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: .17em;
+    text-transform: uppercase;
+    color: var(--mx-primary, #1051df) !important;
+}
+
+body .tk-fdr-name {
+    margin: 6px 0 0 !important;
+    font-size: 1.28rem !important;
+    line-height: 1.25 !important;
+    font-weight: 800 !important;
+    letter-spacing: -.02em !important;
+    color: var(--mx-navy, #10234d) !important;
+    -webkit-text-fill-color: var(--mx-navy, #10234d);
+}
+
+body .tk-fdr-role {
+    margin: 4px 0 0;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--mx-primary, #1051df) !important;
+}
+
+body .tk-fdr-bio {
+    margin: 9px 0 0;
+    max-width: 60ch;
+    font-size: 13.2px;
+    line-height: 1.78;
+    color: var(--mx-muted, #65718b) !important;
+}
+
+/* ---------- contact buttons ---------- */
+body .tk-fdr-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+body .tk-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 11px 16px;
+    border-radius: 14px;
+    border: 1px solid transparent;
+    font-size: 12.5px;
+    font-weight: 800;
+    text-decoration: none;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+}
+
+body .tk-cta i {
+    font-size: 15px;
+    line-height: 1;
+}
+
+body .tk-cta:hover {
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+body .tk-cta.is-tg {
+    background: #e8f6fd;
+    border-color: #c4e8f8;
+    color: #0b6f99 !important;
+}
+body .tk-cta.is-tg i { color: #229ed9; }
+body .tk-cta.is-tg:hover {
+    background: #dbf1fb;
+    box-shadow: 0 12px 24px rgba(34, 158, 217, .20);
+}
+
+body .tk-cta.is-wa {
+    background: #e9fbf1;
+    border-color: #c6f0d8;
+    color: #12794a !important;
+}
+body .tk-cta.is-wa i { color: #25d366; }
+body .tk-cta.is-wa:hover {
+    background: #ddf8e9;
+    box-shadow: 0 12px 24px rgba(37, 211, 102, .22);
+}
+
+body .tk-cta.is-fb {
+    background: #eaf2ff;
+    border-color: #cddcff;
+    color: #14479c !important;
+}
+body .tk-cta.is-fb i { color: #1877f2; }
+body .tk-cta.is-fb:hover {
+    background: #dfebff;
+    box-shadow: 0 12px 24px rgba(24, 119, 242, .20);
+}
+
+/* ---------- body: steps + order preview ---------- */
+body .tk-card-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr);
+    gap: 22px;
+    padding: 8px 26px 26px;
+    align-items: start;
+}
+
+body .tk-form.tk-steps {
+    display: grid;
+    gap: 0;
+    padding-top: 8px;
+    min-width: 0;
+}
+
+body .tk-step {
+    padding: 20px 2px 6px;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+body .tk-step:first-child {
+    padding-top: 8px;
+}
+
+body .tk-step:last-child {
+    padding-bottom: 0;
+}
+
+body .tk-step + .tk-step {
+    margin-top: 18px;
+    padding-top: 22px;
+    border-top: 1px dashed var(--mx-border, #e3ebfb);
+}
+
+body .tk-step-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+body .tk-step .tk-num {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    border-radius: 50%;
+    font-size: 12.5px;
+    font-weight: 800;
+    color: var(--mx-primary, #1051df) !important;
+    background: #eaf2ff !important;
+    border: 1px solid #d7e5fd !important;
+}
+
+body .tk-step-title {
+    font-size: 14.8px;
+    font-weight: 800;
+    letter-spacing: -.01em;
+    color: var(--mx-navy, #10234d) !important;
+}
+
+body .tk-step-hint {
+    margin-top: 3px;
+    font-size: 12.2px;
+    line-height: 1.6;
+    color: var(--mx-muted, #65718b) !important;
+}
+
+body .tk-step .tk-select {
+    border-radius: 12px;
+}
+
+body .tk-step .tk-textarea {
+    min-height: 134px;
+    border-radius: 12px;
+}
+
+body .tk-step .tk-counter {
+    margin-top: 7px;
+    font-size: 11.5px;
+    color: #7d8da6 !important;
+}
+
+body .tk-step .tk-q {
+    border-radius: 16px;
+}
+
+body .tk-step .tk-q b {
+    font-size: 12.5px;
+}
+
+/* ---------- order preview (inside the card) ---------- */
+body .tk-book-card .tk-prev {
+    position: static;
+    align-self: start;
+    margin-top: 20px;
+    padding: 20px !important;
+    border-radius: 20px !important;
+    background: linear-gradient(180deg, #f5f9ff 0%, #eaf2ff 100%) !important;
+    border: 1px solid #dbe8fc !important;
+    box-shadow: none !important;
+}
+
+body .tk-book-card .tk-prev-kicker {
+    color: var(--mx-primary, #1051df) !important;
+}
+
+body .tk-book-card .tk-prev-title {
+    color: var(--mx-navy, #10234d) !important;
+}
+
+body .tk-book-card .tk-prev-row {
+    padding-bottom: 9px;
+    border-bottom: 1px dashed #cfdff8 !important;
+}
+
+body .tk-book-card .tk-prev-row:last-child {
+    border-bottom: 0 !important;
+    padding-bottom: 0;
+}
+
+body .tk-book-card .tk-prev-row span {
+    color: #7386a2 !important;
+}
+
+body .tk-book-card .tk-prev-row b {
+    color: var(--mx-navy, #10234d) !important;
+}
+
+body .tk-book-card .tk-prev-msg {
+    background: #fff !important;
+    border: 1px dashed #cfdff8 !important;
+    color: #5c6d88 !important;
+    border-radius: 12px !important;
+}
+
+body .tk-book-card .tk-prev-msg.is-empty {
+    color: #8794aa !important;
+}
+
+body .tk-book-card .tk-submit {
+    margin-top: 14px;
+    border-radius: 14px !important;
+    padding: 14px 20px !important;
+    box-shadow: 0 12px 26px rgba(16, 81, 223, .30) !important;
+}
+
+body .tk-book-card .tk-err {
+    margin-top: 12px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #b42318 !important;
+    background: #fef3f2 !important;
+    border: 1px solid #fecdca !important;
+}
+
+body .tk-book-card .tk-err[hidden] {
+    display: none;
+}
+
+body .tk-book-card .tk-prev-note {
+    color: #7d8da6 !important;
+}
+
+/* ---------- responsive ---------- */
+@media (max-width: 1000px) {
+    body .tk-card-body {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+    }
+
+    body .tk-book-card .tk-prev {
+        margin: 8px 0 0;
+    }
+}
+
+@media (max-width: 720px) {
+    body .tk-book-card {
+        border-radius: 20px;
+    }
+
+    body .tk-fdr {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
+        padding: 20px;
+    }
+
+    body .tk-fdr-photo {
+        width: 92px;
+        height: 92px;
+        border-radius: 18px;
+        font-size: 26px;
+    }
+
+    body .tk-fdr-links {
+        flex-direction: column;
+    }
+
+    body .tk-cta {
+        justify-content: center;
+    }
+
+    body .tk-card-body {
+        padding: 4px 18px 18px;
+    }
+
+    body .tk-book-card .tk-prev {
+        padding: 16px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body .tk-cta,
+    body .tk-cta:hover {
+        transform: none;
+        transition: none;
+    }
+}
