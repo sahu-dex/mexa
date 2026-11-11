@@ -77,11 +77,6 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
             <a class="adm-link<?= $adminPage === 'settings' ? ' is-active' : '' ?>" href="settings.php">
                 <i class="fa-solid fa-sliders"></i><span>Site &amp; Page Settings</span>
             </a>
-
-            <div class="adm-nav-sec">System</div>
-            <a class="adm-link<?= $adminPage === 'diagnostics' ? ' is-active' : '' ?>" href="diagnostics.php">
-                <i class="fa-solid fa-stethoscope"></i><span>Diagnostics</span>
-            </a>
         </nav>
 
         <div class="adm-side-foot">
