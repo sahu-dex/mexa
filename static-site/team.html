@@ -6932,6 +6932,28 @@ body.mmvp-locked { overflow: hidden !important; }
   }
 }
 
+/* Desktop: keep the founder card landscape (photo left, info right) so it
+   does not stretch into a tall column on wide screens. Overrides only the
+   desktop shape; mobile/tablet layout is untouched. */
+@layer mexa-founder-desktop {
+  @media (min-width: 1024px) {
+    html body #t3-founder.mx-founder-card {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr) !important;
+      align-items: center !important;
+      max-width: 1060px !important;
+      gap: clamp(26px, 3.5vw, 46px) !important;
+      padding: clamp(22px, 3vw, 34px) !important;
+    }
+    html body #t3-founder.mx-founder-card > .tm-founder-photo {
+      aspect-ratio: 4 / 5 !important;
+      border-radius: clamp(16px, 2.4vw, 26px) !important;
+    }
+    html body #t3-founder.mx-founder-card .tm-founder-name { font-size: clamp(1.6rem, 2.5vw, 2.15rem) !important; }
+    html body #t3-founder.mx-founder-card .tm-founder-role { font-size: .78rem !important; letter-spacing: .12em !important; text-transform: uppercase !important; }
+    html body #t3-founder.mx-founder-card .tm-founder-bio { font-size: 1.02rem !important; line-height: 1.6 !important; }
+  }
+}
+
 </style>
 
 <style id="mm-subscribe-fix">
