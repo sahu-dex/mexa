@@ -1,0 +1,36 @@
+#header.hdr-bar-wrap { background:#FFFFFF !important; }
+#header .brand-logo-badge { position:relative !important; display:flex !important; align-items:center !important; justify-content:center !important; flex:0 0 56px !important; width:56px !important; height:44px !important; overflow:visible !important; background:none !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; }
+#header .brand-logo-full { display:none !important; }
+#header .brand-logo-mark { display:block !important; width:56px !important; height:44px !important; max-width:none !important; object-fit:fill !important; border-radius:0 !important; filter:none !important; }
+#header .mm-brand-link { display:flex !important; align-items:center !important; gap:12px !important; min-width:0; text-decoration:none !important; }
+#header .brand-copy { display:flex; min-width:0; flex-direction:column; justify-content:center; gap:3px; }
+#header .brand-word { display:block; white-space:nowrap; font-size:clamp(19px,1.8vw,24px) !important; font-weight:900 !important; line-height:.98 !important; letter-spacing:-.02em !important; }
+#header .brand-word .brand-a { color:#102544 !important; }
+#header .brand-word .brand-b { color:#1459E8 !important; }
+#header .brand-tagline { display:block; color:#123A78; font-size:9px; font-weight:600; line-height:1.1; letter-spacing:.22em; white-space:nowrap; }
+html.dark #header.hdr-bar-wrap { background:#0F1A2E !important; }
+html.dark #header .brand-word .brand-a { color:#EAF2FF !important; }
+html.dark #header .brand-word .brand-b { color:#73A8FF !important; }
+html.dark #header .brand-tagline { color:#BDD4F5; }
+@media (max-width:1023px) {
+    #header .brand-logo-badge { width:72px !important; height:52px !important; flex-basis:72px !important; }
+    #header .brand-logo-mark { width:72px !important; height:52px !important; }
+    #header .mm-brand-link { gap:12px !important; }
+    #header .brand-word { font-size:clamp(22px,3.45vw,28px) !important; }
+    #header .brand-tagline { font-size:10px; letter-spacing:.25em; }
+}
+@media (max-width:600px) {
+    #header .brand-logo-badge { width:50px !important; height:38px !important; flex-basis:50px !important; }
+    #header .brand-logo-mark { width:50px !important; height:38px !important; }
+    #header .mm-brand-link { gap:8px !important; }
+    #header .brand-copy { gap:2px; }
+    #header .brand-word { font-size:clamp(18px,5.2vw,21px) !important; }
+    #header .brand-tagline { font-size:8px; letter-spacing:.15em; }
+}
+@media (max-width:360px) {
+    #header .brand-logo-badge { width:44px !important; height:34px !important; flex-basis:44px !important; }
+    #header .brand-logo-mark { width:44px !important; height:34px !important; }
+    #header .mm-brand-link { gap:7px !important; }
+    #header .brand-word { font-size:18px !important; }
+    #header .brand-tagline { font-size:7px; letter-spacing:.12em; }
+}

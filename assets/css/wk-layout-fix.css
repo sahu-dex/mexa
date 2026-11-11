@@ -1,0 +1,71 @@
+.wk-wrap, .wk-sec {
+    width: 100%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+}
+.wk-wrap { padding: 40px 24px 4px; }
+.wk-sec  { padding: 34px 24px 6px; }
+#wk-recent-sec { padding-top: 30px; }
+#wk-demo-sec, #wk-shorts-sec { padding-top: 40px; }
+.wk-recent {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 18px;
+    align-items: stretch;
+}
+.wk-recent .wk-empty { grid-column: 1 / -1; margin-top: 0; }
+.wk-rc {
+    height: 100%;
+    min-width: 0;
+    border-radius: 16px;
+}
+.wk-rc .th { flex: 0 0 auto; }
+.wk-rc .info { flex: 1 1 auto; display: flex; flex-direction: column; min-width: 0; }
+.wk-rc .info b {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    overflow: hidden; line-height: 1.45;
+}
+.wk-rc .info p {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    overflow: hidden; min-height: 0; margin-top: 6px;
+}
+.wk-rc .meta { margin-top: auto; padding-top: 10px; }
+.wk-demo-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+.wk-demo-grid .wk-empty { grid-column: 1 / -1; margin-top: 0; }
+.wk-demo {
+    width: 100%;
+    min-width: 0;
+    border-radius: 16px;
+}
+.wk-demo .shot { width: 100%; aspect-ratio: 16 / 9; }
+.wk-demo .cap { padding: 34px 14px 13px; }
+.wk-demo .cap b {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+    overflow: hidden; line-height: 1.4;
+}
+.wk-shorts { margin-top: 18px; }
+@media (max-width: 1080px) {
+    .wk-recent, .wk-demo-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+}
+@media (max-width: 768px) {
+    .wk-wrap { padding: 30px 16px 2px; }
+    .wk-sec  { padding: 26px 16px 4px; }
+    #wk-recent-sec { padding-top: 22px; }
+    #wk-demo-sec, #wk-shorts-sec { padding-top: 30px; }
+    .wk-recent, .wk-demo-grid { grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+    .wk-rc .info b, .wk-rc .info p { -webkit-line-clamp: 3; }
+}
+@media (max-width: 460px) {
+    .wk-wrap { padding: 24px 14px 2px; }
+    .wk-sec  { padding: 22px 14px 4px; }
+}
