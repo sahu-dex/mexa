@@ -1,0 +1,84 @@
+-- MySQL 8 / MariaDB 10.4+. Import once into a new, empty database.
+CREATE TABLE users (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ name VARCHAR(100) NOT NULL, email VARCHAR(190) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL, role ENUM('user','admin') NOT NULL DEFAULT 'user',
+ active BOOLEAN NOT NULL DEFAULT 1, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE services (
+ id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ title VARCHAR(150) NOT NULL, category VARCHAR(80) NOT NULL,
+ description TEXT NOT NULL, price_note VARCHAR(150) NOT NULL DEFAULT '',
+ active BOOLEAN NOT NULL DEFAULT 1, sort_order INT NOT NULL DEFAULT 0,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ INDEX services_public (active, sort_order, id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE settings (
+ setting_key VARCHAR(80) PRIMARY KEY, setting_value TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO settings (setting_key, setting_value) VALUES
+ ('hero_title', 'Make your next move count.'),
+ ('hero_text', 'A clearer way to plan and manage your social media services.'),
+ ('contact_email', '');
+CREATE TABLE login_attempts (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ip_hash CHAR(64) NOT NULL,
+ attempted_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ INDEX attempt_lookup (ip_hash, attempted_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE activity_logs (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, actor_id BIGINT UNSIGNED NOT NULL,
+ action VARCHAR(255) NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (actor_id) REFERENCES users(id), INDEX (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Amounts are in integer BDT poisha; no floating-point arithmetic is used.
+ALTER TABLE services ADD COLUMN rate_poisha_per_1000 INT UNSIGNED NOT NULL DEFAULT 0,
+ ADD COLUMN min_quantity INT UNSIGNED NOT NULL DEFAULT 100,
+ ADD COLUMN max_quantity INT UNSIGNED NOT NULL DEFAULT 10000;
+CREATE TABLE wallets (
+ user_id BIGINT UNSIGNED PRIMARY KEY, balance_poisha BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ FOREIGN KEY (user_id) REFERENCES users(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE orders (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id BIGINT UNSIGNED NOT NULL,
+ service_id BIGINT UNSIGNED NOT NULL, service_title VARCHAR(150) NOT NULL,
+ target_url VARCHAR(2048) NOT NULL, quantity INT UNSIGNED NOT NULL,
+ cost_poisha BIGINT UNSIGNED NOT NULL, request_key CHAR(64) NOT NULL UNIQUE,
+ status ENUM('pending','in_progress','completed','cancelled') NOT NULL DEFAULT 'pending',
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (user_id) REFERENCES users(id), FOREIGN KEY (service_id) REFERENCES services(id),
+ INDEX (user_id,id), INDEX (status,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE deposits (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id BIGINT UNSIGNED NOT NULL,
+ amount_poisha BIGINT UNSIGNED NOT NULL, method VARCHAR(40) NOT NULL,
+ reference VARCHAR(120) NOT NULL, request_key CHAR(64) NOT NULL UNIQUE,
+ status ENUM('pending','approved','rejected') NOT NULL DEFAULT 'pending',
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (user_id) REFERENCES users(id), UNIQUE KEY (method,reference), INDEX (status,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE ledger (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id BIGINT UNSIGNED NOT NULL,
+ amount_poisha BIGINT NOT NULL, kind ENUM('deposit','order','refund') NOT NULL,
+ reference_id BIGINT UNSIGNED NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY (user_id) REFERENCES users(id), UNIQUE KEY (kind,reference_id), INDEX (user_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE tickets (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, user_id BIGINT UNSIGNED NOT NULL,
+ subject VARCHAR(150) NOT NULL, status ENUM('open','closed') NOT NULL DEFAULT 'open',
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY (user_id) REFERENCES users(id), INDEX (user_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE ticket_messages (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, ticket_id BIGINT UNSIGNED NOT NULL,
+ user_id BIGINT UNSIGNED NOT NULL, body TEXT NOT NULL, created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ FOREIGN KEY(ticket_id) REFERENCES tickets(id), FOREIGN KEY(user_id) REFERENCES users(id), INDEX(ticket_id,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+INSERT INTO settings (setting_key,setting_value) VALUES ('payment_instructions','');
+CREATE TABLE blog_posts (
+ id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY, title VARCHAR(180) NOT NULL,
+ slug VARCHAR(180) NOT NULL UNIQUE, summary VARCHAR(500) NOT NULL,
+ body MEDIUMTEXT NOT NULL, published BOOLEAN NOT NULL DEFAULT 0,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX (published,id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
