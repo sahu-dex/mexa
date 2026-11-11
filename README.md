@@ -19,16 +19,17 @@ mexa/
 ├── config/                 Protected environment loader (config.php) & PDO connection (db.php)
 ├── database/               MySQL schema (schema.sql), seed runner (seed.php), SQL dump (seed.sql) & JSON seed
 ├── includes/               Shared header.php, footer.php, admin_header.php, admin_footer.php & functions.php
+├── pages/                  Six public page implementations (included by root entry points)
 ├── storage/                Protected rate-limit buckets & error logs
 ├── uploads/
 │   ├── images/             Validated uploaded images (PHP execution disabled via .htaccess)
 │   └── videos/             Validated uploaded videos (PHP execution disabled via .htaccess)
-├── index.php               Homepage (full page source)
-├── service.php             Services page (full page source)
-├── work.php                Portfolio page (full page source)
-├── review.php              Reviews page (full page source)
-├── team.php                Team page (full page source)
-├── book.php                Booking page (full page source)
+├── index.php               Homepage entry point
+├── service.php             Services entry point
+├── work.php                Portfolio entry point
+├── review.php              Reviews entry point
+├── team.php                Team entry point
+├── book.php                Booking entry point
 ├── .env.example            Configuration template with placeholders
 ├── .gitignore              Excludes .env, runtime uploads, and logs from Git
 └── .htaccess               Apache security rules, directory index lock & 301 .html -> .php redirects
@@ -123,7 +124,7 @@ No administrator password is stored anywhere in the source code or seed files.
 ## 6. Deploying to cPanel / Shared Hosting
 
 1. Upload all project files to `public_html/` (or a subdomain document root).
-2. Ensure hidden files (`.htaccess`, `config/.htaccess`, `includes/.htaccess`, `database/.htaccess`, `storage/.htaccess`, `uploads/.htaccess`) are uploaded.
+2. Ensure hidden files (`.htaccess`, `config/.htaccess`, `includes/.htaccess`, `pages/.htaccess`, `database/.htaccess`, `storage/.htaccess`, `uploads/.htaccess`) are uploaded.
 3. In **cPanel -> MySQL Databases**, create a database and user, grant `ALL PRIVILEGES`, and import `database/schema.sql` followed by `database/seed.sql` in **phpMyAdmin**.
 4. Create `public_html/.env` from `.env.example` with `APP_ENV=production` and `SESSION_COOKIE_SECURE=1`.
 5. Verify directory permissions:
