@@ -896,7 +896,7 @@ function page_stylesheets(string $pageKey): array
         $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
     } elseif ($pageKey === 'book') {
         $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
-        $stylesheets[] = 'assets/css/book-layout.css?v=20261112';
+        $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';
     }
     if ($pageKey === 'home' || $pageKey === 'team') {
         $stylesheets[] = 'assets/css/team-photos.css?v=20261112';
