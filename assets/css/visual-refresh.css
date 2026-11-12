@@ -1685,3 +1685,59 @@ html body .mx-profile-card .tm-perk-text {
         border-radius: 0 0 22px 22px;
     }
 }
+
+/* Plain text links — replaces the pill button styling for these two CTAs */
+body .rs-foot .seen-more-link,
+body .abt-services-cta .abt-services-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 2px 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--mx-primary) !important;
+    -webkit-text-fill-color: var(--mx-primary) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: .01em !important;
+    line-height: 1.5 !important;
+    text-decoration: none !important;
+    transform: none !important;
+    transition: color .22s ease !important;
+}
+
+body .rs-foot .seen-more-link i,
+body .abt-services-cta .abt-services-btn i {
+    font-size: .78rem !important;
+    transition: transform .22s ease !important;
+}
+
+body .rs-foot .seen-more-link:hover,
+body .abt-services-cta .abt-services-btn:hover {
+    background: none !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #0B3FB0 !important;
+    -webkit-text-fill-color: #0B3FB0 !important;
+    transform: none !important;
+    text-decoration: underline !important;
+    text-underline-offset: 3px;
+}
+
+body .rs-foot .seen-more-link:hover i,
+body .abt-services-cta .abt-services-btn:hover i {
+    transform: translateX(3px) !important;
+}
+
+body .abt-services-cta {
+    margin-top: 0 !important;
+    padding: 4px 1rem 2.75rem !important;
+}
