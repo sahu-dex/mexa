@@ -1478,7 +1478,7 @@ body .mm-open {
 /* Founder profile card — premium blue gradient profile card */
 html body .mx-founder-card.mx-profile-card {
     display: grid !important;
-    grid-template-columns: minmax(0, .92fr) minmax(0, 1fr);
+    grid-template-columns: 400px minmax(0, 1fr);
     align-items: center;
     gap: clamp(22px, 2.6vw, 38px);
     width: 100%;
@@ -1553,17 +1553,20 @@ html body .mx-profile-card .tm-founder-bio {
 }
 
 html body .mx-profile-card .mx-profile-perks {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(10px, 1.1vw, 14px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 10px 12px;
     margin-top: clamp(15px, 1.8vw, 20px);
 }
 
 html body .mx-profile-card .tm-perk {
+    flex: 0 1 auto;
     display: flex;
     align-items: center;
-    gap: clamp(9px, 1vw, 12px);
-    padding: clamp(10px, 1vw, 13px) clamp(11px, 1.2vw, 15px) !important;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 10px 16px 10px 11px !important;
     border: 1px solid rgba(255, 255, 255, .34) !important;
     border-radius: 14px !important;
     background: linear-gradient(160deg, rgba(130, 200, 255, .38) 0%, rgba(58, 146, 255, .26) 100%) !important;
@@ -1571,14 +1574,14 @@ html body .mx-profile-card .tm-perk {
 }
 
 html body .mx-profile-card .tm-perk-ic {
-    width: 38px;
-    height: 38px;
-    flex: 0 0 38px;
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
     border: 1.5px solid rgba(255, 255, 255, .9) !important;
     border-radius: 999px !important;
     background: transparent !important;
     color: #fff !important;
-    font-size: 15px;
+    font-size: 13px;
 }
 
 html body .mx-profile-card .tm-perk-title {
@@ -1633,20 +1636,15 @@ html body .mx-profile-card .tm-perk-text {
     }
 
     html body .mx-profile-card .tm-perk {
-        padding: 10px 12px !important;
+        flex: 1 1 100%;
+        padding: 10px 14px !important;
     }
 
     html body .mx-profile-card .tm-perk-ic {
-        width: 34px;
-        height: 34px;
-        flex: 0 0 34px;
-        font-size: 14px;
-    }
-}
-
-@media (max-width: 480px) {
-    html body .mx-profile-card .mx-profile-perks {
-        grid-template-columns: minmax(0, 1fr);
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+        font-size: 13px;
     }
 }
 
