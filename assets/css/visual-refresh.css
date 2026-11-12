@@ -1479,27 +1479,27 @@ body .mm-open {
 html body .mx-founder-card.mx-profile-card {
     display: block !important;
     width: 100%;
-    max-width: 1152px;
+    max-width: 1024px;
     margin: 0 auto;
-    padding: clamp(20px, 3vw, 36px) !important;
+    padding: clamp(16px, 2.2vw, 24px) !important;
     border: 0 !important;
-    border-radius: 30px !important;
+    border-radius: 26px !important;
     background:
         radial-gradient(115% 78% at 100% 0%, rgba(96, 198, 255, .28) 0%, rgba(96, 198, 255, 0) 50%),
         radial-gradient(95% 75% at 0% 0%, rgba(0, 124, 255, .72) 0%, rgba(0, 124, 255, 0) 64%),
         linear-gradient(68deg, #0033AE 0%, #0044CF 35%, #0168FA 70%, #2AA6FE 100%) !important;
     box-shadow:
-        0 30px 70px rgba(13, 94, 232, .26),
-        0 10px 26px rgba(13, 94, 232, .16),
+        0 22px 52px rgba(13, 94, 232, .24),
+        0 8px 20px rgba(13, 94, 232, .14),
         inset 0 1px 0 rgba(255, 255, 255, .26) !important;
 }
 
 html body .mx-profile-card .tm-founder-photo {
     width: 100%;
-    aspect-ratio: 16 / 9 !important;
-    max-height: 560px;
+    aspect-ratio: auto !important;
+    height: clamp(200px, 24vw, 300px) !important;
     border: 0 !important;
-    border-radius: 20px !important;
+    border-radius: 18px !important;
     box-shadow: none !important;
     overflow: hidden;
     background: #0B1B33;
@@ -1509,20 +1509,20 @@ html body .mx-profile-card .tm-founder-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 22%;
+    object-position: center 18%;
     display: block;
 }
 
 html body .mx-profile-card .mx-profile-body {
-    padding-top: clamp(16px, 2.2vw, 24px);
+    padding-top: clamp(12px, 1.6vw, 18px);
 }
 
 html body .mx-profile-card .tm-founder-name {
     color: #fff !important;
     -webkit-text-fill-color: #fff !important;
-    font-size: clamp(1.85rem, 3.4vw, 2.5rem) !important;
+    font-size: clamp(1.4rem, 2.3vw, 1.75rem) !important;
     font-weight: 800 !important;
-    line-height: 1.1 !important;
+    line-height: 1.12 !important;
     letter-spacing: -.02em !important;
     margin: 0 !important;
 }
@@ -1530,79 +1530,79 @@ html body .mx-profile-card .tm-founder-name {
 html body .mx-profile-card .tm-founder-role {
     color: rgba(255, 255, 255, .96) !important;
     -webkit-text-fill-color: rgba(255, 255, 255, .96) !important;
-    font-size: clamp(.8rem, 1.1vw, .95rem) !important;
+    font-size: clamp(.74rem, .92vw, .84rem) !important;
     font-weight: 800 !important;
     letter-spacing: .12em !important;
     text-transform: uppercase !important;
-    margin: 10px 0 0 !important;
+    margin: 7px 0 0 !important;
 }
 
 html body .mx-profile-card .tm-founder-bio {
     color: rgba(255, 255, 255, .95) !important;
     -webkit-text-fill-color: rgba(255, 255, 255, .95) !important;
-    font-size: clamp(.95rem, 1.1vw, 1.05rem) !important;
-    line-height: 1.75 !important;
-    margin: clamp(12px, 1.6vw, 18px) 0 0 !important;
-    max-width: 68ch !important;
+    font-size: clamp(.88rem, .98vw, .96rem) !important;
+    line-height: 1.68 !important;
+    margin: clamp(10px, 1.2vw, 14px) 0 0 !important;
+    max-width: 74ch !important;
 }
 
 html body .mx-profile-card .mx-profile-perks {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: clamp(10px, 1.4vw, 16px);
-    margin-top: clamp(16px, 2.4vw, 26px);
+    gap: clamp(10px, 1.2vw, 14px);
+    margin-top: clamp(14px, 1.8vw, 20px);
 }
 
 html body .mx-profile-card .tm-perk {
     display: flex;
     align-items: center;
-    gap: clamp(10px, 1.2vw, 14px);
-    padding: clamp(11px, 1.4vw, 16px) clamp(12px, 1.6vw, 18px) !important;
+    gap: clamp(9px, 1vw, 12px);
+    padding: clamp(9px, 1vw, 12px) clamp(11px, 1.3vw, 15px) !important;
     border: 1px solid rgba(255, 255, 255, .34) !important;
-    border-radius: 16px !important;
+    border-radius: 14px !important;
     background: linear-gradient(160deg, rgba(130, 200, 255, .38) 0%, rgba(58, 146, 255, .26) 100%) !important;
     box-shadow: none !important;
 }
 
 html body .mx-profile-card .tm-perk-ic {
-    width: 44px;
-    height: 44px;
-    flex: 0 0 44px;
-    border: 1.6px solid rgba(255, 255, 255, .9) !important;
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    border: 1.5px solid rgba(255, 255, 255, .9) !important;
     border-radius: 999px !important;
     background: transparent !important;
     color: #fff !important;
-    font-size: 18px;
+    font-size: 15px;
 }
 
 html body .mx-profile-card .tm-perk-title {
     color: #fff !important;
     -webkit-text-fill-color: #fff !important;
-    font-size: clamp(.74rem, .95vw, .84rem) !important;
+    font-size: clamp(.7rem, .88vw, .78rem) !important;
     font-weight: 800 !important;
     letter-spacing: .06em !important;
     text-transform: uppercase !important;
-    line-height: 1.35;
+    line-height: 1.3;
     margin: 0 !important;
 }
 
 html body .mx-profile-card .tm-perk-text {
     color: rgba(255, 255, 255, .9) !important;
     -webkit-text-fill-color: rgba(255, 255, 255, .9) !important;
-    font-size: clamp(.78rem, .95vw, .86rem) !important;
-    line-height: 1.4;
-    margin: 3px 0 0 !important;
+    font-size: clamp(.74rem, .88vw, .82rem) !important;
+    line-height: 1.35;
+    margin: 2px 0 0 !important;
 }
 
 @media (max-width: 560px) {
     html body .mx-founder-card.mx-profile-card {
         padding: 14px !important;
-        border-radius: 24px !important;
+        border-radius: 22px !important;
     }
 
     html body .mx-profile-card .tm-founder-photo {
-        aspect-ratio: 4 / 3 !important;
-        border-radius: 16px !important;
+        height: 200px !important;
+        border-radius: 14px !important;
     }
 
     html body .mx-profile-card .mx-profile-perks {
@@ -1610,14 +1610,14 @@ html body .mx-profile-card .tm-perk-text {
     }
 
     html body .mx-profile-card .tm-perk {
-        padding: 11px 14px !important;
+        padding: 10px 13px !important;
     }
 
     html body .mx-profile-card .tm-perk-ic {
-        width: 38px;
-        height: 38px;
-        flex: 0 0 38px;
-        font-size: 16px;
+        width: 34px;
+        height: 34px;
+        flex: 0 0 34px;
+        font-size: 14px;
     }
 }
 
