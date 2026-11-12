@@ -857,6 +857,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-vendor-base.css',
             'assets/css/tailwind-book.css',
             'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
             'assets/css/service-booking-theme.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
@@ -893,6 +894,8 @@ function page_stylesheets(string $pageKey): array
     ]);
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
+    } elseif ($pageKey === 'book') {
+        $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
     }
     return $stylesheets;
 }
