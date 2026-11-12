@@ -38,8 +38,7 @@ $accentHex = chr(35) . '1051DF';
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
                     <div>
                         <a href="index.php" class="flex items-center gap-2 mb-6 group">
-                            <img src="<?= e($footerLogo) ?>" alt="Mexa Motion M" class="object-contain group-hover:scale-105 transition flex-shrink-0" style="height:26px;width:auto;border-radius:0" loading="lazy" decoding="async">
-                            <span class="footer-brand-word text-2xl font-extrabold tracking-tight transition" aria-label="<?= e(setting('site_name', 'MEXA MOTION')) ?>"><span aria-hidden="true">EXA MOTION</span></span>
+                            <span class="footer-brand-word text-2xl font-extrabold tracking-tight transition" aria-label="<?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?>" title="<?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?>"><?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?></span>
                         </a>
                         <p class="text-sm text-slate-500 mb-6 leading-relaxed"><?= e($footerDesc) ?></p>
                         <div class="flex gap-3">
@@ -85,8 +84,8 @@ $accentHex = chr(35) . '1051DF';
                 <div class="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-sm text-slate-500"><?= e($footerCopy) ?></p>
                     <div class="flex gap-6 text-sm text-slate-500">
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Terms of Service</a>
+                        <a href="privacy.php" class="hover:text-primary transition-colors">Privacy Policy</a>
+                        <a href="terms.php" class="hover:text-primary transition-colors">Terms of Service</a>
                     </div>
                 </div>
             </div>

@@ -174,6 +174,13 @@
         }
     }
 
+    /* Direct contact channels for the founder card */
+    var SOC = {
+        tg: 'https://t.me/Osman_Graphice',
+        wa: '8801575715571',
+        fb: 'https://www.facebook.com/mexamotion'
+    };
+
     function renderFounder() {
         var mount = el('tk-founder');
         if (!mount) return;
@@ -186,18 +193,14 @@
         var role = (founder && founder.role) || contact.founder_role || 'Mexa Motion';
         var bio = contact.founder_bio || (founder && founder.bio) || '';
         var photo = (founder && (founder.file_path || founder.photo_url)) || '';
-        var wa = digits((founder && founder.whatsapp) || contact.whatsapp_number || '');
-        var tg = (founder && founder.telegram) || contact.telegram_url || '';
-        var mail = (founder && founder.email) || contact.email || '';
-        var fb = contact.facebook_url || '';
+        var wa = digits((founder && founder.whatsapp) || contact.whatsapp_number || '') || SOC.wa;
+        var tg = (founder && founder.telegram) || contact.telegram_url || SOC.tg;
+        var fb = contact.facebook_url || (founder && founder.facebook_url) || SOC.fb;
 
         var links = [];
-        if (wa) links.push('<a class="tk-link is-wa" href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>');
         if (tg) links.push('<a class="tk-link is-tg" href="' + esc(tg) + '" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>');
-        if (fb) links.push('<a class="tk-link" href="' + esc(fb) + '" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
-        if (mail && mail.indexOf('your-domain.com') === -1 && mail.indexOf('example.com') === -1) {
-            links.push('<a class="tk-link is-mail" href="mailto:' + esc(mail) + '"><i class="fa-solid fa-envelope"></i> Email</a>');
-        }
+        if (wa) links.push('<a class="tk-link is-wa" href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>');
+        if (fb) links.push('<a class="tk-link is-fb" href="' + esc(fb) + '" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
 
         mount.innerHTML =
             '<div class="tk-founder-photo">' +

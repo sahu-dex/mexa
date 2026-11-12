@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'book';
 $pageTitle = 'Book a Service | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('book_lead', 'Select a service and package quality to submit your booking ticket.');
-$pageScripts = ['assets/js/store.js', 'assets/js/page-book.js'];
+$pageScripts = ['assets/js/store.js', 'assets/js/page-book.js?v=20261112-tabs2'];
 
 $catalog = get_services_with_packages(true);
 $services = $catalog['services'];
@@ -84,56 +84,59 @@ include dirname(__DIR__) . '/includes/header.php';
                 <form class="tk-form" id="tk-form" novalidate>
                     <?= csrf_field() ?>
                     <?= honeypot_field() ?>
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">1</span>
-                            <div>
-                                <div class="tk-box-title">Select service</div>
-                                <div class="tk-box-hint">Switch the service — packages and price follow instantly.</div>
+                    <div class="tk-steps">
+                        <div class="tk-box">
+                            <div class="tk-box-head">
+                                <span class="tk-num">1</span>
+                                <div>
+                                    <div class="tk-box-title">Select service</div>
+                                    <div class="tk-box-hint">Switch the service — packages and price follow instantly.</div>
+                                </div>
+                            </div>
+                            <div class="tk-select-wrap">
+                                <select id="tk-service" name="service_id" class="tk-select" aria-label="Select service">
+    <?php foreach ($services as $svc): ?>
+                                    <option value="<?= (int) $svc['id'] ?>"<?= ($selectedService !== null && (int) $svc['id'] === (int) $selectedService['id']) ? ' selected' : '' ?>><?= e($svc['name']) ?></option>
+    <?php endforeach; ?>
+                                </select>
                             </div>
                         </div>
-                        <div class="tk-select-wrap">
-                            <select id="tk-service" name="service_id" class="tk-select" aria-label="Select service">
-<?php foreach ($services as $svc): ?>
-                                <option value="<?= (int) $svc['id'] ?>"<?= ($selectedService !== null && (int) $svc['id'] === (int) $selectedService['id']) ? ' selected' : '' ?>><?= e($svc['name']) ?></option>
-<?php endforeach; ?>
-                            </select>
+
+                        <div class="tk-box">
+                            <div class="tk-box-head">
+                                <span class="tk-num">2</span>
+                                <div>
+                                    <div class="tk-box-title">Select package quality</div>
+                                    <div class="tk-box-hint">Three levels — the price updates as soon as you pick one.</div>
+                                </div>
+                            </div>
+                            <div class="tk-qgrid" id="tk-quality" role="radiogroup" aria-label="Package quality">
+    <?php if ($selectedService !== null): ?>
+    <?php foreach ($selectedService['packages'] as $pkg): $isOn = ($selectedPackage !== null && $pkg['quality'] === $selectedPackage['quality']); ?>
+                                <label class="tk-q<?= $isOn ? ' is-on' : '' ?>" data-quality="<?= e($pkg['quality']) ?>">
+                                    <input type="radio" name="tk-quality" value="<?= e($pkg['quality']) ?>"<?= $isOn ? ' checked' : '' ?>>
+                                    <b><?= e($pkg['name']) ?></b>
+                                    <small><?= e($pkg['revisions'] . ($pkg['delivery'] !== '' ? ' · ' . $pkg['delivery'] : '')) ?></small>
+                                    <span class="tk-q-price">$<?= e(rtrim(rtrim(number_format((float) $pkg['price'], 2, '.', ''), '0'), '.')) ?></span>
+                                </label>
+    <?php endforeach; ?>
+    <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="tk-box">
+                            <div class="tk-box-head">
+                                <span class="tk-num">3</span>
+                                <div>
+                                    <div class="tk-box-title">Project details</div>
+                                    <div class="tk-box-hint">Footage length, style, deadline, contact email/WhatsApp, references — anything that helps.</div>
+                                </div>
+                            </div>
+                            <textarea id="tk-message" name="message" class="tk-textarea" maxlength="4000" placeholder="Tell us about your project…" aria-label="Project details"></textarea>
+                            <div class="tk-counter"><span id="tk-count">0 / 4000</span></div>
                         </div>
                     </div>
 
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">2</span>
-                            <div>
-                                <div class="tk-box-title">Select package quality</div>
-                                <div class="tk-box-hint">Three levels — the price updates as soon as you pick one.</div>
-                            </div>
-                        </div>
-                        <div class="tk-qgrid" id="tk-quality" role="radiogroup" aria-label="Package quality">
-<?php if ($selectedService !== null): ?>
-<?php foreach ($selectedService['packages'] as $pkg): $isOn = ($selectedPackage !== null && $pkg['quality'] === $selectedPackage['quality']); ?>
-                            <label class="tk-q<?= $isOn ? ' is-on' : '' ?>" data-quality="<?= e($pkg['quality']) ?>">
-                                <input type="radio" name="tk-quality" value="<?= e($pkg['quality']) ?>"<?= $isOn ? ' checked' : '' ?>>
-                                <b><?= e($pkg['name']) ?></b>
-                                <small><?= e($pkg['revisions'] . ($pkg['delivery'] !== '' ? ' · ' . $pkg['delivery'] : '')) ?></small>
-                                <span class="tk-q-price">$<?= e(rtrim(rtrim(number_format((float) $pkg['price'], 2, '.', ''), '0'), '.')) ?></span>
-                            </label>
-<?php endforeach; ?>
-<?php endif; ?>
-                        </div>
-                    </div>
-
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">3</span>
-                            <div>
-                                <div class="tk-box-title">Project details</div>
-                                <div class="tk-box-hint">Footage length, style, deadline, contact email/WhatsApp, references — anything that helps.</div>
-                            </div>
-                        </div>
-                        <textarea id="tk-message" name="message" class="tk-textarea" maxlength="4000" placeholder="Tell us about your project…" aria-label="Project details"></textarea>
-                        <div class="tk-counter"><span id="tk-count">0 / 4000</span></div>
-                    </div>
                 </form>
 
                 <aside class="tk-prev" aria-label="Order preview">

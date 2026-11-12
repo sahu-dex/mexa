@@ -863,10 +863,32 @@ function page_stylesheets(string $pageKey): array
             'assets/css/video-preview.css',
             'assets/css/mm-subscribe-fix.css',
         ],
+        'privacy' => [
+            'assets/css/site-vendor-base.css',
+            'assets/css/tailwind-book.css',
+            'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
+            'assets/css/mobile-menu.css',
+            'assets/css/site-typography.css',
+            'assets/css/video-preview.css',
+            'assets/css/mm-subscribe-fix.css',
+            'assets/css/legal-page.css?v=20261112-plain',
+        ],
+        'terms' => [
+            'assets/css/site-vendor-base.css',
+            'assets/css/tailwind-book.css',
+            'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
+            'assets/css/mobile-menu.css',
+            'assets/css/site-typography.css',
+            'assets/css/video-preview.css',
+            'assets/css/mm-subscribe-fix.css',
+            'assets/css/legal-page.css?v=20261112-plain',
+        ],
     ];
     return array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
-        'assets/css/premium-design-system.css',
-        'assets/css/visual-refresh.css?v=20261112',
+        'assets/css/premium-design-system.css?v=20261112-tabs2',
+        'assets/css/visual-refresh.css?v=20261112-tabs2',
     ]);
 }

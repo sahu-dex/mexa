@@ -119,8 +119,11 @@
         var feats = (p.features || []).map(function (f) {
             return '<li><i class="fa-solid fa-check"></i><span>' + esc(f) + '</span></li>';
         }).join('');
+        // The legacy "Best Value" badge was retired from the package cards.
+        var badgeLabel = String(p.badge || '').trim();
+        if (badgeLabel.toLowerCase() === 'best value') badgeLabel = '';
         return '<article class="sp-pkg sv-pkg' + (p.highlight ? ' is-hi' : '') + '" data-quality="' + esc(p.quality) + '">' +
-            (p.badge ? '<span class="sv-pkg-badge">' + esc(p.badge) + '</span>' : '') +
+            (badgeLabel ? '<span class="sv-pkg-badge">' + esc(badgeLabel) + '</span>' : '') +
             '<h3>' + esc(p.name) + '</h3>' +
             (p.description ? '<p class="sp-pkg-desc">' + esc(p.description) + '</p>' : '') +
             '<div class="sv-pkg-price"><b>' + esc(money(p.price, p.currency)) + '</b><span>/ project</span></div>' +
