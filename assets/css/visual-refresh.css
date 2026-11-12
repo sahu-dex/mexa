@@ -1970,3 +1970,37 @@ body .tk-link.is-tg i { color: #229ED9 !important; }
 body .tk-link.is-wa i { color: #25D366 !important; }
 body .tk-link.is-fb i { color: #1877F2 !important; }
 body .tk-link.is-mail i { color: #64748b !important; }
+
+/* Bigger founder photo on the booking card */
+body .tk-founder {
+    grid-template-columns: clamp(150px, 15vw, 200px) minmax(0, 1fr);
+}
+
+body .tk-founder-photo {
+    width: clamp(150px, 15vw, 200px);
+    height: clamp(150px, 15vw, 200px);
+    border-radius: 24px !important;
+}
+
+body .tk-founder-photo img {
+    object-position: center 20%;
+}
+
+@media (max-width: 767px) {
+    body .tk-founder {
+        grid-template-columns: 1fr;
+    }
+
+    body .tk-founder-photo {
+        width: 160px;
+        height: 160px;
+        border-radius: 20px !important;
+    }
+}
+
+@media (max-width: 420px) {
+    body .tk-founder-photo {
+        width: 132px;
+        height: 132px;
+    }
+}
