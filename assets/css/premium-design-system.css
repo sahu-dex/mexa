@@ -42,7 +42,8 @@ body #services,body #process,body #team,body .sv2-sec,body .t3-members-sec{backg
 body :is(#portfolio,#reviews,#about,#contact,.sp-packages-final,.rvx-list,.rvx-write){background:#fff}
 body #home .hero-title{top:0}
 body #home{--hero-header-height:78px}
-body #stats-container > .grid{background:#fff!important;border:1px solid var(--mx-border)!important;border-radius:24px!important;box-shadow:var(--mx-shadow)!important}
+body #stats-container > .grid{background:radial-gradient(ellipse 95% 65% at 75% 0%,rgba(72,184,255,.22) 0%,transparent 65%),linear-gradient(82deg,#013AD5 0%,#0C64EF 50%,#279CFF 100%)!important;border:1.5px solid rgba(255,255,255,.82)!important;border-radius:26px!important;box-shadow:0 16px 38px rgba(12,92,235,.22),inset 0 1px 0 rgba(255,255,255,.28)!important;color:#fff!important}
+body #stats-container > .grid :is(h3,p,span,.counter,.text-primary,.text-secondary,.text-slate-500){color:#fff!important;-webkit-text-fill-color:#fff!important;text-shadow:none!important}
 body :is(.sv2-card,.sp-pkg,.rvx-card,.rvx-fcard,.t3-card,.tk-box,.tk-sum,.tk-prev){color:var(--mx-text)}
 body :is(.sp-pkg.is-hi,.tk-q.is-on){border-color:#9bbcff!important;box-shadow:0 16px 40px rgba(16,81,223,.16)!important}
 body :is(.tk-q,.rvx-photo-box,.tm-perk,.t3-chips li,.tk-prev-msg,.rvx-score-row){background:var(--mx-soft)!important;border:1px solid var(--mx-border)!important;color:var(--mx-text)!important;border-radius:16px}

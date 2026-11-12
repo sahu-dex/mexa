@@ -866,7 +866,7 @@ function page_stylesheets(string $pageKey): array
     ];
     return array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
-        'assets/css/premium-design-system.css',
-        'assets/css/visual-refresh.css?v=20261112',
+        'assets/css/premium-design-system.css?v=20261112-profile',
+        'assets/css/visual-refresh.css?v=20261112-profile',
     ]);
 }

@@ -325,10 +325,21 @@ body .hero-btn {
 }
 
 body #stats-container > .grid {
-    border: 1px solid var(--mx-border) !important;
+    border: 1.5px solid rgba(255, 255, 255, .82) !important;
     border-radius: 26px !important;
-    background: rgba(255, 255, 255, .94) !important;
-    box-shadow: var(--mx-shadow) !important;
+    background:
+        radial-gradient(ellipse 95% 65% at 75% 0%, rgba(72, 184, 255, .22) 0%, transparent 65%),
+        linear-gradient(82deg, #013AD5 0%, #0C64EF 50%, #279CFF 100%) !important;
+    box-shadow:
+        0 16px 38px rgba(12, 92, 235, .22),
+        inset 0 1px 0 rgba(255, 255, 255, .28) !important;
+    color: #fff !important;
+}
+
+body #stats-container > .grid :is(h3, p, span, .counter, .text-primary, .text-secondary, .text-slate-500) {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    text-shadow: none !important;
 }
 
 /* Royal blue primary controls; white/transparent surfaces stay dominant. */
@@ -1461,5 +1472,156 @@ body .mm-open {
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
+    }
+}
+
+/* Founder profile card — premium blue gradient profile card */
+html body .mx-founder-card.mx-profile-card {
+    display: block !important;
+    width: 100%;
+    max-width: 840px;
+    margin: 0 auto;
+    padding: clamp(16px, 2.6vw, 26px) !important;
+    border: 0 !important;
+    border-radius: 30px !important;
+    background:
+        radial-gradient(115% 78% at 100% 0%, rgba(96, 198, 255, .28) 0%, rgba(96, 198, 255, 0) 50%),
+        radial-gradient(95% 75% at 0% 0%, rgba(0, 124, 255, .72) 0%, rgba(0, 124, 255, 0) 64%),
+        linear-gradient(68deg, #0033AE 0%, #0044CF 35%, #0168FA 70%, #2AA6FE 100%) !important;
+    box-shadow:
+        0 30px 70px rgba(13, 94, 232, .26),
+        0 10px 26px rgba(13, 94, 232, .16),
+        inset 0 1px 0 rgba(255, 255, 255, .26) !important;
+}
+
+html body .mx-profile-card .tm-founder-photo {
+    width: 100%;
+    aspect-ratio: 16 / 9 !important;
+    border: 0 !important;
+    border-radius: 20px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    background: #0B1B33;
+}
+
+html body .mx-profile-card .tm-founder-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 22%;
+    display: block;
+}
+
+html body .mx-profile-card .mx-profile-body {
+    padding-top: clamp(16px, 2.2vw, 24px);
+}
+
+html body .mx-profile-card .tm-founder-name {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    font-size: clamp(1.85rem, 3.4vw, 2.5rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -.02em !important;
+    margin: 0 !important;
+}
+
+html body .mx-profile-card .tm-founder-role {
+    color: rgba(255, 255, 255, .96) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .96) !important;
+    font-size: clamp(.8rem, 1.1vw, .95rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: .12em !important;
+    text-transform: uppercase !important;
+    margin: 10px 0 0 !important;
+}
+
+html body .mx-profile-card .tm-founder-bio {
+    color: rgba(255, 255, 255, .95) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .95) !important;
+    font-size: clamp(.95rem, 1.1vw, 1.05rem) !important;
+    line-height: 1.75 !important;
+    margin: clamp(12px, 1.6vw, 18px) 0 0 !important;
+    max-width: none !important;
+}
+
+html body .mx-profile-card .mx-profile-perks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(10px, 1.4vw, 16px);
+    margin-top: clamp(16px, 2.4vw, 26px);
+}
+
+html body .mx-profile-card .tm-perk {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 1.2vw, 14px);
+    padding: clamp(11px, 1.4vw, 16px) clamp(12px, 1.6vw, 18px) !important;
+    border: 1px solid rgba(255, 255, 255, .34) !important;
+    border-radius: 16px !important;
+    background: linear-gradient(160deg, rgba(130, 200, 255, .38) 0%, rgba(58, 146, 255, .26) 100%) !important;
+    box-shadow: none !important;
+}
+
+html body .mx-profile-card .tm-perk-ic {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    border: 1.6px solid rgba(255, 255, 255, .9) !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: #fff !important;
+    font-size: 18px;
+}
+
+html body .mx-profile-card .tm-perk-title {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    font-size: clamp(.74rem, .95vw, .84rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: .06em !important;
+    text-transform: uppercase !important;
+    line-height: 1.35;
+    margin: 0 !important;
+}
+
+html body .mx-profile-card .tm-perk-text {
+    color: rgba(255, 255, 255, .9) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .9) !important;
+    font-size: clamp(.78rem, .95vw, .86rem) !important;
+    line-height: 1.4;
+    margin: 3px 0 0 !important;
+}
+
+@media (max-width: 560px) {
+    html body .mx-founder-card.mx-profile-card {
+        padding: 14px !important;
+        border-radius: 24px !important;
+    }
+
+    html body .mx-profile-card .tm-founder-photo {
+        aspect-ratio: 4 / 3 !important;
+        border-radius: 16px !important;
+    }
+
+    html body .mx-profile-card .mx-profile-perks {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    html body .mx-profile-card .tm-perk {
+        padding: 11px 14px !important;
+    }
+
+    html body .mx-profile-card .tm-perk-ic {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        font-size: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html body .mx-founder-card.mx-profile-card {
+        transition: box-shadow .35s ease, transform .35s ease;
     }
 }

@@ -101,10 +101,10 @@ include dirname(__DIR__) . '/includes/header.php';
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-8 apple-glass-card rounded-3xl p-8">
 <?php for ($si = 1; $si <= 4; $si++): ?>
                         <div class="text-center group">
-                            <h3 class="text-4xl font-bold text-secondary mb-2 flex justify-center items-center">
-                                <span class="counter" data-target="<?= e(setting("stat_{$si}_number", '0')) ?>">0</span><span class="text-primary">+</span>
+                            <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
+                                <span class="counter" data-target="<?= e(setting("stat_{$si}_number", '0')) ?>">0</span><span class="text-white">+</span>
                             </h3>
-                            <p class="text-slate-500 font-medium text-sm tracking-wide"><?= e(setting("stat_{$si}_label", '')) ?></p>
+                            <p class="text-white font-medium text-sm tracking-wide"><?= e(setting("stat_{$si}_label", '')) ?></p>
                         </div>
 <?php endfor; ?>
                     </div>
@@ -275,17 +275,17 @@ include dirname(__DIR__) . '/includes/header.php';
                 </div>
 
 <?php if ($founder !== null): ?>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center max-w-6xl mx-auto mx-founder-card" data-aos="fade-up">
+                <div class="mx-founder-card mx-profile-card" data-aos="fade-up">
                     <div class="tm-founder-photo">
                         <img src="<?= e($founder['file_path']) ?>" alt="<?= e($founder['name']) ?>" loading="lazy" decoding="async">
                     </div>
 
-                    <div>
+                    <div class="mx-profile-body">
                         <h3 class="tm-founder-name"><?= e($founder['name']) ?></h3>
                         <p class="tm-founder-role"><?= e($founder['role']) ?></p>
                         <p class="tm-founder-bio"><?= e($founder['bio'] !== '' ? $founder['bio'] : $founder['description']) ?></p>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-7">
+                        <div class="mx-profile-perks">
                             <div class="tm-perk">
                                 <span class="tm-perk-ic"><svg class="tm-perk-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3.1 1.9"/></svg></span>
                                 <div>
