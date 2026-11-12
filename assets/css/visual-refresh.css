@@ -1478,7 +1478,7 @@ body .mm-open {
 /* Founder profile card — premium blue gradient profile card */
 html body .mx-founder-card.mx-profile-card {
     display: grid !important;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, .92fr) minmax(0, 1fr);
     align-items: center;
     gap: clamp(22px, 2.6vw, 38px);
     width: 100%;
@@ -1500,7 +1500,7 @@ html body .mx-founder-card.mx-profile-card {
 /* Photo behaves like a landscape thumbnail */
 html body .mx-profile-card .tm-founder-photo {
     width: 100%;
-    aspect-ratio: 16 / 9 !important;
+    aspect-ratio: 1.1 / 1 !important;
     height: auto !important;
     max-height: none !important;
     border: 0 !important;
@@ -1514,7 +1514,7 @@ html body .mx-profile-card .tm-founder-photo img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 28%;
+    object-position: center 22%;
     display: block;
 }
 
@@ -1606,6 +1606,11 @@ html body .mx-profile-card .tm-perk-text {
         max-width: 660px;
         padding: 16px !important;
         border-radius: 24px !important;
+    }
+
+    html body .mx-profile-card .tm-founder-photo {
+        width: min(100%, 430px);
+        margin: 0 auto;
     }
 
     html body .mx-profile-card .mx-profile-body {
