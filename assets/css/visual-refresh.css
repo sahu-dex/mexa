@@ -1553,20 +1553,20 @@ html body .mx-profile-card .tm-founder-bio {
 }
 
 html body .mx-profile-card .mx-profile-perks {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
-    gap: 10px 12px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
     margin-top: clamp(15px, 1.8vw, 20px);
 }
 
 html body .mx-profile-card .tm-perk {
-    flex: 0 1 auto;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 10px;
-    padding: 10px 16px 10px 11px !important;
+    gap: 11px;
+    min-width: 0;
+    min-height: 62px;
+    padding: 12px 16px !important;
     border: 1px solid rgba(255, 255, 255, .34) !important;
     border-radius: 14px !important;
     background: linear-gradient(160deg, rgba(130, 200, 255, .38) 0%, rgba(58, 146, 255, .26) 100%) !important;
@@ -1636,15 +1636,22 @@ html body .mx-profile-card .tm-perk-text {
     }
 
     html body .mx-profile-card .tm-perk {
-        flex: 1 1 100%;
-        padding: 10px 14px !important;
+        min-height: 58px;
+        gap: 9px;
+        padding: 11px 10px !important;
     }
 
     html body .mx-profile-card .tm-perk-ic {
-        width: 32px;
-        height: 32px;
-        flex: 0 0 32px;
-        font-size: 13px;
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 400px) {
+    html body .mx-profile-card .mx-profile-perks {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
