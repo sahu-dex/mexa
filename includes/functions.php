@@ -970,5 +970,8 @@ function page_stylesheets(string $pageKey): array
     if ($pageKey === 'home' || $pageKey === 'team') {
         $stylesheets[] = 'assets/css/team-photos.css?v=20261112';
     }
+    // Final visual grade for every public page — keep this last so the
+    // light-blue palette wins over page-specific theme files.
+    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-light-blue';
     return $stylesheets;
 }

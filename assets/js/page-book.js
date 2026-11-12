@@ -197,16 +197,19 @@
         var tg = (founder && founder.telegram) || contact.telegram_url || SOC.tg;
         var fb = contact.facebook_url || (founder && founder.facebook_url) || SOC.fb;
 
+        var messageHref = tg ? tg : (wa ? 'https://wa.me/' + wa : '');
+        var contactHref = wa ? 'https://wa.me/' + wa : messageHref;
+
         var links = [];
-        if (tg) links.push('<a class="tk-link is-tg" href="' + esc(tg) + '" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>');
-        if (wa) links.push('<a class="tk-link is-wa" href="https://wa.me/' + esc(wa) + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>');
-        if (fb) links.push('<a class="tk-link is-fb" href="' + esc(fb) + '" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>');
+        if (messageHref) links.push('<a class="tk-link is-tg" href="' + esc(messageHref) + '" target="_blank" rel="noopener"><i class="fa-brands fa-telegram" aria-hidden="true"></i><span>Message Me</span></a>');
+        if (contactHref) links.push('<a class="tk-link is-wa" href="' + esc(contactHref) + '" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i><span>Contact Me</span></a>');
+        if (fb) links.push('<a class="tk-link is-fb" href="' + esc(fb) + '" target="_blank" rel="noopener" aria-label="Facebook" title="Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>');
 
         mount.innerHTML =
             '<div class="tk-founder-photo">' +
                 (photo ? '<img src="' + esc(photo) + '" alt="' + esc(name) + '" loading="lazy" decoding="async">' : '<i class="fa-solid fa-user-tie"></i>') +
             '</div>' +
-            '<div>' +
+            '<div class="tk-founder-body">' +
                 '<h2 class="tk-founder-name">' + esc(name) + '</h2>' +
                 '<p class="tk-founder-role">' + esc(role) + '</p>' +
                 (bio ? '<p class="tk-founder-bio">' + esc(bio) + '</p>' : '') +

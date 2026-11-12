@@ -28,7 +28,7 @@ include dirname(__DIR__) . '/includes/header.php';
 <section class="sv2-hero">
     <div class="container mx-auto px-4 md:px-8">
         <div class="sv2-hero-in">
-            <h1 class="mh-line2" id="sv2-tagline">Video editing that ships on time, every time</h1>
+            <h1 class="mh-line2" id="sv2-tagline">Video editing that ships <span class="mh-accent">on time, every time</span></h1>
             <p class="mh-desc" id="sv2-hero-desc"><?= e(setting('services_intro', '')) ?></p>
 <?php if ($showOverview && ($overviewVideo !== '' || $overviewPoster !== '')): ?>
             <div class="sv2-hero-video" id="sv2-hero-video" aria-label="Our services showreel">
