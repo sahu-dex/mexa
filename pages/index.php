@@ -52,33 +52,34 @@ $tgHref = $tgRaw !== '' ? $tgRaw : 'book.php';
 include dirname(__DIR__) . '/includes/header.php';
 ?>
 <?php if (setting_raw('home_section_hero', '1') !== '0'): ?>
-        <section id="home" class="relative pt-2 pb-6 lg:pt-3 lg:pb-8 overflow-hidden bg-transparent flex items-center">
-            <div class="container mx-auto px-4 md:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center hero-grid">
-                    <div class="order-1 lg:col-start-1 lg:row-start-1" data-aos="fade-right" data-aos-duration="1000">
-                        <h1 class="hero-title font-extrabold leading-[0.98] mt-0">
-                            <span class="hero-line-1 text-secondary"><?= $heroLine1Html ?></span>
-                            <span class="hero-line-2 hero-title-blue"><?= e($heroLine2) ?></span>
-                        </h1>
-                        <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
-                            <?= e($heroDesc) ?>
-                        </p>
+        <section id="home" class="mx-home-hero">
+            <div class="mx-hero-inner">
+                <div class="mx-hero-copy">
+                    <div class="mx-eyebrow"><span class="mx-eyebrow-dot"></span> YOUR CREATIVE POST-PRODUCTION PARTNER</div>
+                    <h1 class="mx-hero-title"><span><?= $heroLine1Html ?></span> <span class="mx-gradient-text"><?= e($heroLine2) ?></span></h1>
+                    <p class="mx-hero-description"><?= e($heroDesc) ?></p>
+                    <div class="mx-hero-actions">
+                        <a href="service.php" class="glass-btn-primary mx-hero-button"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <span aria-hidden="true">↗</span></a>
+                        <a href="book.php" class="glass-btn-secondary mx-hero-button"><?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <span aria-hidden="true">↗</span></a>
                     </div>
-
-                    <div class="hero-video order-2 lg:col-start-2 lg:row-start-1 relative flex items-center justify-end" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-                        <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
-                            <img class="hero-character-img" src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
-                        </figure>
+                    <div class="mx-hero-trust">
+                        <span class="mx-trust-icon" aria-hidden="true">✦</span>
+                        <span><strong>Made for creators &amp; brands</strong><br>Thoughtful edits, built to make an impact.</span>
                     </div>
-
-                    <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
-                        <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
-                        </a>
-                        <a href="book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
-                        </a>
+                </div>
+                <div class="mx-hero-art" aria-label="Mexa Motion creative studio">
+                    <div class="mx-art-orbit mx-art-orbit-one"></div><div class="mx-art-orbit mx-art-orbit-two"></div>
+                    <div class="mx-art-window">
+                        <div class="mx-window-top"><span class="mx-window-dots"><i></i><i></i><i></i></span><span>THE CREATIVE STUDIO</span><span class="mx-window-top-right">MEXA / 01</span></div>
+                        <div class="mx-art-stage">
+                            <span class="mx-art-label">CREATIVITY IN MOTION <span>↗</span></span>
+                            <img src="<?= e($heroImg) ?>" alt="Mexa Motion creative studio character" width="1024" height="969" decoding="async" fetchpriority="high">
+                            <span class="mx-art-caption">GOOD STORIES<br><strong>DESERVE GREAT EDITS.</strong></span>
+                        </div>
+                        <div class="mx-window-bottom"><span><i></i> READY TO CREATE</span><span>VIDEO &nbsp; / &nbsp; MOTION &nbsp; / &nbsp; DESIGN</span></div>
                     </div>
+                    <div class="mx-floating-card"><span class="mx-floating-icon">✦</span><span><strong>Ideas, brought to life.</strong><small>Made with purpose &amp; creativity</small></span></div>
+                    <div class="mx-art-index" aria-hidden="true">01 / 04 <span>—</span> CREATE WITH MEXA</div>
                 </div>
             </div>
         </section>
@@ -102,7 +103,7 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php for ($si = 1; $si <= 4; $si++): ?>
                         <div class="text-center group">
                             <h3 class="text-4xl font-bold text-secondary mb-2 flex justify-center items-center">
-                                <span class="counter" data-target="<?= e(setting("stat_{$si}_number", '0')) ?>">0</span><span class="text-primary">+</span>
+                                <span class="counter" data-target="<?= e(setting("stat_{$si}_number", '0')) ?>"><?= e(setting("stat_{$si}_number", '0')) ?></span><span class="text-primary">+</span>
                             </h3>
                             <p class="text-slate-500 font-medium text-sm tracking-wide"><?= e(setting("stat_{$si}_label", '')) ?></p>
                         </div>
@@ -117,6 +118,7 @@ include dirname(__DIR__) . '/includes/header.php';
         <section id="services" class="py-20 md:py-24 relative bg-transparent">
             <div class="container mx-auto px-4 md:px-8 relative z-10">
                 <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14" data-aos="fade-up">
+                    <span class="mx-section-kicker">WHAT WE DO</span>
                     <h2 class="svc-title font-extrabold">
                         <span class="hidden md:block text-secondary"><?= e(setting('home_services_title_1', 'Premium Video Editing')) ?></span>
                         <span class="hidden md:block svc-title-blue"><?= e(setting('home_services_title_2', 'Solutions')) ?></span>
@@ -139,6 +141,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
 <?php endforeach; ?>
                 </div>
+                <div class="mx-section-action"><a class="glass-btn-secondary mx-hero-button" href="service.php">Explore all services <span aria-hidden="true">↗</span></a></div>
             </div>
         </section>
 <?php endif; ?>
@@ -147,6 +150,7 @@ include dirname(__DIR__) . '/includes/header.php';
         <section id="portfolio" class="py-20 md:py-24 bg-transparent relative">
             <div class="container mx-auto px-4 md:px-8">
                 <div class="text-center max-w-4xl mx-auto" data-aos="fade-up">
+                    <span class="mx-section-kicker">THE WORK</span>
                     <h2 class="pf-title font-extrabold">
                         <span class="text-secondary"><?= e(setting('home_portfolio_title_1', 'Explore Our Recent ')) ?></span><span class="pf-title-blue"><?= e(setting('home_portfolio_title_2', 'Work & Video Demos')) ?></span>
                     </h2>

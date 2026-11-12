@@ -43,10 +43,18 @@ $accentHex = chr(35) . '1051DF';
                         </a>
                         <p class="text-sm text-slate-500 mb-6 leading-relaxed"><?= e($footerDesc) ?></p>
                         <div class="flex gap-3">
+<?php if ($fbUrl !== ''): ?>
                             <a href="<?= e($fbUrl ?: $hashPlaceholder) ?>"<?= $fbUrl !== '' ? ' target="_blank" rel="noopener"' : '' ?> aria-label="Facebook" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-facebook-f"></i></a>
+<?php endif; ?>
+<?php if ($tgUrl !== ''): ?>
                             <a href="<?= e($tgUrl ?: $hashPlaceholder) ?>"<?= $tgUrl !== '' ? ' target="_blank" rel="noopener"' : '' ?> aria-label="Telegram" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-telegram"></i></a>
+<?php endif; ?>
+<?php if ($waUrl !== ''): ?>
                             <a href="<?= e($waUrl ?: $hashPlaceholder) ?>"<?= $waUrl !== '' ? ' target="_blank" rel="noopener"' : '' ?> aria-label="WhatsApp" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-whatsapp"></i></a>
+<?php endif; ?>
+<?php if ($ytUrl !== ''): ?>
                             <a href="<?= e($ytUrl ?: $hashPlaceholder) ?>"<?= $ytUrl !== '' ? ' target="_blank" rel="noopener"' : '' ?> aria-label="YouTube" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-youtube"></i></a>
+<?php endif; ?>
                         </div>
                     </div>
 
@@ -84,10 +92,7 @@ $accentHex = chr(35) . '1051DF';
 
                 <div class="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-sm text-slate-500"><?= e($footerCopy) ?></p>
-                    <div class="flex gap-6 text-sm text-slate-500">
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Terms of Service</a>
-                    </div>
+                    <span class="text-sm text-slate-500">Made for stories worth sharing.</span>
                 </div>
             </div>
         </footer>
