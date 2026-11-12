@@ -1914,16 +1914,217 @@ body #packages .sp-pkg.is-hi .sp-buy:hover {
     }
 }
 
-/* Booking steps 1-3 grouped in a single card */
-body .tk-form > .tk-steps {
-    padding: clamp(18px, 2.4vw, 26px);
+/* Book page — one unified booking card (founder, contacts, steps, order preview) */
+body .tk-unified {
+    margin-top: 22px;
+    padding: clamp(14px, 1.7vw, 22px);
     border: 1px solid var(--mx-border);
-    border-radius: 22px;
-    background: #fff;
-    box-shadow: var(--mx-shadow);
+    border-radius: 26px;
+    background: linear-gradient(150deg, #ffffff 0%, #fbfcff 100%);
+    box-shadow: 0 22px 52px rgba(17, 60, 138, .10);
 }
 
-body .tk-steps > .tk-box {
+body .tk-unified-grid {
+    display: grid;
+    grid-template-columns: 356px minmax(0, 1fr);
+    gap: clamp(14px, 1.6vw, 20px);
+    align-items: start;
+}
+
+body .tk-unified-side {
+    position: sticky;
+    top: 94px;
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+}
+
+body .tk-unified .tk-founder {
+    display: block !important;
+    margin: 0 !important;
+    padding: 18px !important;
+    border: 0 !important;
+    border-radius: 20px !important;
+    background:
+        radial-gradient(120% 90% at 100% 0%, rgba(96, 198, 255, .46) 0%, rgba(96, 198, 255, 0) 58%),
+        linear-gradient(150deg, #012E9E 0%, #0248CE 48%, #0A6BF7 100%) !important;
+    box-shadow: 0 16px 34px rgba(10, 62, 170, .26) !important;
+}
+
+body .tk-unified .tk-founder-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+body .tk-unified .tk-founder-photo {
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
+    border: 1.5px solid rgba(255, 255, 255, .6) !important;
+    border-radius: 18px !important;
+    background: rgba(255, 255, 255, .14) !important;
+    color: #fff !important;
+    font-size: 22px;
+}
+
+body .tk-unified .tk-founder-id {
+    min-width: 0;
+}
+
+body .tk-unified .tk-founder-name {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    font-size: 1.02rem !important;
+    line-height: 1.25 !important;
+    letter-spacing: -.01em !important;
+}
+
+body .tk-unified .tk-founder-role {
+    margin-top: 3px !important;
+    color: rgba(255, 255, 255, .82) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .82) !important;
+    font-size: 9.8px !important;
+    letter-spacing: .13em !important;
+}
+
+body .tk-unified .tk-founder-bio {
+    margin-top: 12px !important;
+    color: rgba(255, 255, 255, .9) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .9) !important;
+    font-size: 12.2px !important;
+    line-height: 1.68 !important;
+    max-width: none !important;
+}
+
+body .tk-unified .tk-links {
+    margin-top: 14px !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px !important;
+}
+
+body .tk-unified .tk-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 36px;
+    padding: 7px 6px !important;
+    border: 1px solid rgba(255, 255, 255, .6) !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    color: #0A45C2 !important;
+    -webkit-text-fill-color: #0A45C2 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: .01em !important;
+    text-decoration: none !important;
+    box-shadow: 0 6px 14px rgba(4, 33, 94, .16) !important;
+    transform: none !important;
+    transition: background .2s ease, transform .2s ease !important;
+}
+
+body .tk-unified .tk-link i {
+    font-size: 12px;
+    line-height: 1;
+}
+
+body .tk-unified .tk-link.is-tg i { color: #229ED9 !important; }
+body .tk-unified .tk-link.is-wa i { color: #25D366 !important; }
+body .tk-unified .tk-link.is-fb i { color: #1877F2 !important; }
+
+body .tk-unified .tk-link:hover {
+    background: #F1F6FF !important;
+    color: #093FB4 !important;
+    -webkit-text-fill-color: #093FB4 !important;
+    transform: translateY(-1px) !important;
+    border-color: #fff !important;
+}
+
+body .tk-unified .tk-prev {
+    position: static !important;
+    margin: 0 !important;
+    padding: 18px !important;
+    border: 1px solid #E4EBF7 !important;
+    border-radius: 20px !important;
+    background: #F6F9FF !important;
+    box-shadow: none !important;
+}
+
+body .tk-unified .tk-prev-title {
+    font-size: 14px !important;
+}
+
+body .tk-unified .tk-prev-rows {
+    margin-top: 12px !important;
+    gap: 8px !important;
+}
+
+body .tk-unified .tk-prev-row {
+    padding-bottom: 8px !important;
+}
+
+body .tk-unified .tk-prev-msg {
+    margin-top: 12px !important;
+    font-size: 12px !important;
+    line-height: 1.6 !important;
+}
+
+body .tk-unified .tk-submit {
+    width: 100%;
+    margin-top: 14px;
+}
+
+body .tk-unified .tk-prev-note {
+    margin-top: 10px !important;
+    font-size: 11px !important;
+}
+
+body .tk-unified-main {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+}
+
+body .tk-unified .tk-sum {
+    margin: 0 !important;
+    padding: 18px 20px !important;
+    border: 1px solid #E7EEF9 !important;
+    border-radius: 18px !important;
+    background: linear-gradient(135deg, #F7FAFF 0%, #EEF5FF 100%) !important;
+    box-shadow: none !important;
+}
+
+body .tk-unified .tk-sum-name {
+    font-size: 1.12rem !important;
+}
+
+body .tk-unified .tk-sum-price b {
+    font-size: 1.65rem !important;
+}
+
+body .tk-unified .tk-sum-desc {
+    margin-top: 10px !important;
+    font-size: 12.5px !important;
+}
+
+body .tk-unified .tk-sum-feats {
+    margin-top: 12px !important;
+    gap: 7px 16px !important;
+}
+
+body .tk-unified .tk-sum-feats li {
+    font-size: 12px !important;
+}
+
+body .tk-unified .tk-form {
+    display: block !important;
+    margin: 0 !important;
+    padding: 4px 2px 2px;
+}
+
+body .tk-unified .tk-box {
     padding: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -1931,15 +2132,68 @@ body .tk-steps > .tk-box {
     box-shadow: none !important;
 }
 
-body .tk-steps > .tk-box + .tk-box {
-    margin-top: 18px;
-    padding-top: 18px !important;
+body .tk-unified .tk-box + .tk-box {
+    margin-top: 20px;
+    padding-top: 20px !important;
     border-top: 1px dashed #E3EAF7 !important;
 }
 
-@media (max-width: 560px) {
-    body .tk-form > .tk-steps {
-        padding: 16px;
-        border-radius: 18px;
+body .tk-unified .tk-box-head {
+    margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+    body .tk-unified {
+        margin-top: 16px;
+        padding: 14px;
+        border-radius: 22px;
     }
+
+    body .tk-unified-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    body .tk-unified-side {
+        display: contents;
+    }
+
+    body .tk-unified .tk-founder { order: 1; }
+    body .tk-unified-main { order: 2; }
+    body .tk-unified .tk-prev { order: 3; }
+}
+
+@media (max-width: 560px) {
+    body .tk-unified .tk-link {
+        font-size: 10px !important;
+        gap: 4px;
+        padding: 7px 4px !important;
+    }
+
+    body .tk-unified .tk-founder {
+        padding: 15px !important;
+    }
+
+    body .tk-unified .tk-founder-photo {
+        width: 54px;
+        height: 54px;
+        flex: 0 0 54px;
+        border-radius: 16px !important;
+    }
+
+    body .tk-unified .tk-sum {
+        padding: 15px 16px !important;
+    }
+}
+
+body .tk-unified .tk-founder-photo img {
+    object-position: center 18%;
+}
+
+body .tk-unified .tk-founder-bio {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
