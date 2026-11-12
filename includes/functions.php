@@ -872,7 +872,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-typography.css',
             'assets/css/video-preview.css',
             'assets/css/mm-subscribe-fix.css',
-            'assets/css/legal-page.css?v=20261112-legal',
+            'assets/css/legal-page.css?v=20261112-plain',
         ],
         'terms' => [
             'assets/css/site-vendor-base.css',
@@ -883,7 +883,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-typography.css',
             'assets/css/video-preview.css',
             'assets/css/mm-subscribe-fix.css',
-            'assets/css/legal-page.css?v=20261112-legal',
+            'assets/css/legal-page.css?v=20261112-plain',
         ],
     ];
     return array_merge($map[$pageKey] ?? $map['home'], [

@@ -22,229 +22,158 @@ $supportFb = 'https://www.facebook.com/mexamotion';
 
 $lastUpdated = '12 November 2026';
 
-$toc = [
-    'agreement' => 'Agreement',
-    'services' => 'Our services',
-    'booking' => 'Booking and confirmation',
-    'pricing' => 'Pricing and payment',
-    'client-duties' => 'Your responsibilities',
-    'revisions' => 'Revisions and scope',
-    'delivery' => 'Turnaround and delivery',
-    'ownership' => 'Ownership and licences',
-    'refunds' => 'Cancellations and refunds',
-    'acceptable-use' => 'Acceptable use',
-    'liability' => 'Liability',
-    'termination' => 'Termination',
-    'law' => 'Governing law',
-    'changes' => 'Changes to these terms',
-    'contact' => 'Contact us',
-];
-
 include dirname(__DIR__) . '/includes/header.php';
 ?>
-        <main class="lg-page">
-            <div class="container mx-auto px-4 md:px-8">
-                <div class="lg-wrap">
-                    <header class="lg-head">
-                        <nav class="lg-crumb" aria-label="Breadcrumb">
-                            <a href="index.php">Home</a>
-                            <i class="fa-solid fa-chevron-right"></i>
-                            <span>Terms of Service</span>
-                        </nav>
-                        <span class="lg-kicker"><i class="fa-solid fa-file-contract"></i> Legal</span>
-                        <h1 class="lg-title">Terms of Service</h1>
-                        <p class="lg-lead">
-                            These terms explain how bookings, prices, revisions, delivery and payments work when you order
-                            editing from <?= e($siteName) ?>. Please read them before you submit a booking ticket.
-                        </p>
-                        <div class="lg-meta">
-                            <span><i class="fa-solid fa-calendar-days"></i> Last updated: <?= e($lastUpdated) ?></span>
-                            <span><i class="fa-solid fa-handshake"></i> Applies to every booked project</span>
-                        </div>
-                    </header>
+        <main class="legal">
+            <div class="legal-wrap">
+                <article class="legal-doc">
+                    <h1>Terms of Service</h1>
+                    <p class="legal-meta">Last updated: <?= e($lastUpdated) ?></p>
 
-                    <div class="lg-layout">
-                        <aside class="lg-toc" aria-label="On this page">
-                            <div class="lg-toc-title">On this page</div>
-                            <ol>
-<?php foreach ($toc as $anchor => $label): ?>
-                                <li><a href="#<?= e($anchor) ?>"><?= e($label) ?></a></li>
-<?php endforeach; ?>
-                            </ol>
-                            <a class="lg-toc-cta" href="book.php"><i class="fa-solid fa-ticket"></i> Book a service</a>
-                        </aside>
+                    <p class="legal-intro">
+                        These terms explain how bookings, prices, revisions, delivery and payments work when you order editing
+                        from <?= e($siteName) ?>. Please read them before you submit a booking ticket.
+                    </p>
 
-                        <article class="lg-body">
-                            <section id="agreement">
-                                <h2>Agreement</h2>
-                                <p>
-                                    By submitting a booking ticket, ordering an edit or using this website, you agree to these
-                                    terms. If you are ordering on behalf of a company or client, you confirm you are allowed to
-                                    accept them for that organisation.
-                                </p>
-                                <p>
-                                    If anything here is unclear, message us before ordering — we would rather clear it up first than
-                                    argue about it later.
-                                </p>
-                            </section>
+                    <h2>1. Agreement</h2>
+                    <p>
+                        By submitting a booking ticket, ordering an edit or using this website, you agree to these terms. If you
+                        are ordering on behalf of a company or client, you confirm you are allowed to accept them for that
+                        organisation.
+                    </p>
+                    <p>
+                        If anything here is unclear, message us before ordering — we would rather clear it up first than argue
+                        about it later.
+                    </p>
 
-                            <section id="services">
-                                <h2>Our services</h2>
-                                <p><?= e($siteName) ?> provides remote post-production services, including:</p>
-                                <ul>
-                                    <li>professional video editing, YouTube editing, shorts and reels;</li>
-                                    <li>motion graphics and animated titles;</li>
-                                    <li>thumbnail design, brand videos, social media ads and product videos.</li>
-                                </ul>
-                                <p>
-                                    Each service is offered in package levels (for example Normal, High and Premium) that differ in
-                                    revisions, delivery time and price. The exact contents of the package you pick are shown on the
-                                    booking page and confirmed in your ticket.
-                                </p>
-                            </section>
+                    <h2>2. Our services</h2>
+                    <p><?= e($siteName) ?> provides remote post-production services, including:</p>
+                    <ul>
+                        <li>professional video editing, YouTube editing, shorts and reels;</li>
+                        <li>motion graphics and animated titles;</li>
+                        <li>thumbnail design, brand videos, social media ads and product videos.</li>
+                    </ul>
+                    <p>
+                        Each service is offered in package levels (for example Normal, High and Premium) that differ in
+                        revisions, delivery time and price. The exact contents of the package you pick are shown on the booking
+                        page and confirmed in your ticket.
+                    </p>
 
-                            <section id="booking">
-                                <h2>Booking and confirmation</h2>
-                                <ul>
-                                    <li>A booking ticket is a <strong>request</strong>, not a confirmed order. You receive a unique ticket reference as soon as you submit it.</li>
-                                    <li>The founder reviews every ticket and confirms scope, timeline and price before any work starts.</li>
-                                    <li>A project becomes binding when we confirm the ticket and the agreed advance or full payment has been received.</li>
-                                    <li>If a request falls outside what we do, or the deadline is not achievable, we will say so instead of taking the job.</li>
-                                </ul>
-                            </section>
+                    <h2>3. Booking and confirmation</h2>
+                    <ul>
+                        <li>A booking ticket is a <strong>request</strong>, not a confirmed order. You receive a unique ticket reference as soon as you submit it.</li>
+                        <li>The founder reviews every ticket and confirms scope, timeline and price before any work starts.</li>
+                        <li>A project becomes binding when we confirm the ticket and the agreed advance or full payment has been received.</li>
+                        <li>If a request falls outside what we do, or the deadline is not achievable, we will say so instead of taking the job.</li>
+                    </ul>
 
-                            <section id="pricing">
-                                <h2>Pricing and payment</h2>
-                                <ul>
-                                    <li>Prices on the website are shown in US dollars and are starting points per project, not per minute or per revision.</li>
-                                    <li>A quote may change if the brief, footage volume or deadline changes after confirmation.</li>
-                                    <li>Unless agreed otherwise, a project is paid in advance, or in milestones for larger jobs (for example 50% to start and 50% before final delivery).</li>
-                                    <li>Bank, wallet or transfer fees are the client's responsibility, and any applicable taxes are added where the law requires them.</li>
-                                    <li>Work on a milestone does not begin until that milestone is paid.</li>
-                                </ul>
-                            </section>
+                    <h2>4. Pricing and payment</h2>
+                    <ul>
+                        <li>Prices on the website are shown in US dollars and are starting points per project, not per minute or per revision.</li>
+                        <li>A quote may change if the brief, footage volume or deadline changes after confirmation.</li>
+                        <li>Unless agreed otherwise, a project is paid in advance, or in milestones for larger jobs (for example 50% to start and 50% before final delivery).</li>
+                        <li>Bank, wallet or transfer fees are the client's responsibility, and any applicable taxes are added where the law requires them.</li>
+                        <li>Work on a milestone does not begin until that milestone is paid.</li>
+                    </ul>
 
-                            <section id="client-duties">
-                                <h2>Your responsibilities</h2>
-                                <ul>
-                                    <li><strong>Supply the material.</strong> Send the raw footage, logo, brand fonts, references and brief through the channel we agree on, within the timeline set for the project.</li>
-                                    <li><strong>Own what you send.</strong> You confirm you hold the rights to all footage, music, images and logos you provide, and that our use of them does not infringe anyone else's rights.</li>
-                                    <li><strong>Respond on time.</strong> Revision notes and approvals should come back within the agreed feedback window; silence beyond that may push the delivery date.</li>
-                                    <li><strong>One point of contact.</strong> Where a project has several stakeholders, nominate one person to collect and send consolidated feedback.</li>
-                                </ul>
-                            </section>
+                    <h2>5. Your responsibilities</h2>
+                    <ul>
+                        <li><strong>Supply the material.</strong> Send the raw footage, logo, brand fonts, references and brief through the channel we agree on, within the timeline set for the project.</li>
+                        <li><strong>Own what you send.</strong> You confirm you hold the rights to all footage, music, images and logos you provide, and that our use of them does not infringe anyone else's rights.</li>
+                        <li><strong>Respond on time.</strong> Revision notes and approvals should come back within the agreed feedback window. Silence beyond that may push the delivery date.</li>
+                        <li><strong>One point of contact.</strong> Where a project has several stakeholders, nominate one person to collect and send consolidated feedback.</li>
+                    </ul>
 
-                            <section id="revisions">
-                                <h2>Revisions and scope</h2>
-                                <p>
-                                    Each package includes a defined number of revision rounds: Normal typically one, High three, and
-                                    Premium unlimited within fair use. A revision is a reasonable adjustment to the edit already
-                                    delivered — trimming a scene, changing a title, swapping a clip, adjusting music or colour.
-                                </p>
-                                <ul>
-                                    <li>A new concept, a new structure, a different video, or re-editing footage that was not in the original brief counts as new work and is quoted separately.</li>
-                                    <li>“Unlimited” revisions in the Premium package are meant for normal creative refinement; it is not a licence to restart the project repeatedly.</li>
-                                    <li>Extra rounds beyond your package are billed per round, and we always tell you the price before starting.</li>
-                                </ul>
-                            </section>
+                    <h2>6. Revisions and scope</h2>
+                    <p>
+                        Each package includes a defined number of revision rounds: Normal typically one, High three, and Premium
+                        unlimited within fair use. A revision is a reasonable adjustment to the edit already delivered — trimming
+                        a scene, changing a title, swapping a clip, adjusting music or colour.
+                    </p>
+                    <ul>
+                        <li>A new concept, a new structure, a different video, or re-editing footage that was not in the original brief counts as new work and is quoted separately.</li>
+                        <li>"Unlimited" revisions in the Premium package are meant for normal creative refinement; it is not a licence to restart the project repeatedly.</li>
+                        <li>Extra rounds beyond your package are billed per round, and we always tell you the price before starting.</li>
+                    </ul>
 
-                            <section id="delivery">
-                                <h2>Turnaround and delivery</h2>
-                                <ul>
-                                    <li>Delivery windows shown on the packages (for example 1–2, 2–3 or 3–4 business days) start when we have both the payment and the complete material.</li>
-                                    <li>Weekends and public holidays are not counted as business days, and delays caused by missing feedback move the delivery date by the same amount.</li>
-                                    <li>Final files are delivered digitally, normally as a download link in the format agreed (for example 1080p or 4K MP4, plus project-specific exports).</li>
-                                    <li>Delivery links stay available for 7 days. Please download and archive your files — long-term storage is not part of the service.</li>
-                                </ul>
-                            </section>
+                    <h2>7. Turnaround and delivery</h2>
+                    <ul>
+                        <li>Delivery windows shown on the packages (for example 1–2, 2–3 or 3–4 business days) start when we have both the payment and the complete material.</li>
+                        <li>Weekends and public holidays are not counted as business days, and delays caused by missing feedback move the delivery date by the same amount.</li>
+                        <li>Final files are delivered digitally, normally as a download link in the format agreed (for example 1080p or 4K MP4, plus project-specific exports).</li>
+                        <li>Delivery links stay available for 7 days. Please download and archive your files — long-term storage is not part of the service.</li>
+                    </ul>
 
-                            <section id="ownership">
-                                <h2>Ownership and licences</h2>
-                                <ul>
-                                    <li>Once the project is paid in full, you receive the rights to use the final delivered video for the purposes agreed in the brief.</li>
-                                    <li>Working files, project timelines and unused cuts remain the property of <?= e($siteName) ?> unless we agree otherwise in writing.</li>
-                                    <li>We may show the finished work in our portfolio, showreel and social channels. Tell us before the project starts if it must stay confidential, and we will keep it private.</li>
-                                    <li>Third-party assets such as stock footage, music or fonts are licensed under their own terms; where a project needs them, we tell you the licence and its limits.</li>
-                                </ul>
-                            </section>
+                    <h2>8. Ownership and licences</h2>
+                    <ul>
+                        <li>Once the project is paid in full, you receive the rights to use the final delivered video for the purposes agreed in the brief.</li>
+                        <li>Working files, project timelines and unused cuts remain the property of <?= e($siteName) ?> unless we agree otherwise in writing.</li>
+                        <li>We may show the finished work in our portfolio, showreel and social channels. Tell us before the project starts if it must stay confidential, and we will keep it private.</li>
+                        <li>Third-party assets such as stock footage, music or fonts are licensed under their own terms. Where a project needs them, we tell you the licence and its limits.</li>
+                    </ul>
 
-                            <section id="refunds">
-                                <h2>Cancellations and refunds</h2>
-                                <ul>
-                                    <li><strong>Before work starts</strong> — cancel in writing and we refund the amount paid, minus any transfer or platform fees already incurred.</li>
-                                    <li><strong>After work has started</strong> — the portion of work completed is charged and the remainder is refunded.</li>
-                                    <li><strong>After final delivery</strong> — payments are non-refundable. If something is not right, use your included revision rounds and we will fix it.</li>
-                                    <li>Cancellations caused by missing footage, missing feedback or a change of direction from your side are handled under the same pro-rata rule.</li>
-                                </ul>
-                                <div class="lg-callout">
-                                    <i class="fa-solid fa-circle-info"></i>
-                                    <p>Refunds are returned through the same method you paid with, usually within 7 business days of approval.</p>
-                                </div>
-                            </section>
+                    <h2>9. Cancellations and refunds</h2>
+                    <ul>
+                        <li><strong>Before work starts</strong> — cancel in writing and we refund the amount paid, minus any transfer or platform fees already incurred.</li>
+                        <li><strong>After work has started</strong> — the portion of work completed is charged and the remainder is refunded.</li>
+                        <li><strong>After final delivery</strong> — payments are non-refundable. If something is not right, use your included revision rounds and we will fix it.</li>
+                        <li>Cancellations caused by missing footage, missing feedback or a change of direction from your side are handled under the same pro-rata rule.</li>
+                    </ul>
+                    <p>
+                        Refunds are returned through the same method you paid with, usually within 7 business days of approval.
+                    </p>
 
-                            <section id="acceptable-use">
-                                <h2>Acceptable use</h2>
-                                <p>We do not edit or promote content that is unlawful, hateful, harassing, sexually exploitative of minors, or that infringes someone else's copyright. We may decline or stop a project that turns out to involve such material, and no refund is owed for work already completed.</p>
-                            </section>
+                    <h2>10. Acceptable use</h2>
+                    <p>
+                        We do not edit or promote content that is unlawful, hateful, harassing, sexually exploitative of minors,
+                        or that infringes someone else's copyright. We may decline or stop a project that turns out to involve
+                        such material, and no refund is owed for work already completed.
+                    </p>
 
-                            <section id="liability">
-                                <h2>Liability</h2>
-                                <ul>
-                                    <li>We deliver work with professional care, but we cannot guarantee views, sales, subscribers or any commercial outcome.</li>
-                                    <li>Our total liability for any project is limited to the fee you paid for that project.</li>
-                                    <li>We are not liable for indirect or consequential losses, or for losses caused by material you supplied without the necessary rights.</li>
-                                    <li>Keep your own backup of every file you send us. We are not responsible for lost footage that only existed in our transfer link.</li>
-                                </ul>
-                            </section>
+                    <h2>11. Liability</h2>
+                    <ul>
+                        <li>We deliver work with professional care, but we cannot guarantee views, sales, subscribers or any commercial outcome.</li>
+                        <li>Our total liability for any project is limited to the fee you paid for that project.</li>
+                        <li>We are not liable for indirect or consequential losses, or for losses caused by material you supplied without the necessary rights.</li>
+                        <li>Keep your own backup of every file you send us. We are not responsible for lost footage that only existed in our transfer link.</li>
+                    </ul>
 
-                            <section id="termination">
-                                <h2>Termination</h2>
-                                <p>
-                                    Either side may end a project with written notice. If we end it for reasons within our control, you
-                                    are refunded for work not yet completed. If it ends because of a breach of these terms — for example
-                                    an unpaid milestone or unlawful material — work stops immediately and the amounts already earned stay
-                                    payable.
-                                </p>
-                            </section>
+                    <h2>12. Termination</h2>
+                    <p>
+                        Either side may end a project with written notice. If we end it for reasons within our control, you are
+                        refunded for work not yet completed. If it ends because of a breach of these terms — for example an unpaid
+                        milestone or unlawful material — work stops immediately and the amounts already earned stay payable.
+                    </p>
 
-                            <section id="law">
-                                <h2>Governing law</h2>
-                                <p>
-                                    These terms are governed by the laws of Bangladesh, and disputes are handled by the courts of
-                                    Chattogram. Before anything formal, write to us — almost every disagreement is solved with a
-                                    conversation and a revision.
-                                </p>
-                            </section>
+                    <h2>13. Governing law</h2>
+                    <p>
+                        These terms are governed by the laws of Bangladesh, and disputes are handled by the courts of Chattogram.
+                        Before anything formal, write to us — almost every disagreement is solved with a conversation and a
+                        revision.
+                    </p>
 
-                            <section id="changes">
-                                <h2>Changes to these terms</h2>
-                                <p>
-                                    We may update these terms as our services evolve. The version in force is the one published on this
-                                    page when you submit your ticket, and the “last updated” date at the top always shows the current
-                                    version.
-                                </p>
-                            </section>
+                    <h2>14. Changes to these terms</h2>
+                    <p>
+                        We may update these terms as our services evolve. The version in force is the one published on this page
+                        when you submit your ticket, and the "last updated" date at the top always shows the current version.
+                    </p>
 
-                            <section id="contact">
-                                <h2>Contact us</h2>
-                                <p>Questions about a quote, a deadline or anything in these terms? Reach the studio directly.</p>
-                                <div class="lg-contact">
-                                    <a class="is-wa" href="<?= e($supportWa) ?>" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-                                    <a class="is-tg" href="<?= e($supportTg) ?>" target="_blank" rel="noopener"><i class="fa-brands fa-telegram"></i> Telegram</a>
-                                    <a class="is-fb" href="<?= e($supportFb) ?>" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+                    <h2>15. Contact us</h2>
+                    <p>Questions about a quote, a deadline or anything in these terms? Reach the studio directly.</p>
+                    <ul>
+                        <li>WhatsApp: <a href="<?= e($supportWa) ?>" target="_blank" rel="noopener">wa.me/8801575715571</a></li>
+                        <li>Telegram: <a href="<?= e($supportTg) ?>" target="_blank" rel="noopener">t.me/Osman_Graphice</a></li>
+                        <li>Facebook: <a href="<?= e($supportFb) ?>" target="_blank" rel="noopener">facebook.com/mexamotion</a></li>
 <?php if ($supportEmail !== ''): ?>
-                                    <a class="is-mail" href="mailto:<?= e($supportEmail) ?>"><i class="fa-solid fa-envelope"></i> <?= e($supportEmail) ?></a>
+                        <li>Email: <a href="mailto:<?= e($supportEmail) ?>"><?= e($supportEmail) ?></a></li>
 <?php endif; ?>
-                                </div>
-                            </section>
-                        </article>
-                    </div>
+                    </ul>
 
-                    <div class="lg-foot-nav">
-                        <p>Want to know how we handle your information?</p>
-                        <a href="privacy.php">Read the Privacy Policy <i class="fa-solid fa-arrow-right"></i></a>
-                    </div>
-                </div>
+                    <hr>
+                    <p class="legal-back">
+                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="privacy.php">Privacy Policy</a> &nbsp;·&nbsp; <a href="book.php">Book a service</a>
+                    </p>
+                </article>
             </div>
         </main>
 <?php include dirname(__DIR__) . '/includes/footer.php'; ?>
