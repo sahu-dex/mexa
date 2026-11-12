@@ -898,5 +898,8 @@ function page_stylesheets(string $pageKey): array
         $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
         $stylesheets[] = 'assets/css/book-layout.css?v=20261112';
     }
+    if ($pageKey === 'home' || $pageKey === 'team') {
+        $stylesheets[] = 'assets/css/team-photos.css?v=20261112';
+    }
     return $stylesheets;
 }
