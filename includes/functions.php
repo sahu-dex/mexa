@@ -888,7 +888,7 @@ function page_stylesheets(string $pageKey): array
     ];
     return array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
-        'assets/css/premium-design-system.css?v=20261112-tabs',
-        'assets/css/visual-refresh.css?v=20261112-tabs',
+        'assets/css/premium-design-system.css?v=20261112-tabs2',
+        'assets/css/visual-refresh.css?v=20261112-tabs2',
     ]);
 }

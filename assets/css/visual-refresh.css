@@ -480,19 +480,45 @@ body .pf-tabs {
     box-shadow: none !important;
 }
 
-body .pf-tab {
-    border: 1px solid transparent !important;
+body .pf-tab,
+body #portfolio .pf-tab {
+    border: 0 !important;
     border-radius: 999px !important;
     background: transparent !important;
-    color: #69758b !important;
+    box-shadow: none !important;
+    padding: 9px 18px !important;
+    color: #6b7a90 !important;
+    -webkit-text-fill-color: #6b7a90 !important;
     font-weight: 800;
 }
 
-body .pf-tab.is-active {
-    border-color: #e8edf6 !important;
-    background: #fff !important;
-    box-shadow: 0 4px 12px rgba(24, 43, 76, .07) !important;
+body .pf-tab:hover,
+body #portfolio .pf-tab:hover {
+    background: #eaf1ff !important;
     color: var(--mx-primary) !important;
+    -webkit-text-fill-color: var(--mx-primary) !important;
+}
+
+body .pf-tab.is-active,
+body #portfolio .pf-tab.is-active {
+    border: 0 !important;
+    background: var(--mx-gradient) !important;
+    box-shadow: 0 8px 18px rgba(16, 71, 212, .26) !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body .pf-tab.is-active:hover,
+body #portfolio .pf-tab.is-active:hover {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body .pf-tab.is-active .pf-tab-ic,
+body .pf-tab.is-active .pf-tab-ic i,
+body .pf-tab.is-active .pf-tab-ic svg {
+    color: #fff !important;
+    fill: #fff !important;
 }
 
 body .pf-card {
