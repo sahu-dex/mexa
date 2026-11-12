@@ -886,9 +886,13 @@ function page_stylesheets(string $pageKey): array
             'assets/css/legal-page.css?v=20261112-plain',
         ],
     ];
-    return array_merge($map[$pageKey] ?? $map['home'], [
+    $stylesheets = array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
         'assets/css/premium-design-system.css?v=20261112-tabs2',
         'assets/css/visual-refresh.css?v=20261112-tabs2',
     ]);
+    if ($pageKey === 'home') {
+        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
+    }
+    return $stylesheets;
 }
