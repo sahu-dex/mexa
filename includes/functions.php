@@ -865,7 +865,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-hero-character.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/home-hero.css',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/mm-services-cta.css',
@@ -880,7 +880,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'work' => [
@@ -893,7 +893,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/wk-layout-fix.css',
         ],
@@ -907,7 +907,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/rvx-layout-v2.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'team' => [
@@ -919,7 +919,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'book' => [
@@ -930,7 +930,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/service-booking-theme.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'privacy' => [
@@ -940,7 +940,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -951,7 +951,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -962,7 +962,7 @@ function page_stylesheets(string $pageKey): array
         'assets/css/visual-refresh.css?v=20261112-footer-soft',
     ]);
     if ($pageKey === 'home') {
-        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112-hero-blend';
+        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112-hero-blend2';
     } elseif ($pageKey === 'book') {
         $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
         $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';

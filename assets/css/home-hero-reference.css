@@ -63,6 +63,7 @@ body #home .hero-video {
 body #home .hero-character {
     position: relative;
     isolation: isolate;
+    flex: 0 0 auto;
     width: min(112%, 640px);
     max-width: none;
     height: auto;

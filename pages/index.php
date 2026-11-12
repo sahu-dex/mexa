@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-work-preview.js?v=20261112-work-preview'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
 
 $servicesBundle = get_services_with_packages(true);
 $homeServices = $servicesBundle['services'];
