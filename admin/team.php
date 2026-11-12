@@ -117,12 +117,15 @@ $rows = db()->query('SELECT * FROM `team_members` ORDER BY `is_founder` DESC, `s
                 </div>
             </div>
             <div class="adm-field">
-                <label>Short Card Description</label>
-                <textarea class="adm-textarea" name="description"></textarea>
+                <label for="team-description">Card Description (maximum 300 characters)</label>
+                <textarea id="team-description" class="adm-textarea" name="description" data-team-profile-limit="300" aria-describedby="team-description-count"></textarea>
+                <small id="team-description-count" aria-live="polite">0 / 300 characters</small>
             </div>
             <div class="adm-field">
-                <label>Extended Biography (used for Founder spotlight)</label>
-                <textarea class="adm-textarea" name="bio"></textarea>
+                <label for="team-bio">Biography (used for Founder spotlight; maximum 300 characters)</label>
+                <textarea id="team-bio" class="adm-textarea" name="bio" data-team-profile-limit="300" aria-describedby="team-bio-count"></textarea>
+                <small id="team-bio-count" aria-live="polite">0 / 300 characters</small>
+                <small>Spaces and punctuation count toward the limit.</small>
             </div>
             <div class="adm-field">
                 <label>Skills &amp; Keywords (comma or newline separated)</label>

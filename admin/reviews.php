@@ -39,7 +39,9 @@ if ($statusFilter !== '') {
         <table class="adm-table">
             <thead>
                 <tr>
+                    <th>Review ID</th>
                     <th>Client</th>
+                    <th>Photo</th>
                     <th>Rating</th>
                     <th>Review Text</th>
                     <th>Home Marquee</th>
@@ -50,11 +52,32 @@ if ($statusFilter !== '') {
             <tbody>
 <?php foreach ($rows as $r):
     $rowJson = htmlspecialchars(json_encode($r, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8');
+    $photoPath = (string) ($r['file_path'] ?? '');
+    $photoSrc = '';
+    if (preg_match('~^(?:uploads/images|assets/images)/[a-zA-Z0-9_./-]+$~D', $photoPath) && !str_contains($photoPath, '..')) {
+        $photoSrc = '../' . $photoPath;
+    } elseif (preg_match('~^https?://~i', $photoPath) && filter_var($photoPath, FILTER_VALIDATE_URL)) {
+        $photoSrc = $photoPath;
+    }
 ?>
                 <tr>
                     <td>
+<?php if ($r['status'] === 'approved'): ?>
+                        <a href="../review.php#review-<?= (int) $r['id'] ?>">#<?= (int) $r['id'] ?></a>
+<?php else: ?>
+                        #<?= (int) $r['id'] ?>
+<?php endif; ?>
+                    </td>
+                    <td>
                         <b><?= e((string) $r['name']) ?></b>
                         <div style="font-size:12px;color:<?= chr(35) ?>94a3b8"><?= e((string) ($r['role'] ?? '')) ?></div>
+                    </td>
+                    <td>
+<?php if ($photoSrc !== ''): ?>
+                        <a href="<?= e($photoSrc) ?>" target="_blank" rel="noopener noreferrer" aria-label="View photo for review <?= (int) $r['id'] ?>"><img class="adm-avatar" src="<?= e($photoSrc) ?>" alt="<?= e((string) $r['name']) ?>'s review photo" loading="lazy"></a>
+<?php else: ?>
+                        <span>No photo</span>
+<?php endif; ?>
                     </td>
                     <td><b><?= (int) $r['rating'] ?></b> / 5</td>
                     <td style="max-width:440px"><?= e((string) $r['body']) ?></td>
