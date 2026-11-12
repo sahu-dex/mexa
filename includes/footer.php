@@ -84,8 +84,8 @@ $accentHex = chr(35) . '1051DF';
                 <div class="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-sm text-slate-500"><?= e($footerCopy) ?></p>
                     <div class="flex gap-6 text-sm text-slate-500">
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="<?= $hashPlaceholder ?>" class="hover:text-primary transition-colors">Terms of Service</a>
+                        <a href="privacy.php" class="hover:text-primary transition-colors">Privacy Policy</a>
+                        <a href="terms.php" class="hover:text-primary transition-colors">Terms of Service</a>
                     </div>
                 </div>
             </div>

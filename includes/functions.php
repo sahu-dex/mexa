@@ -863,6 +863,28 @@ function page_stylesheets(string $pageKey): array
             'assets/css/video-preview.css',
             'assets/css/mm-subscribe-fix.css',
         ],
+        'privacy' => [
+            'assets/css/site-vendor-base.css',
+            'assets/css/tailwind-book.css',
+            'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
+            'assets/css/mobile-menu.css',
+            'assets/css/site-typography.css',
+            'assets/css/video-preview.css',
+            'assets/css/mm-subscribe-fix.css',
+            'assets/css/legal-page.css?v=20261112-legal',
+        ],
+        'terms' => [
+            'assets/css/site-vendor-base.css',
+            'assets/css/tailwind-book.css',
+            'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
+            'assets/css/mobile-menu.css',
+            'assets/css/site-typography.css',
+            'assets/css/video-preview.css',
+            'assets/css/mm-subscribe-fix.css',
+            'assets/css/legal-page.css?v=20261112-legal',
+        ],
     ];
     return array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
