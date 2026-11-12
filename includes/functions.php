@@ -1005,5 +1005,9 @@ function page_stylesheets(string $pageKey): array
     // Final visual grade for every public page — keep this last so the
     // light-blue palette wins over page-specific theme files.
     $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
+    if ($pageKey === 'home') {
+        // Reference-led home UI. Loaded last so it owns the home page design system.
+        $stylesheets[] = 'assets/css/home-reference-design.css?v=20261112-ref-ui';
+    }
     return $stylesheets;
 }

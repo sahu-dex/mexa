@@ -28,6 +28,10 @@ $navItems = [
     ['key' => 'review', 'href' => 'review.php', 'i18n' => 'nav.review', 'label' => 'Review'],
     ['key' => 'team', 'href' => 'team.php', 'i18n' => 'nav.headerTeam', 'label' => 'Team'],
 ];
+// The home page carries the contact section, so surface it in the navigation too.
+if ($pageKey === 'home') {
+    $navItems[] = ['key' => 'contact', 'href' => '#contact', 'i18n' => 'nav.contact', 'label' => 'Contact'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
@@ -38,11 +42,15 @@ $navItems = [
     <link rel="icon" type="image/png" href="<?= e($faviconPath) ?>">
     <title><?= e($metaTitle) ?></title>
     <meta name="description" content="<?= e($metaDesc) ?>">
+<?php if ($pageKey === 'home'): ?>
+    <link rel="preload" href="assets/fonts/poppins/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/poppins/poppins-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+<?php endif; ?>
 <?php foreach ($stylesheets as $cssHref): ?>
     <link rel="stylesheet" href="<?= e($cssHref) ?>">
 <?php endforeach; ?>
 </head>
-<body class="font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
+<body class="page-<?= e($pageKey) ?> font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
     <div class="cursor-dot"></div>
     <div class="cursor-glow"></div>
 
@@ -94,12 +102,26 @@ $navItems = [
         <div id="mobile-menu" class="fixed inset-0 z-[9999] lg:hidden pointer-events-none mm-root" style="top: 0; height: 100dvh;">
             <div id="mobile-menu-backdrop" class="mm-backdrop absolute inset-0 opacity-0 transition-opacity duration-300"></div>
             <div id="mobile-menu-drawer" class="mm-drawer absolute top-0 left-0 right-0 bg-white flex flex-col transform -translate-y-full transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] overscroll-contain">
+<?php if ($pageKey === 'home'): ?>
+                <div class="mm-head">
+                    <a href="index.php" class="mm-brand" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>">
+                        <span class="mm-brand-mark" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                        <span class="mm-brand-copy"><span class="mm-brand-word"><?= e(strtoupper($siteName)) ?></span><span class="mm-brand-tag"><?= e($brandTagline) ?></span></span>
+                    </a>
+                    <button type="button" id="mobile-menu-close" class="mm-close" aria-label="Close menu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
+                </div>
+<?php endif; ?>
                 <nav class="mm-nav" aria-label="Mobile navigation">
 <?php foreach ($navItems as $item): $active = ($pageKey === $item['key']); ?>
                     <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="mobile-nav-item mm-item<?= $active ? ' is-active' : '' ?>"><span class="mm-label" data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
 <?php endforeach; ?>
                 </nav>
                 <div class="mm-foot">
+<?php if ($pageKey === 'home'): ?>
+                    <p class="mm-foot-tag"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i> <?= e($brandTagline) ?></p>
+<?php endif; ?>
                     <a class="mm-booking-button" href="service.php#packages" aria-label="Booking Now">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <rect x="3" y="5" width="18" height="16" rx="2"></rect>

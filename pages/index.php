@@ -43,6 +43,13 @@ if (str_starts_with($heroDesc, 'MEXA MOTION')) {
     $heroDescHtml = '<strong>' . e('MEXA MOTION') . '</strong>' . e(substr($heroDesc, strlen('MEXA MOTION')));
 }
 $heroImg = setting('hero_character_file_path', 'assets/images/hero-character.webp');
+$ratingBadge = trim(setting('about_rating_badge', '4.9/5 Client Rating'));
+if ($ratingBadge === '') {
+    $ratingBadge = '4.9/5 Client Rating';
+}
+$ratingParts = preg_split('/\s+/', $ratingBadge, 2) ?: [];
+$ratingValue = $ratingParts[0] ?? '4.9/5';
+$ratingLabel = $ratingParts[1] ?? 'Client Rating';
 
 $contactEmail = setting_raw('contact_email', '');
 $emailHref = ($contactEmail !== '' && !str_contains($contactEmail, '@your-domain.com') && !str_contains($contactEmail, '@example.com'))
@@ -60,6 +67,10 @@ include dirname(__DIR__) . '/includes/header.php';
             <div class="container mx-auto px-4 md:px-8 relative z-10">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center hero-grid">
                     <div class="order-1 lg:col-start-1 lg:row-start-1" data-aos="fade-right" data-aos-duration="1000">
+                        <div class="ref-hero-badge apple-glass-card">
+                            <span class="ref-hero-dot" aria-hidden="true"></span>
+                            <span><?= e(setting('brand_tagline', 'Video Editing Agency')) ?></span>
+                        </div>
                         <h1 class="hero-title font-extrabold leading-[0.98] mt-0">
                             <span class="hero-line-1 text-secondary"><?= $heroLine1Html ?></span>
                             <span class="hero-line-2 hero-title-blue"><?= e($heroLine2) ?></span>
@@ -81,6 +92,13 @@ include dirname(__DIR__) . '/includes/header.php';
                         <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
                             <img class="hero-character-img" src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
                         </figure>
+                        <div class="ref-hero-rating apple-glass-card">
+                            <span class="ref-hero-rating-star" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
+                            <span class="ref-hero-rating-copy">
+                                <span class="ref-hero-rating-value"><?= e($ratingValue) ?></span>
+                                <span class="ref-hero-rating-label"><?= e($ratingLabel) ?></span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -101,7 +119,7 @@ include dirname(__DIR__) . '/includes/header.php';
         <section class="pb-16 pt-8 bg-transparent relative z-10">
             <div class="container mx-auto px-4 md:px-8">
                 <div id="stats-container" data-aos="fade-up" data-aos-duration="1000">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 apple-glass-card rounded-3xl p-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 apple-glass-card rounded-3xl p-8 ref-stats-card">
 <?php for ($si = 1; $si <= 4; $si++): ?>
                         <div class="text-center group">
                             <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
@@ -119,7 +137,8 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (setting_raw('home_section_services', '1') !== '0'): ?>
         <section id="services" class="py-20 md:py-24 relative bg-transparent">
             <div class="container mx-auto px-4 md:px-8 relative z-10">
-                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14" data-aos="fade-up">
+                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">What We Do</span>
                     <h2 class="svc-title font-extrabold">
                         <span class="hidden md:block text-secondary"><?= e(setting('home_services_title_1', 'Premium Video Editing')) ?></span>
                         <span class="hidden md:block svc-title-blue"><?= e(setting('home_services_title_2', 'Solutions')) ?></span>
@@ -149,7 +168,8 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (setting_raw('home_section_work', '1') !== '0'): ?>
         <section id="portfolio" class="py-20 md:py-24 bg-transparent relative">
             <div class="container mx-auto px-4 md:px-8">
-                <div class="text-center max-w-4xl mx-auto" data-aos="fade-up">
+                <div class="text-center max-w-4xl mx-auto ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Latest Portfolio</span>
                     <h2 class="pf-title font-extrabold">
                         <span class="text-secondary"><?= e(setting('home_portfolio_title_1', 'Explore Our Recent ')) ?></span><span class="pf-title-blue"><?= e(setting('home_portfolio_title_2', 'Work & Video Demos')) ?></span>
                     </h2>
@@ -315,17 +335,20 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (setting_raw('home_section_team', '1') !== '0'): ?>
         <section id="team" class="py-20 md:py-24 bg-transparent overflow-hidden relative">
             <div class="container mx-auto px-4 md:px-8">
-                <div class="text-center max-w-2xl mx-auto mb-9 md:mb-12" data-aos="fade-up">
+                <div class="text-center max-w-2xl mx-auto mb-9 md:mb-12 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Meet The Creative Minds</span>
                     <h2 class="tm-title font-extrabold">
                         <span class="text-secondary">Our </span><span class="tm-title-blue">Team</span>
                     </h2>
                     <p class="tm-sub text-slate-500 mt-3 md:mt-4"><?= e(setting('home_team_subtitle', 'A passionate team working together to provide the best service for you.')) ?></p>
                 </div>
 
+                <div class="tm-strip" data-aos="fade-up">
 <?php if ($founder !== null): ?>
-                <div class="mx-founder-card mx-profile-card" data-aos="fade-up">
+                <div class="mx-founder-card mx-profile-card">
                     <div class="tm-founder-photo">
                         <img src="<?= e($founder['file_path']) ?>" alt="<?= e($founder['name']) ?>" loading="lazy" decoding="async">
+                        <span class="tm-founder-badge">Founder</span>
                     </div>
 
                     <div class="mx-profile-body">
@@ -368,6 +391,7 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php endforeach; ?>
                 </div>
 <?php endif; ?>
+                </div>
             </div>
         </section>
 <?php endif; ?>
@@ -375,8 +399,6 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (setting_raw('home_section_about', '1') !== '0'): ?>
         <section id="about" class="py-20 md:py-24 bg-transparent relative">
             <div class="container mx-auto px-4 md:px-8">
-                <h2 class="abt-title" data-aos="fade-up"><span class="abt-title-dark"><?= e(setting('about_title_1', 'About')) ?></span> <span class="abt-title-blue"><?= e(setting('about_title_2', 'Mexa Motion')) ?></span></h2>
-
                 <div class="abt-grid">
                     <div class="abt-collage" data-aos="fade-right">
                         <img class="abt-photo abt-a" src="<?= e(setting('about_image_1_file_path', 'assets/about/editing-suite.jpg')) ?>" alt="Video editing suite" width="1280" height="720" loading="lazy" decoding="async" draggable="false">
@@ -391,25 +413,27 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
 
                     <div class="abt-body" data-aos="fade-left">
+                        <h2 class="abt-title"><span class="abt-title-dark"><?= e(setting('about_title_1', 'About')) ?></span> <span class="abt-title-blue"><?= e(setting('about_title_2', 'Mexa Motion')) ?></span></h2>
                         <h3 class="abt-heading"><?= e(setting('about_heading', 'Real people, real timelines, real results')) ?></h3>
                         <p class="abt-text"><?= e(setting('about_paragraph_1', '')) ?></p>
                         <p class="abt-text"><?= e(setting('about_paragraph_2', '')) ?></p>
+                        <div class="abt-services-cta abt-services-cta--inline">
+                            <a href="service.php" class="hero-btn glass-btn-primary abt-services-btn" aria-label="Go to Our Services">
+                                Our Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <div class="abt-services-cta">
-            <a href="service.php" class="hero-btn glass-btn-primary abt-services-btn" aria-label="Go to Our Services">
-                Our Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
-            </a>
-        </div>
 <?php endif; ?>
 
 <?php if (setting_raw('home_section_contact', '1') !== '0'): ?>
         <section id="contact" class="py-20 md:py-24 bg-transparent relative">
             <div class="container mx-auto px-4 md:px-8">
-                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-12" data-aos="fade-up">
+                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-12 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Let’s Talk</span>
                     <h2 class="ct-title font-extrabold mt-3"><?= e(setting('home_contact_title', 'Let’s Work Together')) ?></h2>
                     <p class="ct-sub text-slate-500 mt-4 mx-auto"><?= e(setting('home_contact_subtitle', 'Have a project in mind? Send us a message and let’s create something amazing.')) ?></p>
                 </div>
