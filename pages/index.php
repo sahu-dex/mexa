@@ -67,21 +67,20 @@ include dirname(__DIR__) . '/includes/header.php';
                         <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
                             <?= $heroDescHtml ?>
                         </p>
+                        <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
+                            <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
+                                <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
+                            </a>
+                            <a href="book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
+                                <?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
+                            </a>
+                        </div>
                     </div>
 
                     <div class="hero-video order-2 lg:col-start-2 lg:row-start-1 relative flex items-center justify-end" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
                         <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
                             <img class="hero-character-img" src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
                         </figure>
-                    </div>
-
-                    <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
-                        <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
-                        </a>
-                        <a href="book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
-                        </a>
                     </div>
                 </div>
             </div>
