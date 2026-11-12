@@ -21,7 +21,6 @@ $shorts = $workBundle['shorts'];
 include dirname(__DIR__) . '/includes/header.php';
 ?>
         <section class="wk-wrap">
-            <span class="mh-line1">Work</span>
             <h1 class="mh-line2">We've shipped</h1>
             <p class="mh-desc">Every video, short, design and tutorial we build — published on our YouTube channel and Facebook page. Click any card to watch it right here.</p>
         </section>

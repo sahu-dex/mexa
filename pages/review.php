@@ -27,7 +27,6 @@ include dirname(__DIR__) . '/includes/header.php';
                 </figure>
 
                 <div class="rvx-hero-main">
-                    <span class="mh-line1">Reviews</span>
                     <h1 id="rvx-heading" class="mh-line2"><?= e(setting('review_heading', 'Client Reviews')) ?></h1>
                     <p id="rvx-desc" class="mh-desc"><?= e(setting('review_hero_desc', '')) ?></p>
 

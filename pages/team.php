@@ -31,7 +31,6 @@ include dirname(__DIR__) . '/includes/header.php';
     <section class="t3-founder-sec">
         <div class="container mx-auto px-4 md:px-8">
             <div class="t3-sec-head mh-head">
-                <span class="mh-line1"><?= e($teamBundle['heading']) ?></span>
                 <h1 class="mh-line2">The people behind every edit</h1>
                 <p class="mh-desc" id="t3-intro"><?= e($teamBundle['intro']) ?></p>
             </div>
