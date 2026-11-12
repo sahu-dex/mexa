@@ -1004,6 +1004,6 @@ function page_stylesheets(string $pageKey): array
     }
     // Final visual grade for every public page — keep this last so the
     // light-blue palette wins over page-specific theme files.
-    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-team-skills2';
+    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
     return $stylesheets;
 }

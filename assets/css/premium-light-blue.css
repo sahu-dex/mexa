@@ -14,8 +14,8 @@
     --mx-muted: #566e8e;
     --mx-blue-mid: #2c5fa8;
     --mx-slate: #46618b;
-    --mx-blue-soft: #5a7295;
-    --mx-bg: #e9f2fd;
+    --mx-blue-soft: #54708f;
+    --mx-bg: #f8faff;
     --mx-soft: #e2eefc;
     --mx-soft-blue: #eef6ff;
     --mx-surface: #fbfdff;
@@ -34,73 +34,65 @@
 
 html {
     color-scheme: light;
-    background: #e9f2fd;
+    background: #f8faff;
 }
 
-/* Page field: soft, clear light blue with a gentle painted light. */
+/* Page field: off-white and soft ice blue blended by two wide, blurred
+   light sources. Sections stay transparent so the field reads as one
+   continuous surface on every page instead of stacked colour bands. */
 body {
     background:
-        radial-gradient(ellipse 46rem 30rem at 86% 0%, rgba(64, 138, 240, .16), transparent 66%),
-        radial-gradient(ellipse 40rem 28rem at 2% 28%, rgba(158, 199, 246, .24), transparent 72%),
-        linear-gradient(180deg, #eaf3fe 0%, #e5f0fd 48%, #e9f3fe 100%) !important;
+        radial-gradient(ellipse 54rem 34rem at 88% -6%, rgba(82, 143, 238, .15), transparent 64%),
+        radial-gradient(ellipse 48rem 32rem at -8% 24%, rgba(166, 204, 247, .20), transparent 70%),
+        radial-gradient(ellipse 46rem 30rem at 76% 88%, rgba(214, 233, 255, .30), transparent 70%),
+        linear-gradient(155deg, #f8faff 0%, #f3f8ff 34%, #eaf2ff 68%, #f7fbff 100%) !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
     color: var(--mx-text) !important;
 }
 
 body #header.hdr-bar-wrap {
-    background: rgba(239, 247, 255, .95) !important;
-    border-bottom: 1px solid rgba(186, 212, 242, .85) !important;
-    box-shadow: 0 6px 24px rgba(19, 64, 140, .07) !important;
+    background: rgba(248, 250, 255, .82) !important;
+    border-bottom: 1px solid rgba(203, 222, 245, .78) !important;
+    box-shadow: 0 8px 30px rgba(19, 64, 140, .06) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(135%) !important;
+    backdrop-filter: blur(18px) saturate(135%) !important;
 }
 
 body #mobile-menu-drawer.mm-drawer {
-    background: #f4faff !important;
+    background: rgba(248, 250, 255, .98) !important;
 }
 
 body #mobile-menu-drawer .mm-item {
-    background: #eef6ff !important;
-    border-color: var(--mx-border) !important;
+    background: rgba(255, 255, 255, .72) !important;
+    border-color: #dce9fb !important;
 }
 
 /* --------------------------------------------------------------------------
-   Page fields and section rhythm — alternating light-blue shades
+   Page fields and section rhythm — one continuous ice-blue light field.
+   Page wrappers and section bands are transparent so the body gradient
+   shows through uninterrupted; separate glows are supplied by the body.
    -------------------------------------------------------------------------- */
 body #home,
 body .sv2-hero,
 body .wk-wrap,
 body .rvx-hero,
+body .rvx-wrap,
 body .t3-founder-sec,
-body .tk-page {
-    background:
-        radial-gradient(ellipse 42rem 26rem at 82% 2%, rgba(47, 118, 232, .14), transparent 66%),
-        linear-gradient(165deg, #e9f3fe 0%, #f3f9ff 48%, #e4effc 100%) !important;
-}
-
+body .tk-page,
 body #services,
 body #process,
 body #team,
 body .sv2-sec,
-body .t3-members-sec {
-    background: linear-gradient(180deg, #e3effd 0%, #ecf5fe 100%) !important;
-}
-
+body .t3-members-sec,
 body #portfolio,
-body .rvx-wrap {
-    background: linear-gradient(180deg, #edf6ff 0%, #e5f0fd 100%) !important;
-}
-
 body #reviews,
-body .sp-packages-final {
-    background: linear-gradient(180deg, #e0edfc 0%, #e9f3fe 100%) !important;
-}
-
-body #about {
-    background: linear-gradient(180deg, #eff7ff 0%, #e8f2fe 100%) !important;
-}
-
+body .sp-packages-final,
+body #about,
 body #contact,
 body .rvx-list,
 body .rvx-write {
-    background: linear-gradient(180deg, #e6f1fe 0%, #edf6ff 100%) !important;
+    background: transparent !important;
 }
 
 body .t3-join {
@@ -884,13 +876,14 @@ body :is(.t3-card, .rvx-card, .rvx-fcard):hover {
 @media (max-width: 767px) {
     /* Remove the old floating mobile frame so nothing sits off-screen. */
     html {
-        background: #e9f2fd !important;
+        background: #f8faff !important;
     }
 
     body {
         margin: 0 !important;
         border-radius: 0 !important;
         box-shadow: none !important;
+        background-attachment: scroll !important;
     }
 
     body #header.hdr-bar-wrap {
@@ -1230,4 +1223,108 @@ body #team-page .t3-founder-keywords .t3-chips li {
             font-size: 10px !important;
         }
     }
+}
+
+/* --------------------------------------------------------------------------
+   Footer — the same off-white / ice-blue field as the rest of the site.
+   The old deep-navy footer is intentionally replaced so no page ends in a
+   dark-blue or black background. Text, icon and button colours are flipped
+   to dark-on-light for readability; layout and controls are unchanged.
+   -------------------------------------------------------------------------- */
+body footer {
+    border-top: 1px solid #dce9fb !important;
+    background:
+        radial-gradient(ellipse 80rem 26rem at 88% -10%, rgba(82, 143, 238, .13), transparent 64%),
+        radial-gradient(ellipse 54rem 22rem at 4% 108%, rgba(196, 222, 250, .24), transparent 70%),
+        linear-gradient(158deg, #f8faff 0%, #f2f8ff 52%, #eaf2ff 100%) !important;
+    color: var(--mx-slate) !important;
+}
+
+body footer .footer-brand-word {
+    color: var(--mx-navy) !important;
+    -webkit-text-fill-color: var(--mx-navy) !important;
+}
+
+body footer :is(h4, .text-secondary, .footer-brand-word, .footer-brand-word span) {
+    color: var(--mx-navy) !important;
+    -webkit-text-fill-color: var(--mx-navy) !important;
+}
+
+body footer :is(p, .text-slate-500, .text-slate-600, .text-slate-700) {
+    color: var(--mx-slate) !important;
+    -webkit-text-fill-color: var(--mx-slate) !important;
+}
+
+body footer a:not(.newsletter-btn):not(.glass-btn-primary) {
+    color: var(--mx-slate) !important;
+    -webkit-text-fill-color: var(--mx-slate) !important;
+}
+
+body footer a:not(.newsletter-btn):not(.glass-btn-primary):hover {
+    color: var(--mx-primary) !important;
+    -webkit-text-fill-color: var(--mx-primary) !important;
+}
+
+body footer a i.fa-angle-right {
+    color: var(--mx-primary) !important;
+    -webkit-text-fill-color: var(--mx-primary) !important;
+}
+
+body footer :is(.border-t, .border-slate-200\/50) {
+    border-color: #dce9fb !important;
+}
+
+body footer a.apple-glass-card {
+    border: 1px solid #cfe1f7 !important;
+    background: rgba(255, 255, 255, .74) !important;
+    box-shadow: 0 6px 16px rgba(19, 64, 140, .06) !important;
+}
+
+body footer a.apple-glass-card,
+body footer a.apple-glass-card i {
+    color: var(--mx-primary) !important;
+    -webkit-text-fill-color: var(--mx-primary) !important;
+}
+
+body footer a.apple-glass-card:hover {
+    border-color: var(--mx-primary) !important;
+    background: var(--mx-primary) !important;
+}
+
+body footer a.apple-glass-card:hover,
+body footer a.apple-glass-card:hover i {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body footer .newsletter-input {
+    border: 1px solid #cfe1f7 !important;
+    background: #fff !important;
+    color: var(--mx-text) !important;
+    -webkit-text-fill-color: var(--mx-text) !important;
+    box-shadow: 0 6px 16px rgba(19, 64, 140, .05) !important;
+}
+
+body footer .newsletter-input::placeholder {
+    color: #5f7494 !important;
+    opacity: 1;
+}
+
+body footer .newsletter-input:focus {
+    border-color: #7aa9ef !important;
+    box-shadow: 0 0 0 3px rgba(40, 120, 255, .12) !important;
+}
+
+body footer .newsletter-btn {
+    border: 1px solid transparent !important;
+    background: linear-gradient(105deg, #1051df, #0c3fae) !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    box-shadow: var(--mx-shadow-button) !important;
+}
+
+body footer .newsletter-btn:hover {
+    background: linear-gradient(105deg, #0c3fae, #0a2f8f) !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
 }
