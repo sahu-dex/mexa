@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'team';
 $pageTitle = 'Team | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('team_intro', 'Meet the editors, designers, and motion artists behind Mexa Motion.');
-$pageScripts = ['assets/js/page-team.js?v=20261112-skill-limit'];
+$pageScripts = ['assets/js/page-team.js?v=20261112-skill-limit2'];
 
 $teamBundle = get_team_bundle();
 $members = $teamBundle['members'];
