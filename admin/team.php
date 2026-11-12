@@ -32,13 +32,7 @@ $rows = db()->query('SELECT * FROM `team_members` ORDER BY `is_founder` DESC, `s
             </thead>
             <tbody>
 <?php foreach ($rows as $m):
-    $skillsArr = [];
-    if (!empty($m['skills'])) {
-        $dec = json_decode((string) $m['skills'], true);
-        if (is_array($dec)) {
-            $skillsArr = $dec;
-        }
-    }
+    $skillsArr = parse_team_skills((string) ($m['skills'] ?? ''));
     $fp = (string) ($m['file_path'] ?? '');
     $imgSrc = $fp !== '' ? (str_starts_with($fp, 'http') ? $fp : '../' . $fp) : '';
     $rowData = $m;
@@ -57,7 +51,12 @@ $rows = db()->query('SELECT * FROM `team_members` ORDER BY `is_founder` DESC, `s
                         <b><?= e((string) $m['name']) ?></b>
                         <div style="font-size:12px;color:<?= chr(35) ?>38bdf8"><?= e((string) $m['role']) ?></div>
                     </td>
-                    <td><?= e(implode(', ', array_slice($skillsArr, 0, 5))) ?></td>
+                    <td>
+                        <?= e(implode(', ', array_slice($skillsArr, 0, TEAM_SKILL_LIMIT))) ?>
+<?php if (count($skillsArr) > TEAM_SKILL_LIMIT): ?>
+                        <span class="adm-skill-extra" title="Extra skills are stored but only the first <?= TEAM_SKILL_LIMIT ?> are shown on the Team page">+<?= count($skillsArr) - TEAM_SKILL_LIMIT ?></span>
+<?php endif; ?>
+                    </td>
                     <td><?= (int) $m['is_founder'] === 1 ? '<span class="adm-badge adm-badge-approved">Founder</span>' : 'Specialist' ?></td>
                     <td>
                         <span class="adm-badge adm-badge-<?= (int) $m['is_active'] === 1 ? 'active' : 'inactive' ?>">
@@ -128,8 +127,19 @@ $rows = db()->query('SELECT * FROM `team_members` ORDER BY `is_founder` DESC, `s
                 <small>Spaces and punctuation count toward the limit.</small>
             </div>
             <div class="adm-field">
-                <label>Skills &amp; Keywords (comma or newline separated)</label>
-                <textarea class="adm-textarea" name="skills" placeholder="Premiere Pro, After Effects, Color Grading"></textarea>
+                <label for="team-skill-input">Skills &amp; Expertise <span class="adm-skill-limit-badge">Maximum <?= TEAM_SKILL_LIMIT ?></span></label>
+                <div class="adm-skill-manager" data-skill-manager data-limit="<?= TEAM_SKILL_LIMIT ?>">
+                    <ul class="adm-skill-list" id="team-skills-list" aria-live="polite"></ul>
+                    <div class="adm-skill-row">
+                        <input class="adm-input" id="team-skill-input" type="text" maxlength="60" autocomplete="off" placeholder="Type a skill and press Enter (e.g. Colour grading)">
+                        <button type="button" class="adm-btn adm-btn-primary" id="team-skill-add"><i class="fa-solid fa-plus"></i> Add</button>
+                    </div>
+                    <input type="hidden" name="skills" id="team-skills-value" value="">
+                    <div class="adm-skill-meta">
+                        <small id="team-skills-count" aria-live="polite">0 / <?= TEAM_SKILL_LIMIT ?> skills</small>
+                        <small id="team-skills-hint">Add up to <?= TEAM_SKILL_LIMIT ?> skills. Click a skill to edit it, or × to remove it.</small>
+                    </div>
+                </div>
             </div>
             <div class="adm-grid-2">
                 <div class="adm-field">

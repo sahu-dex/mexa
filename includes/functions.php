@@ -84,6 +84,38 @@ function split_lines(?string $text): array
     return $out;
 }
 
+function parse_team_skills(?string $text): array
+{
+    $text = trim((string) $text);
+    // Older rows stored a JSON array; accept that without changing the
+    // canonical newline-separated format used by the current admin form.
+    if ($text !== '' && $text[0] === '[' && str_ends_with($text, ']')) {
+        $decoded = json_decode($text, true);
+        if (is_array($decoded)) {
+            $text = implode("\n", array_filter($decoded, 'is_string'));
+        }
+    }
+
+    $out = [];
+    $seen = [];
+    foreach (split_lines($text) as $chunk) {
+        $parts = preg_split('/,/', $chunk) ?: [];
+        foreach ($parts as $part) {
+            $skill = preg_replace('/\s+/u', ' ', trim($part)) ?? '';
+            if ($skill === '') {
+                continue;
+            }
+            $key = mb_strtolower($skill, 'UTF-8');
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $out[] = $skill;
+        }
+    }
+    return $out;
+}
+
 function start_secure_session(): void
 {
     mexa_start_session();
@@ -780,7 +812,7 @@ function get_team_bundle(): array
             'role' => (string) $m['role'],
             'bio' => team_profile_excerpt((string) ($m['bio'] ?? '')),
             'description' => team_profile_excerpt((string) ($m['description'] ?? '')),
-            'skills' => split_lines($m['skills'] ?? ''),
+            'skills' => array_slice(parse_team_skills((string) ($m['skills'] ?? '')), 0, TEAM_SKILL_LIMIT),
             'responsibilities' => split_lines($m['responsibilities'] ?? ''),
             'file_path' => $fp,
             'photo_url' => $fp,
@@ -972,6 +1004,6 @@ function page_stylesheets(string $pageKey): array
     }
     // Final visual grade for every public page — keep this last so the
     // light-blue palette wins over page-specific theme files.
-    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-light-blue';
+    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-team-skills';
     return $stylesheets;
 }

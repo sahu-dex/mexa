@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'team';
 $pageTitle = 'Team | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('team_intro', 'Meet the editors, designers, and motion artists behind Mexa Motion.');
-$pageScripts = ['assets/js/page-team.js'];
+$pageScripts = ['assets/js/page-team.js?v=20261112-skill-limit'];
 
 $teamBundle = get_team_bundle();
 $members = $teamBundle['members'];
@@ -48,7 +48,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <div class="t3-block t3-founder-keywords">
                         <span class="t3-block-label">Skill keywords</span>
                         <ul class="t3-chips">
-<?php foreach ($founder['skills'] as $sk): ?>
+<?php foreach (array_slice($founder['skills'], 0, TEAM_SKILL_LIMIT) as $sk): ?>
                             <li><?= e($sk) ?></li>
 <?php endforeach; ?>
                         </ul>
@@ -105,7 +105,7 @@ include dirname(__DIR__) . '/includes/header.php';
                         <div class="t3-block t3-skills">
                             <span class="t3-block-label">Skills &amp; expertise</span>
                             <ul class="t3-chips">
-<?php foreach ($sp['skills'] as $sk): ?>
+<?php foreach (array_slice($sp['skills'], 0, TEAM_SKILL_LIMIT) as $sk): ?>
                                 <li><?= e($sk) ?></li>
 <?php endforeach; ?>
                             </ul>

@@ -5,6 +5,7 @@
 <script src="../assets/js/admin.js?v=20261112-work-manager"></script>
 <?php if (($adminPage ?? '') === 'team'): ?>
 <script src="../assets/js/admin-team-bio.js?v=20261112-characters"></script>
+<script src="../assets/js/admin-team-skills.js?v=20261112-skill-limit"></script>
 <?php endif; ?>
 </body>
 </html>

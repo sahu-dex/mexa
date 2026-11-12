@@ -27,7 +27,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
-    <link rel="stylesheet" href="../assets/css/admin-theme.css?v=20261112-work-manager">
+    <link rel="stylesheet" href="../assets/css/admin-theme.css?v=20261112-skill-limit">
 </head>
 <body>
 <div class="adm-shell">

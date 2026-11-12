@@ -115,6 +115,9 @@ define('ADMIN_SETUP_KEY', (string) env_val('ADMIN_SETUP_KEY', ''));
 define('MAX_IMAGE_BYTES', max(512000, (int) env_val('MAX_IMAGE_BYTES', 5 * 1024 * 1024)));
 define('MAX_VIDEO_BYTES', max(1048576, (int) env_val('MAX_VIDEO_BYTES', 50 * 1024 * 1024)));
 
+// Maximum skills & expertise keywords stored per team member.
+define('TEAM_SKILL_LIMIT', 4);
+
 date_default_timezone_set(APP_TIMEZONE ?: 'UTC');
 if (function_exists('mb_internal_encoding')) {
     mb_internal_encoding('UTF-8');
