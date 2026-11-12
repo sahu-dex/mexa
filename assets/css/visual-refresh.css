@@ -1479,9 +1479,9 @@ body .mm-open {
 html body .mx-founder-card.mx-profile-card {
     display: block !important;
     width: 100%;
-    max-width: 840px;
+    max-width: 1152px;
     margin: 0 auto;
-    padding: clamp(16px, 2.6vw, 26px) !important;
+    padding: clamp(20px, 3vw, 36px) !important;
     border: 0 !important;
     border-radius: 30px !important;
     background:
@@ -1497,6 +1497,7 @@ html body .mx-founder-card.mx-profile-card {
 html body .mx-profile-card .tm-founder-photo {
     width: 100%;
     aspect-ratio: 16 / 9 !important;
+    max-height: 560px;
     border: 0 !important;
     border-radius: 20px !important;
     box-shadow: none !important;
@@ -1542,7 +1543,7 @@ html body .mx-profile-card .tm-founder-bio {
     font-size: clamp(.95rem, 1.1vw, 1.05rem) !important;
     line-height: 1.75 !important;
     margin: clamp(12px, 1.6vw, 18px) 0 0 !important;
-    max-width: none !important;
+    max-width: 68ch !important;
 }
 
 html body .mx-profile-card .mx-profile-perks {
