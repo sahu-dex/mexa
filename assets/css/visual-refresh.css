@@ -1741,3 +1741,175 @@ body .abt-services-cta {
     margin-top: 0 !important;
     padding: 4px 1rem 2.75rem !important;
 }
+
+/* Service page — package cards */
+body #packages .sp-pkgs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 18px;
+}
+
+body #packages .sp-pkg {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 0;
+    overflow: visible !important;
+    padding: 30px 24px 24px !important;
+    border: 1px solid #E6EDF9 !important;
+    border-radius: 22px !important;
+    background: #fff !important;
+    box-shadow: 0 10px 30px rgba(17, 60, 138, .07) !important;
+}
+
+body #packages .sp-pkg:hover {
+    transform: translateY(-4px);
+    border-color: #CFDDF6 !important;
+    box-shadow: 0 20px 46px rgba(17, 60, 138, .13) !important;
+}
+
+body #packages .sp-pkg h3 {
+    margin: 4px 0 0 !important;
+    font-size: 19px !important;
+    line-height: 1.32 !important;
+    letter-spacing: -.01em !important;
+}
+
+body #packages .sp-pkg .sp-pkg-desc {
+    margin-top: 6px !important;
+    font-size: 12.5px !important;
+    line-height: 1.6 !important;
+}
+
+body #packages .sp-pkg .sv-pkg-price {
+    margin-top: 14px;
+}
+
+body #packages .sp-pkg .sv-pkg-price b {
+    font-size: 34px !important;
+    line-height: 1 !important;
+}
+
+body #packages .sp-pkg .sv-pkg-meta {
+    margin-top: 14px;
+}
+
+body #packages .sp-pkg .sv-feats {
+    margin: 16px 0 22px;
+}
+
+body #packages .sp-pkg .sp-buy {
+    margin-top: auto;
+    width: 100%;
+}
+
+/* Highlighted (middle) package — premium blue grading */
+body #packages .sp-pkg.is-hi {
+    border: 1.5px solid rgba(255, 255, 255, .55) !important;
+    background:
+        radial-gradient(120% 85% at 100% 0%, rgba(96, 198, 255, .55) 0%, rgba(96, 198, 255, 0) 55%),
+        radial-gradient(95% 75% at 0% 0%, rgba(0, 124, 255, .6) 0%, rgba(0, 124, 255, 0) 62%),
+        linear-gradient(150deg, #002F9E 0%, #0145D6 42%, #0A6BF7 78%, #2AA6FE 100%) !important;
+    box-shadow:
+        0 26px 60px rgba(10, 74, 200, .32),
+        inset 0 1px 0 rgba(255, 255, 255, .26) !important;
+}
+
+body #packages .sp-pkg.is-hi::before {
+    display: none !important;
+}
+
+body #packages .sp-pkg.is-hi h3,
+body #packages .sp-pkg.is-hi .sv-pkg-price b {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body #packages .sp-pkg.is-hi .sp-pkg-desc,
+body #packages .sp-pkg.is-hi .sv-feats li {
+    color: rgba(255, 255, 255, .9) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .9) !important;
+}
+
+body #packages .sp-pkg.is-hi .sv-pkg-price span {
+    color: rgba(255, 255, 255, .78) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .78) !important;
+}
+
+body #packages .sp-pkg.is-hi .sv-pkg-meta {
+    color: rgba(255, 255, 255, .82) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .82) !important;
+    border-bottom-color: rgba(255, 255, 255, .24) !important;
+}
+
+body #packages .sp-pkg.is-hi .sv-pkg-meta i,
+body #packages .sp-pkg.is-hi .sv-feats i {
+    color: #CFE6FF !important;
+}
+
+/* Badges */
+body #packages .sv-pkg-badge {
+    top: -13px !important;
+    padding: 6px 14px !important;
+    font-size: 9.5px !important;
+    letter-spacing: .14em !important;
+    background: #EEF4FF !important;
+    border: 1px solid #D6E3FA !important;
+    color: #1450D8 !important;
+    -webkit-text-fill-color: #1450D8 !important;
+    box-shadow: 0 8px 18px rgba(16, 66, 160, .14) !important;
+}
+
+body #packages .sp-pkg.is-hi .sv-pkg-badge {
+    background: #fff !important;
+    border-color: rgba(255, 255, 255, .9) !important;
+    color: #0A45C2 !important;
+    -webkit-text-fill-color: #0A45C2 !important;
+    box-shadow: 0 10px 22px rgba(4, 34, 96, .28) !important;
+}
+
+/* White CTA inside the highlighted package */
+body #packages .sp-pkg.is-hi .sp-buy {
+    border: 0 !important;
+    background: #fff !important;
+    color: #0A45C2 !important;
+    -webkit-text-fill-color: #0A45C2 !important;
+    box-shadow: 0 12px 26px rgba(3, 33, 94, .26) !important;
+}
+
+body #packages .sp-pkg.is-hi .sp-buy:hover {
+    background: #F2F7FF !important;
+    color: #093FB4 !important;
+    -webkit-text-fill-color: #093FB4 !important;
+}
+
+@media (max-width: 1000px) {
+    body #packages .sp-pkgs {
+        grid-template-columns: minmax(0, 1fr);
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+        gap: 22px;
+    }
+
+    body #packages .sp-pkg {
+        padding: 28px 22px 22px !important;
+    }
+}
+
+@media (max-width: 560px) {
+    body #packages .sp-pkg {
+        padding: 26px 18px 20px !important;
+        border-radius: 18px !important;
+    }
+
+    body #packages .sp-pkg h3 {
+        font-size: 17.5px !important;
+    }
+
+    body #packages .sp-pkg .sv-pkg-price b {
+        font-size: 30px !important;
+    }
+}
