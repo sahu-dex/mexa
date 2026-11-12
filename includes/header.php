@@ -49,14 +49,6 @@ $navItems = [
     <div class="w-full max-w-full overflow-x-hidden relative flex flex-col min-h-screen z-10">
         <header id="header" class="hdr-bar-wrap flex items-center bg-white">
             <div class="container mx-auto px-4 md:px-8 flex justify-between items-center w-full h-full gap-4">
-<?php if ($pageKey === 'book'): ?>
-                <a href="index.php" class="flex items-center gap-2 group flex-shrink-0" aria-label="<?= e($siteName) ?>" title="<?= e($siteName) ?>">
-                    <span class="brand-logo-badge">
-                        <img src="<?= e(setting('footer_logo_file_path', 'assets/images/footer-logo.png')) ?>" alt="Mexa Motion M" class="brand-logo-full object-contain group-hover:scale-105 transition-transform duration-200 flex-shrink-0" style="width:34px;height:auto;border-radius:0" decoding="async" fetchpriority="high" loading="lazy">
-                    </span>
-                    <span class="brand-word text-[19px] lg:text-[20px] xl:text-[21px] font-extrabold whitespace-nowrap" aria-label="<?= e($siteName) ?>"><span class="brand-a" aria-hidden="true">EXA</span> <span class="brand-b" aria-hidden="true">MOTION</span></span>
-                </a>
-<?php else: ?>
                 <a href="index.php" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>" class="mm-brand-link flex items-center gap-2 group flex-shrink-0">
                     <span class="brand-logo-badge">
                         <svg class="brand-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-labelledby="title042 desc042">
@@ -74,7 +66,6 @@ $navItems = [
                     </span>
                     <span class="brand-copy"><span class="brand-word text-[19px] lg:text-[20px] xl:text-[21px] font-extrabold whitespace-nowrap"><span class="brand-a"><?= e($brandPartA) ?></span><?php if ($brandPartB !== ''): ?> <span class="brand-b"><?= e($brandPartB) ?></span><?php endif; ?></span><span class="brand-tagline" data-i18n="brand.tagline"><?= e($brandTagline) ?></span></span>
                 </a>
-<?php endif; ?>
 
                 <nav class="nav-desk hidden lg:flex items-center gap-6 xl:gap-8 mx-auto">
 <?php $activeNavKey = ($pageKey === 'book') ? 'service' : $pageKey; ?>

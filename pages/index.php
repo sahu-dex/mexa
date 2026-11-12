@@ -37,7 +37,11 @@ $gridMembers = array_slice($gridMembers, 0, 4);
 $heroLine1Parts = split_lines(setting('hero_line_1', "WE CREATE\nVISUALS"));
 $heroLine1Html = implode('<br>', array_map('e', $heroLine1Parts));
 $heroLine2 = setting('hero_line_2', 'THAT GROW YOUR BRAND');
-$heroDesc = setting('hero_description', '');
+$heroDesc = setting('hero_description', 'MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.');
+$heroDescHtml = e($heroDesc);
+if (str_starts_with($heroDesc, 'MEXA MOTION')) {
+    $heroDescHtml = '<strong>' . e('MEXA MOTION') . '</strong>' . e(substr($heroDesc, strlen('MEXA MOTION')));
+}
 $heroImg = setting('hero_character_file_path', 'assets/images/hero-character.webp');
 
 $contactEmail = setting_raw('contact_email', '');
@@ -61,7 +65,7 @@ include dirname(__DIR__) . '/includes/header.php';
                             <span class="hero-line-2 hero-title-blue"><?= e($heroLine2) ?></span>
                         </h1>
                         <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
-                            <?= e($heroDesc) ?>
+                            <?= $heroDescHtml ?>
                         </p>
                     </div>
 

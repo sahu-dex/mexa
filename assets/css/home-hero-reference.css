@@ -1,0 +1,194 @@
+/* Home hero, based on the supplied reference. Kept local to this page. */
+body #home {
+    min-height: 0;
+    padding: 38px 0 48px !important;
+    background: linear-gradient(110deg, #eef2f8 0%, #f8f9fa 52%, #f0f6f8 100%) !important;
+}
+body #home > .container {
+    width: 100% !important;
+    max-width: 1440px !important;
+    padding-inline: clamp(24px, 2.6vw, 40px) !important;
+}
+body #home .hero-grid {
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    column-gap: 28px !important;
+    row-gap: 24px !important;
+    align-content: center !important;
+    align-items: center !important;
+}
+body #home .hero-title { top: 0; padding: 0; }
+body #home .hero-title .hero-line-1 {
+    display: block;
+    color: #10337f !important;
+    -webkit-text-fill-color: #10337f !important;
+    font-size: clamp(3.2rem, 5.8vw, 4.8rem) !important;
+    font-weight: 800;
+    line-height: 1.02 !important;
+    letter-spacing: -.045em;
+}
+body #home .hero-title .hero-line-2 {
+    display: block;
+    margin-top: 14px !important;
+    font-size: clamp(1.65rem, 3vw, 2.45rem) !important;
+    font-weight: 800;
+    line-height: 1.1 !important;
+    letter-spacing: -.035em;
+    color: #1768df !important;
+    background: linear-gradient(90deg, #1758df, #369bd0) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+body #home .hero-grid > div:first-child > p {
+    max-width: 670px;
+    margin: 32px 0 0 !important;
+    color: #52627c;
+    font-size: 16px !important;
+    line-height: 1.75 !important;
+    letter-spacing: 0;
+}
+body #home .hero-grid > div:first-child > p strong { font-weight: 800; }
+body #home .hero-video {
+    grid-column: 2 !important;
+    grid-row: 1 / span 2 !important;
+    left: 0;
+    width: 100% !important;
+    max-width: none;
+    margin: 0 !important;
+    padding: 0 !important;
+    justify-content: flex-end !important;
+}
+body #home .hero-character {
+    width: min(100%, 460px);
+    height: auto;
+    min-height: 0;
+    margin: 0 !important;
+}
+body #home .hero-character-img {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    object-fit: contain;
+    transform: none;
+    filter: none;
+}
+body #home .hero-cta {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    top: 0;
+    margin: 0 !important;
+    gap: 16px !important;
+}
+body #home .hero-cta .hero-btn {
+    width: auto !important;
+    min-height: 51px;
+    padding: 12px 21px !important;
+    border-radius: 999px !important;
+    font-size: 15px !important;
+    gap: 10px !important;
+}
+body #home .hero-cta .glass-btn-primary {
+    background: #1d57df !important;
+    box-shadow: 0 8px 20px rgba(29, 87, 223, .2) !important;
+}
+body #home .hero-cta .glass-btn-secondary {
+    border: 1px solid #c4d7fb !important;
+    background: rgba(255, 255, 255, .75) !important;
+    color: #10377f !important;
+    -webkit-text-fill-color: #10377f !important;
+}
+@media (max-width: 1023.98px) {
+    body #home { padding: 36px 0 42px !important; }
+    body #home .hero-grid {
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: auto auto auto auto !important;
+        gap: 0 !important;
+    }
+    body #home .hero-grid > div:first-child { display: contents !important; }
+    body #home .hero-grid > div:first-child > .hero-title { grid-row: 1 !important; }
+    body #home .hero-grid > div:first-child > p { grid-row: 2 !important; margin-top: 22px !important; }
+    body #home .hero-grid > .hero-cta {
+        grid-row: 3 !important;
+        display: flex !important;
+        flex-wrap: wrap;
+        width: auto;
+        margin-top: 24px !important;
+    }
+    body #home .hero-grid > .hero-video {
+        grid-column: 1 !important;
+        grid-row: 4 !important;
+        justify-content: center !important;
+        margin-top: 20px !important;
+    }
+    body #home .hero-character { width: min(100%, 370px); height: auto; }
+    body #home .hero-title .hero-line-1 { font-size: clamp(2.8rem, 9vw, 4.8rem) !important; }
+    body #home .hero-title .hero-line-2 { font-size: clamp(1.45rem, 5vw, 2.4rem) !important; }
+}
+@media (max-width: 420px) {
+    body #home .hero-cta { gap: 10px !important; }
+    body #home .hero-cta .hero-btn { padding-inline: 16px !important; font-size: 14px !important; }
+}
+
+/* Four process cards */
+body #process {
+    background: linear-gradient(110deg, #eef2f8 0%, #f8f9fa 52%, #f0f6f8 100%) !important;
+}
+body #process .pr-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+}
+body #process .pr-card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #dce7ff !important;
+    border-radius: 24px !important;
+    background: rgba(255, 255, 255, .72) !important;
+    box-shadow: 0 12px 30px rgba(55, 100, 175, .07) !important;
+}
+body #process .pr-card:hover {
+    border-color: #c9dbff !important;
+    box-shadow: 0 18px 36px rgba(55, 100, 175, .14) !important;
+}
+body #process .pr-top {
+    height: 5px;
+    background: linear-gradient(90deg, #1c56e3, #4fc0ef) !important;
+}
+body #process .pr-body { padding: 24px 20px 22px; }
+body #process .pr-step {
+    display: inline-block;
+    margin-bottom: 13px;
+    padding: 5px 12px;
+    border: 1px solid #bfdaff !important;
+    border-radius: 999px !important;
+    background: #e6f1ff !important;
+    color: #1459e7 !important;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: .13em;
+}
+body #process .pr-title {
+    margin: 0;
+    color: #10377f !important;
+    -webkit-text-fill-color: #10377f !important;
+    font-size: 21px !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    letter-spacing: -.035em !important;
+}
+body #process .pr-text {
+    margin-top: 13px;
+    color: #52627c !important;
+    -webkit-text-fill-color: #52627c !important;
+    font-size: 16px !important;
+    line-height: 1.7 !important;
+}
+@media (max-width: 1023.98px) {
+    body #process .pr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+    body #process .pr-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}

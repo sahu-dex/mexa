@@ -857,6 +857,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-vendor-base.css',
             'assets/css/tailwind-book.css',
             'assets/css/site-image-fallbacks.css',
+            'assets/css/site-header-lockup.css',
             'assets/css/service-booking-theme.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
@@ -886,9 +887,19 @@ function page_stylesheets(string $pageKey): array
             'assets/css/legal-page.css?v=20261112-plain',
         ],
     ];
-    return array_merge($map[$pageKey] ?? $map['home'], [
+    $stylesheets = array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
         'assets/css/premium-design-system.css?v=20261112-tabs2',
         'assets/css/visual-refresh.css?v=20261112-tabs2',
     ]);
+    if ($pageKey === 'home') {
+        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
+    } elseif ($pageKey === 'book') {
+        $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
+        $stylesheets[] = 'assets/css/book-layout.css?v=20261112';
+    }
+    if ($pageKey === 'home' || $pageKey === 'team') {
+        $stylesheets[] = 'assets/css/team-photos.css?v=20261112';
+    }
+    return $stylesheets;
 }

@@ -98,6 +98,16 @@ mysql -u YOUR_DB_USER -p YOUR_DB_NAME < database/schema.sql
 mysql -u YOUR_DB_USER -p YOUR_DB_NAME < database/seed.sql
 ```
 
+### Updating the default team biographies on an existing site
+
+Back up the database first, then import `database/update-default-team-bios.sql` in phpMyAdmin, or run:
+
+```bash
+mysql -u YOUR_DB_USER -p YOUR_DB_NAME < database/update-default-team-bios.sql
+```
+
+This optional update replaces only the original, unchanged default biographies; profiles edited in the admin panel are left untouched. New installations receive the updated biographies through either seed method. Avoid re-running the full PHP seeder on an existing site just for this update, since it can overwrite other team profile fields.
+
 ### Database Tables Created (`8` tables)
 
 - `settings` — Global brand identity, hero headlines, showreel path, counters, studio collage paths, FAQs, social links, and notification email.
