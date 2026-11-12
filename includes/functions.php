@@ -864,5 +864,9 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-subscribe-fix.css',
         ],
     ];
-    return array_merge($map[$pageKey] ?? $map['home'], ['assets/css/plus-jakarta-font.css', 'assets/css/premium-design-system.css']);
+    return array_merge($map[$pageKey] ?? $map['home'], [
+        'assets/css/plus-jakarta-font.css',
+        'assets/css/premium-design-system.css',
+        'assets/css/visual-refresh.css?v=20261112',
+    ]);
 }
