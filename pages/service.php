@@ -118,8 +118,15 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if ($firstService !== null): ?>
 <?php foreach ($firstService['packages'] as $pkg): ?>
             <article class="sp-pkg sv-pkg<?= $pkg['highlight'] ? ' is-hi' : '' ?>" data-quality="<?= e($pkg['quality']) ?>">
-<?php if ($pkg['badge'] !== ''): ?>
-                <span class="sv-pkg-badge"><?= e($pkg['badge']) ?></span>
+<?php
+            // The legacy "Best Value" badge was retired from the package cards.
+            $pkgBadge = trim((string) $pkg['badge']);
+            if (strtolower($pkgBadge) === 'best value') {
+                $pkgBadge = '';
+            }
+?>
+<?php if ($pkgBadge !== ''): ?>
+                <span class="sv-pkg-badge"><?= e($pkgBadge) ?></span>
 <?php endif; ?>
                 <h3><?= e($pkg['name']) ?></h3>
 <?php if ($pkg['description'] !== ''): ?>
