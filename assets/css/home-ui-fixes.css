@@ -52,3 +52,48 @@ footer .footer-brand-word {
     }
     footer .footer-brand-word { margin-left: -10px !important; }
 }
+
+/* Homepage Work / Shorts cards — preview affordances and graceful fallbacks */
+#portfolio .pf-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#portfolio .pf-card:focus-visible {
+    outline: 3px solid #80aaff;
+    outline-offset: 3px;
+}
+
+#portfolio .pf-thumb-fallback {
+    position: absolute;
+    inset: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    color: rgba(255, 255, 255, .82);
+    font-size: 30px;
+    background:
+        radial-gradient(ellipse at 78% 0%, rgba(94, 176, 255, .38) 0%, transparent 55%),
+        linear-gradient(140deg, #082b69 0%, #1051df 58%, #2f8ae8 100%);
+}
+
+#portfolio .pf-card-short .pf-thumb-fallback { border-radius: 18px; font-size: 26px; }
+
+#portfolio .pf-empty {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 26px 22px;
+    border: 1px dashed rgba(16, 81, 223, .22);
+    border-radius: 18px;
+    color: #64748b;
+    font-size: 14.5px;
+    line-height: 1.6;
+    text-align: center;
+    background: rgba(244, 248, 255, .7);
+}
+
+@media (max-width: 640px) {
+    #portfolio .pf-thumb-fallback { inset: 4px; border-radius: 15px; font-size: 22px; }
+    #portfolio .pf-empty { padding: 20px 16px; font-size: 13.5px; }
+}

@@ -61,18 +61,44 @@ body #home .hero-video {
     justify-content: flex-end !important;
 }
 body #home .hero-character {
-    width: min(100%, 460px);
+    position: relative;
+    isolation: isolate;
+    width: min(112%, 640px);
+    max-width: none;
     height: auto;
     min-height: 0;
-    margin: 0 !important;
+    margin: 0 clamp(-40px, -2vw, 0px) 0 0 !important;
+}
+/* Soft light pooled behind the lower body so the character sits in the scene. */
+body #home .hero-character::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    z-index: 0;
+    width: 82%;
+    height: 22%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: radial-gradient(ellipse at 50% 58%, rgba(16, 81, 223, .18) 0%, rgba(16, 81, 223, .09) 42%, rgba(16, 81, 223, 0) 74%);
+    filter: blur(8px);
 }
 body #home .hero-character-img {
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: auto;
     max-height: none;
     object-fit: contain;
     transform: none;
-    filter: none;
+    filter: drop-shadow(0 24px 30px rgba(11, 39, 96, .14)) drop-shadow(0 6px 10px rgba(11, 39, 96, .08));
+    /* Feather the lower edge into the hero background — no hard cut-off. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, rgba(0, 0, 0, .9) 86%, rgba(0, 0, 0, .5) 94%, rgba(0, 0, 0, 0) 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, #000 78%, rgba(0, 0, 0, .9) 86%, rgba(0, 0, 0, .5) 94%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
 }
 body #home .hero-cta {
     grid-column: 1 !important;
@@ -83,11 +109,19 @@ body #home .hero-cta {
 }
 body #home .hero-cta .hero-btn {
     width: auto !important;
-    min-height: 51px;
-    padding: 12px 21px !important;
+    min-width: 188px;
+    min-height: 58px;
+    padding: 16px 32px !important;
     border-radius: 999px !important;
-    font-size: 15px !important;
-    gap: 10px !important;
+    font-size: 16.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: .005em;
+    gap: 12px !important;
+    justify-content: center;
+    white-space: nowrap;
+}
+body #home .hero-cta .hero-btn i {
+    font-size: 14px !important;
 }
 body #home .hero-cta .glass-btn-primary {
     background: #1d57df !important;
@@ -113,22 +147,53 @@ body #home .hero-cta .glass-btn-secondary {
         grid-row: 3 !important;
         display: flex !important;
         flex-wrap: wrap;
-        width: auto;
-        margin-top: 24px !important;
+        width: 100%;
+        gap: 14px !important;
+        margin-top: 28px !important;
+    }
+    body #home .hero-grid > .hero-cta .hero-btn {
+        flex: 1 1 165px;
+        min-width: 0;
+        min-height: 54px;
+        padding: 15px 24px !important;
+        font-size: 15.5px !important;
+    }
+    body #home .hero-grid > .hero-cta .hero-btn i {
+        font-size: 13px !important;
     }
     body #home .hero-grid > .hero-video {
         grid-column: 1 !important;
         grid-row: 4 !important;
         justify-content: center !important;
-        margin-top: 20px !important;
+        margin-top: 22px !important;
     }
-    body #home .hero-character { width: min(100%, 370px); height: auto; }
+    body #home .hero-character {
+        width: min(100%, clamp(370px, 60vw, 480px));
+        max-width: 100%;
+        height: auto;
+        margin: 0 auto !important;
+    }
+    body #home .hero-character::after { width: 88%; bottom: -4px; }
     body #home .hero-title .hero-line-1 { font-size: clamp(2.8rem, 9vw, 4.8rem) !important; }
     body #home .hero-title .hero-line-2 { font-size: clamp(1.45rem, 5vw, 2.4rem) !important; }
 }
-@media (max-width: 420px) {
-    body #home .hero-cta { gap: 10px !important; }
-    body #home .hero-cta .hero-btn { padding-inline: 16px !important; font-size: 14px !important; }
+@media (max-width: 480px) {
+    body #home .hero-character { width: min(100%, 372px); }
+    body #home .hero-grid > .hero-cta { gap: 12px !important; }
+    body #home .hero-grid > .hero-cta .hero-btn {
+        flex-basis: 140px;
+        min-height: 52px;
+        padding: 14px 18px !important;
+        font-size: 14.5px !important;
+    }
+}
+@media (max-width: 360px) {
+    body #home .hero-character { width: min(100%, 318px); }
+    body #home .hero-grid > .hero-cta .hero-btn {
+        font-size: 13.5px !important;
+        padding: 13px 12px !important;
+        gap: 8px !important;
+    }
 }
 
 /* Four process cards */

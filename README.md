@@ -115,7 +115,7 @@ Team biographies and card descriptions may be shorter but cannot exceed 300 Unic
 - `settings` — Global brand identity, hero headlines, showreel path, counters, studio collage paths, FAQs, social links, and notification email.
 - `services` — Studio services (`file_path` & `thumbnail_path` media columns, icon, bullets, sort order, visibility).
 - `packages` — `normal`, `high`, and `premium` pricing tiers linked via foreign key to `services`.
-- `work_items` — Portfolio entries (`recent`, `demo`, `short`, `preview`) with `file_path` and `thumbnail_path`.
+- `work_items` — Portfolio and homepage media entries (`recent`, `demo`, `short`, `preview`) with `file_path`, `embed_url`, and `thumbnail_path`. `demo` powers the homepage **Videos** tab; `short` powers the **Shorts** tab.
 - `team_members` — Founder and specialist profiles with portrait `file_path` and JSON skills.
 - `reviews` — Client testimonials with avatar `file_path`, star rating, `is_featured`, and moderation `status` (`pending` / `approved` / `rejected`).
 - `messages` — Booking tickets (`ticket_ref`, `service_id`, `package_id`, `quoted_price`), contact inquiries, and newsletter subscribers.
@@ -130,6 +130,24 @@ No administrator password is stored anywhere in the source code or seed files.
 1. Open `/admin/setup.php` in your browser (for example `https://yourdomain.com/admin/setup.php`).
 2. Enter your **Admin Username**, **Admin Email**, and a **Password** (minimum 10 characters).
 3. Submit the form — your account is hashed with `password_hash()` (`PASSWORD_DEFAULT`), your session ID is regenerated, and `/admin/setup.php` **permanently locks itself** (automatically redirecting to `/admin/login.php` whenever at least one admin row exists).
+
+### Managing Homepage Videos & Shorts (Admin Panel)
+
+Open **Admin → Videos & Shorts**. The same `work_items` table powers the public Work page and the homepage, so no duplicate content system is created.
+
+1. Click **Add Video** for a landscape card in the homepage **Videos** tab, or **Add Short** for a vertical 9:16 card in the **Shorts** tab.
+2. Add a **Title** (required), an optional category, duration, description, and sort order.
+3. Choose **Appears In**:
+   - `demo` → homepage Videos tab and Work page Videos section
+   - `short` → homepage Shorts tab (9:16)
+   - `recent` → Work page “Recently Worked On”
+   - `preview` → homepage preview pool
+4. Upload the **video** (MP4, WebM, or MOV, up to `MAX_VIDEO_BYTES`) **or** paste a YouTube/Vimeo/Facebook URL. Uploads use the existing validated `uploads/videos/` pipeline.
+5. Upload a separate **thumbnail** (JPG, PNG, or WebP) or paste its URL. If a thumbnail is omitted for a YouTube link, the provider thumbnail is used automatically.
+6. Set **Status** to `Published` so the card appears on the website immediately; keep it as `Draft` to hide it. **Edit** and delete actions are available per row, and deleting an item also removes its uploaded video and thumbnail files.
+7. Use the **All / Videos / Shorts** filter tabs to manage each content type quickly. Changes are public on the next page load — no code edits or cache rebuild required.
+
+On the homepage, clicking a card with a playable source opens the preview modal. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
 
 ---
 

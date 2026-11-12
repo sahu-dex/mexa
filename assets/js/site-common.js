@@ -139,15 +139,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridVideos = document.getElementById('grid-videos');
     const gridShorts = document.getElementById('grid-shorts');
     if (tabVideos && tabShorts && gridVideos && gridShorts) {
-        const setTab = (showVideos) => {
+        const setTab = (showVideos, moveFocus = false) => {
             tabVideos.classList.toggle('is-active', showVideos);
             tabShorts.classList.toggle('is-active', !showVideos);
+            tabVideos.setAttribute('aria-selected', showVideos ? 'true' : 'false');
+            tabShorts.setAttribute('aria-selected', showVideos ? 'false' : 'true');
+            tabVideos.tabIndex = showVideos ? 0 : -1;
+            tabShorts.tabIndex = showVideos ? -1 : 0;
             gridVideos.classList.toggle('hidden', !showVideos);
             gridShorts.classList.toggle('hidden', showVideos);
+            gridVideos.hidden = !showVideos;
+            gridShorts.hidden = showVideos;
+            if (moveFocus) (showVideos ? tabVideos : tabShorts).focus();
             if (window.AOS) setTimeout(() => AOS.refresh(), 50);
         };
         tabVideos.addEventListener('click', () => setTab(true));
         tabShorts.addEventListener('click', () => setTab(false));
+        [tabVideos, tabShorts].forEach((tab) => {
+            tab.addEventListener('keydown', (event) => {
+                if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home' && event.key !== 'End') return;
+                event.preventDefault();
+                if (event.key === 'Home') setTab(true, true);
+                else if (event.key === 'End') setTab(false, true);
+                else setTab(tab === tabVideos ? false : true, true);
+            });
+        });
     }
 
     window.handleNewsletterSubscribe = async function (form) {

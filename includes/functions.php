@@ -547,6 +547,52 @@ function get_services_with_packages(bool $onlyActive = true): array
     ];
 }
 
+/**
+ * Extract a YouTube video ID from any public YouTube URL (watch, embed, shorts, live, youtu.be).
+ */
+function work_youtube_id(string $url): string
+{
+    if ($url === '') {
+        return '';
+    }
+    if (preg_match('~(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:[^#]*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,})~i', $url, $m)) {
+        return (string) $m[1];
+    }
+    return '';
+}
+
+/**
+ * Resolve the best available thumbnail for a work item.
+ *
+ * Uploaded thumbnails win, then image items use their own file, and YouTube
+ * links fall back to the provider thumbnail so cards never render a video
+ * file inside an <img> tag.
+ */
+function work_item_thumbnail(array $item): string
+{
+    $thumb = trim((string) ($item['thumbnail_path'] ?? ''));
+    if ($thumb !== '') {
+        return $thumb;
+    }
+    if (($item['kind'] ?? '') === 'image') {
+        return trim((string) ($item['file_path'] ?? ''));
+    }
+    $ytId = work_youtube_id((string) ($item['file_path'] ?? ''));
+    if ($ytId === '') {
+        $ytId = work_youtube_id((string) ($item['embed_url'] ?? ''));
+    }
+    return $ytId !== '' ? 'https://i.ytimg.com/vi/' . $ytId . '/hqdefault.jpg' : '';
+}
+
+/**
+ * Whether a work item has a media source that can be opened in the preview player.
+ */
+function work_item_previewable(array $item): bool
+{
+    return trim((string) ($item['file_path'] ?? '')) !== ''
+        || trim((string) ($item['embed_url'] ?? '')) !== '';
+}
+
 function get_work_bundle(?string $kind = null, ?string $category = null, ?string $section = null): array
 {
     $sql = 'SELECT * FROM `work_items` WHERE `status` = :status';
@@ -819,11 +865,11 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-hero-character.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/home-hero.css',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/mm-services-cta.css',
-            'assets/css/home-ui-fixes.css',
+            'assets/css/home-ui-fixes.css?v=20261112-work-preview',
         ],
         'service' => [
             'assets/css/site-vendor-base.css',
@@ -834,7 +880,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
         ],
         'work' => [
@@ -847,7 +893,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/wk-layout-fix.css',
         ],
@@ -861,7 +907,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/rvx-layout-v2.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
         ],
         'team' => [
@@ -873,7 +919,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
         ],
         'book' => [
@@ -884,7 +930,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/service-booking-theme.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
         ],
         'privacy' => [
@@ -894,7 +940,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -905,7 +951,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -913,10 +959,10 @@ function page_stylesheets(string $pageKey): array
     $stylesheets = array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
         'assets/css/premium-design-system.css?v=20261112-tabs2',
-        'assets/css/visual-refresh.css?v=20261112-tabs2',
+        'assets/css/visual-refresh.css?v=20261112-footer-soft',
     ]);
     if ($pageKey === 'home') {
-        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
+        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112-hero-blend';
     } elseif ($pageKey === 'book') {
         $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
         $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';

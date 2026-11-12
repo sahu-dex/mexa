@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-work-preview.js?v=20261112-work-preview'];
 
 $servicesBundle = get_services_with_packages(true);
 $homeServices = $servicesBundle['services'];
@@ -159,42 +159,87 @@ include dirname(__DIR__) . '/includes/header.php';
                     </p>
                 </div>
 
-                <div class="pf-tabs mt-7 md:mt-8 mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="80">
-                    <button type="button" id="tab-videos" class="pf-tab is-active">
+                <div class="pf-tabs mt-7 md:mt-8 mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="80" role="tablist" aria-label="Work categories">
+                    <button type="button" id="tab-videos" class="pf-tab is-active" role="tab" aria-selected="true" aria-controls="grid-videos" tabindex="0">
                         <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-play"></i></span> Videos
                     </button>
-                    <button type="button" id="tab-shorts" class="pf-tab">
+                    <button type="button" id="tab-shorts" class="pf-tab" role="tab" aria-selected="false" aria-controls="grid-shorts" tabindex="-1">
                         <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-clapperboard"></i></span> Shorts
                     </button>
                 </div>
 
-                <div id="grid-videos" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500">
+                <div id="grid-videos" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500" role="tabpanel" aria-labelledby="tab-videos">
 <?php foreach ($homeDemoVideos as $vi => $vItem):
-    $vThumb = $vItem['thumbnail_path'] !== '' ? $vItem['thumbnail_path'] : $vItem['file_path'];
-    $vHref = ($vItem['kind'] === 'video' && $vItem['file_path'] !== '') ? $vItem['file_path'] : 'work.php';
-    $vExt = str_starts_with($vHref, 'http');
-?>
-                    <a href="<?= e($vHref) ?>"<?= $vExt ? ' target="_blank" rel="noopener"' : '' ?> class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="<?= 100 + ($vi * 50) ?>">
-                        <img src="<?= e($vThumb) ?>" alt="<?= e($vItem['title']) ?>" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+    $vThumb = work_item_thumbnail($vItem);
+    $vKind = ($vItem['kind'] ?? 'video') === 'image' ? 'image' : 'video';
+    $vSrc = trim((string) ($vItem['file_path'] ?? ''));
+    $vEmbed = trim((string) ($vItem['embed_url'] ?? ''));
+    $vType = trim((string) ($vItem['embed_type'] ?? ''));
+    $vPreview = work_item_previewable($vItem);
+    $vHref = $vPreview && $vSrc !== '' ? $vSrc : 'work.php';
+?><a href="<?= e($vHref) ?>"<?= $vPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($vKind) ?>" data-mm-src="<?= e($vSrc) ?>" data-mm-embed="<?= e($vEmbed) ?>" data-mm-type="<?= e($vType) ?>" data-mm-poster="<?= e($vThumb) ?>" data-mm-title="<?= e($vItem['title']) ?>" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="<?= 100 + ($vi * 50) ?>" aria-label="<?= e(($vPreview ? 'Play ' : 'View ') . $vItem['title']) ?>">
+<?php if ($vThumb !== ''): ?>
+                        <img src="<?= e($vThumb) ?>" alt="<?= e($vItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+<?php else: ?>
+                        <span class="pf-thumb-fallback" aria-hidden="true"><i class="fa-solid fa-film"></i></span>
+<?php endif; ?>
                         <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="<?= chr(35) ?>1051DF"></path></svg></span>
                     </a>
 <?php endforeach; ?>
+<?php if (empty($homeDemoVideos)): ?>
+                    <p class="pf-empty">Videos will appear here as soon as they are published from the Admin Panel.</p>
+<?php endif; ?>
                 </div>
 
-                <div id="grid-shorts" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500 hidden">
+                <div id="grid-shorts" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500 hidden" role="tabpanel" aria-labelledby="tab-shorts" hidden>
 <?php foreach ($homeShorts as $sItem):
-    $sThumb = $sItem['thumbnail_path'] !== '' ? $sItem['thumbnail_path'] : $sItem['file_path'];
-    $sHref = ($sItem['kind'] === 'video' && $sItem['file_path'] !== '') ? $sItem['file_path'] : 'work.php';
-    $sExt = str_starts_with($sHref, 'http');
-?>
-                    <a href="<?= e($sHref) ?>"<?= $sExt ? ' target="_blank" rel="noopener"' : '' ?> class="pf-card pf-card-short">
-                        <img src="<?= e($sThumb) ?>" alt="<?= e($sItem['title']) ?>" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+    $sThumb = work_item_thumbnail($sItem);
+    $sKind = ($sItem['kind'] ?? 'video') === 'image' ? 'image' : 'video';
+    $sSrc = trim((string) ($sItem['file_path'] ?? ''));
+    $sEmbed = trim((string) ($sItem['embed_url'] ?? ''));
+    $sType = trim((string) ($sItem['embed_type'] ?? ''));
+    $sPreview = work_item_previewable($sItem);
+    $sHref = $sPreview && $sSrc !== '' ? $sSrc : 'work.php';
+?><a href="<?= e($sHref) ?>"<?= $sPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($sKind) ?>" data-mm-src="<?= e($sSrc) ?>" data-mm-embed="<?= e($sEmbed) ?>" data-mm-type="<?= e($sType) ?>" data-mm-poster="<?= e($sThumb) ?>" data-mm-title="<?= e($sItem['title']) ?>" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="<?= e(($sPreview ? 'Play ' : 'View ') . $sItem['title']) ?>">
+<?php if ($sThumb !== ''): ?>
+                        <img src="<?= e($sThumb) ?>" alt="<?= e($sItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+<?php else: ?>
+                        <span class="pf-thumb-fallback" aria-hidden="true"><i class="fa-solid fa-clapperboard"></i></span>
+<?php endif; ?>
                         <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="<?= chr(35) ?>1051DF"></path></svg></span>
                     </a>
 <?php endforeach; ?>
+<?php if (empty($homeShorts)): ?>
+                    <p class="pf-empty">Shorts will appear here as soon as they are published from the Admin Panel.</p>
+<?php endif; ?>
                 </div>
             </div>
         </section>
+
+        <div id="mm-work-modal" class="mmvp" hidden aria-hidden="true">
+            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-labelledby="mm-work-modal-title">
+                <div class="mmvp-stage">
+                    <button type="button" class="mmvp-close" data-mm-close aria-label="Close video preview">&times;</button>
+                    <div class="mmvp-player" data-mm-player></div>
+                    <div class="mmvp-loading" data-mm-loading>
+                        <span class="mmvp-spinner" aria-hidden="true"></span>
+                        <span>Loading video&hellip;</span>
+                    </div>
+                    <div class="mmvp-error" data-mm-error hidden>
+                        <p data-mm-error-text>This video could not be played right now.</p>
+                        <span class="mmvp-error-actions">
+                            <a class="mmvp-external" data-mm-external href="#" target="_blank" rel="noopener noreferrer">Open in a new tab</a>
+                            <button type="button" class="mmvp-retry" data-mm-retry>Try again</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="mmvp-meta">
+                    <h3 class="mmvp-title" id="mm-work-modal-title"></h3>
+                    <p class="mmvp-hint">Press Esc or click outside the player to close.</p>
+                </div>
+                <p class="mmvp-status" role="status" data-mm-status></p>
+            </div>
+        </div>
 <?php endif; ?>
 
 <?php if (setting_raw('home_section_process', '1') !== '0'): ?>

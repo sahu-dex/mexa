@@ -541,3 +541,55 @@ body :focus-visible {
         transition-duration: .01ms !important;
     }
 }
+
+/* Work / portfolio manager helpers */
+.adm-muted-line {
+    margin-top: 3px;
+    max-width: 320px;
+    overflow: hidden;
+    color: #8492a8 !important;
+    font-size: 11.5px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.adm-hint {
+    display: block;
+    margin-top: 5px;
+    color: #8492a8;
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+.adm-thumb-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #8fa6c8;
+    background: #eef3fb;
+    border: 1px solid var(--adm-border, #e7ecf4);
+    font-size: 15px;
+}
+
+.adm-empty-cell {
+    padding: 24px 12px !important;
+    color: #7b889d !important;
+    font-size: 13px;
+    text-align: center;
+}
+
+.adm-card-head .adm-actions {
+    justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+    .adm-card-head .adm-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.adm-table tr[hidden] {
+    display: none !important;
+}

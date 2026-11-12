@@ -90,6 +90,18 @@
                         if (actNew) actNew.value = 'create';
                         var idField = form.elements.namedItem('id');
                         if (idField) idField.value = '0';
+
+                        // Optional presets for "Add Video" / "Add Short" shortcuts.
+                        var presetRaw = openBtn.getAttribute('data-preset');
+                        if (presetRaw) {
+                            try {
+                                var preset = JSON.parse(presetRaw);
+                                Object.keys(preset).forEach(function (key) {
+                                    var presetField = form.elements.namedItem(key);
+                                    if (presetField) presetField.value = String(preset[key]);
+                                });
+                            } catch (presetErr) {}
+                        }
                     }
                 }
                 var titleEl = m.querySelector('[data-modal-title]');
@@ -133,6 +145,25 @@
                     toast('Network error.', true);
                     actBtn.disabled = false;
                 });
+            return;
+        }
+
+        var filterBtn = e.target.closest('[data-adm-filter]');
+        if (filterBtn) {
+            var filterValue = filterBtn.getAttribute('data-adm-filter') || 'all';
+            document.querySelectorAll('[data-adm-filter]').forEach(function (b) {
+                var isOn = b === filterBtn;
+                b.classList.toggle('is-active', isOn);
+                b.setAttribute('aria-pressed', isOn ? 'true' : 'false');
+            });
+            var visibleRows = 0;
+            document.querySelectorAll('[data-work-type]').forEach(function (row) {
+                var showRow = filterValue === 'all' || row.getAttribute('data-work-type') === filterValue;
+                row.hidden = !showRow;
+                if (showRow) visibleRows++;
+            });
+            var emptyRow = document.getElementById('work-empty-row');
+            if (emptyRow) emptyRow.hidden = visibleRows !== 0;
             return;
         }
 
