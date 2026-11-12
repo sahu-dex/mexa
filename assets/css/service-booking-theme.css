@@ -390,3 +390,6 @@ body.sv2-locked { overflow: hidden; }
 .tk-q { position: relative; }
 .tk-select-wrap { display: block; }
 .tk-done-box .tk-link { justify-content: center; }
+
+/* The root scroll padding already clears the fixed header on both breakpoints. */
+#packages { scroll-margin-top: 0; }

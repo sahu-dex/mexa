@@ -24,3 +24,31 @@
         margin-top: auto;
     }
 }
+
+/* Highlight the selected package with the site's blue palette. */
+body .tk-page .tk-sum {
+    background: linear-gradient(115deg, #1047c8, #1665df) !important;
+    border-color: #1954c8 !important;
+    box-shadow: 0 16px 36px rgba(16, 71, 200, .2) !important;
+}
+
+body .tk-page .tk-sum :is(.tk-sum-name, .tk-sum-price b) {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body .tk-page .tk-sum :is(.tk-sum-kicker, .tk-sum-price span, .tk-sum-desc, .tk-sum-feats li, .tk-sum-feats i) {
+    color: #edf4ff !important;
+    -webkit-text-fill-color: #edf4ff !important;
+}
+
+body .tk-page .tk-sum .tk-sum-quality {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    background: #123d9b !important;
+    border-color: rgba(255, 255, 255, .35) !important;
+}
+
+body .tk-page .tk-sum .tk-sum-feats {
+    border-color: rgba(255, 255, 255, .25) !important;
+}

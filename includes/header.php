@@ -75,7 +75,7 @@ $navItems = [
                 </nav>
 
                 <div class="hidden lg:flex items-center gap-3 flex-shrink-0">
-                    <a href="book.php" class="header-booking-button" aria-label="Booking Now">
+                    <a href="service.php#packages" class="header-booking-button" aria-label="Booking Now">
                         <span>Booking Now</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
                     </a>
@@ -100,7 +100,7 @@ $navItems = [
 <?php endforeach; ?>
                 </nav>
                 <div class="mm-foot">
-                    <a class="mm-booking-button" href="book.php" aria-label="Booking Now">
+                    <a class="mm-booking-button" href="service.php#packages" aria-label="Booking Now">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <rect x="3" y="5" width="18" height="16" rx="2"></rect>
                             <path d="M16 3v4M8 3v4M3 11h18"></path>

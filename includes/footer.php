@@ -98,7 +98,7 @@ $accentHex = chr(35) . '1051DF';
         window.__MM_TAGLINE__ = <?= json_encode(setting('brand_tagline', 'Video Editing Agency'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
     </script>
     <script src="assets/js/vendor-aos.js"></script>
-    <script src="assets/js/site-common.js"></script>
+    <script src="assets/js/site-common.js?v=20261112-packages-anchor"></script>
 <?php foreach ($pageScripts as $jsSrc): ?>
     <script src="<?= e($jsSrc) ?>"></script>
 <?php endforeach; ?>

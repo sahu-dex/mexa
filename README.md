@@ -106,7 +106,9 @@ Back up the database first, then import `database/update-default-team-bios.sql` 
 mysql -u YOUR_DB_USER -p YOUR_DB_NAME < database/update-default-team-bios.sql
 ```
 
-This optional update replaces only the original, unchanged default biographies; profiles edited in the admin panel are left untouched. New installations receive the updated biographies through either seed method. Avoid re-running the full PHP seeder on an existing site just for this update, since it can overwrite other team profile fields.
+This optional update replaces known, unchanged default biographies and descriptions with concise versions; profiles edited in the admin panel are left untouched. New installations receive the updated biographies through either seed method. Avoid re-running the full PHP seeder on an existing site just for this update, since it can overwrite other team profile fields.
+
+Team biographies and card descriptions may be shorter but cannot exceed 300 Unicode code points each, including spaces, punctuation, digits and Bengali combining marks. A line break counts as one. The admin editor enforces the limit and the server rejects over-limit submissions. For existing custom profiles that exceed the limit, the public site displays a bounded excerpt without modifying the stored text; an administrator should shorten those fields before saving the profile.
 
 ### Database Tables Created (`8` tables)
 

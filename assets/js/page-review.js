@@ -42,7 +42,7 @@
         var photo = photoSrc
             ? '<span class="rvx-avatar"><img src="' + esc(photoSrc) + '" alt="' + esc(r.name || 'Client') + '" loading="lazy"></span>'
             : '<span class="rvx-avatar" aria-hidden="true">' + esc(initials(r.name)) + '</span>';
-        return '<article class="rvx-card' + (isNew ? ' is-new' : '') + '">' +
+        return '<article id="review-' + Number(r.id) + '" class="rvx-card' + (isNew ? ' is-new' : '') + '">' +
             '<div class="rvx-card-top">' + photo +
                 '<div class="rvx-card-id"><b>' + esc(r.name) + '</b>' +
                     (r.role ? '<small>' + esc(r.role) + '</small>' : '') + '</div>' +
@@ -108,9 +108,15 @@
 
     function rvBoot() {
         rvState.total = rvState.items.length;
-        rvRender(rvState.items.slice(0, RVPAGE), false);
+        var target = /^#review-(\d+)$/.exec(window.location.hash);
+        var index = target ? rvState.items.findIndex(function (r) { return String(r.id) === target[1]; }) : -1;
+        rvRender(rvState.items.slice(0, Math.max(RVPAGE, index + 1)), false);
         rvPaintSummary(rvState.items, rvState.stats);
         rvUpdateMore();
+        if (index >= 0) {
+            var card = el('review-' + target[1]);
+            if (card) card.scrollIntoView();
+        }
     }
 
     if (el('rvx-more')) el('rvx-more').addEventListener('click', rvLoadMore);
@@ -119,6 +125,7 @@
     function rvPaintStars(n) {
         n = Math.max(0, Math.min(5, Number(n) || 0));
         rvState.rating = n;
+        if (el('rvx-rating')) el('rvx-rating').value = n ? String(n) : '';
         var rateEl = el('rvx-rate');
         if (!rateEl) return;
         rateEl.querySelectorAll('button').forEach(function (b) {
@@ -156,6 +163,7 @@
     }
 
     var photoInput = el('rvx-photo');
+    var photoVersion = 0;
     function rvPhotoResetUI() {
         if (el('rvx-photo-prev')) el('rvx-photo-prev').innerHTML = '<i class="fa-solid fa-user"></i>';
         if (el('rvx-photo-pick')) {
@@ -176,6 +184,7 @@
         if (el('rvx-photo-pick')) el('rvx-photo-pick').addEventListener('click', function () { photoInput.click(); });
         if (el('rvx-photo-change')) el('rvx-photo-change').addEventListener('click', function () { photoInput.click(); });
         if (el('rvx-photo-remove')) el('rvx-photo-remove').addEventListener('click', function () {
+            photoVersion++;
             rvState.photoFile = null;
             rvState.photoPreview = '';
             rvState.photoError = '';
@@ -185,30 +194,37 @@
         });
         photoInput.addEventListener('change', function (e) {
             var f = e.target.files && e.target.files[0];
+            var version = ++photoVersion;
             var err = el('rvx-err');
             rvState.photoFile = null;
             rvState.photoPreview = '';
             rvState.photoError = '';
             if (!f) { rvPhotoResetUI(); return; }
-            var allowed = ['image/jpeg', 'image/png', 'image/webp'];
+            var allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
             var ext = String(f.name || '').split('.').pop().toLowerCase();
-            var validMime = allowed.indexOf(f.type) !== -1 || (!f.type && ['jpg', 'jpeg', 'png', 'webp'].indexOf(ext) !== -1);
+            var validMime = allowed.indexOf(f.type) !== -1 || (!f.type && ['jpg', 'jpeg', 'png', 'webp', 'gif'].indexOf(ext) !== -1);
             function fail(message) {
                 rvState.photoError = message;
                 e.target.value = '';
                 rvPhotoResetUI();
                 if (err) { err.textContent = message; err.hidden = false; }
             }
-            if (!validMime) { fail('Please choose a JPG, PNG, or WebP image.'); return; }
-            if (f.size > 5 * 1024 * 1024) { fail('The photo must be 5 MB or smaller.'); return; }
+            if (!validMime) { fail('Please choose a JPG, PNG, WebP, or GIF image.'); return; }
+            var maxBytes = Number(photoInput.dataset.maxBytes) || 5 * 1024 * 1024;
+            if (!f.size || f.size > maxBytes) { fail('The photo must be non-empty and no larger than ' + (maxBytes / 1048576).toFixed(1) + ' MB.'); return; }
             if (err) err.hidden = true;
             rvState.photoFile = f;
             var reader = new FileReader();
             reader.onload = function () {
+                if (version !== photoVersion) return;
                 rvState.photoPreview = reader.result;
                 rvPhotoShow(reader.result);
             };
-            reader.onerror = function () { fail('The photo could not be read. Please choose another file.'); };
+            reader.onerror = function () {
+                if (version !== photoVersion) return;
+                rvState.photoFile = null;
+                fail('The photo could not be read. Please choose another file.');
+            };
             reader.readAsDataURL(f);
         });
     }
@@ -230,8 +246,10 @@
                 err.scrollIntoView({ block: 'center', behavior: 'smooth' });
             }
             if (!rvState.rating || rvState.rating < 1 || rvState.rating > 5) return showError('Please select a star rating from 1 to 5.');
-            if (!nameVal) return showError('Please enter your name.');
-            if (bodyVal.length < 15) return showError('Please write at least 15 characters so your review is useful to others.');
+            if (!nameVal || Array.from(nameVal).length > 60) return showError('Please enter your name (up to 60 characters).');
+            if (!roleVal || Array.from(roleVal).length > 60) return showError('Please enter your title (up to 60 characters).');
+            if (!rvState.photoFile || !photoInput.files || !photoInput.files.length) return showError(rvState.photoError || 'Please upload a photo with your review.');
+            if (Array.from(bodyVal).length < 15 || Array.from(bodyVal).length > 900) return showError('Please write a review between 15 and 900 characters.');
 
             var fd = new FormData();
             fd.append('name', nameVal);
@@ -242,7 +260,7 @@
             var hp = form.querySelector('input[name="website_url"]');
             if (csrf) fd.append('_csrf', csrf.value);
             if (hp) fd.append('website_url', hp.value);
-            if (rvState.photoFile) fd.append('photo', rvState.photoFile);
+            fd.append('photo', rvState.photoFile);
 
             btn.disabled = true;
             try {
@@ -257,14 +275,17 @@
                     return showError(data.error || 'Could not submit your review right now. Please try again.');
                 }
                 form.reset();
+                photoVersion++;
                 rvState.photoFile = null;
                 rvState.photoPreview = '';
+                rvState.photoError = '';
                 rvPhotoResetUI();
                 rvPaintStars(0);
                 if (el('rvx-body-count')) el('rvx-body-count').textContent = '0 / 900';
                 btn.disabled = false;
 
                 if (el('rvx-modal-name')) el('rvx-modal-name').textContent = nameVal.split(' ')[0] || 'there';
+                if (el('rvx-modal-id')) el('rvx-modal-id').textContent = '#' + String(data.id);
                 if (el('rvx-modal')) {
                     el('rvx-modal').hidden = false;
                     document.body.style.overflow = 'hidden';

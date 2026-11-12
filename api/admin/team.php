@@ -36,8 +36,14 @@ if (!in_array($action, ['create', 'update'], true)) {
 $id = (int) ($_POST['id'] ?? 0);
 $name = trim((string) ($_POST['name'] ?? ''));
 $role = trim((string) ($_POST['role'] ?? ''));
-$bio = trim((string) ($_POST['bio'] ?? ''));
-$description = trim((string) ($_POST['description'] ?? ''));
+$bio = str_replace(["\r\n", "\r"], "\n", (string) ($_POST['bio'] ?? ''));
+$description = str_replace(["\r\n", "\r"], "\n", (string) ($_POST['description'] ?? ''));
+if (!mb_check_encoding($bio, 'UTF-8') || !mb_check_encoding($description, 'UTF-8') ||
+    mb_strlen($bio, 'UTF-8') > 300 || mb_strlen($description, 'UTF-8') > 300) {
+    json_response(['ok' => false, 'error' => 'Biography and card description must each be valid UTF-8 and no more than 300 characters.'], 422);
+}
+$bio = trim($bio);
+$description = trim($description);
 $skillsRaw = trim((string) ($_POST['skills'] ?? ''));
 $filePath = trim((string) ($_POST['file_path'] ?? ''));
 $isFounder = !empty($_POST['is_founder']) ? 1 : 0;

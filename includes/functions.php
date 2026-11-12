@@ -696,6 +696,29 @@ function get_featured_reviews(): array
     return $fallback->fetchAll();
 }
 
+// Limit legacy profiles at display time without changing the stored admin content.
+function team_profile_excerpt(string $text): string
+{
+    if (mb_strlen($text, 'UTF-8') <= 300) {
+        return $text;
+    }
+
+    preg_match_all('/\X/u', $text, $matches);
+    $excerpt = '';
+    foreach ($matches[0] as $cluster) {
+        if (mb_strlen($excerpt . $cluster, 'UTF-8') > 299) {
+            break;
+        }
+        $excerpt .= $cluster;
+    }
+    // Prefer a word boundary, but do not discard a long unbroken string entirely.
+    $boundary = preg_replace('/\s+\S*$/u', '', $excerpt);
+    if ($boundary !== null && mb_strlen($boundary, 'UTF-8') >= 200) {
+        $excerpt = $boundary;
+    }
+    return rtrim($excerpt) . '…';
+}
+
 function get_team_bundle(): array
 {
     $stmt = db()->query('SELECT * FROM `team_members` WHERE `is_active` = 1 ORDER BY `is_founder` DESC, `sort_order` ASC, `id` ASC');
@@ -709,8 +732,8 @@ function get_team_bundle(): array
             'slug' => (string) $m['slug'],
             'name' => (string) $m['name'],
             'role' => (string) $m['role'],
-            'bio' => (string) ($m['bio'] ?? ''),
-            'description' => (string) ($m['description'] ?? ''),
+            'bio' => team_profile_excerpt((string) ($m['bio'] ?? '')),
+            'description' => team_profile_excerpt((string) ($m['description'] ?? '')),
             'skills' => split_lines($m['skills'] ?? ''),
             'responsibilities' => split_lines($m['responsibilities'] ?? ''),
             'file_path' => $fp,
@@ -776,7 +799,7 @@ function build_page_payload(string $pageKey): array
         $payload['videos'] = $work['videos'];
     }
     if ($pageKey === 'review') {
-        $payload['reviews'] = get_reviews_bundle(true);
+        $payload['reviews'] = get_reviews_bundle(false);
     }
     if (in_array($pageKey, ['team', 'book'], true)) {
         $payload['team'] = get_team_bundle();
@@ -807,7 +830,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/tailwind-service.css',
             'assets/css/site-image-fallbacks.css',
             'assets/css/site-header-lockup.css',
-            'assets/css/service-booking-theme.css',
+            'assets/css/service-booking-theme.css?v=20261112-packages-anchor',
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
@@ -896,7 +919,7 @@ function page_stylesheets(string $pageKey): array
         $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
     } elseif ($pageKey === 'book') {
         $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
-        $stylesheets[] = 'assets/css/book-layout.css?v=20261112';
+        $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';
     }
     if ($pageKey === 'home' || $pageKey === 'team') {
         $stylesheets[] = 'assets/css/team-photos.css?v=20261112';

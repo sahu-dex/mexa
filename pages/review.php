@@ -11,9 +11,9 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'review';
 $pageTitle = 'Review | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('review_hero_desc', 'Honest feedback from creators, shops and brands we edit for.');
-$pageScripts = ['assets/js/page-review.js'];
+$pageScripts = ['assets/js/page-review.js?v=20261112-required-photo'];
 
-$revBundle = get_reviews_bundle(true);
+$revBundle = get_reviews_bundle(false);
 $initialReviews = array_slice($revBundle['items'], 0, 20);
 $stats = $revBundle['stats'];
 $heroImg = setting('review_hero_file_path', 'assets/images/review-hero.jpg');
@@ -65,7 +65,7 @@ include dirname(__DIR__) . '/includes/header.php';
     $rIni = mb_strtoupper(mb_substr($rWords[0] ?? '?', 0, 1) . mb_substr($rWords[1] ?? '', 0, 1));
     $rStars = max(1, min(5, (int) $r['rating']));
 ?>
-                    <article class="rvx-card">
+                    <article class="rvx-card" id="review-<?= (int) $r['id'] ?>">
                         <div class="rvx-card-top">
 <?php if ($r['file_path'] !== ''): ?>
                             <span class="rvx-avatar"><img src="<?= e($r['file_path']) ?>" alt="<?= e($r['name']) ?>" loading="lazy"></span>
@@ -102,8 +102,9 @@ include dirname(__DIR__) . '/includes/header.php';
                     <span class="rvx-pending-note"><i class="fa-solid fa-clock"></i> Reviewed before publishing</span>
                 </div>
 
-                <form class="rvx-form" id="rvx-form" novalidate>
+                <form class="rvx-form" id="rvx-form" action="api/submit-review.php" method="post" enctype="multipart/form-data" novalidate>
                     <?= csrf_field() ?>
+                    <input type="hidden" name="rating" id="rvx-rating" value="">
                     <?= honeypot_field() ?>
                     <div class="rvx-form-card rvx-fcard">
                         <div class="rvx-field">
@@ -126,12 +127,13 @@ include dirname(__DIR__) . '/includes/header.php';
                                 <input class="rvx-input" type="text" id="rvx-name" name="name" maxlength="60" autocomplete="name" required>
                             </div>
                             <div class="rvx-field">
-                                <label for="rvx-role">Your title <span style="color:<?= chr(35) ?>7C96B8;font-weight:600">(optional)</span></label>
-                                <input class="rvx-input" type="text" id="rvx-role" name="role" maxlength="60" autocomplete="organization-title">
+                                <label for="rvx-role">Your title <span aria-hidden="true">*</span></label>
+                                <input class="rvx-input" type="text" id="rvx-role" name="role" maxlength="60" autocomplete="organization-title" required>
                             </div>
                         </div>
 
                         <div class="rvx-field">
+                            <label for="rvx-photo">Your photo <span aria-hidden="true">*</span></label>
                             <div class="rvx-photo-box">
                                 <div class="rvx-photo-prev" id="rvx-photo-prev" aria-live="polite"><i class="fa-solid fa-user"></i></div>
                                 <div>
@@ -141,7 +143,7 @@ include dirname(__DIR__) . '/includes/header.php';
                                         <button type="button" class="rvx-mini-btn is-danger" id="rvx-photo-remove" hidden><i class="fa-solid fa-xmark"></i> Remove</button>
                                     </div>
                                 </div>
-                                <input class="rvx-hidden-file" type="file" id="rvx-photo" name="photo" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" aria-label="Choose a profile photo">
+                                <input class="rvx-hidden-file" type="file" id="rvx-photo" name="photo" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" data-max-bytes="<?= (int) MAX_IMAGE_BYTES ?>" aria-label="Choose a profile photo" required>
                             </div>
                         </div>
                     </div>
@@ -172,6 +174,7 @@ include dirname(__DIR__) . '/includes/header.php';
                 <div class="rvx-modal-tick"><i class="fa-solid fa-check"></i></div>
                 <h3 id="rvx-modal-title">Thanks, <span id="rvx-modal-name">there</span>!</h3>
                 <p>Your review has been received and is now <b>pending approval</b>. Our team reads every submission before it appears on this page.</p>
+                <p>Review ID: <b id="rvx-modal-id"></b></p>
                 <span class="rvx-modal-tag"><i class="fa-solid fa-clock"></i> Pending approval</span>
                 <button type="button" data-rvx-close="1" id="rvx-modal-done">Done</button>
             </div>
