@@ -2004,3 +2004,130 @@ body .tk-founder-photo img {
         height: 132px;
     }
 }
+
+/* Footer — brand blue background */
+body footer {
+    border-top: 1px solid rgba(255, 255, 255, .16) !important;
+    background:
+        radial-gradient(120% 90% at 100% 0%, rgba(96, 198, 255, .3) 0%, rgba(96, 198, 255, 0) 58%),
+        radial-gradient(90% 80% at 0% 8%, rgba(0, 124, 255, .38) 0%, rgba(0, 124, 255, 0) 62%),
+        linear-gradient(155deg, #04225E 0%, #0A3BAE 48%, #0A63EC 100%) !important;
+    color: rgba(255, 255, 255, .78) !important;
+}
+
+body footer .footer-brand-word {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    letter-spacing: -.01em;
+}
+
+body footer .footer-brand-word::before,
+body footer .footer-brand-word > span::before {
+    content: none !important;
+}
+
+body footer :is(h4, .text-secondary, .footer-brand-word, .footer-brand-word span) {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body footer :is(p, .text-slate-500, .text-slate-600, .text-slate-700) {
+    color: rgba(255, 255, 255, .78) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .78) !important;
+}
+
+body footer a:not(.newsletter-btn):not(.glass-btn-primary) {
+    color: rgba(255, 255, 255, .84) !important;
+    -webkit-text-fill-color: rgba(255, 255, 255, .84) !important;
+}
+
+body footer a:not(.newsletter-btn):not(.glass-btn-primary):hover {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body footer a i.fa-angle-right {
+    color: #7CC4FF !important;
+    -webkit-text-fill-color: #7CC4FF !important;
+}
+
+body footer :is(.border-t, .border-slate-200\/50) {
+    border-color: rgba(255, 255, 255, .16) !important;
+}
+
+body footer .apple-glass-card {
+    border: 1px solid rgba(255, 255, 255, .42) !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, .14) !important;
+    box-shadow: none !important;
+}
+
+body footer .apple-glass-card,
+body footer .apple-glass-card i {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+
+body footer .apple-glass-card:hover {
+    border-color: #fff !important;
+    background: #fff !important;
+}
+
+body footer .apple-glass-card:hover,
+body footer .apple-glass-card:hover i {
+    color: #0A45C2 !important;
+    -webkit-text-fill-color: #0A45C2 !important;
+}
+
+body footer .newsletter-form {
+    display: flex !important;
+    flex-direction: column !important;
+    position: static !important;
+    gap: 10px !important;
+    width: 100%;
+}
+
+body footer .newsletter-input {
+    position: static !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: .85rem 1.15rem !important;
+    border: 1px solid #fff !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    color: #15233D !important;
+    -webkit-text-fill-color: #15233D !important;
+    box-shadow: none !important;
+}
+
+body footer .newsletter-input::placeholder {
+    color: #8B9AAE !important;
+}
+
+body footer .newsletter-input:focus {
+    border-color: #fff !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .3) !important;
+}
+
+body footer .newsletter-btn {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    height: auto !important;
+    padding: .85rem 1.25rem !important;
+    border: 1px solid #fff !important;
+    border-radius: 999px !important;
+    background: #fff !important;
+    color: #0A45C2 !important;
+    -webkit-text-fill-color: #0A45C2 !important;
+    box-shadow: 0 10px 24px rgba(3, 26, 74, .28) !important;
+}
+
+body footer .newsletter-btn:hover {
+    background: #EAF2FF !important;
+    color: #093FB4 !important;
+    -webkit-text-fill-color: #093FB4 !important;
+    transform: none !important;
+}
