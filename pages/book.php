@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'book';
 $pageTitle = 'Book a Service | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('book_lead', 'Select a service and package quality to submit your booking ticket.');
-$pageScripts = ['assets/js/store.js', 'assets/js/page-book.js?v=20261112-footer'];
+$pageScripts = ['assets/js/store.js', 'assets/js/page-book.js?v=20261112-tabs'];
 
 $catalog = get_services_with_packages(true);
 $services = $catalog['services'];

@@ -467,7 +467,11 @@ body .pr-top {
 }
 
 body .pf-tabs {
-    display: inline-flex;
+    display: flex;
+    width: max-content;
+    max-width: 100%;
+    margin-left: auto !important;
+    margin-right: auto !important;
     gap: 5px;
     padding: 5px;
     border: 1px solid var(--mx-border) !important;
