@@ -176,7 +176,8 @@
 
     function renderFounder() {
         var mount = el('tk-founder');
-        if (!mount) return;
+        // The founder block is rendered server-side inside the unified booking container.
+        if (!mount || mount.getAttribute('data-server-rendered') === '1') return;
         var founder = null;
         (SNAP['team'] && SNAP['team'].members || []).forEach(function (m) {
             if (m && (m.is_founder || /founder/i.test(m.role || ''))) founder = founder || m;

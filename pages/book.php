@@ -42,6 +42,33 @@ if ($selectedService !== null) {
     }
 }
 
+// Founder profile shown inside the unified booking container (data comes from the site itself)
+$teamBundle = get_team_bundle();
+$founder = null;
+foreach ($teamBundle['members'] as $m) {
+    if ((int) $m['is_founder'] === 1 || stripos((string) $m['role'], 'founder') !== false) {
+        $founder = $m;
+        break;
+    }
+}
+$founderName = (string) ($founder['name'] ?? setting('founder_name', 'Rowshan Taieen'));
+$founderRole = (string) ($founder['role'] ?? setting('founder_role', 'Founder & Lead Mentor'));
+$founderBio = '';
+if ($founder !== null) {
+    $founderBio = trim((string) ($founder['bio'] !== '' ? $founder['bio'] : $founder['description']));
+}
+if ($founderBio === '') {
+    $founderBio = setting('founder_bio', '');
+}
+$founderPhoto = (string) ($founder['file_path'] ?? '');
+
+// Direct contact channels for the founder
+$founderContacts = [
+    ['label' => 'Telegram', 'icon' => 'fa-brands fa-telegram', 'class' => 'is-tg', 'href' => 'https://t.me/Osman_Graphice'],
+    ['label' => 'WhatsApp', 'icon' => 'fa-brands fa-whatsapp', 'class' => 'is-wa', 'href' => 'https://wa.me/8801575715571'],
+    ['label' => 'Facebook', 'icon' => 'fa-brands fa-facebook-f', 'class' => 'is-fb', 'href' => 'https://www.facebook.com/mexamotion'],
+];
+
 include dirname(__DIR__) . '/includes/header.php';
 ?>
 <main class="tk-page">
@@ -59,102 +86,128 @@ include dirname(__DIR__) . '/includes/header.php';
                 <p class="tk-lead"><?= e(setting('book_lead', 'Your selected service and package are already loaded. Add your project details and the ticket goes straight to the founder with status Pending.')) ?></p>
             </div>
 
-            <div class="tk-sum" id="tk-sum" aria-live="polite">
+            <div class="tk-unified">
+                <div class="tk-unified-grid">
+                    <aside class="tk-unified-side">
+                        <section class="tk-founder" id="tk-founder" data-server-rendered="1" aria-label="Founder contact">
+                            <div class="tk-founder-top">
+<?php if ($founderPhoto !== ''): ?>
+                                <div class="tk-founder-photo">
+                                    <img src="<?= e($founderPhoto) ?>" alt="<?= e($founderName) ?>" loading="lazy" decoding="async">
+                                </div>
+<?php endif; ?>
+                                <div class="tk-founder-id">
+                                    <h2 class="tk-founder-name"><?= e($founderName) ?></h2>
+                                    <p class="tk-founder-role"><?= e($founderRole) ?></p>
+                                </div>
+                            </div>
+<?php if ($founderBio !== ''): ?>
+                            <p class="tk-founder-bio"><?= e($founderBio) ?></p>
+<?php endif; ?>
+                            <div class="tk-links">
+<?php foreach ($founderContacts as $ct): ?>
+                                <a class="tk-link <?= e($ct['class']) ?>" href="<?= e($ct['href']) ?>" target="_blank" rel="noopener"><i class="<?= e($ct['icon']) ?>" aria-hidden="true"></i> <?= e($ct['label']) ?></a>
+<?php endforeach; ?>
+                            </div>
+                        </section>
+
+                        <aside class="tk-prev" aria-label="Order preview">
+                            <span class="tk-prev-kicker">Order preview</span>
+                            <div class="tk-prev-title">Check it before you submit</div>
+                            <div class="tk-prev-rows" id="tk-prev-rows">
+                                <div class="tk-prev-row"><span>Service</span><b><?= e($selectedService['name'] ?? '—') ?></b></div>
+                                <div class="tk-prev-row"><span>Package</span><b><?= e($selectedPackage['name'] ?? '—') ?></b></div>
+                                <div class="tk-prev-row"><span>Price</span><b><?= $selectedPackage !== null ? '$' . e(rtrim(rtrim(number_format((float) $selectedPackage['price'], 2, '.', ''), '0'), '.')) : '—' ?></b></div>
+                                <div class="tk-prev-row"><span>Delivery</span><b><?= e($selectedPackage['delivery'] ?? '—') ?></b></div>
+                            </div>
+                            <div class="tk-prev-msg is-empty" id="tk-prev-msg">Your project message will appear here…</div>
+                            <div class="tk-err" id="tk-err" hidden></div>
+                            <button type="submit" form="tk-form" class="tk-submit" id="tk-submit">
+                                <i class="fa-solid fa-paper-plane"></i> Submit Ticket
+                            </button>
+                            <p class="tk-prev-note">You get a unique ticket reference. The founder reviews it and confirms scope and payment before anything starts.</p>
+                        </aside>
+                    </aside>
+
+                    <div class="tk-unified-main">
+                        <div class="tk-sum" id="tk-sum" aria-live="polite">
 <?php if ($selectedService !== null && $selectedPackage !== null): ?>
-                <div class="tk-sum-top">
-                    <div>
-                        <span class="tk-sum-kicker">Your selected package</span>
-                        <h2 class="tk-sum-name"><?= e($selectedService['name']) ?></h2>
-                        <span class="tk-sum-quality"><i class="fa-solid fa-layer-group"></i><?= e($selectedPackage['name']) ?></span>
-                    </div>
-                    <div class="tk-sum-price"><b>$<?= e(rtrim(rtrim(number_format((float) $selectedPackage['price'], 2, '.', ''), '0'), '.')) ?></b><span>per project</span></div>
-                </div>
+                            <div class="tk-sum-top">
+                                <div>
+                                    <span class="tk-sum-kicker">Your selected package</span>
+                                    <h2 class="tk-sum-name"><?= e($selectedService['name']) ?></h2>
+                                    <span class="tk-sum-quality"><i class="fa-solid fa-layer-group"></i><?= e($selectedPackage['name']) ?></span>
+                                </div>
+                                <div class="tk-sum-price"><b>$<?= e(rtrim(rtrim(number_format((float) $selectedPackage['price'], 2, '.', ''), '0'), '.')) ?></b><span>per project</span></div>
+                            </div>
 <?php if ($selectedPackage['description'] !== ''): ?>
-                <p class="tk-sum-desc"><?= e($selectedPackage['description']) ?></p>
+                            <p class="tk-sum-desc"><?= e($selectedPackage['description']) ?></p>
 <?php endif; ?>
-                <ul class="tk-sum-feats">
+                            <ul class="tk-sum-feats">
 <?php foreach ($selectedPackage['features'] as $pf): ?>
-                    <li><i class="fa-solid fa-check"></i><span><?= e($pf) ?></span></li>
+                                <li><i class="fa-solid fa-check"></i><span><?= e($pf) ?></span></li>
 <?php endforeach; ?>
-                </ul>
+                            </ul>
 <?php endif; ?>
-            </div>
-
-            <div class="tk-grid">
-                <form class="tk-form" id="tk-form" novalidate>
-                    <?= csrf_field() ?>
-                    <?= honeypot_field() ?>
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">1</span>
-                            <div>
-                                <div class="tk-box-title">Select service</div>
-                                <div class="tk-box-hint">Switch the service — packages and price follow instantly.</div>
-                            </div>
                         </div>
-                        <div class="tk-select-wrap">
-                            <select id="tk-service" name="service_id" class="tk-select" aria-label="Select service">
+
+                        <form class="tk-form" id="tk-form" novalidate>
+                            <?= csrf_field() ?>
+                            <?= honeypot_field() ?>
+                            <div class="tk-box">
+                                <div class="tk-box-head">
+                                    <span class="tk-num">1</span>
+                                    <div>
+                                        <div class="tk-box-title">Select service</div>
+                                        <div class="tk-box-hint">Switch the service — packages and price follow instantly.</div>
+                                    </div>
+                                </div>
+                                <div class="tk-select-wrap">
+                                    <select id="tk-service" name="service_id" class="tk-select" aria-label="Select service">
 <?php foreach ($services as $svc): ?>
-                                <option value="<?= (int) $svc['id'] ?>"<?= ($selectedService !== null && (int) $svc['id'] === (int) $selectedService['id']) ? ' selected' : '' ?>><?= e($svc['name']) ?></option>
+                                        <option value="<?= (int) $svc['id'] ?>"<?= ($selectedService !== null && (int) $svc['id'] === (int) $selectedService['id']) ? ' selected' : '' ?>><?= e($svc['name']) ?></option>
 <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">2</span>
-                            <div>
-                                <div class="tk-box-title">Select package quality</div>
-                                <div class="tk-box-hint">Three levels — the price updates as soon as you pick one.</div>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
-                        <div class="tk-qgrid" id="tk-quality" role="radiogroup" aria-label="Package quality">
+
+                            <div class="tk-box">
+                                <div class="tk-box-head">
+                                    <span class="tk-num">2</span>
+                                    <div>
+                                        <div class="tk-box-title">Select package quality</div>
+                                        <div class="tk-box-hint">Three levels — the price updates as soon as you pick one.</div>
+                                    </div>
+                                </div>
+                                <div class="tk-qgrid" id="tk-quality" role="radiogroup" aria-label="Package quality">
 <?php if ($selectedService !== null): ?>
 <?php foreach ($selectedService['packages'] as $pkg): $isOn = ($selectedPackage !== null && $pkg['quality'] === $selectedPackage['quality']); ?>
-                            <label class="tk-q<?= $isOn ? ' is-on' : '' ?>" data-quality="<?= e($pkg['quality']) ?>">
-                                <input type="radio" name="tk-quality" value="<?= e($pkg['quality']) ?>"<?= $isOn ? ' checked' : '' ?>>
-                                <b><?= e($pkg['name']) ?></b>
-                                <small><?= e($pkg['revisions'] . ($pkg['delivery'] !== '' ? ' · ' . $pkg['delivery'] : '')) ?></small>
-                                <span class="tk-q-price">$<?= e(rtrim(rtrim(number_format((float) $pkg['price'], 2, '.', ''), '0'), '.')) ?></span>
-                            </label>
+                                    <label class="tk-q<?= $isOn ? ' is-on' : '' ?>" data-quality="<?= e($pkg['quality']) ?>">
+                                        <input type="radio" name="tk-quality" value="<?= e($pkg['quality']) ?>"<?= $isOn ? ' checked' : '' ?>>
+                                        <b><?= e($pkg['name']) ?></b>
+                                        <small><?= e($pkg['revisions'] . ($pkg['delivery'] !== '' ? ' · ' . $pkg['delivery'] : '')) ?></small>
+                                        <span class="tk-q-price">$<?= e(rtrim(rtrim(number_format((float) $pkg['price'], 2, '.', ''), '0'), '.')) ?></span>
+                                    </label>
 <?php endforeach; ?>
 <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <div class="tk-box">
-                        <div class="tk-box-head">
-                            <span class="tk-num">3</span>
-                            <div>
-                                <div class="tk-box-title">Project details</div>
-                                <div class="tk-box-hint">Footage length, style, deadline, contact email/WhatsApp, references — anything that helps.</div>
+                                </div>
                             </div>
-                        </div>
-                        <textarea id="tk-message" name="message" class="tk-textarea" maxlength="4000" placeholder="Tell us about your project…" aria-label="Project details"></textarea>
-                        <div class="tk-counter"><span id="tk-count">0 / 4000</span></div>
-                    </div>
-                </form>
 
-                <aside class="tk-prev" aria-label="Order preview">
-                    <span class="tk-prev-kicker">Order preview</span>
-                    <div class="tk-prev-title">Check it before you submit</div>
-                    <div class="tk-prev-rows" id="tk-prev-rows">
-                        <div class="tk-prev-row"><span>Service</span><b><?= e($selectedService['name'] ?? '—') ?></b></div>
-                        <div class="tk-prev-row"><span>Package</span><b><?= e($selectedPackage['name'] ?? '—') ?></b></div>
-                        <div class="tk-prev-row"><span>Price</span><b><?= $selectedPackage !== null ? '$' . e(rtrim(rtrim(number_format((float) $selectedPackage['price'], 2, '.', ''), '0'), '.')) : '—' ?></b></div>
-                        <div class="tk-prev-row"><span>Delivery</span><b><?= e($selectedPackage['delivery'] ?? '—') ?></b></div>
+                            <div class="tk-box">
+                                <div class="tk-box-head">
+                                    <span class="tk-num">3</span>
+                                    <div>
+                                        <div class="tk-box-title">Project details</div>
+                                        <div class="tk-box-hint">Footage length, style, deadline, contact email/WhatsApp, references — anything that helps.</div>
+                                    </div>
+                                </div>
+                                <textarea id="tk-message" name="message" class="tk-textarea" maxlength="4000" placeholder="Tell us about your project…" aria-label="Project details"></textarea>
+                                <div class="tk-counter"><span id="tk-count">0 / 4000</span></div>
+                            </div>
+                        </form>
                     </div>
-                    <div class="tk-prev-msg is-empty" id="tk-prev-msg">Your project message will appear here…</div>
-                    <div class="tk-err" id="tk-err" hidden></div>
-                    <button type="submit" form="tk-form" class="tk-submit" id="tk-submit">
-                        <i class="fa-solid fa-paper-plane"></i> Submit Ticket
-                    </button>
-                    <p class="tk-prev-note">You get a unique ticket reference. The founder reviews it and confirms scope and payment before anything starts.</p>
-                </aside>
+                </div>
             </div>
-
-            <section class="tk-founder" id="tk-founder" aria-label="Founder contact"></section>
         </div>
     </div>
 
