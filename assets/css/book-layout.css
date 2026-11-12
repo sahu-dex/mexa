@@ -1,0 +1,26 @@
+/* Match the form and order preview dimensions when shown side by side. */
+@media (min-width: 1001px) {
+    body .tk-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: stretch;
+    }
+
+    body .tk-form {
+        min-width: 0;
+    }
+
+    body .tk-prev {
+        position: static;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    body .tk-prev-msg {
+        margin-bottom: 16px;
+    }
+
+    body .tk-prev .tk-submit {
+        margin-top: auto;
+    }
+}
