@@ -28,7 +28,6 @@ include dirname(__DIR__) . '/includes/header.php';
 <section class="sv2-hero">
     <div class="container mx-auto px-4 md:px-8">
         <div class="sv2-hero-in">
-            <span class="mh-line1"><?= e(setting('services_heading', 'Our Services')) ?></span>
             <h1 class="mh-line2" id="sv2-tagline">Video editing that ships on time, every time</h1>
             <p class="mh-desc" id="sv2-hero-desc"><?= e(setting('services_intro', '')) ?></p>
 <?php if ($showOverview && ($overviewVideo !== '' || $overviewPoster !== '')): ?>
@@ -147,7 +146,6 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php endforeach; ?>
 <?php endif; ?>
         </div>
-        <p class="sv2-pkg-brand"><?= e(strtoupper(setting('site_name', 'MEXA MOTION'))) ?></p>
     </div>
 </section>
 <?php endif; ?>
