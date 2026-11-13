@@ -17,7 +17,6 @@
     var errorText = modal.querySelector('[data-mm-error-text]');
     var externalLink = modal.querySelector('[data-mm-external]');
     var retryBtn = modal.querySelector('[data-mm-retry]');
-    var titleEl = modal.querySelector('#mm-work-modal-title');
     var statusEl = modal.querySelector('[data-mm-status]');
     var closeBtn = modal.querySelector('[data-mm-close]');
 
@@ -126,7 +125,7 @@
 
     function buildFrame(src) {
         var frame = document.createElement('iframe');
-        frame.title = (titleEl && titleEl.textContent) || 'Video preview';
+        frame.title = 'Video player';
         frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen';
         frame.setAttribute('allowfullscreen', '');
         frame.addEventListener('load', markReady, { once: true });
@@ -184,7 +183,6 @@
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('mmvp-locked');
 
-        titleEl.textContent = title;
         statusEl.textContent = 'Opening ' + title;
         hideError();
         setLoading(true);
@@ -257,7 +255,6 @@
             }
         }
         lastFocused = null;
-        titleEl.textContent = '';
     }
 
     document.addEventListener('click', function (event) {

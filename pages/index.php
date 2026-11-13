@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return', 'assets/js/home-work-preview.js?v=20261113-clean-player'];
 
 $servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
@@ -208,13 +208,13 @@ include dirname(__DIR__) . '/includes/header.php';
         </section>
 
         <div id="mm-work-modal" class="mmvp" hidden aria-hidden="true">
-            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-labelledby="mm-work-modal-title">
+            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-label="Video preview">
                 <div class="mmvp-stage">
                     <button type="button" class="mmvp-close" data-mm-close aria-label="Close video preview">&times;</button>
                     <div class="mmvp-player" data-mm-player></div>
                     <div class="mmvp-loading" data-mm-loading>
                         <span class="mmvp-spinner" aria-hidden="true"></span>
-                        <span>Loading video&hellip;</span>
+                        <span class="sr-only">Loading video&hellip;</span>
                     </div>
                     <div class="mmvp-error" data-mm-error hidden>
                         <p data-mm-error-text>This video could not be played right now.</p>
@@ -223,10 +223,6 @@ include dirname(__DIR__) . '/includes/header.php';
                             <button type="button" class="mmvp-retry" data-mm-retry>Try again</button>
                         </span>
                     </div>
-                </div>
-                <div class="mmvp-meta">
-                    <h3 class="mmvp-title" id="mm-work-modal-title"></h3>
-                    <p class="mmvp-hint">Press Esc or click outside the player to close.</p>
                 </div>
                 <p class="mmvp-status" role="status" data-mm-status></p>
             </div>

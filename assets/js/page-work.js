@@ -35,9 +35,7 @@
         var h = String.fromCharCode(35);
         var pair = colors[index % colors.length];
         var c0 = h + pair[0], c1 = h + pair[1];
-        var title = esc((item && item.title) || 'Studio video preview').slice(0, 48);
-        var category = esc((item && item.category) || 'MEXA MOTION').slice(0, 26);
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="' + c0 + '"/><stop offset="1" stop-color="' + c1 + '"/></linearGradient></defs><rect width="800" height="450" fill="url(%23g)"/><circle cx="660" cy="90" r="180" fill="white" opacity=".07"/><circle cx="100" cy="420" r="210" fill="white" opacity=".06"/><text x="52" y="310" fill="' + h + '9fc8ff" font-family="Arial,sans-serif" font-size="20" font-weight="700" letter-spacing="4">' + category + '</text><text x="52" y="365" fill="white" font-family="Arial,sans-serif" font-size="31" font-weight="700">' + title + '</text><circle cx="400" cy="178" r="35" fill="white" opacity=".93"/><path d="M393 160v36l30-18z" fill="' + c0 + '"/></svg>';
+        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="' + c0 + '"/><stop offset="1" stop-color="' + c1 + '"/></linearGradient></defs><rect width="800" height="450" fill="url(%23g)"/><circle cx="660" cy="90" r="180" fill="white" opacity=".07"/><circle cx="100" cy="420" r="210" fill="white" opacity=".06"/><circle cx="400" cy="178" r="35" fill="white" opacity=".93"/><path d="M393 160v36l30-18z" fill="' + c0 + '"/></svg>';
         return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg).replace(/'/g, '%27');
     }
     function posterMarkup(item, index, alt) {
@@ -45,7 +43,6 @@
         var fallback = posterFallback(item, index);
         return '<img src="' + esc(src) + '" data-fallback="' + esc(fallback) + '" alt="' + esc(alt || ((item && item.title) || 'Video preview')) + '" loading="lazy" decoding="async">';
     }
-    function featured(item) { return item && (item.is_featured === true || Number(item.is_featured) === 1); }
     function ordered(list) {
         return (list || []).slice().sort(function (a, b) {
             return (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0);
@@ -74,23 +71,19 @@
         var rawUrl = item.url || item.file_path || '';
         var videoUrl = item.kind === 'image' ? (fallback || '') : (rawUrl || item.video_url || fallback || '');
         var playerAttrs = videoUrl ? ' data-mm-video-url="' + esc(videoUrl) + '" data-mm-video-type="' + esc(item.embed_type || '') + '" data-mm-video-embed-url="' + esc(item.embed_url || '') + '" data-mm-video-provider="' + esc(item.embed_provider || item.platform || '') + '" data-mm-video-poster="' + esc(thumb) + '" data-mm-video-title="' + title + '"' : '';
-        var badge = section === 'recent' && featured(item)
-            ? '<span class="wk-rc-featured"><i class="fa-solid fa-star"></i> Featured</span>' : '';
         if (section === 'recent') {
             return '<button type="button" class="wk-rc" data-section="recent" data-index="' + index + '" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
-                '<span class="th">' + posterMarkup(item, index, (item.title || 'Video') + ' thumbnail') + badge + '<span class="wk-rc-play"><i class="fa-solid fa-play"></i></span></span>' +
-                '<span class="info"><small>' + esc(item.category || 'Video') + '</small><b>' + title + '</b>' +
-                (item.description ? '<p>' + esc(item.description) + '</p>' : '') +
-                '<span class="meta">Click to play · ' + esc(item.platform || 'Video') + '</span></span></button>';
+                '<span class="th">' + posterMarkup(item, index, (item.title || 'Video') + ' thumbnail') + '<span class="wk-rc-play"><i class="fa-solid fa-play"></i></span></span>' +
+                '</button>';
         }
         if (section === 'demo') {
             return '<button type="button" class="wk-demo" data-section="demo" data-index="' + index + '" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
                 '<span class="shot">' + posterMarkup(item, index, (item.title || 'Video') + ' thumbnail') + '</span>' +
-                '<span class="ply"><i class="fa-solid fa-play"></i></span><span class="cap"><small>' + esc(item.category || 'Video') + '</small><b>' + title + '</b></span></button>';
+                '<span class="ply"><i class="fa-solid fa-play"></i></span></button>';
         }
         return '<button type="button" class="wk-short" data-section="short" data-index="' + index + '" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
             posterMarkup(item, index, (item.title || 'Short') + ' thumbnail') +
-            '<i class="wk-short-play fa-solid fa-play" aria-hidden="true"></i><span>' + title + '</span></button>';
+            '<i class="wk-short-play fa-solid fa-play" aria-hidden="true"></i></button>';
     }
     function renderRecent() {
         var box = $('wk-recent-grid');
@@ -119,12 +112,13 @@
 
     var modal = $('wk-modal');
     var player = $('wk-modal-player');
-    function openItem(item, fallbackUrl) {
+    var lastFocused = null;
+    function openItem(item, fallbackUrl, vertical) {
         if (!item || !modal || !player) return;
         var url = item.url || item.file_path || '';
         var html = '';
         if (item.embed_type === 'iframe' && item.embed_url) {
-            html = '<iframe src="' + esc(item.embed_url) + '?autoplay=1&rel=0" title="' + esc(item.title || 'Video') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+            html = '<iframe src="' + esc(item.embed_url + (item.embed_url.indexOf('?') === -1 ? '?' : '&') + 'autoplay=1&rel=0') + '" title="' + esc(item.title || 'Video') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
         } else if (item.embed_type === 'link') {
             html = '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open video on ' + esc(item.embed_provider || 'the video host') + '</a>';
         } else if (item.kind === 'image' && fallbackUrl) {
@@ -140,17 +134,20 @@
         } else {
             html = '<video src="' + esc(url || fallbackUrl) + '" poster="' + esc(thumbOf(item)) + '" controls autoplay playsinline preload="metadata"></video>';
         }
+        lastFocused = document.activeElement;
         player.innerHTML = html;
-        $('wk-modal-title').textContent = item.title || '';
-        $('wk-modal-desc').textContent = item.description || '';
+        modal.classList.toggle('is-vertical', !!vertical);
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
+        modal.querySelector('button[data-wk-close]').focus();
     }
     function closeModal() {
         if (!modal || !player) return;
         modal.hidden = true;
         player.innerHTML = '';
         document.body.style.overflow = '';
+        if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
+        lastFocused = null;
     }
     document.addEventListener('error', function (e) {
         var image = e.target;
@@ -180,7 +177,7 @@
                 description: description ? description.textContent : ''
             };
         }
-        openItem(item, cardEl.getAttribute('data-preview-src') || '');
+        openItem(item, cardEl.getAttribute('data-preview-src') || '', section === 'short');
     });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && !modal.hidden) closeModal(); });
 

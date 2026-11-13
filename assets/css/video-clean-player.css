@@ -1,0 +1,22 @@
+/* Video galleries show only the thumbnail and play affordance. */
+body .wk-rc { display: block !important; padding: 0 !important; }
+body .wk-rc .th { display: block; width: 100%; }
+body .wk-modal-box {
+    width: min(960px, 100%, calc((100dvh - 72px) * 16 / 9)) !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    background: #000 !important;
+}
+body #wk-modal-player { overflow: hidden; border-radius: inherit; background: #000; }
+body #wk-modal-player :is(video, iframe, img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    object-fit: contain;
+    background: #000;
+}
+body .wk-modal.is-vertical .wk-modal-box {
+    width: min(100%, calc((100dvh - 72px) * 9 / 16), 420px) !important;
+}
+body .wk-modal.is-vertical #wk-modal-player :is(video, iframe, img) { aspect-ratio: 9 / 16; }
