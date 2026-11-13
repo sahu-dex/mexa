@@ -227,6 +227,7 @@ window.showCustomMessage = function (text) {
             'nav.service': 'Service', 'nav.work': 'Work', 'nav.review': 'Review', 'nav.headerTeam': 'Team',
             'brand.tagline': window.__MM_TAGLINE__ || 'Video Editing Agency',
             'header.serviceLabel': 'Professional Video Editing',
+            'header.ourServices': 'Our Services',
             'nav.home': 'Home', 'nav.about': 'About', 'nav.services': 'Services',
             'nav.portfolio': 'Portfolio', 'nav.reviews': 'Reviews', 'nav.team': 'Our Team',
             'nav.contact': 'Contact', 'cta.quote': 'Get Free Quote', 'menu.title': 'Menu'
@@ -235,6 +236,7 @@ window.showCustomMessage = function (text) {
             'nav.service': 'সার্ভিস', 'nav.work': 'কাজ', 'nav.review': 'রিভিউ', 'nav.headerTeam': 'টিম',
             'brand.tagline': 'ভিডিও এডিটিং এজেন্সি',
             'header.serviceLabel': 'প্রফেশনাল ভিডিও এডিটিং',
+            'header.ourServices': 'আমাদের সার্ভিস',
             'nav.home': 'হোম', 'nav.about': 'আমাদের সম্পর্কে', 'nav.services': 'সার্ভিস',
             'nav.portfolio': 'পোর্টফোলিও', 'nav.reviews': 'রিভিউ', 'nav.team': 'আমাদের টিম',
             'nav.contact': 'যোগাযোগ', 'cta.quote': 'ফ্রি কোটেশন নিন', 'menu.title': 'মেনু'
