@@ -18,10 +18,11 @@ body #header > .container {
     padding: 0 24px !important;
     border: 1px solid rgba(255,255,255,.8);
     border-radius: 9999px;
-    background: rgba(255,255,255,.65);
+    /* Opaque glass-coloured surface stays identical over all page content. */
+    background: #fbfcff !important;
     box-shadow: 0 8px 32px rgba(17,82,223,.04);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
 }
 body #header .brand-logo-badge {
     width: 36px !important; height: 36px !important; flex-basis: 36px !important;
