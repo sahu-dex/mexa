@@ -32,12 +32,12 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <p class="legal-intro">
                         These terms explain how bookings, prices, revisions, delivery and payments work when you order editing
-                        from <?= e($siteName) ?>. Please read them before you submit a booking ticket.
+                        from <?= e($siteName) ?>. Please read them before ordering.
                     </p>
 
                     <h2>1. Agreement</h2>
                     <p>
-                        By submitting a booking ticket, ordering an edit or using this website, you agree to these terms. If you
+                        By ordering an edit or using this website, you agree to these terms. If you
                         are ordering on behalf of a company or client, you confirm you are allowed to accept them for that
                         organisation.
                     </p>
@@ -54,22 +54,20 @@ include dirname(__DIR__) . '/includes/header.php';
                         <li>thumbnail design, brand videos, social media ads and product videos.</li>
                     </ul>
                     <p>
-                        Each service is offered in package levels (for example Normal, High and Premium) that differ in
-                        revisions, delivery time and price. The exact contents of the package you pick are shown on the booking
-                        page and confirmed in your ticket.
+                        The scope, revisions, delivery time and price are agreed with the client before work starts.
                     </p>
 
-                    <h2>3. Booking and confirmation</h2>
+                    <h2>3. Project confirmation</h2>
                     <ul>
-                        <li>A booking ticket is a <strong>request</strong>, not a confirmed order. You receive a unique ticket reference as soon as you submit it.</li>
-                        <li>The founder reviews every ticket and confirms scope, timeline and price before any work starts.</li>
-                        <li>A project becomes binding when we confirm the ticket and the agreed advance or full payment has been received.</li>
+                        <li>Contacting us is a request, not a confirmed order.</li>
+                        <li>The founder confirms scope, timeline and price before any work starts.</li>
+                        <li>A project becomes binding when we confirm the project and the agreed advance or full payment has been received.</li>
                         <li>If a request falls outside what we do, or the deadline is not achievable, we will say so instead of taking the job.</li>
                     </ul>
 
                     <h2>4. Pricing and payment</h2>
                     <ul>
-                        <li>Prices on the website are shown in US dollars and are starting points per project, not per minute or per revision.</li>
+                        <li>Pricing is agreed for each project before work begins.</li>
                         <li>A quote may change if the brief, footage volume or deadline changes after confirmation.</li>
                         <li>Unless agreed otherwise, a project is paid in advance, or in milestones for larger jobs (for example 50% to start and 50% before final delivery).</li>
                         <li>Bank, wallet or transfer fees are the client's responsibility, and any applicable taxes are added where the law requires them.</li>
@@ -86,19 +84,17 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <h2>6. Revisions and scope</h2>
                     <p>
-                        Each package includes a defined number of revision rounds: Normal typically one, High three, and Premium
-                        unlimited within fair use. A revision is a reasonable adjustment to the edit already delivered — trimming
+                        The number of revision rounds is agreed for each project. A revision is a reasonable adjustment to the edit already delivered — trimming
                         a scene, changing a title, swapping a clip, adjusting music or colour.
                     </p>
                     <ul>
                         <li>A new concept, a new structure, a different video, or re-editing footage that was not in the original brief counts as new work and is quoted separately.</li>
-                        <li>"Unlimited" revisions in the Premium package are meant for normal creative refinement; it is not a licence to restart the project repeatedly.</li>
-                        <li>Extra rounds beyond your package are billed per round, and we always tell you the price before starting.</li>
+                        <li>Extra rounds beyond the agreed scope may be billed separately; we will tell you the price before starting.</li>
                     </ul>
 
                     <h2>7. Turnaround and delivery</h2>
                     <ul>
-                        <li>Delivery windows shown on the packages (for example 1–2, 2–3 or 3–4 business days) start when we have both the payment and the complete material.</li>
+                        <li>The agreed delivery window starts when we have both the payment and the complete material.</li>
                         <li>Weekends and public holidays are not counted as business days, and delays caused by missing feedback move the delivery date by the same amount.</li>
                         <li>Final files are delivered digitally, normally as a download link in the format agreed (for example 1080p or 4K MP4, plus project-specific exports).</li>
                         <li>Delivery links stay available for 7 days. Please download and archive your files — long-term storage is not part of the service.</li>
@@ -155,7 +151,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <h2>14. Changes to these terms</h2>
                     <p>
                         We may update these terms as our services evolve. The version in force is the one published on this page
-                        when you submit your ticket, and the "last updated" date at the top always shows the current version.
+                        when you agree to a project, and the "last updated" date at the top always shows the current version.
                     </p>
 
                     <h2>15. Contact us</h2>
@@ -171,7 +167,7 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <hr>
                     <p class="legal-back">
-                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="privacy.php">Privacy Policy</a> &nbsp;·&nbsp; <a href="book.php">Book a service</a>
+                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="privacy.php">Privacy Policy</a>
                     </p>
                 </article>
             </div>

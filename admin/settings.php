@@ -61,7 +61,7 @@ $s = settings();
             <div class="adm-card-head">
                 <div>
                     <h2>Brand Identity, Contact Channels &amp; Email Alerts</h2>
-                    <p>Changes here immediately update the header, footer, booking founder box, and admin email notifications.</p>
+                    <p>Changes here immediately update the header, footer, and admin email notifications.</p>
                 </div>
                 <button type="submit" class="adm-btn adm-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save All Settings</button>
             </div>
@@ -76,7 +76,7 @@ $s = settings();
                     <input class="adm-input" type="text" name="settings[site_tagline]" value="<?= e($s['site_tagline'] ?? '') ?>">
                 </div>
                 <div class="adm-field">
-                    <label>Admin Notification Email (Bookings &amp; Contact)</label>
+                    <label>Admin Notification Email (Contact)</label>
                     <input class="adm-input" type="email" name="settings[notification_email]" value="<?= e($s['notification_email'] ?? '') ?>">
                 </div>
             </div>
@@ -245,7 +245,7 @@ $s = settings();
         <div class="adm-card">
             <div class="adm-card-head">
                 <div>
-                    <h2>Service, Work, Review, Team &amp; Booking Page Copy</h2>
+                    <h2>Service, Work, Review &amp; Team Page Copy</h2>
                     <p>Customize the hero headings, intros, and featured banner imagery across all inner pages.</p>
                 </div>
                 <button type="submit" class="adm-btn adm-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save All Settings</button>
@@ -290,10 +290,6 @@ $s = settings();
                 <div class="adm-field">
                     <label>Team Page Kicker</label>
                     <input class="adm-input" type="text" name="settings[team_heading]" value="<?= e($s['team_heading'] ?? '') ?>">
-                </div>
-                <div class="adm-field">
-                    <label>Booking Page Lead Copy</label>
-                    <input class="adm-input" type="text" name="settings[book_lead]" value="<?= e($s['book_lead'] ?? '') ?>">
                 </div>
             </div>
             <div class="adm-field">

@@ -42,7 +42,7 @@ $pdo->beginTransaction();
 try {
     if ($fresh) {
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
-        foreach (['packages', 'services', 'work_items', 'team_members', 'reviews', 'settings'] as $tbl) {
+        foreach (['services', 'work_items', 'team_members', 'reviews', 'settings'] as $tbl) {
             $pdo->exec("DELETE FROM `{$tbl}`");
         }
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
@@ -109,42 +109,6 @@ try {
             ':demo_videos_json' => (string) $s['demo_videos_json'],
             ':is_active' => (int) $s['is_active'],
             ':sort_order' => (int) $s['sort_order'],
-        ]);
-    }
-
-    $stmtPkg = $pdo->prepare(
-        'INSERT INTO `packages` (
-            `service_id`, `quality`, `name`, `price`, `currency`, `description`,
-            `features`, `delivery`, `revisions`, `badge`, `highlight`, `sort_order`
-        ) VALUES (
-            :service_id, :quality, :name, :price, :currency, :description,
-            :features, :delivery, :revisions, :badge, :highlight, :sort_order
-        ) ON DUPLICATE KEY UPDATE
-            `name` = VALUES(`name`),
-            `price` = VALUES(`price`),
-            `currency` = VALUES(`currency`),
-            `description` = VALUES(`description`),
-            `features` = VALUES(`features`),
-            `delivery` = VALUES(`delivery`),
-            `revisions` = VALUES(`revisions`),
-            `badge` = VALUES(`badge`),
-            `highlight` = VALUES(`highlight`),
-            `sort_order` = VALUES(`sort_order`)'
-    );
-    foreach ($bundle['packages'] ?? [] as $p) {
-        $stmtPkg->execute([
-            ':service_id' => (int) $p['service_id'],
-            ':quality' => (string) $p['quality'],
-            ':name' => (string) $p['name'],
-            ':price' => (float) $p['price'],
-            ':currency' => (string) $p['currency'],
-            ':description' => (string) $p['description'],
-            ':features' => (string) $p['features'],
-            ':delivery' => (string) $p['delivery'],
-            ':revisions' => (string) $p['revisions'],
-            ':badge' => (string) $p['badge'],
-            ':highlight' => (int) $p['highlight'],
-            ':sort_order' => (int) $p['sort_order'],
         ]);
     }
 

@@ -493,7 +493,7 @@ function admin_logout_user(): void
     session_destroy();
 }
 
-function get_services_with_packages(bool $onlyActive = true): array
+function get_services_catalog(bool $onlyActive = true): array
 {
     $pdo = db();
     $sql = 'SELECT * FROM `services`';
@@ -503,30 +503,7 @@ function get_services_with_packages(bool $onlyActive = true): array
     $sql .= ' ORDER BY `sort_order` ASC, `id` ASC';
     $services = $pdo->query($sql)->fetchAll();
 
-    $packages = $pdo->query('SELECT * FROM `packages` ORDER BY `sort_order` ASC, `id` ASC')->fetchAll();
-    $pkgMap = [];
-    foreach ($packages as $pkg) {
-        $sid = (int) $pkg['service_id'];
-        $pkgMap[$sid][] = [
-            'id' => (int) $pkg['id'],
-            'serviceId' => $sid,
-            'service_id' => $sid,
-            'quality' => (string) $pkg['quality'],
-            'name' => (string) $pkg['name'],
-            'price' => (float) $pkg['price'],
-            'currency' => (string) $pkg['currency'],
-            'description' => (string) ($pkg['description'] ?? ''),
-            'features' => split_lines($pkg['features'] ?? ''),
-            'delivery' => (string) ($pkg['delivery'] ?? ''),
-            'revisions' => (string) ($pkg['revisions'] ?? ''),
-            'badge' => (string) ($pkg['badge'] ?? ''),
-            'highlight' => (int) $pkg['highlight'] === 1,
-            'sort_order' => (int) $pkg['sort_order'],
-        ];
-    }
-
     $formattedServices = [];
-    $flatPackages = [];
 
     foreach ($services as $svc) {
         $sid = (int) $svc['id'];
@@ -539,10 +516,6 @@ function get_services_with_packages(bool $onlyActive = true): array
         }
         $filePath = (string) ($svc['file_path'] ?? '');
         $thumbPath = (string) ($svc['thumbnail_path'] ?? '');
-        $svcPackages = $pkgMap[$sid] ?? [];
-        foreach ($svcPackages as $sp) {
-            $flatPackages[] = $sp;
-        }
         $formattedServices[] = [
             'id' => $sid,
             'name' => (string) $svc['name'],
@@ -569,13 +542,11 @@ function get_services_with_packages(bool $onlyActive = true): array
             'demo_videos' => $demos,
             'is_active' => (int) $svc['is_active'],
             'sort_order' => (int) $svc['sort_order'],
-            'packages' => $svcPackages,
         ];
     }
 
     return [
         'services' => $formattedServices,
-        'packages' => $flatPackages,
     ];
 }
 
@@ -833,14 +804,21 @@ function get_team_bundle(): array
     ];
 }
 
+/** Keep the retired default package copy off the site before the DB migration. */
+function services_intro_text(): string
+{
+    $intro = setting('services_intro', '');
+    $old = 'Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.';
+    return $intro === $old ? 'Eight in-house services with one demo each. Watch the one you need and read what is included.' : $intro;
+}
+
 function build_page_payload(string $pageKey): array
 {
     $payload = [
         'content' => [
             'services_heading' => setting('services_heading', 'Our Services'),
-            'services_intro' => setting('services_intro', ''),
+            'services_intro' => services_intro_text(),
             'show_services' => setting_raw('show_services', '1'),
-            'show_packages' => setting_raw('show_packages', '1'),
             'show_overview' => setting_raw('show_overview', '1'),
             'overview_video_url' => setting_raw('overview_video_file_path', ''),
             'overview_poster_url' => setting_raw('overview_poster_file_path', ''),
@@ -866,10 +844,9 @@ function build_page_payload(string $pageKey): array
         ],
     ];
 
-    if (in_array($pageKey, ['service', 'book'], true)) {
-        $cat = get_services_with_packages(true);
+    if ($pageKey === 'service') {
+        $cat = get_services_catalog(true);
         $payload['services'] = $cat['services'];
-        $payload['packages'] = $cat['packages'];
     }
     if ($pageKey === 'work') {
         $work = get_work_bundle();
@@ -879,7 +856,7 @@ function build_page_payload(string $pageKey): array
     if ($pageKey === 'review') {
         $payload['reviews'] = get_reviews_bundle(false);
     }
-    if (in_array($pageKey, ['team', 'book'], true)) {
+    if ($pageKey === 'team') {
         $payload['team'] = get_team_bundle();
     }
 
@@ -954,17 +931,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
-        'book' => [
-            'assets/css/site-vendor-base.css',
-            'assets/css/tailwind-book.css',
-            'assets/css/site-image-fallbacks.css',
-            'assets/css/site-header-lockup.css',
-            'assets/css/service-booking-theme.css',
-            'assets/css/mobile-menu.css',
-            'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
-            'assets/css/mm-subscribe-fix.css',
-        ],
         'privacy' => [
             'assets/css/site-vendor-base.css',
             'assets/css/tailwind-book.css',
@@ -995,9 +961,6 @@ function page_stylesheets(string $pageKey): array
     ]);
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112-hero-blend2';
-    } elseif ($pageKey === 'book') {
-        $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
-        $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';
     }
     if ($pageKey === 'home' || $pageKey === 'team') {
         $stylesheets[] = 'assets/css/team-photos.css?v=20261112';

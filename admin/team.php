@@ -11,7 +11,7 @@ $rows = db()->query('SELECT * FROM `team_members` ORDER BY `is_founder` DESC, `s
     <div class="adm-card-head">
         <div>
             <h2>Studio Team (<?= count($rows) ?>)</h2>
-            <p>Manage the Founder card and specialist team members displayed on the Homepage, Team page, and Booking page.</p>
+            <p>Manage the Founder card and specialist team members displayed on the Homepage and Team page.</p>
         </div>
         <button type="button" class="adm-btn adm-btn-primary" data-modal-open="team-modal" data-title="Add Team Member">
             <i class="fa-solid fa-plus"></i> Add Member

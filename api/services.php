@@ -7,10 +7,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     json_response(['ok' => false, 'error' => 'Method not allowed.'], 405);
 }
 
-$data = get_services_with_packages(true);
+$data = get_services_catalog(true);
 json_response([
     'ok' => true,
     'count' => count($data['services']),
     'services' => $data['services'],
-    'packages' => $data['packages'],
 ]);

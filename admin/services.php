@@ -5,14 +5,14 @@ $adminPage = 'services';
 $adminTitle = 'Services Management';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
-$catalog = get_services_with_packages(false);
+$catalog = get_services_catalog(false);
 $services = $catalog['services'];
 ?>
 <div class="adm-card">
     <div class="adm-card-head">
         <div>
             <h2>All Studio Services (<?= count($services) ?>)</h2>
-            <p>Add, edit, reorder, or remove services shown on the Homepage, Service page, and Booking page. Creating a new service automatically creates its 3 default pricing tiers.</p>
+            <p>Add, edit, reorder, or remove services shown on the Homepage and Service page.</p>
         </div>
         <button type="button" class="adm-btn adm-btn-primary" data-modal-open="svc-modal" data-title="Add New Service">
             <i class="fa-solid fa-plus"></i> Add Service
@@ -27,7 +27,6 @@ $services = $catalog['services'];
                     <th>Preview</th>
                     <th>Service Name</th>
                     <th>Category</th>
-                    <th>Packages</th>
                     <th>Status</th>
                     <th>Actions</th>
                 </tr>
@@ -62,7 +61,6 @@ $services = $catalog['services'];
                         <div style="font-size:12px;color:<?= chr(35) ?>94a3b8;max-width:360px"><?= e(mb_strimwidth($svc['description'], 0, 95, '…')) ?></div>
                     </td>
                     <td><?= e($svc['category']) ?></td>
-                    <td><a href="packages.php?service_id=<?= (int) $svc['id'] ?>"><?= count($svc['packages']) ?> tiers &rarr;</a></td>
                     <td>
                         <span class="adm-badge adm-badge-<?= $svc['is_active'] ? 'active' : 'inactive' ?>">
                             <?= $svc['is_active'] ? 'Active' : 'Hidden' ?>
@@ -72,7 +70,7 @@ $services = $catalog['services'];
                         <button type="button" class="adm-btn adm-btn-sm" data-modal-open="svc-modal" data-title="Edit Service" data-row="<?= $rowJson ?>">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
-                        <button type="button" class="adm-btn adm-btn-sm adm-btn-danger" data-quick-api="../api/admin/services.php" data-action="delete" data-id="<?= (int) $svc['id'] ?>" data-confirm="Delete this service and all its packages?">
+                        <button type="button" class="adm-btn adm-btn-sm adm-btn-danger" data-quick-api="../api/admin/services.php" data-action="delete" data-id="<?= (int) $svc['id'] ?>" data-confirm="Delete this service?">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>

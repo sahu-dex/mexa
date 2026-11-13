@@ -50,9 +50,6 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
             <a class="adm-link<?= $adminPage === 'services' ? ' is-active' : '' ?>" href="services.php">
                 <i class="fa-solid fa-layer-group"></i><span>Services</span>
             </a>
-            <a class="adm-link<?= $adminPage === 'packages' ? ' is-active' : '' ?>" href="packages.php">
-                <i class="fa-solid fa-tags"></i><span>Packages &amp; Pricing</span>
-            </a>
             <a class="adm-link<?= $adminPage === 'work' ? ' is-active' : '' ?>" href="work.php">
                 <i class="fa-solid fa-photo-film"></i><span>Work / Portfolio</span>
             </a>
@@ -68,7 +65,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
 <?php endif; ?>
             </a>
             <a class="adm-link<?= $adminPage === 'messages' ? ' is-active' : '' ?>" href="messages.php">
-                <i class="fa-solid fa-inbox"></i><span>Tickets &amp; Messages</span>
+                <i class="fa-solid fa-inbox"></i><span>Messages</span>
 <?php if ($pendingMessagesCount > 0): ?>
                 <span class="adm-pill-cnt"><?= $pendingMessagesCount ?></span>
 <?php endif; ?>

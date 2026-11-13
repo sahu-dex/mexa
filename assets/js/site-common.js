@@ -37,15 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Unlock the page before following the booking anchor on the current page.
-    const mobileBooking = document.querySelector('#mobile-menu .mm-booking-button');
-    if (mobileBooking) {
-        mobileBooking.addEventListener('click', () => {
-            const menu = document.getElementById('mobile-menu');
-            if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
-        });
-    }
-
     const mobileCloseBtn = document.getElementById('mobile-menu-close');
     if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', (e) => { e.stopPropagation(); window.toggleMobileMenu(); });
 

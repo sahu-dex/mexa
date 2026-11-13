@@ -7,22 +7,11 @@ require_once dirname(__DIR__) . '/includes/admin_header.php';
 
 $pdo = db();
 $totalServices = (int) $pdo->query('SELECT COUNT(*) FROM `services`')->fetchColumn();
-$totalPackages = (int) $pdo->query('SELECT COUNT(*) FROM `packages`')->fetchColumn();
 $totalWork = (int) $pdo->query('SELECT COUNT(*) FROM `work_items`')->fetchColumn();
 $totalTeam = (int) $pdo->query('SELECT COUNT(*) FROM `team_members`')->fetchColumn();
 $approvedReviews = (int) $pdo->query("SELECT COUNT(*) FROM `reviews` WHERE `status` = 'approved'")->fetchColumn();
 $pendingReviews = (int) $pdo->query("SELECT COUNT(*) FROM `reviews` WHERE `status` = 'pending'")->fetchColumn();
-$pendingBookings = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE `type` = 'booking' AND `status` = 'pending'")->fetchColumn();
 $newsletterSubs = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE `type` = 'newsletter'")->fetchColumn();
-
-$recentBookings = $pdo->query(
-    "SELECT m.*, s.`name` AS `service_name`
-     FROM `messages` m
-     LEFT JOIN `services` s ON s.`id` = m.`service_id`
-     WHERE m.`type` = 'booking'
-     ORDER BY m.`created_at` DESC
-     LIMIT 8"
-)->fetchAll();
 
 $recentReviews = $pdo->query(
     'SELECT * FROM `reviews` ORDER BY `created_at` DESC LIMIT 6'
@@ -32,7 +21,7 @@ $recentReviews = $pdo->query(
     <div class="adm-stat">
         <span>Active Services</span>
         <b><?= $totalServices ?></b>
-        <small><?= $totalPackages ?> pricing packages</small>
+        <small>Studio services</small>
     </div>
     <div class="adm-stat">
         <span>Portfolio Work</span>
@@ -50,47 +39,9 @@ $recentReviews = $pdo->query(
         <small><?= $pendingReviews ?> awaiting approval</small>
     </div>
     <div class="adm-stat">
-        <span>Pending Tickets</span>
-        <b><?= $pendingBookings ?></b>
-        <small><?= $newsletterSubs ?> newsletter subscribers</small>
-    </div>
-</div>
-
-<div class="adm-card">
-    <div class="adm-card-head">
-        <div>
-            <h2>Latest Booking Tickets</h2>
-            <p>Submitted through the Book a Service flow.</p>
-        </div>
-        <a class="adm-btn" href="messages.php">Manage All Tickets</a>
-    </div>
-    <div class="adm-table-wrap">
-        <table class="adm-table">
-            <thead>
-                <tr>
-                    <th>Ticket Ref</th>
-                    <th>Service &amp; Quality</th>
-                    <th>Price</th>
-                    <th>Details</th>
-                    <th>Status</th>
-                    <th>Submitted</th>
-                </tr>
-            </thead>
-            <tbody>
-<?php if (empty($recentBookings)): ?>
-                <tr><td colspan="6" style="color:<?= chr(35) ?>94a3b8">No booking tickets submitted yet.</td></tr>
-<?php else: foreach ($recentBookings as $b): ?>
-                <tr>
-                    <td><b><?= e((string) ($b['ticket_ref'] ?? '—')) ?></b></td>
-                    <td><?= e((string) ($b['service_name'] ?? $b['subject'] ?? '—')) ?> <small style="color:<?= chr(35) ?>38bdf8">(<?= e((string) ($b['package_quality'] ?? '')) ?>)</small></td>
-                    <td><?= $b['quoted_price'] !== null ? '$' . e(number_format((float) $b['quoted_price'], 2)) : '—' ?></td>
-                    <td><?= e(mb_strimwidth((string) ($b['message'] ?? ''), 0, 90, '…')) ?></td>
-                    <td><span class="adm-badge adm-badge-<?= e((string) $b['status']) ?>"><?= e((string) $b['status']) ?></span></td>
-                    <td><?= e((string) $b['created_at']) ?></td>
-                </tr>
-<?php endforeach; endif; ?>
-            </tbody>
-        </table>
+        <span>Newsletter Subscribers</span>
+        <b><?= $newsletterSubs ?></b>
+        <small>Subscribed readers</small>
     </div>
 </div>
 

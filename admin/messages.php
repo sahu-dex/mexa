@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 $adminPage = 'messages';
-$adminTitle = 'Booking Tickets, Contact & Newsletter';
+$adminTitle = 'Contact & Newsletter';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
 $typeFilter = isset($_GET['type']) && in_array($_GET['type'], ['booking', 'contact', 'newsletter'], true)
@@ -26,12 +26,11 @@ $rows = $stmt->fetchAll();
 <div class="adm-card">
     <div class="adm-card-head">
         <div>
-            <h2>Inbox &amp; Booking Tickets (<?= count($rows) ?>)</h2>
-            <p>All booking orders, contact inquiries, and newsletter signups stored in the database.</p>
+            <h2>Inbox (<?= count($rows) ?>)</h2>
+            <p>Contact inquiries, newsletter signups, and previously received messages.</p>
         </div>
         <div class="adm-actions">
             <a class="adm-btn<?= $typeFilter === '' ? ' adm-btn-primary' : '' ?>" href="messages.php">All</a>
-            <a class="adm-btn<?= $typeFilter === 'booking' ? ' adm-btn-primary' : '' ?>" href="messages.php?type=booking">Bookings</a>
             <a class="adm-btn<?= $typeFilter === 'contact' ? ' adm-btn-primary' : '' ?>" href="messages.php?type=contact">Contact</a>
             <a class="adm-btn<?= $typeFilter === 'newsletter' ? ' adm-btn-primary' : '' ?>" href="messages.php?type=newsletter">Newsletter</a>
         </div>
@@ -42,7 +41,7 @@ $rows = $stmt->fetchAll();
             <thead>
                 <tr>
                     <th>Type / Ref</th>
-                    <th>Sender / Package</th>
+                    <th>Sender</th>
                     <th>Message / Details</th>
                     <th>Status</th>
                     <th>Received</th>
@@ -63,9 +62,6 @@ $rows = $stmt->fetchAll();
                     <td>
 <?php if (!empty($m['subject'])): ?>
                         <b><?= e((string) $m['subject']) ?></b><br>
-<?php endif; ?>
-<?php if ($m['quoted_price'] !== null): ?>
-                        <span style="color:<?= chr(35) ?>38bdf8;font-weight:700">$<?= e(number_format((float) $m['quoted_price'], 2)) ?></span><br>
 <?php endif; ?>
                         <small style="color:<?= chr(35) ?>94a3b8">
                             <?= e(trim(($m['name'] ?? '') . ' ' . ($m['email'] ?? '') . ' ' . ($m['phone'] ?? ''))) ?>

@@ -13,7 +13,7 @@ $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Age
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
 $pageScripts = ['assets/js/home-extra.js', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
 
-$servicesBundle = get_services_with_packages(true);
+$servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
 
 $workBundle = get_work_bundle();
@@ -47,11 +47,11 @@ $heroImg = setting('hero_character_file_path', 'assets/images/hero-character.web
 $contactEmail = setting_raw('contact_email', '');
 $emailHref = ($contactEmail !== '' && !str_contains($contactEmail, '@your-domain.com') && !str_contains($contactEmail, '@example.com'))
     ? 'mailto:' . $contactEmail
-    : 'book.php';
+    : '#contact';
 $waDigits = preg_replace('/[^\d]/', '', setting_raw('whatsapp_number', ''));
-$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : 'book.php';
+$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : '#contact';
 $tgRaw = setting_raw('telegram_url', '');
-$tgHref = $tgRaw !== '' ? $tgRaw : 'book.php';
+$tgHref = $tgRaw !== '' ? $tgRaw : '#contact';
 
 include dirname(__DIR__) . '/includes/header.php';
 ?>
@@ -70,9 +70,6 @@ include dirname(__DIR__) . '/includes/header.php';
                         <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
                             <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
                                 <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
-                            </a>
-                            <a href="book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                                <?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
                             </a>
                         </div>
                     </div>

@@ -1,6 +1,0 @@
-/* Keep the booking header lockup consistent with the rest of the site. */
-body #header .mm-brand-link .brand-word {
-    margin-left: 0;
-    top: 0;
-    background: none;
-}

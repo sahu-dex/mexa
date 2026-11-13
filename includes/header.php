@@ -68,18 +68,11 @@ $navItems = [
                 </a>
 
                 <nav class="nav-desk hidden lg:flex items-center gap-6 xl:gap-8 mx-auto">
-<?php $activeNavKey = ($pageKey === 'book') ? 'service' : $pageKey; ?>
+<?php $activeNavKey = $pageKey; ?>
 <?php foreach ($navItems as $item): $active = ($activeNavKey === $item['key']); ?>
                     <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="nav-link nav-underline<?= $active ? ' is-active' : '' ?> text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span></a>
 <?php endforeach; ?>
                 </nav>
-
-                <div class="hidden lg:flex items-center gap-3 flex-shrink-0">
-                    <a href="service.php#packages" class="header-booking-button" aria-label="Booking Now">
-                        <span>Booking Now</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-                    </a>
-                </div>
 
                 <button type="button" id="header-menu-toggle" onclick="toggleMobileMenu()" aria-controls="mobile-menu-drawer" aria-expanded="false" aria-label="Open menu" class="hdr-burger lg:hidden flex flex-col items-end justify-center gap-[6px] flex-shrink-0">
                     <span class="hdr-bar"></span>
@@ -113,18 +106,5 @@ $navItems = [
                     <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="mobile-nav-item mm-item<?= $active ? ' is-active' : '' ?>"><span class="mm-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?= $mobileIcons[$item['key']] ?? '' ?></svg></span><span class="mm-label" data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
 <?php endforeach; ?>
                 </nav>
-                <div class="mm-foot">
-                    <a class="mm-booking-button" href="service.php#packages" aria-label="Booking Now">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
-                            <path d="M16 3v4M8 3v4M3 11h18"></path>
-                            <path d="M8 15h2M14 15h2M8 18h2"></path>
-                        </svg>
-                        <span>Booking Now</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M5 12h14M13 6l6 6-6 6"></path>
-                        </svg>
-                    </a>
-                </div>
             </div>
         </div>

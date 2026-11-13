@@ -3,7 +3,6 @@
 
     var SNAP = window.__MM_DEMO_DATA__ || {};
     var S = window.MMStore;
-    var money = S.money;
 
     function el(id) { return document.getElementById(id); }
     function esc(v) {
@@ -115,58 +114,6 @@
             : '<p class="sp-empty">No services are published right now. Please check back soon.</p>';
     }
 
-    function packageCard(p, serviceName) {
-        var feats = (p.features || []).map(function (f) {
-            return '<li><i class="fa-solid fa-check"></i><span>' + esc(f) + '</span></li>';
-        }).join('');
-        // The legacy "Best Value" badge was retired from the package cards.
-        var badgeLabel = String(p.badge || '').trim();
-        if (badgeLabel.toLowerCase() === 'best value') badgeLabel = '';
-        return '<article class="sp-pkg sv-pkg' + (p.highlight ? ' is-hi' : '') + '" data-quality="' + esc(p.quality) + '">' +
-            (badgeLabel ? '<span class="sv-pkg-badge">' + esc(badgeLabel) + '</span>' : '') +
-            '<h3>' + esc(p.name) + '</h3>' +
-            (p.description ? '<p class="sp-pkg-desc">' + esc(p.description) + '</p>' : '') +
-            '<div class="sv-pkg-price"><b>' + esc(money(p.price, p.currency)) + '</b><span>/ project</span></div>' +
-            '<div class="sv-pkg-meta">' +
-            (p.delivery ? '<span><i class="fa-regular fa-clock"></i>' + esc(p.delivery) + '</span>' : '') +
-            (p.revisions ? '<span><i class="fa-solid fa-rotate"></i>' + esc(p.revisions) + '</span>' : '') +
-            '</div>' +
-            '<ul class="sv-feats">' + feats + '</ul>' +
-            '<button type="button" class="sv-btn sv-btn-primary sp-buy" data-buy-service="' + esc(p.serviceId) +
-            '" data-buy-quality="' + esc(p.quality) + '" aria-label="Buy ' + esc(serviceName + ' — ' + p.name) + '">' +
-            'Buy This Package <i class="fa-solid fa-arrow-right text-xs"></i></button>' +
-            '</article>';
-    }
-
-    function renderPackages(serviceId) {
-        var wrap = el('sv-pkg-cards');
-        if (!wrap) return;
-        var svc = S.catalog.service(serviceId);
-        if (!svc) { wrap.innerHTML = ''; return; }
-        var pkgs = S.catalog.packagesFor(svc.id);
-        wrap.innerHTML = pkgs.map(function (p) { return packageCard(p, svc.name); }).join('');
-        var picker = el('sv-svc-pick');
-        if (picker && String(picker.value) !== String(svc.id)) picker.value = String(svc.id);
-        var note = el('sv2-pkg-service');
-        if (note) note.textContent = svc.name;
-    }
-
-    function renderPackageSection() {
-        if (content.show_packages === '0') {
-            var sec = el('packages');
-            if (sec) sec.hidden = true;
-            return;
-        }
-        var picker = el('sv-svc-pick');
-        if (picker) {
-            picker.innerHTML = S.catalog.services().map(function (s) {
-                return '<option value="' + esc(s.id) + '">' + esc(s.name) + '</option>';
-            }).join('');
-        }
-        var first = S.catalog.services()[0];
-        renderPackages(first ? first.id : null);
-    }
-
     var locked = false;
     function lock(on) {
         document.body.classList.toggle('sv2-locked', !!on);
@@ -209,30 +156,17 @@
         if (e.target.closest('[data-sv2-close]')) { closeModals(); return; }
         if (e.target.classList && e.target.classList.contains('sv2-modal')) { closeModals(); return; }
 
-        var buy = e.target.closest('[data-buy-service]');
-        if (buy) {
-            e.preventDefault();
-            var sid = buy.getAttribute('data-buy-service');
-            var q = buy.getAttribute('data-buy-quality') || 'high';
-            window.location.href = 'book.php?service=' + encodeURIComponent(sid) + '&quality=' + encodeURIComponent(q);
-        }
+
     });
 
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') closeModals();
     });
 
-    document.addEventListener('change', function (e) {
-        if (e.target && e.target.id === 'sv-svc-pick') {
-            renderPackages(e.target.value);
-        }
-    });
-
     function boot() {
         content = (window.__MM_DEMO_DATA__ || {}).content || {};
         renderHero();
         renderServices();
-        renderPackageSection();
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
