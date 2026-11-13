@@ -972,6 +972,7 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-wide';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
+    $stylesheets[] = 'assets/css/video-close-button.css?v=20261113';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
