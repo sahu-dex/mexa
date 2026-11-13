@@ -35,7 +35,7 @@ foreach ($allMembers as $m) {
 $gridMembers = array_slice($gridMembers, 0, 4);
 
 $heroLine1Parts = split_lines(setting('hero_line_1', "WE CREATE\nVISUALS"));
-$heroLine1Html = e(implode(' ', $heroLine1Parts));
+$heroLine1Html = implode('<br class="ref-hero-break"> ', array_map('e', $heroLine1Parts));
 $heroLine2 = setting('hero_line_2', 'THAT GROW YOUR BRAND');
 $heroDesc = setting('hero_description', 'MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.');
 $heroDescHtml = e($heroDesc);
