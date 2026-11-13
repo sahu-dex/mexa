@@ -1,20 +1,4 @@
 (function () {
-    const banner = document.querySelector('#home .ref-hero-image img');
-    if (banner) {
-        function useFallback() {
-            const fallback = banner.dataset.fallback;
-            if (!fallback) return;
-            delete banner.dataset.fallback;
-            banner.addEventListener('load', function restore() {
-                banner.style.visibility = '';
-                banner.removeAttribute('aria-hidden');
-                banner.removeEventListener('load', restore);
-            });
-            banner.src = fallback;
-        }
-        banner.addEventListener('error', useFallback);
-        if (banner.complete && !banner.naturalWidth) useFallback();
-    }
     const text = document.getElementById('ref-hero-typed');
     if (!text || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const phrases = [text.dataset.initial || 'THAT GROW YOUR BRAND', 'THAT GO VIRAL', 'THAT ENGAGE VIEWERS', 'THAT TELL STORIES'];

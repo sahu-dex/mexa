@@ -24,9 +24,6 @@ body #home .ref-hero-secondary { background: rgba(255,255,255,.7); border: 1px s
 body #home .ref-hero-secondary i { border: 2px solid currentColor; border-radius: 50%; padding: 4px; font-size: 10px; }
 body #home .ref-hero-visual { position: relative; }
 body #home .ref-hero-glow { position: absolute; inset: -16px; border-radius: 40px; opacity: .3; filter: blur(40px); background: linear-gradient(to right,#1152df,#5ac8fa); pointer-events: none; }
-body #home .ref-hero-banner { position: relative; overflow: hidden; padding: 8px; border: 1px solid rgba(255,255,255,.8); border-radius: 32px; background: rgba(255,255,255,.65); box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); animation: ref-hero-float 5s ease-in-out infinite; }
-body #home .ref-hero-image { position: relative; overflow: hidden; border-radius: 16px; aspect-ratio: 16 / 9; background: #f1f5f9; }
-body #home .ref-hero-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
 body #home .ref-hero-rating { position: absolute; top: -24px; right: -24px; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid rgba(255,255,255,.8); border-radius: 16px; background: rgba(255,255,255,.65); box-shadow: 0 20px 25px -5px rgba(0,0,0,.1); animation: ref-hero-float 6s ease-in-out 1s infinite; }
 body #home .ref-hero-rating i { color: #facc15; font-size: 20px; }
 body #home .ref-hero-rating b, body #home .ref-hero-rating span { display: block; }
@@ -47,7 +44,7 @@ body #home .ref-hero-rating span { color: #64748b; font-size: 10px; line-height:
     body #home .ref-hero-subtitle { font-size: 36px; }
 }
 @media (max-width: 767px) { body #home .ref-hero-rating { right: 0; } }
-@media (prefers-reduced-motion: reduce) { body #home :is(.ref-hero-eyebrow > span,.ref-hero-banner,.ref-hero-rating,.ref-hero-subtitle span::after) { animation: none; } }
+@media (prefers-reduced-motion: reduce) { body #home :is(.ref-hero-eyebrow > span,.ref-hero-rating,.ref-hero-subtitle span::after) { animation: none; } }
 @layer mx-typography {
     body #home .ref-hero-description { font-size: 18px !important; line-height: 1.625 !important; }
     @media (min-width: 768px) { body #home .ref-hero-description { font-size: 20px !important; } }
@@ -79,3 +76,14 @@ body #home .ref-hero-rating span { color: #64748b; font-size: 10px; line-height:
 }
 
 @media (max-width: 1023px) { body #home .ref-hero-title .ref-hero-break { display: none; } }
+
+/* Keep the original character uncropped, with its intrinsic proportions. */
+body #home .ref-hero-character { display: flex; justify-content: center; align-items: center; margin: 0; }
+body #home .ref-hero-character img { display: block; width: auto; height: auto; max-width: 100%; max-height: min(48vh, 480px); object-fit: contain; }
+@media (max-width: 1023px) {
+    body #home .ref-hero-grid { row-gap: 0; }
+    body #home .ref-hero-content { display: contents; }
+    body #home .ref-hero-visual { order: 1; width: 100%; margin: 0 auto 24px; }
+    body #home .ref-hero-character img { width: min(100%, 360px); max-height: none; }
+    body #home .ref-hero-actions { order: 2; }
+}

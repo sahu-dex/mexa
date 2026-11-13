@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
 
 $servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
@@ -71,9 +71,9 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
                     <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
                         <div class="ref-hero-glow" aria-hidden="true"></div>
-                        <div class="ref-hero-banner">
-                            <div class="ref-hero-image"><img src="https://i.ibb.co/0j8vTv1r/We-Poster-2.jpg" data-fallback="<?= e($heroImg) ?>" alt="Mexa Motion banner" width="800" height="450" fetchpriority="high" decoding="async"></div>
-                        </div>
+                        <figure class="ref-hero-character" id="hero-character">
+                            <img src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" fetchpriority="high" decoding="async" draggable="false">
+                        </figure>
                         <div class="ref-hero-rating"><i class="fa-solid fa-star" aria-hidden="true"></i><div><b>4.9/5</b><span>Client Rating</span></div></div>
                     </div>
                 </div>

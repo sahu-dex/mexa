@@ -973,7 +973,7 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-unified-header';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     if ($pageKey === 'home') {
-        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-viewport-fit';
+        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-character-return';
     }
     return $stylesheets;
 }
