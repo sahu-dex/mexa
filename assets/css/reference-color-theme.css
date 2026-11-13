@@ -1,0 +1,91 @@
+/* Poppins font files are licensed under SIL OFL; see assets/fonts/poppins/OFL.txt. */
+@font-face{font-family:'Poppins';font-style:normal;font-weight:300;font-display:swap;src:url('../fonts/poppins/poppins-latin-300-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/poppins/poppins-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:500;font-display:swap;src:url('../fonts/poppins/poppins-latin-500-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url('../fonts/poppins/poppins-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url('../fonts/poppins/poppins-latin-700-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:800;font-display:swap;src:url('../fonts/poppins/poppins-latin-800-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:400;font-display:swap;src:url('../fonts/poppins/poppins-latin-ext-400-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:600;font-display:swap;src:url('../fonts/poppins/poppins-latin-ext-600-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Poppins';font-style:normal;font-weight:700;font-display:swap;src:url('../fonts/poppins/poppins-latin-ext-700-normal.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+
+/* Reference palette and typography only. Existing layout, content and controls are unchanged. */
+:root {
+    --mx-font: 'Poppins', 'MX Jakarta', 'Noto Sans Bengali', system-ui, sans-serif;
+    --mx-primary: #1152df;
+    --mx-primary-deep: #0a3185;
+    --mx-secondary: #1152df;
+    --mx-navy: #0a3185;
+    --mx-text: #475569;
+    --mx-muted: #64748b;
+    --mx-blue-mid: #1152df;
+    --mx-slate: #475569;
+    --mx-blue-soft: #64748b;
+    --mx-bg: #fafafa;
+    --mx-soft: #f4f7ff;
+    --mx-soft-blue: #f4f7ff;
+    --mx-surface: #fff;
+    --mx-border: rgba(17,82,223,.12);
+    --mx-border-strong: rgba(17,82,223,.22);
+    --mx-highlight: #bcd3ff;
+    --mx-white: #fff;
+    --mx-gradient: linear-gradient(135deg, #1152df, #0a3185);
+    --mx-accent: linear-gradient(135deg, #1152df, #5ac8fa);
+    --mx-soft-gradient: linear-gradient(140deg, rgba(255,255,255,.8), rgba(244,247,255,.8));
+    --mx-shadow: 0 8px 32px rgba(17,82,223,.06);
+    --mx-shadow-lg: 0 24px 60px -24px rgba(10,49,133,.22);
+}
+html { background-color: #fafafa; }
+body {
+    font-family: var(--mx-font) !important;
+    color: #475569 !important;
+    background: radial-gradient(ellipse 45rem 35rem at 0% 0%, rgba(17,82,223,.06), transparent 70%),
+                radial-gradient(ellipse 42rem 34rem at 100% 55%, rgba(90,200,250,.06), transparent 70%),
+                #fafafa !important;
+    background-attachment: fixed !important;
+}
+body #header.hdr-bar-wrap {
+    background: rgba(255,255,255,.7) !important;
+    border-color: rgba(255,255,255,.8) !important;
+    box-shadow: 0 8px 32px rgba(17,82,223,.04) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    backdrop-filter: blur(20px) !important;
+}
+body #mobile-menu-drawer.mm-drawer { background: rgba(255,255,255,.97) !important; }
+body #mobile-menu-drawer .mm-item {
+    background: rgba(255,255,255,.7) !important;
+    border-color: rgba(17,82,223,.1) !important;
+}
+body :is(.sv2-card, .wk-rc, .wk-demo, .wk-short, .wk-do-card, .wk-follow,
+         .t3-card, .rvx-card, .rvx-fcard, .rvx-score-row, .t3-join, .rvx-photo-box,
+         .sp-pkg:not(.is-hi), .svc-card, .pr-card, .ct-card, .tm-card) {
+    background: rgba(255,255,255,.65) !important;
+    border-color: rgba(255,255,255,.8) !important;
+    box-shadow: 0 8px 32px rgba(17,82,223,.04) !important;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+}
+body :is(.sv2-card, .wk-rc, .wk-demo, .wk-short, .t3-card, .rvx-card, .svc-card):hover {
+    border-color: rgba(17,82,223,.22) !important;
+    box-shadow: 0 14px 36px rgba(17,82,223,.1) !important;
+}
+body #header .header-booking-button,
+body #mobile-menu .mm-booking-button,
+body :is(.glass-btn-primary, .newsletter-btn) {
+    background: rgba(17,82,223,.85) !important;
+    border-color: rgba(255,255,255,.4) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 24px -4px rgba(17,82,223,.5) !important;
+}
+body #header .header-booking-button:hover,
+body #mobile-menu .mm-booking-button:hover,
+body :is(.glass-btn-primary, .newsletter-btn):hover {
+    background: #1152df !important;
+    box-shadow: 0 8px 32px -4px rgba(17,82,223,.6) !important;
+}
+body :is(.glass-btn-secondary) {
+    background: rgba(255,255,255,.7) !important;
+    border-color: rgba(255,255,255,.9) !important;
+    color: #1152df !important;
+    box-shadow: 0 4px 24px -4px rgba(0,0,0,.05) !important;
+}
