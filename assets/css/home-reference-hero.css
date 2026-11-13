@@ -23,7 +23,6 @@ body #home .ref-hero-primary { background: rgba(17,82,223,.85); border: 1px soli
 body #home .ref-hero-secondary { background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.9); color: #1152df !important; box-shadow: 0 4px 24px -4px rgba(0,0,0,.05); }
 body #home .ref-hero-secondary i { border: 2px solid currentColor; border-radius: 50%; padding: 4px; font-size: 10px; }
 body #home .ref-hero-visual { position: relative; }
-body #home .ref-hero-glow { position: absolute; inset: -16px; border-radius: 40px; opacity: .3; filter: blur(40px); background: linear-gradient(to right,#1152df,#5ac8fa); pointer-events: none; }
 @keyframes ref-hero-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 @keyframes ref-hero-blink { 50% { opacity: 0; } }
 @keyframes ref-hero-pulse { 50% { opacity: .5; } }

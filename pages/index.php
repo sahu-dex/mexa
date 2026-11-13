@@ -70,7 +70,6 @@ include dirname(__DIR__) . '/includes/header.php';
                         </div>
                     </div>
                     <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-                        <div class="ref-hero-glow" aria-hidden="true"></div>
                         <figure class="ref-hero-character" id="hero-character">
                             <img src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" fetchpriority="high" decoding="async" draggable="false">
                         </figure>
