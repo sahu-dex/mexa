@@ -447,7 +447,7 @@ body.page-home #home .ref-hero-rating{
     position:absolute;
     z-index:3;
     top:clamp(6px,3vw,34px);
-    right:clamp(-6px,.2vw,8px);
+    right:0;
     display:flex;
     align-items:center;
     gap:11px;
@@ -1370,4 +1370,25 @@ body.page-home input:focus-visible{
     outline:2px solid #1152df;
     outline-offset:3px;
     border-radius:12px;
+}
+
+/* Team carousel: founder first below desktop, full 5-card row from 1280px */
+@media (min-width:1280px){
+    body.page-home #team .tm-strip{gap:12px;max-width:1216px;justify-content:center}
+    body.page-home #team .tm-card{flex:0 0 180px !important;width:180px !important}
+    body.page-home #team .mx-founder-card{flex:0 0 380px !important;width:380px !important;max-width:380px !important}
+}
+@media (max-width:1279.98px){
+    body.page-home #team .tm-strip{justify-content:flex-start;max-width:100%}
+    body.page-home #team .mx-founder-card{order:1 !important;scroll-snap-align:start}
+    body.page-home #team .tm-strip > .grid > .tm-card:nth-child(-n+2){order:3 !important}
+    body.page-home #team .tm-card{scroll-snap-align:start}
+}
+body.page-home #team .tm-swipe-hint{display:none}
+@media (max-width:1279.98px){
+    body.page-home #team .tm-swipe-hint{
+        display:flex;align-items:center;justify-content:center;gap:7px;
+        margin:0 0 12px;color:#7d8fa8;font-size:11.5px;font-weight:500;
+    }
+    body.page-home #team .tm-swipe-hint i{font-size:10px;color:#1152df}
 }
