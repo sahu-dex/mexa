@@ -1,0 +1,59 @@
+/* The supplied HTML's hero, isolated from every other section and page. */
+body #home.ref-hero {
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - 70px) !important;
+    padding: 58px 0 80px !important;
+    background: transparent !important;
+}
+body #home .ref-hero-container { width: 100% !important; max-width: 1280px !important; padding-inline: 16px !important; }
+body #home .ref-hero-grid { display: grid; grid-template-columns: minmax(0,1fr); gap: 48px; align-items: center; }
+body #home .ref-hero-content, body #home .ref-hero-visual { min-width: 0; }
+body #home .ref-hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; margin-bottom: 24px; border: 1px solid rgba(255,255,255,.8); border-radius: 9999px; background: rgba(255,255,255,.65); box-shadow: 0 8px 32px rgba(17,82,223,.04); color: #1152df; font-size: 12px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; }
+body #home .ref-hero-eyebrow > span { width: 8px; height: 8px; border-radius: 50%; background: #1152df; animation: ref-hero-pulse 2s ease-in-out infinite; }
+body #home .ref-hero-title { position: static; margin: 0 0 8px; padding: 0; color: #0a3185 !important; -webkit-text-fill-color: #0a3185 !important; font-size: 48px !important; font-weight: 800; line-height: 1.25 !important; letter-spacing: 0 !important; }
+body #home .ref-hero-subtitle { min-height: 40px; margin-bottom: 24px; font-size: 24px; font-weight: 700; line-height: 1.2; }
+body #home .ref-hero-subtitle span { background: linear-gradient(135deg,#1152df,#5ac8fa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+body #home .ref-hero-subtitle span::after { content: '|'; animation: ref-hero-blink 1s step-end infinite; }
+body #home .ref-hero-description { max-width: 32rem; margin: 0 0 32px !important; color: #475569 !important; }
+body #home .ref-hero-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 40px; }
+body #home .ref-hero-tool { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.8); border-radius: 12px; background: rgba(255,255,255,.65); box-shadow: 0 8px 32px rgba(17,82,223,.04); transition: transform .3s; }
+body #home .ref-hero-tool:hover { transform: translateY(-4px); }
+body #home .ref-hero-tool span { color: #1152df; font-size: 12px; font-weight: 700; }
+body #home .ref-hero-tool img { position: absolute; width: 24px; height: 24px; object-fit: contain; }
+body #home .ref-hero-actions { display: flex; flex-wrap: wrap; gap: 16px; }
+body #home .ref-hero-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 32px; border-radius: 9999px; font-size: 16px; font-weight: 600; text-decoration: none; transition: transform .3s, box-shadow .3s; }
+body #home .ref-hero-actions a:hover { transform: translateY(-2px); }
+body #home .ref-hero-primary { background: rgba(17,82,223,.85); border: 1px solid rgba(255,255,255,.4); color: #fff !important; box-shadow: 0 4px 24px -4px rgba(17,82,223,.5); }
+body #home .ref-hero-secondary { background: rgba(255,255,255,.7); border: 1px solid rgba(255,255,255,.9); color: #1152df !important; box-shadow: 0 4px 24px -4px rgba(0,0,0,.05); }
+body #home .ref-hero-secondary i { border: 2px solid currentColor; border-radius: 50%; padding: 4px; font-size: 10px; }
+body #home .ref-hero-visual { position: relative; }
+body #home .ref-hero-glow { position: absolute; inset: -16px; border-radius: 40px; opacity: .3; filter: blur(40px); background: linear-gradient(to right,#1152df,#5ac8fa); pointer-events: none; }
+body #home .ref-hero-banner { position: relative; overflow: hidden; padding: 8px; border: 1px solid rgba(255,255,255,.8); border-radius: 32px; background: rgba(255,255,255,.65); box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); animation: ref-hero-float 5s ease-in-out infinite; }
+body #home .ref-hero-image { position: relative; overflow: hidden; border-radius: 16px; aspect-ratio: 16 / 9; background: #f1f5f9; }
+body #home .ref-hero-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+body #home .ref-hero-rating { position: absolute; top: -24px; right: -24px; display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid rgba(255,255,255,.8); border-radius: 16px; background: rgba(255,255,255,.65); box-shadow: 0 20px 25px -5px rgba(0,0,0,.1); animation: ref-hero-float 6s ease-in-out 1s infinite; }
+body #home .ref-hero-rating i { color: #facc15; font-size: 20px; }
+body #home .ref-hero-rating b, body #home .ref-hero-rating span { display: block; }
+body #home .ref-hero-rating b { color: #0a3185; font-size: 14px; line-height: 1.4; }
+body #home .ref-hero-rating span { color: #64748b; font-size: 10px; line-height: 1; }
+@keyframes ref-hero-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes ref-hero-blink { 50% { opacity: 0; } }
+@keyframes ref-hero-pulse { 50% { opacity: .5; } }
+@media (min-width: 768px) {
+    body #home .ref-hero-container { padding-inline: 32px !important; }
+    body #home .ref-hero-title { font-size: 60px !important; }
+    body #home .ref-hero-subtitle { font-size: 30px; min-height: 48px; }
+}
+@media (min-width: 1024px) {
+    body #home.ref-hero { min-height: calc(100vh - 98px) !important; padding: 62px 0 128px !important; }
+    body #home .ref-hero-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    body #home .ref-hero-title { font-size: 72px !important; }
+    body #home .ref-hero-subtitle { font-size: 36px; }
+}
+@media (max-width: 767px) { body #home .ref-hero-rating { right: 0; } }
+@media (prefers-reduced-motion: reduce) { body #home :is(.ref-hero-eyebrow > span,.ref-hero-banner,.ref-hero-rating,.ref-hero-subtitle span::after) { animation: none; } }
+@layer mx-typography {
+    body #home .ref-hero-description { font-size: 18px !important; line-height: 1.625 !important; }
+    @media (min-width: 768px) { body #home .ref-hero-description { font-size: 20px !important; } }
+}

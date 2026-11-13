@@ -972,5 +972,8 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-compact';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-classic-color';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
+    if ($pageKey === 'home') {
+        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113';
+    }
     return $stylesheets;
 }

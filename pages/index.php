@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113', 'assets/js/home-work-preview.js?v=20261112-work-preview2'];
 
 $servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
@@ -35,7 +35,7 @@ foreach ($allMembers as $m) {
 $gridMembers = array_slice($gridMembers, 0, 4);
 
 $heroLine1Parts = split_lines(setting('hero_line_1', "WE CREATE\nVISUALS"));
-$heroLine1Html = implode('<br>', array_map('e', $heroLine1Parts));
+$heroLine1Html = e(implode(' ', $heroLine1Parts));
 $heroLine2 = setting('hero_line_2', 'THAT GROW YOUR BRAND');
 $heroDesc = setting('hero_description', 'MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.');
 $heroDescHtml = e($heroDesc);
@@ -56,28 +56,35 @@ $tgHref = $tgRaw !== '' ? $tgRaw : '#contact';
 include dirname(__DIR__) . '/includes/header.php';
 ?>
 <?php if (setting_raw('home_section_hero', '1') !== '0'): ?>
-        <section id="home" class="relative pt-2 pb-6 lg:pt-3 lg:pb-8 overflow-hidden bg-transparent flex items-center">
-            <div class="container mx-auto px-4 md:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center hero-grid">
-                    <div class="order-1 lg:col-start-1 lg:row-start-1" data-aos="fade-right" data-aos-duration="1000">
-                        <h1 class="hero-title font-extrabold leading-[0.98] mt-0">
-                            <span class="hero-line-1 text-secondary"><?= $heroLine1Html ?></span>
-                            <span class="hero-line-2 hero-title-blue"><?= e($heroLine2) ?></span>
-                        </h1>
-                        <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
-                            <?= $heroDescHtml ?>
-                        </p>
-                        <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
-                            <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                                <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
-                            </a>
+        <section id="home" class="ref-hero" aria-label="Introduction">
+            <div class="container mx-auto ref-hero-container">
+                <div class="ref-hero-grid">
+                    <div class="ref-hero-content" data-aos="fade-right" data-aos-duration="1000">
+                        <div class="ref-hero-eyebrow"><span aria-hidden="true"></span>Video Editing Agency</div>
+                        <h1 class="hero-title ref-hero-title"><?= $heroLine1Html ?></h1>
+                        <div class="ref-hero-subtitle"><span id="ref-hero-typed" data-initial="<?= e($heroLine2) ?>"><?= e($heroLine2) ?></span></div>
+                        <p class="ref-hero-description"><?= $heroDescHtml ?></p>
+                        <div class="ref-hero-tools" aria-label="Creative tools">
+<?php foreach ([
+    ['Premiere Pro', 'Pr', 'https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg'],
+    ['After Effects', 'Ae', 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg'],
+    ['Adobe Photoshop', 'Ps', 'https://upload.wikimedia.org/wikipedia/commons/a/af/Adobe_Photoshop_CC_icon.svg'],
+    ['Adobe Illustrator', 'Ai', 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Adobe_Illustrator_CC_icon.svg'],
+] as [$toolName, $toolInitials, $toolImage]): ?>
+                            <div class="ref-hero-tool" title="<?= e($toolName) ?>"><span aria-hidden="true"><?= e($toolInitials) ?></span><img src="<?= e($toolImage) ?>" alt="<?= e($toolName) ?>" loading="lazy"></div>
+<?php endforeach; ?>
+                        </div>
+                        <div class="ref-hero-actions">
+                            <a href="service.php" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> View Portfolio</a>
                         </div>
                     </div>
-
-                    <div class="hero-video order-2 lg:col-start-2 lg:row-start-1 relative flex items-center justify-end" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-                        <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
-                            <img class="hero-character-img" src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
-                        </figure>
+                    <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                        <div class="ref-hero-glow" aria-hidden="true"></div>
+                        <div class="ref-hero-banner">
+                            <div class="ref-hero-image"><img src="https://i.ibb.co/0j8vTv1r/We-Poster-2.jpg" data-fallback="<?= e($heroImg) ?>" alt="Mexa Motion banner" width="800" height="450" fetchpriority="high" decoding="async"></div>
+                        </div>
+                        <div class="ref-hero-rating"><i class="fa-solid fa-star" aria-hidden="true"></i><div><b>4.9/5</b><span>Client Rating</span></div></div>
                     </div>
                 </div>
             </div>
