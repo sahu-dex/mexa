@@ -971,6 +971,6 @@ function page_stylesheets(string $pageKey): array
     // Shared reference-inspired colour and font grade; leaves page structure intact.
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-founder';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-header-contrast';
-    $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113';
+    $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-inset';
     return $stylesheets;
 }

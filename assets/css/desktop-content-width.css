@@ -1,18 +1,23 @@
-/* Match the reference's centered 1280px desktop container: with its 32px
-   inner gutters the content aligns to the 1216px floating header. Section
-   backgrounds remain full width. Mobile and tablet layouts are unchanged. */
+/* Keep desktop page content just inside the floating header's edges, while
+   allowing section backgrounds and dialogs to span the viewport. */
 @media (min-width: 1024px) {
-    body .container {
-        max-width: 1280px !important;
+    body .container:not(#header > .container) {
+        width: calc(100% - 32px) !important;
+        max-width: 1248px !important;
     }
     body #home > .container {
-        max-width: 1280px !important;
+        width: calc(100% - 32px) !important;
+        max-width: 1248px !important;
         padding-inline: 32px !important;
     }
     body :is(.wk-wrap, .wk-sec, .rvx-wrap) {
-        width: 100%;
-        max-width: 1280px !important;
+        width: calc(100% - 32px);
+        max-width: 1248px !important;
         margin-inline: auto;
         padding-inline: 32px !important;
+    }
+    /* The review rail used negative margins to bleed outside its container. */
+    body #reviews .reviews-container {
+        margin-inline: 0;
     }
 }
