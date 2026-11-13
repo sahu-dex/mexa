@@ -11,6 +11,13 @@ body #header.hdr-bar-wrap {
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
 }
+@media (min-width: 1024px) {
+    body #header.hdr-bar-wrap {
+        height: 68px !important;
+        min-height: 68px !important;
+        max-height: 68px !important;
+    }
+}
 body #header > .container {
     width: calc(100% - 64px) !important;
     max-width: 1216px !important;
