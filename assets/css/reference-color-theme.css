@@ -128,10 +128,10 @@ body #team-page #t3-founder .tm-perk-ic {
     border-color: rgba(255,255,255,.7) !important;
 }
 
-/* Keep the team founder profile and its two detail boxes compact on desktop. */
+/* Give the team founder profile more horizontal space on desktop. */
 @media (min-width: 1024px) {
     body #team-page #t3-founder.mx-founder-card {
-        max-width: 960px !important;
+        max-width: 1152px !important;
         padding: 28px !important;
         gap: 28px !important;
     }
