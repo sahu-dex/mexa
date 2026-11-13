@@ -66,7 +66,7 @@ include dirname(__DIR__) . '/includes/header.php';
                         <p class="ref-hero-description"><?= $heroDescHtml ?></p>
                         <div class="ref-hero-actions">
                             <a href="service.php" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                            <a href="#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> View Portfolio</a>
+                            <a href="index.php#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> Our Work</a>
                         </div>
                     </div>
                     <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
