@@ -1,5 +1,9 @@
 (function () {
     'use strict';
+    // One set of listeners, even if the script is ever included twice.
+    if (window.__mmWorkPage) return;
+    window.__mmWorkPage = true;
+
     var SNAP = window.__MM_DEMO_DATA__ || {};
     var workData = SNAP.work || {};
     var state = {
@@ -23,8 +27,6 @@
         var m = String(u || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
         return m ? m[1] : null;
     }
-    function vimeoId(u) { var m = String(u || '').match(/vimeo\.com\/(?:video\/)?(\d+)/); return m ? m[1] : null; }
-    function isFb(u) { return /facebook\.com|fb\.watch|fb\.me/i.test(String(u || '')); }
     function thumbOf(item) {
         if (item.thumbnail_url || item.thumbnail_path) return item.thumbnail_url || item.thumbnail_path;
         var id = ytId(item.url || item.file_path);
@@ -110,44 +112,34 @@
         }).join('') : '<div class="wk-empty"><b>No Shorts have been published yet.</b></div>';
     }
 
-    var modal = $('wk-modal');
-    var player = $('wk-modal-player');
-    var lastFocused = null;
-    function openItem(item, fallbackUrl, vertical) {
-        if (!item || !modal || !player) return;
+    // Every card opens in the shared site player (assets/js/mm-video-player.js).
+    // This only maps a work item to the player; the player UI lives in one place.
+    function openItem(item, fallbackUrl, vertical, trigger) {
+        if (!item || !window.MMPlayer) return;
         var url = item.url || item.file_path || '';
-        var html = '';
+        var media = {
+            title: item.title || '',
+            poster: thumbOf(item),
+            vertical: !!vertical,
+            trigger: trigger || null
+        };
         if (item.embed_type === 'iframe' && item.embed_url) {
-            html = '<iframe src="' + esc(item.embed_url + (item.embed_url.indexOf('?') === -1 ? '?' : '&') + 'autoplay=1&rel=0') + '" title="' + esc(item.title || 'Video') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
+            media.src = url;
+            media.embed = item.embed_url;
+            media.type = 'iframe';
         } else if (item.embed_type === 'link') {
-            html = '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open video on ' + esc(item.embed_provider || 'the video host') + '</a>';
+            media.src = url;
+            media.type = 'link';
+            media.provider = item.embed_provider || '';
         } else if (item.kind === 'image' && fallbackUrl) {
-            html = '<video src="' + esc(fallbackUrl) + '" poster="' + esc(thumbOf(item)) + '" controls autoplay playsinline preload="metadata"></video>';
+            media.src = fallbackUrl;
         } else if (item.kind === 'image') {
-            html = '<img src="' + esc(url) + '" alt="' + esc(item.title) + '" loading="lazy" decoding="async">';
-        } else if (isFb(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=false&autoplay=true" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        } else if (ytId(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://www.youtube.com/embed/' + ytId(url) + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        } else if (vimeoId(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://player.vimeo.com/video/' + vimeoId(url) + '?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
+            media.src = url;
+            media.kind = 'image';
         } else {
-            html = '<video src="' + esc(url || fallbackUrl) + '" poster="' + esc(thumbOf(item)) + '" controls autoplay playsinline preload="metadata"></video>';
+            media.src = url || fallbackUrl;
         }
-        lastFocused = document.activeElement;
-        player.innerHTML = html;
-        modal.classList.toggle('is-vertical', !!vertical);
-        modal.hidden = false;
-        document.body.style.overflow = 'hidden';
-        modal.querySelector('button[data-wk-close]').focus();
-    }
-    function closeModal() {
-        if (!modal || !player) return;
-        modal.hidden = true;
-        player.innerHTML = '';
-        document.body.style.overflow = '';
-        if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
-        lastFocused = null;
+        window.MMPlayer.open(media);
     }
     document.addEventListener('error', function (e) {
         var image = e.target;
@@ -158,28 +150,24 @@
         }
     }, true);
     document.addEventListener('click', function (e) {
-        if (e.target.closest('[data-wk-close]')) { closeModal(); return; }
-        var cardEl = e.target.closest('.wk-rc, .wk-demo, .wk-short');
+        var cardEl = e.target && e.target.closest ? e.target.closest('.wk-rc, .wk-demo, .wk-short') : null;
         if (!cardEl) return;
         var section = cardEl.getAttribute('data-section');
         var index = Number(cardEl.getAttribute('data-index'));
         var pool = section === 'recent' ? getRecentSix() : section === 'demo' ? ordered(state.demos) : ordered(state.shorts);
         var item = pool[index];
         if (!item && cardEl.getAttribute('data-mm-video-url')) {
-            var description = cardEl.querySelector('.info p');
             item = {
                 url: cardEl.getAttribute('data-mm-video-url'),
                 embed_type: cardEl.getAttribute('data-mm-video-type') || '',
                 embed_url: cardEl.getAttribute('data-mm-video-embed-url') || '',
                 embed_provider: cardEl.getAttribute('data-mm-video-provider') || '',
                 thumbnail_url: cardEl.getAttribute('data-mm-video-poster') || '',
-                title: cardEl.getAttribute('data-mm-video-title') || '',
-                description: description ? description.textContent : ''
+                title: cardEl.getAttribute('data-mm-video-title') || ''
             };
         }
-        openItem(item, cardEl.getAttribute('data-preview-src') || '', section === 'short');
+        openItem(item, cardEl.getAttribute('data-preview-src') || '', section === 'short', cardEl);
     });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && !modal.hidden) closeModal(); });
 
     function boot() {
         renderRecent();

@@ -153,7 +153,18 @@ Open **Admin → Videos & Shorts**. The same `work_items` table powers the publi
 6. Set **Status** to `Published` so the card appears on the website immediately; keep it as `Draft` to hide it. **Edit** and delete actions are available per row, and deleting an item also removes its uploaded video and thumbnail files.
 7. Use the **All / Videos / Shorts** filter tabs to manage each content type quickly. Changes are public on the next page load — no code edits or cache rebuild required.
 
-On the homepage, clicking a card with a playable source opens the preview modal. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
+### Shared Video Player
+
+Every video on the public site — the homepage **Videos** / **Shorts** cards and showreel, the Work page grids, and the Services page hero and service demos — opens in one shared player (`assets/js/mm-video-player.js` + `assets/css/mm-video-player.css`). Page scripts only call `window.MMPlayer.open({ src, poster, vertical, trigger, … })`; the player's markup, controls and close button exist in that one component, so it looks and behaves the same on every page. It is loaded only on the Home, Service and Work pages (`page_uses_video_player()` in `includes/functions.php`).
+
+- **One close button.** A single **X** drawn as an inline SVG (no text or icon-font glyph). Closing with the **X**, `Esc`, or a click on the backdrop stops playback and sound, removes the media and returns focus to the card that opened it.
+- **Controls.** Play/Pause, **10 seconds back** (left) and **10 seconds forward** (right), a seekable progress bar, mute + volume, and fullscreen. Controls fade out while the video plays and return on mouse movement, a tap, or keyboard use. Nothing else is shown — no title or description text.
+- **Keyboard.** `Space`/`K` play or pause, `←`/`→` (or `J`/`L`) skip 10 seconds, `↑`/`↓` volume, `M` mute, `F` fullscreen, `0`–`9` and `Home`/`End` jump, `Esc` close.
+- **Any shape.** Videos open in a 16:9 frame and Shorts in a 9:16 frame; once the file loads, the frame takes the video's real aspect ratio, so nothing is stretched or cropped on desktop or mobile.
+- **Sources.** Uploaded MP4/WebM/MOV files and YouTube links (including Shorts and `youtu.be`) use the controls above. Vimeo keeps its own control bar with the two 10-second buttons added on top; Facebook and other embeds keep their provider controls. If YouTube's player API cannot be reached, the video falls back to YouTube's standard controls rather than being left without any.
+- **Other items.** Image-only items open as a still preview (on the Work page they play a clip from the `preview` pool when one exists), external "link" items show an **Open video** button, and a file that cannot be played shows a short message with **Try again**. Homepage cards with no media source at all link to the Work page. Only `http(s)` and site-relative addresses are ever loaded.
+
+Browser-free checks for the player live in `tests/` and run with `node --test tests/*.test.js`.
 
 ---
 

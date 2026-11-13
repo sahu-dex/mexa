@@ -1,6 +1,10 @@
 (function () {
     'use strict';
 
+    // One set of listeners, even if the script is ever included twice.
+    if (window.__mmServicePage) return;
+    window.__mmServicePage = true;
+
     var SNAP = window.__MM_DEMO_DATA__ || {};
     var S = window.MMStore;
 
@@ -13,16 +17,6 @@
     function youtubeId(url) {
         var m = String(url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
         return m ? m[1] : null;
-    }
-    function vimeoId(url) {
-        var m = String(url || '').match(/vimeo\.com\/(?:video\/)?(\d+)/i);
-        return m ? m[1] : null;
-    }
-    function playerMarkup(url) {
-        var yt = youtubeId(url), vm = vimeoId(url);
-        if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt + '?rel=0&autoplay=1" title="Service video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-        if (vm) return '<iframe src="https://player.vimeo.com/video/' + vm + '?autoplay=1" title="Service video" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-        return '<video src="' + esc(url) + '" controls autoplay playsinline preload="metadata"></video>';
     }
 
     var content = {};
@@ -114,53 +108,33 @@
             : '<p class="sp-empty">No services are published right now. Please check back soon.</p>';
     }
 
-    var locked = false;
-    function lock(on) {
-        document.body.classList.toggle('sv2-locked', !!on);
-        locked = !!on;
-    }
-    function openVideo(url) {
-        var m = el('sv2-video');
-        if (!m) return;
-        el('sv2-video-stage').innerHTML = playerMarkup(url);
-        m.hidden = false; lock(true);
-        var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
-    }
-    function openImage(url, alt) {
-        var m = el('sv2-image');
-        if (!m) return;
-        var img = el('sv2-image-img');
-        img.src = url; img.alt = alt || 'Service image';
-        m.hidden = false; lock(true);
-        var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
-    }
-    function closeModals() {
-        var v = el('sv2-video'), i = el('sv2-image');
-        if (v && !v.hidden) { v.hidden = true; el('sv2-video-stage').innerHTML = ''; }
-        if (i && !i.hidden) { i.hidden = true; el('sv2-image-img').removeAttribute('src'); }
-        if (!locked) return;
-        lock(false);
-    }
-
+    // Videos and image previews open in the shared site player
+    // (assets/js/mm-video-player.js): one frame and one Close button everywhere.
     document.addEventListener('click', function (e) {
+        if (!e.target || !e.target.closest || !window.MMPlayer) return;
+
         var vid = e.target.closest('[data-sv2-video]');
-        if (vid) { e.preventDefault(); openVideo(vid.getAttribute('data-sv2-video')); return; }
+        if (vid) {
+            e.preventDefault();
+            window.MMPlayer.open({
+                src: vid.getAttribute('data-sv2-video') || '',
+                poster: vid.getAttribute('data-mm-video-poster') || '',
+                title: vid.getAttribute('data-mm-video-title') || vid.getAttribute('aria-label') || 'Service video',
+                trigger: vid
+            });
+            return;
+        }
 
         var img = e.target.closest('[data-sv2-image]');
         if (img) {
             e.preventDefault();
-            openImage(img.getAttribute('data-sv2-image'), img.getAttribute('data-sv2-alt'));
-            return;
+            window.MMPlayer.open({
+                kind: 'image',
+                src: img.getAttribute('data-sv2-image') || '',
+                title: img.getAttribute('data-sv2-alt') || 'Service image',
+                trigger: img
+            });
         }
-
-        if (e.target.closest('[data-sv2-close]')) { closeModals(); return; }
-        if (e.target.classList && e.target.classList.contains('sv2-modal')) { closeModals(); return; }
-
-
-    });
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeModals();
     });
 
     function boot() {

@@ -863,6 +863,26 @@ function build_page_payload(string $pageKey): array
     return $payload;
 }
 
+/**
+ * Pages that open videos. They all load the one shared player
+ * (assets/js/mm-video-player.js + assets/css/mm-video-player.css), so the
+ * player UI is defined in a single place for the whole site.
+ */
+function page_uses_video_player(string $pageKey): bool
+{
+    return in_array($pageKey, ['home', 'service', 'work'], true);
+}
+
+function video_player_script(): string
+{
+    return 'assets/js/mm-video-player.js?v=20261113-shared-player';
+}
+
+function video_player_stylesheet(): string
+{
+    return 'assets/css/mm-video-player.css?v=20261113-shared-player';
+}
+
 function page_stylesheets(string $pageKey): array
 {
     $map = [
@@ -874,7 +894,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-hero-character.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/home-hero.css',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/mm-services-cta.css',
@@ -889,7 +908,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'work' => [
@@ -902,7 +920,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/wk-layout-fix.css',
         ],
@@ -916,7 +933,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/rvx-layout-v2.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'team' => [
@@ -928,7 +944,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'privacy' => [
@@ -938,7 +953,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -949,7 +963,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -972,8 +985,10 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-wide';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
-    $stylesheets[] = 'assets/css/video-close-button.css?v=20261113';
-    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261113';
+    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261113-shared-player';
+    if (page_uses_video_player($pageKey)) {
+        $stylesheets[] = video_player_stylesheet();
+    }
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

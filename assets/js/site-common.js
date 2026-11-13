@@ -265,16 +265,10 @@ window.showCustomMessage = function (text) {
 })();
 
 (function () {
-    function extractYt(raw) {
-        if (!raw) return '';
-        if (/^[\w-]{11}$/.test(raw)) return raw;
-        const m = String(raw).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
-        return m ? m[1] : '';
-    }
-
+    // The showreel opens in the shared site player (assets/js/mm-video-player.js),
+    // the same component used by every video card.
     window.openShowreel = function () {
         const rawUrl = window.__MM_SHOWREEL_URL__ || '';
-        const ytId = extractYt(rawUrl);
         if (!rawUrl) {
             const portfolio = document.getElementById('portfolio');
             if (portfolio) {
@@ -284,33 +278,15 @@ window.showCustomMessage = function (text) {
             }
             return;
         }
-        const modal = document.getElementById('showreel-modal');
-        const frame = document.getElementById('showreel-frame');
-        if (!modal || !frame) return;
-        if (ytId) {
-            frame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/' + ytId +
-                '?autoplay=1&rel=0&modestbranding=1" title="Showreel" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
-        } else {
-            frame.innerHTML = '<video src="' + rawUrl.replace(/"/g, '&quot;') + '" controls autoplay playsinline style="width:100%;height:100%"></video>';
-        }
-        modal.classList.add('is-open');
-        modal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        if (!window.MMPlayer) return;
+        // A bare 11-character value is a YouTube video ID.
+        const src = /^[\w-]{11}$/.test(rawUrl) ? 'https://www.youtube.com/watch?v=' + rawUrl : rawUrl;
+        window.MMPlayer.open({ src: src, title: 'Showreel' });
     };
 
     window.closeShowreel = function () {
-        const modal = document.getElementById('showreel-modal');
-        const frame = document.getElementById('showreel-frame');
-        if (!modal) return;
-        modal.classList.remove('is-open');
-        modal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-        setTimeout(() => { if (frame) frame.innerHTML = ''; }, 320);
+        if (window.MMPlayer) window.MMPlayer.close();
     };
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') window.closeShowreel();
-    });
 })();
 
 (function initReviewSlider() {
@@ -494,15 +470,5 @@ window.showCustomMessage = function (text) {
     document.addEventListener('click', function (e) {
         const a = e.target && e.target.closest ? e.target.closest(hashSelector) : null;
         if (a) e.preventDefault();
-        if (!document.getElementById('wk-modal')) {
-            const vCard = e.target && e.target.closest ? e.target.closest('[data-mm-video-url]') : null;
-            if (vCard && typeof window.openVideoModal === 'function') {
-                const url = vCard.getAttribute('data-mm-video-url');
-                if (url) {
-                    e.preventDefault();
-                    window.openVideoModal(url);
-                }
-            }
-        }
     }, false);
 })();

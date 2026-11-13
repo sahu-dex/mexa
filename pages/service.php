@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'service';
 $pageTitle = 'Service | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = services_intro_text() ?: 'Professional video editing services.';
-$pageScripts = ['assets/js/store.js', 'assets/js/page-service.js'];
+$pageScripts = ['assets/js/store.js', 'assets/js/page-service.js?v=20261113-shared-player'];
 
 $catalog = get_services_catalog(true);
 $services = $catalog['services'];
@@ -97,18 +97,4 @@ include dirname(__DIR__) . '/includes/header.php';
     </div>
 </section>
 <?php endif; ?>
-
-<div id="sv2-video" class="sv2-modal" hidden>
-    <div class="sv2-modal-box" role="dialog" aria-modal="true" aria-label="Service video">
-        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close video"><i class="fa-solid fa-xmark"></i></button>
-        <div class="sv2-stage" id="sv2-video-stage"></div>
-    </div>
-</div>
-
-<div id="sv2-image" class="sv2-modal" hidden>
-    <div class="sv2-modal-box is-image" role="dialog" aria-modal="true" aria-label="Service image preview">
-        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close image"><i class="fa-solid fa-xmark"></i></button>
-        <img id="sv2-image-img" alt="Service image preview" decoding="async" loading="lazy">
-    </div>
-</div>
 <?php include dirname(__DIR__) . '/includes/footer.php'; ?>

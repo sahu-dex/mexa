@@ -1,0 +1,854 @@
+/*
+ * MEXA MOTION — shared video player (markup + behaviour: assets/js/mm-video-player.js).
+ *
+ * One player for Home, Service and Work. Every icon is an inline SVG with a
+ * fixed pixel size, so the site-wide button typography (font-size / line-height
+ * forced with !important inside a cascade layer) cannot change how the
+ * controls render. The close button in particular has exactly one cross:
+ * no text node, no icon font and no ::before / ::after glyph.
+ */
+
+html.mmp-lock,
+html.mmp-lock body {
+    overflow: hidden !important;
+}
+
+.mmp {
+    --mmp-accent: #2f7bff;
+    --mmp-pad-x: clamp(14px, 4vw, 56px);
+    --mmp-pad-y: clamp(30px, 6vh, 56px);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: var(--mmp-pad-y) var(--mmp-pad-x);
+    color: #fff;
+    font-family: inherit;
+    line-height: 1;
+    overscroll-behavior: contain;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+}
+/* Notched phones: keep the frame and the × out of the unsafe areas. */
+@supports (padding: max(0px, env(safe-area-inset-top))) {
+    .mmp {
+        padding:
+            max(var(--mmp-pad-y), env(safe-area-inset-top))
+            max(var(--mmp-pad-x), env(safe-area-inset-right))
+            max(var(--mmp-pad-y), env(safe-area-inset-bottom))
+            max(var(--mmp-pad-x), env(safe-area-inset-left));
+    }
+}
+/* Short screens (a phone held sideways): give the height to the video. */
+@media (max-height: 500px) {
+    .mmp {
+        --mmp-pad-y: 12px;
+    }
+}
+.mmp[hidden],
+.mmp [hidden] {
+    display: none !important;
+}
+.mmp *,
+.mmp *::before,
+.mmp *::after {
+    box-sizing: border-box;
+}
+
+.mmp-backdrop {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(2, 9, 24, .96);
+}
+/* The soft blur is kept for desktop GPUs only; phones spend that power on the video. */
+@media (hover: hover) and (pointer: fine) {
+    .mmp-backdrop {
+        background: rgba(2, 9, 24, .9);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+    }
+}
+
+/* ---- Frame: sized from the media ratio, never stretches the picture ---- */
+.mmp-frame {
+    --mmp-ratio: 1.7778;
+    --mmp-max: 1120px;
+    position: relative;
+    flex: none;
+    width: min(100%, var(--mmp-max), calc((100vh - 2 * var(--mmp-pad-y)) * var(--mmp-ratio)));
+    animation: mmp-pop .24s cubic-bezier(.22, .61, .36, 1) both;
+}
+@supports (height: 100dvh) {
+    .mmp-frame {
+        width: min(100%, var(--mmp-max), calc((100dvh - 2 * var(--mmp-pad-y)) * var(--mmp-ratio)));
+    }
+}
+.mmp-frame--portrait {
+    --mmp-max: 480px;
+}
+/* Height follows the ratio (works without aspect-ratio support). */
+.mmp-frame::before {
+    content: '';
+    display: block;
+    padding-top: calc(100% / var(--mmp-ratio));
+}
+
+.mmp-stage {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    border-radius: clamp(10px, 1.6vw, 18px);
+    background: #000;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, .55), 0 0 0 1px rgba(150, 199, 255, .16);
+    isolation: isolate;
+    transform: translateZ(0);
+}
+.mmp .mmp-stage:focus,
+.mmp .mmp-stage:focus-visible {
+    outline: none;
+}
+
+.mmp-media {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    background: #000;
+}
+.mmp-media > .mmp-video,
+.mmp-media > .mmp-embed,
+.mmp-media > .mmp-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #000;
+    object-fit: contain;
+}
+
+/* Click / tap surface over the picture while our own controls are live. */
+.mmp-shield {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+    display: none;
+    cursor: pointer;
+}
+.mmp--live .mmp-shield {
+    display: block;
+}
+.mmp--live.is-idle.is-fullscreen .mmp-shield {
+    cursor: none;
+}
+
+.mmp-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    display: none;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    border: 3px solid rgba(255, 255, 255, .24);
+    border-top-color: #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: mmp-spin .8s linear infinite;
+}
+.mmp.is-waiting .mmp-spinner {
+    display: block;
+}
+
+/* ---- Icons ---- */
+.mmp-ic {
+    display: block;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+    pointer-events: none;
+}
+.mmp-ic-line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.mmp [data-mmp-toggle] .mmp-ic-pause,
+.mmp [data-mmp-toggle] .mmp-ic-replay,
+.mmp.is-playing [data-mmp-toggle] .mmp-ic-play,
+.mmp.is-ended [data-mmp-toggle] .mmp-ic-play,
+.mmp-mute .mmp-ic-muted,
+.mmp.is-muted .mmp-mute .mmp-ic-volume,
+.mmp.is-quiet .mmp-ic-wave2,
+.mmp-fs .mmp-ic-fs-exit,
+.mmp.is-fullscreen .mmp-fs .mmp-ic-fs-enter {
+    display: none;
+}
+.mmp.is-playing [data-mmp-toggle] .mmp-ic-pause,
+.mmp.is-ended [data-mmp-toggle] .mmp-ic-replay,
+.mmp.is-muted .mmp-mute .mmp-ic-muted,
+.mmp.is-fullscreen .mmp-fs .mmp-ic-fs-exit {
+    display: block;
+}
+
+/* ---- Close: the single × of the player ---- */
+.mmp-close {
+    position: absolute;
+    top: -19px;
+    right: -11px;
+    z-index: 6;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #174a98;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: opacity .2s ease;
+}
+.mmp .mmp-close::before,
+.mmp .mmp-close::after {
+    content: none !important;
+    display: none !important;
+}
+.mmp-close-svg {
+    display: block;
+    width: 34px;
+    height: 34px;
+    overflow: visible;
+    pointer-events: none;
+    filter: drop-shadow(0 6px 9px rgba(11, 46, 96, .22));
+}
+.mmp-close-disc {
+    fill: #fff;
+    stroke: rgba(220, 231, 246, .9);
+    stroke-width: 1;
+    transition: fill .15s ease;
+}
+.mmp-close-x {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+}
+.mmp-close:hover .mmp-close-disc {
+    fill: #eaf2ff;
+}
+.mmp .mmp-close:focus-visible {
+    outline: 2px solid #3674e8;
+    outline-offset: -2px;
+}
+@media (max-height: 500px) {
+    /* Less room above the frame: the × sits on its corner instead of above it. */
+    .mmp-close {
+        top: -8px;
+    }
+}
+
+/* ---- Centre controls: 10s back (left) · play/pause · 10s forward (right) ---- */
+.mmp-center {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 3;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 clamp(12px, 6%, 72px);
+    pointer-events: none;
+    transition: opacity .2s ease;
+}
+.mmp--live .mmp-center,
+.mmp--skips .mmp-center {
+    display: flex;
+}
+.mmp-skip,
+.mmp-bigplay {
+    flex: none;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .22);
+    border-radius: 50%;
+    color: #fff;
+    background: rgba(6, 14, 32, .64);
+    cursor: pointer;
+    pointer-events: auto;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background-color .15s ease, transform .15s ease;
+}
+.mmp-skip {
+    width: 54px;
+    height: 54px;
+}
+.mmp-bigplay {
+    width: 72px;
+    height: 72px;
+}
+.mmp-skip .mmp-ic {
+    width: 30px;
+    height: 30px;
+}
+.mmp-bigplay .mmp-ic {
+    width: 34px;
+    height: 34px;
+}
+.mmp-skip .mmp-ic-line {
+    stroke-width: 1.7;
+}
+@media (hover: hover) {
+    .mmp-skip:hover,
+    .mmp-bigplay:hover {
+        background: rgba(47, 123, 255, .94);
+    }
+}
+.mmp-skip:active,
+.mmp-bigplay:active {
+    transform: scale(.93);
+}
+.mmp.is-waiting .mmp-bigplay {
+    visibility: hidden;
+    pointer-events: none;
+}
+/* Provider embed (Vimeo): only the two 10s buttons, kept near the middle so
+   they stay clear of the embed's own corner buttons and bottom bar. */
+.mmp--skips .mmp-center {
+    justify-content: center;
+}
+.mmp--skips .mmp-bigplay {
+    display: none;
+}
+.mmp--skips .mmp-skip {
+    margin: 0 clamp(26px, 8%, 92px);
+}
+
+/* ---- Bottom bar: progress · play · volume · time · fullscreen ---- */
+.mmp-bar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 4;
+    display: none;
+    flex-direction: column;
+    padding: 34px 10px 6px;
+    background: linear-gradient(to top, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .5) 48%, rgba(0, 0, 0, 0) 100%);
+    transition: opacity .2s ease;
+}
+.mmp--live .mmp-bar {
+    display: flex;
+}
+.mmp.is-idle .mmp-bar,
+.mmp.is-idle .mmp-center {
+    opacity: 0;
+}
+.mmp.is-idle .mmp-bar,
+.mmp.is-idle .mmp-center > button {
+    pointer-events: none;
+}
+
+.mmp-row {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 2px;
+}
+.mmp-btn {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    color: #fff;
+    background: transparent;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: background-color .15s ease;
+}
+@media (hover: hover) {
+    .mmp-btn:hover {
+        background: rgba(255, 255, 255, .16);
+    }
+}
+.mmp-btn:active {
+    background: rgba(255, 255, 255, .24);
+}
+.mmp .mmp-btn:focus-visible,
+.mmp .mmp-skip:focus-visible,
+.mmp .mmp-bigplay:focus-visible,
+.mmp .mmp-action:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.mmp-time {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 6px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: .01em;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+.mmp-time-sep {
+    opacity: .6;
+}
+.mmp-spacer {
+    flex: 1 1 auto;
+    min-width: 4px;
+}
+
+/* Progress */
+.mmp-progress {
+    --mmp-played: 0;
+    --mmp-buffered: 0;
+    --mmp-tip: 0px;
+    position: relative;
+    height: 22px;
+    margin: 0 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    touch-action: none;
+}
+.mmp-progress-track {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 4px;
+    margin-top: -2px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, .28);
+    transition: height .12s ease, margin-top .12s ease;
+}
+.mmp-progress-buffer,
+.mmp-progress-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform-origin: 0 50%;
+}
+.mmp-progress-buffer {
+    background: rgba(255, 255, 255, .4);
+    transform: scaleX(var(--mmp-buffered));
+}
+.mmp-progress-fill {
+    background: var(--mmp-accent);
+    transform: scaleX(var(--mmp-played));
+}
+.mmp-progress-thumb {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--mmp-played) * 100%);
+    width: 14px;
+    height: 14px;
+    margin: -7px 0 0 -7px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+    pointer-events: none;
+    transform: scale(0);
+    transition: transform .12s ease;
+}
+.mmp-progress.is-dragging .mmp-progress-thumb,
+.mmp-progress:focus-visible .mmp-progress-thumb {
+    transform: scale(1);
+}
+.mmp-progress.is-dragging .mmp-progress-track {
+    height: 6px;
+    margin-top: -3px;
+}
+.mmp-progress-tip {
+    position: absolute;
+    bottom: 100%;
+    left: clamp(20px, var(--mmp-tip), calc(100% - 20px));
+    margin-bottom: 2px;
+    padding: 5px 7px;
+    border-radius: 6px;
+    color: #fff;
+    background: rgba(6, 14, 32, .92);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: opacity .12s ease;
+}
+.mmp-progress.is-dragging .mmp-progress-tip {
+    opacity: 1;
+}
+@media (hover: hover) {
+    .mmp-progress:hover .mmp-progress-thumb {
+        transform: scale(1);
+    }
+    .mmp-progress:hover .mmp-progress-track {
+        height: 6px;
+        margin-top: -3px;
+    }
+    .mmp-progress:hover .mmp-progress-tip {
+        opacity: 1;
+    }
+}
+@media (hover: none) {
+    .mmp-progress-thumb {
+        transform: scale(1);
+    }
+}
+.mmp-progress[aria-valuemax='0'] {
+    cursor: default;
+}
+.mmp-progress[aria-valuemax='0'] .mmp-progress-thumb,
+.mmp-progress[aria-valuemax='0'] .mmp-progress-tip {
+    display: none;
+}
+
+/* Volume */
+.mmp-volume {
+    --mmp-level: 1;
+    position: relative;
+    flex: none;
+    width: 64px;
+    height: 40px;
+    margin: 0 12px 0 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    touch-action: none;
+}
+.mmp-volume-track {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    height: 4px;
+    margin-top: -2px;
+    overflow: hidden;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, .3);
+}
+.mmp-volume-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    transform-origin: 0 50%;
+    transform: scaleX(var(--mmp-level));
+}
+.mmp-volume-thumb {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--mmp-level) * 100%);
+    width: 12px;
+    height: 12px;
+    margin: -6px 0 0 -6px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+    pointer-events: none;
+}
+.mmp .mmp-progress:focus,
+.mmp .mmp-volume:focus {
+    outline: none;
+}
+.mmp .mmp-progress:focus-visible,
+.mmp .mmp-volume:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .9);
+    outline-offset: 0;
+}
+/* iOS keeps volume under hardware control: only Mute is offered there. */
+.mmp--novolume .mmp-volume,
+.mmp--tiny .mmp-volume {
+    display: none;
+}
+
+/* ---- Message panel (playback error, external link) ---- */
+.mmp-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    text-align: center;
+    background: rgba(2, 9, 24, .84);
+    -webkit-user-select: text;
+    user-select: text;
+}
+.mmp-panel-text {
+    max-width: 36ch;
+    color: #eaf4ff;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+.mmp-panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.mmp .mmp-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    margin: 0;
+    padding: 9px 16px;
+    border: 1px solid rgba(145, 196, 255, .42);
+    border-radius: 999px;
+    color: #fff;
+    -webkit-text-fill-color: #fff;
+    background: linear-gradient(110deg, #2389ef, #164ed4);
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    max-width: 100%;
+}
+.mmp-action .mmp-ic {
+    width: 16px;
+    height: 16px;
+}
+
+.mmp-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ---- Fullscreen (real, or viewport-filling fallback) ---- */
+.mmp-frame:fullscreen {
+    width: 100% !important;
+    height: 100% !important;
+    background: #000;
+}
+.mmp-frame:-webkit-full-screen {
+    width: 100% !important;
+    height: 100% !important;
+    background: #000;
+}
+.mmp.mmp--fill {
+    padding: 0;
+}
+.mmp.mmp--fill .mmp-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation: none;
+}
+.mmp.is-fullscreen .mmp-frame::before {
+    display: none;
+}
+.mmp.is-fullscreen .mmp-stage {
+    border-radius: 0;
+    box-shadow: none;
+}
+.mmp.is-fullscreen .mmp-close {
+    top: 8px;
+    right: 8px;
+}
+.mmp.is-fullscreen.is-idle .mmp-close {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ---- Small frames (phones, vertical Shorts) ---- */
+.mmp--compact .mmp-center {
+    /* Keep the three buttons clear of the bar on short (landscape) frames. */
+    bottom: 48px;
+    padding: 0 12px;
+}
+.mmp--compact .mmp-skip {
+    width: 46px;
+    height: 46px;
+}
+.mmp--compact .mmp-skip .mmp-ic {
+    width: 26px;
+    height: 26px;
+}
+.mmp--compact .mmp-bigplay {
+    width: 60px;
+    height: 60px;
+}
+.mmp--compact .mmp-bigplay .mmp-ic {
+    width: 30px;
+    height: 30px;
+}
+.mmp--compact .mmp-bar {
+    padding: 28px 6px 4px;
+}
+.mmp--compact .mmp-volume {
+    width: 46px;
+    margin: 0 12px 0 2px;
+}
+.mmp--compact .mmp-time {
+    margin-left: 0;
+    font-size: 12px;
+}
+.mmp--compact .mmp-panel {
+    gap: 12px;
+    padding: 16px;
+}
+.mmp--compact .mmp-panel-text {
+    font-size: 13px;
+}
+.mmp--compact .mmp-panel-actions {
+    gap: 8px;
+}
+.mmp--compact .mmp-action {
+    min-height: 36px;
+    padding: 7px 13px;
+    font-size: 12.5px;
+}
+/* Narrow frames (small phones). */
+.mmp--tiny .mmp-center {
+    padding: 0 8px;
+}
+.mmp--tiny .mmp-skip {
+    width: 40px;
+    height: 40px;
+}
+.mmp--tiny .mmp-skip .mmp-ic {
+    width: 24px;
+    height: 24px;
+}
+.mmp--tiny .mmp-bigplay {
+    width: 52px;
+    height: 52px;
+}
+.mmp--tiny .mmp-bigplay .mmp-ic {
+    width: 26px;
+    height: 26px;
+}
+.mmp--tiny .mmp-panel {
+    padding: 12px;
+}
+/* Very narrow frames: a vertical Short on a phone held sideways. */
+.mmp--micro .mmp-center {
+    padding: 0 4px;
+}
+.mmp--micro .mmp-skip {
+    width: 36px;
+    height: 36px;
+}
+.mmp--micro .mmp-skip .mmp-ic {
+    width: 22px;
+    height: 22px;
+}
+.mmp--micro .mmp-bigplay {
+    width: 46px;
+    height: 46px;
+}
+.mmp--micro .mmp-bigplay .mmp-ic {
+    width: 24px;
+    height: 24px;
+}
+.mmp--micro .mmp-bar {
+    padding: 24px 4px 2px;
+}
+.mmp--micro .mmp-btn {
+    width: 36px;
+    height: 36px;
+}
+.mmp--micro .mmp-time {
+    display: none;
+}
+.mmp--micro .mmp-panel {
+    gap: 10px;
+    padding: 10px;
+}
+@media (pointer: coarse) {
+    .mmp-btn {
+        width: 44px;
+        height: 44px;
+    }
+    .mmp-progress {
+        height: 28px;
+    }
+}
+
+/* Entrance: movement only. The frame is never transparent, so a busy device
+   that starts the animation late still shows the player straight away. */
+@keyframes mmp-pop {
+    from { transform: translateY(12px) scale(.975); }
+    to { transform: none; }
+}
+@keyframes mmp-spin {
+    to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mmp-frame { animation: none; }
+}
