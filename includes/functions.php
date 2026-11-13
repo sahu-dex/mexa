@@ -875,12 +875,12 @@ function page_uses_video_player(string $pageKey): bool
 
 function video_player_script(): string
 {
-    return 'assets/js/mm-video-player.js?v=20261113-shared-player';
+    return 'assets/js/mm-video-player.js?v=20261113-clean-dock';
 }
 
 function video_player_stylesheet(): string
 {
-    return 'assets/css/mm-video-player.css?v=20261113-shared-player';
+    return 'assets/css/mm-video-player.css?v=20261113-clean-dock';
 }
 
 function page_stylesheets(string $pageKey): array

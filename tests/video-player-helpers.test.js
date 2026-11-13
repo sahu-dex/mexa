@@ -3,7 +3,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 
 const player = require('../assets/js/mm-video-player.js');
-const { clamp, formatTime, safeUrl, youtubeId, youtubeStart, vimeoRef, isFacebookUrl, isImageUrl, withParams, youtubeEmbedUrl, vimeoEmbedUrl, facebookEmbedUrl, resolveSource } = player;
+const { clamp, formatTime, safeUrl, youtubeId, youtubeStart, vimeoRef, isFacebookUrl, isImageUrl, withParams, youtubeEmbedUrl, vimeoEmbedUrl, facebookEmbedUrl, wrapIndex, resolveSource } = player;
 
 test('time read-out is formatted like a video player', () => {
     assert.equal(formatTime(0), '0:00');
@@ -118,7 +118,7 @@ test('embed addresses are built for each provider', () => {
     assert.equal(plain.searchParams.has('controls'), false);
     assert.equal(plain.searchParams.has('enablejsapi'), false);
 
-    // API embed: YouTube's bar is switched off and ours drives the video.
+    // API embed: YouTube's bar is switched off and the dock drives the video.
     const api = new URL(youtubeEmbedUrl('aqz-KE-bpKQ', { api: true, origin: 'https://mexa.example' }));
     assert.equal(api.origin + api.pathname, 'https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ');
     assert.equal(api.searchParams.get('controls'), '0');
@@ -128,6 +128,18 @@ test('embed addresses are built for each provider', () => {
     assert.equal(api.searchParams.get('playsinline'), '1');
     assert.ok(api.searchParams.get('widgetid'));
     assert.equal(new URL(youtubeEmbedUrl('aqz-KE-bpKQ', { api: true })).searchParams.has('origin'), false);
+    // Only documented player parameters: related videos limited to the same
+    // channel, no keyboard handling inside the frame (the page handles keys),
+    // no second fullscreen button, no annotations.
+    assert.equal(api.searchParams.get('rel'), '0');
+    assert.equal(api.searchParams.get('disablekb'), '1');
+    assert.equal(api.searchParams.get('fs'), '0');
+    assert.equal(api.searchParams.get('iv_load_policy'), '3');
+    assert.equal(plain.searchParams.get('rel'), '0');
+    assert.equal(plain.searchParams.has('fs'), false);
+    assert.equal(plain.searchParams.has('disablekb'), false);
+    assert.equal(new URL(youtubeEmbedUrl('aqz-KE-bpKQ', { api: true, start: 15 })).searchParams.get('start'), '15');
+    assert.equal(new URL(youtubeEmbedUrl('aqz-KE-bpKQ', { api: true })).searchParams.has('start'), false);
 
     const vimeo = new URL(vimeoEmbedUrl({ id: '76979871', hash: 'abc123' }));
     assert.equal(vimeo.origin + vimeo.pathname, 'https://player.vimeo.com/video/76979871');
@@ -144,6 +156,39 @@ test('embed addresses are built for each provider', () => {
     assert.equal(facebook.origin + facebook.pathname, 'https://www.facebook.com/plugins/video.php');
     assert.equal(facebook.searchParams.get('href'), 'https://www.facebook.com/facebook/videos/10153231379946729/');
     assert.equal(facebook.searchParams.get('show_text'), 'false');
+    // An address that is already the plugin address is not wrapped a second time.
+    const stored = 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Ffacebook%2Fvideos%2F10153231379946729%2F&show_text=false&width=560';
+    assert.equal(facebookEmbedUrl(stored), facebookEmbedUrl('https://www.facebook.com/facebook/videos/10153231379946729/'));
+    assert.equal(new URL(facebookEmbedUrl(stored)).searchParams.get('href'), 'https://www.facebook.com/facebook/videos/10153231379946729/');
+    assert.equal(resolveSource({ embed: stored, type: 'iframe' }).provider, 'facebook');
+});
+
+test('Previous / Next wrap around the list', () => {
+    // forwards
+    assert.equal(wrapIndex(0, 1, 6), 1);
+    assert.equal(wrapIndex(4, 1, 6), 5);
+    assert.equal(wrapIndex(5, 1, 6), 0);
+    // backwards
+    assert.equal(wrapIndex(3, -1, 6), 2);
+    assert.equal(wrapIndex(0, -1, 6), 5);
+    // bigger steps and repeated presses
+    assert.equal(wrapIndex(5, 13, 6), 0);
+    assert.equal(wrapIndex(0, -13, 6), 5);
+    let at = 2;
+    for (let i = 0; i < 6; i++) at = wrapIndex(at, 1, 6);
+    assert.equal(at, 2, 'six steps forward come back to the start');
+    for (let i = 0; i < 6; i++) at = wrapIndex(at, -1, 6);
+    assert.equal(at, 2, 'six steps back as well');
+    // one video: there is nowhere to go
+    assert.equal(wrapIndex(0, 1, 1), 0);
+    assert.equal(wrapIndex(0, -1, 1), 0);
+    // never out of range, whatever comes in
+    for (const [index, delta, length] of [[0, 1, 0], [3, 1, -2], [NaN, 1, 6], [2, NaN, 6], ['4', '1', '6'], [99, 0, 6], [-7, 0, 6], [2.9, 1.9, 6]]) {
+        const result = wrapIndex(index, delta, length);
+        const size = Math.max(1, Math.floor(Number(length)) || 0);
+        assert.ok(Number.isInteger(result) && result >= 0 && result < size, JSON.stringify([index, delta, length, result]));
+    }
+    assert.equal(wrapIndex('4', '1', '6'), 5);
 });
 
 test('every kind of work item is routed to the right player mode', () => {

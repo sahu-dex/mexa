@@ -14,6 +14,29 @@ const playerJs = read('assets/js/mm-video-player.js');
 const playerCss = read('assets/css/mm-video-player.css');
 const template = player.TEMPLATE;
 
+// Where every element of the player sits: [{ tag, cls, attrs, path }] with
+// `path` listing the classes of its ancestors, outermost first.
+const VOID = new Set(['path', 'circle', 'rect', 'line', 'polyline', 'polygon', 'img', 'br', 'input']);
+const elements = (() => {
+    const out = [];
+    const stack = [];
+    for (const match of template.matchAll(/<(\/?)([a-z0-9]+)\b([^>]*)>/gi)) {
+        const [, closing, tag, attrs] = match;
+        if (closing) { stack.pop(); continue; }
+        const cls = (/\bclass="([^"]*)"/.exec(attrs) || [, ''])[1];
+        out.push({ tag, cls, attrs, path: stack.slice() });
+        if (!VOID.has(tag.toLowerCase()) && !/\/\s*$/.test(attrs)) stack.push(cls.split(' ')[0] || tag);
+    }
+    assert.equal(stack.length, 0, 'player markup is balanced');
+    return out;
+})();
+const find = pattern => elements.filter(node => pattern.test(node.attrs));
+const one = pattern => {
+    const hits = find(pattern);
+    assert.equal(hits.length, 1, `exactly one element matching ${pattern}`);
+    return hits[0];
+};
+
 const PAGE_TEMPLATES = ['pages/index.php', 'pages/work.php', 'pages/service.php'];
 const PAGE_CONTROLLERS = [
     'assets/js/home-work-preview.js',
@@ -32,9 +55,10 @@ test('video cards and player dialogs do not render per-video metadata', () => {
 
     // The player itself has no title / description slot at all…
     assert.doesNotMatch(template, /<h[1-6]\b|<p\b|<figcaption\b|mmp-(?:title|desc|meta|caption|heading)/);
-    // …its only visible words are the time read-out and the two message-panel buttons…
+    // …its only visible words are the two message-panel buttons and the time read-outs
+    // (seek tooltip, time played, full length)…
     const words = template.replace(/<[^>]*>/g, '\n').split('\n').map(s => s.trim()).filter(Boolean);
-    assert.deepEqual(words, ['0:00', '0:00', '/', '0:00', 'Try again', 'Open in a new tab']);
+    assert.deepEqual(words, ['Try again', 'Open in a new tab', '0:00', '0:00', '0:00']);
     // …and an item's title only ever reaches assistive technology, never the screen.
     assert.doesNotMatch(playerJs, /(?:textContent|innerText|innerHTML)\s*=[^;\n]*\btitle\b/);
 });
@@ -70,9 +94,11 @@ test('the shared player has exactly one close button, drawn as a single cross', 
 test('the shared player offers play/pause, 10 second skips, progress, volume and fullscreen', () => {
     assert.equal(player.SKIP_SECONDS, 10);
 
-    assert.equal(count(template, /data-mmp-toggle/g), 2); // centre button + control bar
-    assert.equal(count(template, /data-mmp-back\b/g), 1);
-    assert.equal(count(template, /data-mmp-forward\b/g), 1);
+    // One of each control: nothing is doubled.
+    for (const control of ['toggle', 'back', 'forward', 'progress', 'mute', 'volume', 'fullscreen']) {
+        assert.equal(count(template, new RegExp(`data-mmp-${control}\\b`, 'g')), 1, control);
+    }
+    assert.match(template, /data-mmp-toggle aria-label="Play"/);
     assert.match(template, /data-mmp-back aria-label="Rewind 10 seconds"/);
     assert.match(template, /data-mmp-forward aria-label="Forward 10 seconds"/);
     assert.match(template, /data-mmp-progress role="slider"[^>]*aria-label="Seek"/);
@@ -80,11 +106,19 @@ test('the shared player offers play/pause, 10 second skips, progress, volume and
     assert.match(template, /data-mmp-volume role="slider"[^>]*aria-label="Volume"/);
     assert.match(template, /data-mmp-fullscreen aria-label="Full screen"/);
 
-    // Rewind sits on the left, Play/Pause in the middle, Forward on the right.
-    const back = template.indexOf('data-mmp-back');
-    const big = template.indexOf('class="mmp-bigplay"');
-    const forward = template.indexOf('data-mmp-forward');
-    assert.ok(back > -1 && back < big && big < forward, 'centre controls order');
+    // Rewind 10s sits left of Play / Pause and Forward 10s right of it, side by side.
+    const order = ['data-mmp-back', 'data-mmp-toggle', 'data-mmp-forward'].map(name => template.indexOf(name));
+    assert.ok(order[0] > -1 && order[0] < order[1] && order[1] < order[2], 'rewind · play · forward');
+    for (const name of ['back', 'toggle', 'forward']) {
+        assert.deepEqual(one(new RegExp(`data-mmp-${name}\\b`)).path, ['mmp-layout', 'mmp-frame', 'mmp-dock', 'mmp-row', 'mmp-group'], name);
+    }
+    const centre = /<div class="mmp-group mmp-group-center">([\s\S]*?)<\/div>/.exec(template);
+    assert.ok(centre, 'centre group');
+    assert.deepEqual(centre[1].match(/data-mmp-(?:back|toggle|forward)\b/g), ['data-mmp-back', 'data-mmp-toggle', 'data-mmp-forward']);
+    // Time played stands left of them and the full length right: Play stays in the middle.
+    assert.ok(template.indexOf('data-mmp-current') < order[0], 'time played before the buttons');
+    assert.ok(template.indexOf('data-mmp-duration') > order[2], 'full length after the buttons');
+    assert.ok(template.indexOf('data-mmp-duration') < template.indexOf('data-mmp-fullscreen'), 'full length before Full screen');
 
     // Every control is a real button / slider with an accessible name.
     for (const tag of template.match(/<button\b[^>]*>/g)) {
@@ -95,6 +129,111 @@ test('the shared player offers play/pause, 10 second skips, progress, volume and
     // Uploaded files use these controls, never the browser's own control bar.
     assert.match(playerJs, /video\.controls = false;/);
     assert.doesNotMatch(playerJs, /\bvideo\.controls = true|setAttribute\('controls'/);
+});
+
+test('nothing is placed over the video: controls live in the dock under it', () => {
+    // The picture area holds the media, a loading spinner behind it, the poster
+    // and the message panel. No control of any kind.
+    const stage = one(/class="mmp-stage"/);
+    assert.deepEqual(stage.path, ['mmp-layout', 'mmp-frame']);
+    const inStage = elements.filter(node => node.path.includes('mmp-stage'));
+    assert.ok(inStage.length > 0);
+    for (const node of inStage) {
+        assert.doesNotMatch(node.attrs, /data-mmp-(?:toggle|back|forward|progress|mute|volume|fullscreen|close|prev|next|dismiss)\b/, node.attrs);
+        if (node.tag === 'button') assert.match(node.attrs, /data-mmp-retry/, 'the only button in the picture area is "Try again" of the error message');
+    }
+    assert.deepEqual(one(/data-mmp-media\b/).path, ['mmp-layout', 'mmp-frame', 'mmp-stage']);
+
+    // The dock follows the picture inside the same frame, so it also goes fullscreen with it.
+    const dock = one(/data-mmp-dock\b/);
+    assert.deepEqual(dock.path, ['mmp-layout', 'mmp-frame']);
+    assert.ok(template.indexOf('class="mmp-stage"') < template.indexOf('class="mmp-dock"'), 'dock comes after the picture');
+    for (const control of ['toggle', 'back', 'forward', 'progress', 'mute', 'volume', 'fullscreen', 'current', 'duration']) {
+        const node = one(new RegExp(`data-mmp-${control}\\b`));
+        assert.ok(node.path.includes('mmp-dock') && !node.path.includes('mmp-stage'), `${control} is in the dock`);
+    }
+
+    // The earlier overlay design is gone: no centre play button, click layer or bar on the video.
+    assert.doesNotMatch(template, /mmp-(?:bigplay|shield|bar|overlay|center|controls)\b/);
+    assert.doesNotMatch(playerCss, /\.mmp-(?:bigplay|shield|bar|overlay)\b/);
+    assert.doesNotMatch(playerJs, /is-idle|mmp-shield|mmp-bigplay/);
+    // An embed is never cropped, scaled or made unclickable to hide the provider's own screen.
+    for (const rule of playerCss.match(/[^{}]*\{[^{}]*\}/g)) {
+        const [selector, body] = [rule.slice(0, rule.indexOf('{')), rule.slice(rule.indexOf('{'))];
+        if (/iframe|mmp-embed|mmp-media\b/.test(selector)) {
+            assert.doesNotMatch(body, /pointer-events\s*:\s*none|transform\s*:|clip-path|\bscale\b|margin(?:-top|-bottom)?\s*:\s*-/, selector.trim());
+        }
+    }
+});
+
+test('Previous / Next video buttons stand beside the player, one of each', () => {
+    const prev = one(/data-mmp-prev\b/);
+    const next = one(/data-mmp-next\b/);
+    for (const [node, label] of [[prev, 'Previous video'], [next, 'Next video']]) {
+        assert.equal(node.tag, 'button');
+        assert.match(node.attrs, /type="button"/);
+        assert.match(node.attrs, new RegExp(`aria-label="${label}"`));
+        // Outside the frame: never on the picture, never inside the dock.
+        assert.deepEqual(node.path, ['mmp-layout']);
+        // Hidden until a gallery of two or more videos is opened.
+        assert.match(node.attrs, /\bhidden\b/);
+    }
+    // Reading order = visual order: × · previous · player · next.
+    const at = name => template.indexOf(name);
+    assert.ok(at('data-mmp-close') < at('data-mmp-prev') && at('data-mmp-prev') < at('class="mmp-frame"') && at('class="mmp-dock"') < at('data-mmp-next'), 'order');
+    // Icon only, like the ×: a single chevron and no text.
+    for (const name of ['prev', 'next']) {
+        const inner = new RegExp(`<button\\b[^>]*\\bdata-mmp-${name}\\b[^>]*>([\\s\\S]*?)<\\/button>`).exec(template)[1];
+        assert.equal(count(inner, /<svg\b/g), 1);
+        assert.equal(inner.replace(/<[^>]*>/g, '').trim(), '');
+    }
+    assert.deepEqual(one(/data-mmp-close\b/).path, ['mmp-layout']);
+
+    // A hidden button really disappears, and fullscreen shows the player alone.
+    assert.match(playerCss, /\.mmp\[hidden\],\s*\.mmp \[hidden\]\s*\{[^}]*display:\s*none\s*!important/);
+    assert.match(playerCss, /\.mmp\.is-fullscreen \.mmp-close,\s*\.mmp\.is-fullscreen \.mmp-nav\s*\{[^}]*visibility:\s*hidden/);
+
+    // The public API: a single item or a list with a start position.
+    assert.match(playerJs, /next: function \(\) \{ go\(1\); \}/);
+    assert.match(playerJs, /prev: function \(\) \{ go\(-1\); \}/);
+
+    // Work: a click opens the card's whole section, starting at that card.
+    const work = read('assets/js/page-work.js');
+    assert.match(work, /MMPlayer\.open\(gallery, start\)/);
+    assert.match(work, /var CARDS = '\.wk-rc, \.wk-demo, \.wk-short';/);
+    assert.match(work, /node\.getAttribute\('data-section'\) !== section/);
+    // Cards keep their own link, embed address and thumbnail.
+    assert.match(read('pages/work.php'), /data-mm-video-url=/);
+    for (const attr of ['data-mm-video-url', 'data-mm-video-type', 'data-mm-video-embed-url', 'data-mm-video-poster']) {
+        assert.match(work, new RegExp(attr), attr);
+    }
+});
+
+test('the dock is exactly as tall as its content, on mouse and on touch screens', () => {
+    const px = (name, block) => {
+        const hit = new RegExp(`--mmp-${name}:\\s*(\\d+)px`).exec(block);
+        assert.ok(hit, `--mmp-${name}`);
+        return Number(hit[1]);
+    };
+    const base = /\.mmp\s*\{[^}]*\}/.exec(playerCss)[0];
+    assert.match(base, /--mmp-dock-full:\s*calc\(var\(--mmp-bar\) \+ var\(--mmp-play\) \+ var\(--mmp-dock-gap\)\)/);
+    assert.match(playerCss, /\.mmp--dock\s*\{\s*--mmp-dock:\s*var\(--mmp-dock-full\);/);
+    assert.match(playerCss, /\.mmp--reserve\s*\{\s*--mmp-reserve:\s*var\(--mmp-dock-full\);/);
+    assert.match(playerCss, /\.mmp-progress\s*\{[^}]*height:\s*var\(--mmp-bar\)/);
+    assert.match(playerCss, /\.mmp-btn\s*\{[^}]*width:\s*var\(--mmp-btn\);\s*height:\s*var\(--mmp-btn\)/);
+    assert.match(playerCss, /\.mmp \.mmp-play\s*\{[^}]*width:\s*var\(--mmp-play\);\s*height:\s*var\(--mmp-play\)/);
+    assert.match(playerCss, /\.mmp-row\s*\{[^}]*padding-bottom:\s*var\(--mmp-dock-gap\)/);
+    // Side columns flex symmetrically around the centred Play group, and narrow tiers step down cleanly.
+    assert.match(playerCss, /\.mmp-row\s*\{[^}]*grid-template-columns:\s*minmax\(min-content,\s*1fr\)\s+auto\s+minmax\(min-content,\s*1fr\)/);
+    assert.match(playerCss, /\.mmp--nano \.mmp-time\s*\{\s*display:\s*none;/);
+    // Play is the largest button and has room under it.
+    assert.ok(px('play', base) > px('btn', base));
+    assert.ok(px('dock-gap', base) >= 4);
+    assert.ok(px('btn', base) >= 40);
+    // Touch screens: larger targets, same rule.
+    const touch = /@media \(pointer: coarse\)\s*\{\s*\.mmp\s*\{[^}]*\}/.exec(playerCss);
+    assert.ok(touch, 'touch sizes');
+    assert.ok(px('btn', touch[0]) >= 44 && px('play', touch[0]) > px('btn', touch[0]) && px('bar', touch[0]) > px('bar', base));
 });
 
 test('Home, Work and Service all open media in the one shared player', () => {

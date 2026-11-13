@@ -114,8 +114,7 @@
 
     // Every card opens in the shared site player (assets/js/mm-video-player.js).
     // This only maps a work item to the player; the player UI lives in one place.
-    function openItem(item, fallbackUrl, vertical, trigger) {
-        if (!item || !window.MMPlayer) return;
+    function mediaFor(item, fallbackUrl, vertical, trigger) {
         var url = item.url || item.file_path || '';
         var media = {
             title: item.title || '',
@@ -139,7 +138,18 @@
         } else {
             media.src = url || fallbackUrl;
         }
-        window.MMPlayer.open(media);
+        return media;
+    }
+    // A server-rendered card still works if the page data is missing.
+    function itemFromCard(cardEl) {
+        return {
+            url: cardEl.getAttribute('data-mm-video-url') || '',
+            embed_type: cardEl.getAttribute('data-mm-video-type') || '',
+            embed_url: cardEl.getAttribute('data-mm-video-embed-url') || '',
+            embed_provider: cardEl.getAttribute('data-mm-video-provider') || '',
+            thumbnail_url: cardEl.getAttribute('data-mm-video-poster') || '',
+            title: cardEl.getAttribute('data-mm-video-title') || ''
+        };
     }
     document.addEventListener('error', function (e) {
         var image = e.target;
@@ -149,24 +159,31 @@
             image.src = fallback;
         }
     }, true);
+    // A click opens the whole section as a gallery, starting at the chosen card:
+    // the player's Previous / Next buttons (and ← / →) then step through the
+    // other videos of that section, in the order shown on the page.
+    var CARDS = '.wk-rc, .wk-demo, .wk-short';
+    function itemForCard(cardEl, pool) {
+        var index = cardEl.getAttribute('data-index');
+        var item = index === null || index === '' ? null : pool[Number(index)];
+        return item || (cardEl.getAttribute('data-mm-video-url') ? itemFromCard(cardEl) : null);
+    }
     document.addEventListener('click', function (e) {
-        var cardEl = e.target && e.target.closest ? e.target.closest('.wk-rc, .wk-demo, .wk-short') : null;
-        if (!cardEl) return;
+        var cardEl = e.target && e.target.closest ? e.target.closest(CARDS) : null;
+        if (!cardEl || !window.MMPlayer) return;
         var section = cardEl.getAttribute('data-section');
-        var index = Number(cardEl.getAttribute('data-index'));
         var pool = section === 'recent' ? getRecentSix() : section === 'demo' ? ordered(state.demos) : ordered(state.shorts);
-        var item = pool[index];
-        if (!item && cardEl.getAttribute('data-mm-video-url')) {
-            item = {
-                url: cardEl.getAttribute('data-mm-video-url'),
-                embed_type: cardEl.getAttribute('data-mm-video-type') || '',
-                embed_url: cardEl.getAttribute('data-mm-video-embed-url') || '',
-                embed_provider: cardEl.getAttribute('data-mm-video-provider') || '',
-                thumbnail_url: cardEl.getAttribute('data-mm-video-poster') || '',
-                title: cardEl.getAttribute('data-mm-video-title') || ''
-            };
-        }
-        openItem(item, cardEl.getAttribute('data-preview-src') || '', section === 'short', cardEl);
+        var gallery = [];
+        var start = -1;
+        Array.prototype.forEach.call(document.querySelectorAll(CARDS), function (node) {
+            if (node.getAttribute('data-section') !== section) return;
+            var item = itemForCard(node, pool);
+            if (!item) return;
+            if (node === cardEl) start = gallery.length;
+            gallery.push(mediaFor(item, node.getAttribute('data-preview-src') || '', section === 'short', node));
+        });
+        if (start < 0) return;
+        window.MMPlayer.open(gallery, start);
     });
 
     function boot() {

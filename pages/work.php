@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'work';
 $pageTitle = 'Work | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = 'Every video, short, design and tutorial we build — click any card to watch it right here.';
-$pageScripts = ['assets/js/page-work.js?v=20261113-shared-player'];
+$pageScripts = ['assets/js/page-work.js?v=20261113-clean-dock'];
 
 $workBundle = get_work_bundle();
 $recentSix = array_slice($workBundle['recent'], 0, 6);

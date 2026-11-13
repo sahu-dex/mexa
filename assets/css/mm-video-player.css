@@ -1,11 +1,20 @@
 /*
  * MEXA MOTION — shared video player (markup + behaviour: assets/js/mm-video-player.js).
  *
- * One player for Home, Service and Work. Every icon is an inline SVG with a
- * fixed pixel size, so the site-wide button typography (font-size / line-height
- * forced with !important inside a cascade layer) cannot change how the
- * controls render. The close button in particular has exactly one cross:
- * no text node, no icon font and no ::before / ::after glyph.
+ * One player for Home, Service and Work.
+ *
+ *   .mmp          full-screen dialog over a dark backdrop
+ *   .mmp-layout   [×]  [‹]  frame  [›] — the buttons stand outside the frame
+ *   .mmp-frame    the picture (.mmp-stage) with the control dock (.mmp-dock) under it
+ *
+ * Nothing is ever positioned over the media. Embedded players (YouTube,
+ * Facebook, Vimeo) have to stay uncovered, and our own files use the same
+ * layout so every video looks alike.
+ *
+ * Every icon is an inline SVG with a fixed pixel size, so the site-wide button
+ * typography (font-size / line-height forced with !important inside a cascade
+ * layer) cannot change how the controls render. The close button in particular
+ * has exactly one cross: no text node, no icon font, no ::before / ::after glyph.
  */
 
 html.mmp-lock,
@@ -15,8 +24,33 @@ html.mmp-lock body {
 
 .mmp {
     --mmp-accent: #2f7bff;
-    --mmp-pad-x: clamp(14px, 4vw, 56px);
-    --mmp-pad-y: clamp(30px, 6vh, 56px);
+    --mmp-ratio: 1.7778;   /* width / height of the media, set by the script */
+    --mmp-max: 1120px;     /* widest frame */
+    --mmp-min: 0px;        /* narrowest frame (the dock needs room for its buttons) */
+    --mmp-dock: 0px;       /* height of the control dock, 0 when it is not shown */
+    --mmp-reserve: 0px;    /* room kept under the picture for the dock, shown or not */
+    /* The dock is exactly as tall as its content: progress bar + Play + space. */
+    --mmp-bar: 20px;       /* progress bar (its whole pressable height) */
+    --mmp-btn: 40px;       /* dock button */
+    --mmp-play: 44px;      /* Play / Pause, the main button */
+    --mmp-dock-gap: 6px;   /* free space under the buttons */
+    --mmp-dock-full: calc(var(--mmp-bar) + var(--mmp-play) + var(--mmp-dock-gap));
+    --mmp-dock-skips: 56px;
+    --mmp-box: 0px;        /* gallery: smallest layout width, so the arrows keep their place */
+    --mmp-nav: 48px;       /* Previous / Next button */
+    --mmp-gap: 14px;       /* between the frame and the buttons beside it */
+    --mmp-radius: clamp(10px, 1.6vw, 16px);
+    --mmp-vh: 100vh;
+    --mmp-pad-x: max(14px, env(safe-area-inset-left, 0px), env(safe-area-inset-right, 0px));
+    --mmp-pad-y: max(clamp(12px, 3.2vh, 32px), env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
+    /* Room used by the buttons around the frame; set per orientation below. */
+    --mmp-side: 0px;
+    --mmp-above: 0px;
+    --mmp-below: 0px;
+    --mmp-avail-w: calc(100vw - 2 * var(--mmp-pad-x) - 2 * var(--mmp-side));
+    --mmp-avail-h: calc(var(--mmp-vh) - 2 * var(--mmp-pad-y) - var(--mmp-above) - var(--mmp-below));
+    /* As large as the screen allows without ever distorting the picture. */
+    --mmp-w: min(var(--mmp-avail-w), max(var(--mmp-min), min(var(--mmp-max), calc((var(--mmp-avail-h) - var(--mmp-reserve)) * var(--mmp-ratio)))));
     position: fixed;
     top: 0;
     right: 0;
@@ -37,20 +71,33 @@ html.mmp-lock body {
     -webkit-user-select: none;
     user-select: none;
 }
-/* Notched phones: keep the frame and the × out of the unsafe areas. */
-@supports (padding: max(0px, env(safe-area-inset-top))) {
+@supports (height: 100dvh) {
     .mmp {
-        padding:
-            max(var(--mmp-pad-y), env(safe-area-inset-top))
-            max(var(--mmp-pad-x), env(safe-area-inset-right))
-            max(var(--mmp-pad-y), env(safe-area-inset-bottom))
-            max(var(--mmp-pad-x), env(safe-area-inset-left));
+        --mmp-vh: 100dvh;
+    }
+}
+.mmp.mmp--portrait {
+    --mmp-max: 480px;
+}
+/* Wide screens: × and the arrows stand beside the frame. */
+@media (orientation: landscape) {
+    .mmp {
+        --mmp-side: calc(var(--mmp-nav) + var(--mmp-gap));
+    }
+}
+/* Tall screens: × above the frame, the arrows below it. */
+@media (orientation: portrait) {
+    .mmp {
+        --mmp-above: 52px;
+    }
+    .mmp.mmp--nav {
+        --mmp-below: calc(var(--mmp-nav) + 12px);
     }
 }
 /* Short screens (a phone held sideways): give the height to the video. */
 @media (max-height: 500px) {
     .mmp {
-        --mmp-pad-y: 12px;
+        --mmp-pad-y: max(10px, env(safe-area-inset-top, 0px), env(safe-area-inset-bottom, 0px));
     }
 }
 .mmp[hidden],
@@ -80,91 +127,126 @@ html.mmp-lock body {
     }
 }
 
-/* ---- Frame: sized from the media ratio, never stretches the picture ---- */
-.mmp-frame {
-    --mmp-ratio: 1.7778;
-    --mmp-max: 1120px;
+/* ---- Layout: the frame with × and the arrows around it ---- */
+.mmp-layout {
     position: relative;
+    z-index: 1;
     flex: none;
-    width: min(100%, var(--mmp-max), calc((100vh - 2 * var(--mmp-pad-y)) * var(--mmp-ratio)));
-    animation: mmp-pop .24s cubic-bezier(.22, .61, .36, 1) both;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    /* Clicks between the buttons fall through to the backdrop (which closes). */
+    pointer-events: none;
 }
-@supports (height: 100dvh) {
+.mmp-layout > * {
+    pointer-events: auto;
+}
+@media (orientation: landscape) {
+    .mmp-layout {
+        grid-template-columns: var(--mmp-side) minmax(var(--mmp-box), auto) var(--mmp-side);
+    }
     .mmp-frame {
-        width: min(100%, var(--mmp-max), calc((100dvh - 2 * var(--mmp-pad-y)) * var(--mmp-ratio)));
+        grid-column: 2;
+        grid-row: 1;
+    }
+    .mmp-close {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: start;
+        justify-self: end;
+    }
+    .mmp-nav-prev {
+        grid-column: 1;
+        grid-row: 1;
+        justify-self: start;
+    }
+    .mmp-nav-next {
+        grid-column: 3;
+        grid-row: 1;
+        justify-self: end;
+    }
+    /* Line the arrows up with the middle of the picture, not of picture + dock. */
+    .mmp-layout > .mmp-nav {
+        margin-bottom: var(--mmp-reserve);
     }
 }
-.mmp-frame--portrait {
-    --mmp-max: 480px;
-}
-/* Height follows the ratio (works without aspect-ratio support). */
-.mmp-frame::before {
-    content: '';
-    display: block;
-    padding-top: calc(100% / var(--mmp-ratio));
+@media (orientation: portrait) {
+    .mmp-layout {
+        grid-template-columns: 1fr 1fr;
+        min-width: var(--mmp-box);
+    }
+    .mmp-close {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        justify-self: end;
+        margin-bottom: 8px;
+    }
+    .mmp-frame {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+    .mmp-nav-prev {
+        grid-column: 1;
+        grid-row: 3;
+        justify-self: start;
+    }
+    .mmp-nav-next {
+        grid-column: 2;
+        grid-row: 3;
+        justify-self: end;
+    }
+    .mmp-layout > .mmp-nav {
+        margin-top: 12px;
+    }
 }
 
-.mmp-stage {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    overflow: hidden;
-    border-radius: clamp(10px, 1.6vw, 18px);
+/* ---- Frame: the picture with the dock underneath ---- */
+.mmp-frame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: var(--mmp-w);
+    /* Without a dock its room stays empty: the picture does not move. */
+    margin-bottom: calc(var(--mmp-reserve) - var(--mmp-dock));
+    border-radius: var(--mmp-radius);
     background: #000;
     box-shadow: 0 28px 90px rgba(0, 0, 0, .55), 0 0 0 1px rgba(150, 199, 255, .16);
+    animation: mmp-pop .24s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+/* The picture. Its height follows the media ratio, so nothing is stretched. */
+.mmp-stage {
+    position: relative;
+    flex: none;
+    width: 100%;
+    height: min(calc(var(--mmp-w) / var(--mmp-ratio)), calc(var(--mmp-avail-h) - var(--mmp-reserve)));
+    overflow: hidden;
+    border-radius: var(--mmp-radius);
+    background: #000;
     isolation: isolate;
     transform: translateZ(0);
+}
+.mmp--dock .mmp-stage {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .mmp .mmp-stage:focus,
 .mmp .mmp-stage:focus-visible {
     outline: none;
 }
 
-.mmp-media {
+/* Thumbnail and spinner wait behind an embed until its frame has loaded. */
+.mmp-poster {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 1;
-    background: #000;
+    z-index: 0;
+    background: #000 center / contain no-repeat;
 }
-.mmp-media > .mmp-video,
-.mmp-media > .mmp-embed,
-.mmp-media > .mmp-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: #000;
-    object-fit: contain;
-}
-
-/* Click / tap surface over the picture while our own controls are live. */
-.mmp-shield {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
+.mmp.is-loaded .mmp-poster {
     display: none;
-    cursor: pointer;
-}
-.mmp--live .mmp-shield {
-    display: block;
-}
-.mmp--live.is-idle.is-fullscreen .mmp-shield {
-    cursor: none;
 }
 
 .mmp-spinner {
@@ -184,6 +266,42 @@ html.mmp-lock body {
 }
 .mmp.is-waiting .mmp-spinner {
     display: block;
+}
+/* Never in front of an embedded player. */
+.mmp--embed .mmp-spinner {
+    z-index: 1;
+}
+
+.mmp-media {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2;
+}
+.mmp-media > .mmp-video,
+.mmp-media > .mmp-embed,
+.mmp-media > .mmp-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: #000;
+    object-fit: contain;
+}
+.mmp-media > .mmp-embed {
+    background: transparent;
+}
+.mmp-media > .mmp-video {
+    cursor: pointer;
 }
 
 /* ---- Icons ---- */
@@ -220,12 +338,8 @@ html.mmp-lock body {
     display: block;
 }
 
-/* ---- Close: the single × of the player ---- */
+/* ---- Close: the single × of the player, outside the picture ---- */
 .mmp-close {
-    position: absolute;
-    top: -19px;
-    right: -11px;
-    z-index: 6;
     display: grid;
     place-items: center;
     width: 44px;
@@ -239,7 +353,6 @@ html.mmp-lock body {
     cursor: pointer;
     -webkit-appearance: none;
     appearance: none;
-    transition: opacity .2s ease;
 }
 .mmp .mmp-close::before,
 .mmp .mmp-close::after {
@@ -248,8 +361,8 @@ html.mmp-lock body {
 }
 .mmp-close-svg {
     display: block;
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
     overflow: visible;
     pointer-events: none;
     filter: drop-shadow(0 6px 9px rgba(11, 46, 96, .22));
@@ -270,134 +383,113 @@ html.mmp-lock body {
     fill: #eaf2ff;
 }
 .mmp .mmp-close:focus-visible {
-    outline: 2px solid #3674e8;
+    outline: 2px solid #fff;
     outline-offset: -2px;
 }
-@media (max-height: 500px) {
-    /* Less room above the frame: the × sits on its corner instead of above it. */
-    .mmp-close {
-        top: -8px;
-    }
-}
 
-/* ---- Centre controls: 10s back (left) · play/pause · 10s forward (right) ---- */
-.mmp-center {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 3;
-    display: none;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(12px, 6%, 72px);
-    pointer-events: none;
-    transition: opacity .2s ease;
-}
-.mmp--live .mmp-center,
-.mmp--skips .mmp-center {
-    display: flex;
-}
-.mmp-skip,
-.mmp-bigplay {
-    flex: none;
+/* ---- Previous / Next video ---- */
+.mmp-nav {
     display: grid;
     place-items: center;
+    width: var(--mmp-nav);
+    height: var(--mmp-nav);
     margin: 0;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, .22);
+    border: 1px solid rgba(255, 255, 255, .2);
     border-radius: 50%;
     color: #fff;
-    background: rgba(6, 14, 32, .64);
+    background: rgba(255, 255, 255, .1);
     cursor: pointer;
-    pointer-events: auto;
     -webkit-appearance: none;
     appearance: none;
     transition: background-color .15s ease, transform .15s ease;
 }
-.mmp-skip {
-    width: 54px;
-    height: 54px;
+.mmp-nav .mmp-ic {
+    width: 26px;
+    height: 26px;
 }
-.mmp-bigplay {
-    width: 72px;
-    height: 72px;
-}
-.mmp-skip .mmp-ic {
-    width: 30px;
-    height: 30px;
-}
-.mmp-bigplay .mmp-ic {
-    width: 34px;
-    height: 34px;
-}
-.mmp-skip .mmp-ic-line {
-    stroke-width: 1.7;
+.mmp-nav .mmp-ic-line {
+    stroke-width: 2.2;
 }
 @media (hover: hover) {
-    .mmp-skip:hover,
-    .mmp-bigplay:hover {
+    .mmp-nav:hover {
         background: rgba(47, 123, 255, .94);
     }
 }
-.mmp-skip:active,
-.mmp-bigplay:active {
-    transform: scale(.93);
-}
-.mmp.is-waiting .mmp-bigplay {
-    visibility: hidden;
-    pointer-events: none;
-}
-/* Provider embed (Vimeo): only the two 10s buttons, kept near the middle so
-   they stay clear of the embed's own corner buttons and bottom bar. */
-.mmp--skips .mmp-center {
-    justify-content: center;
-}
-.mmp--skips .mmp-bigplay {
-    display: none;
-}
-.mmp--skips .mmp-skip {
-    margin: 0 clamp(26px, 8%, 92px);
+.mmp-nav:active {
+    transform: scale(.94);
 }
 
-/* ---- Bottom bar: progress · play · volume · time · fullscreen ---- */
-.mmp-bar {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 4;
-    display: none;
-    flex-direction: column;
-    padding: 34px 10px 6px;
-    background: linear-gradient(to top, rgba(0, 0, 0, .82) 0%, rgba(0, 0, 0, .5) 48%, rgba(0, 0, 0, 0) 100%);
-    transition: opacity .2s ease;
+/* ---- Dock: progress bar · volume · time · 10s back · play · 10s forward · fullscreen ---- */
+.mmp--dock {
+    --mmp-dock: var(--mmp-dock-full);
 }
-.mmp--live .mmp-bar {
+.mmp--skips {
+    --mmp-dock: var(--mmp-dock-skips);
+}
+/* The dock's room is kept for a video that has (or may get) a dock and for
+   every video of a gallery: nothing jumps when the dock comes or goes. */
+.mmp--reserve {
+    --mmp-reserve: var(--mmp-dock-full);
+    --mmp-min: 280px;
+}
+/* Gallery: the layout is as wide as a 16:9 player (9:16 for Shorts) whatever
+   the shape of the video on screen, so Previous / Next never move. */
+.mmp.mmp--nav {
+    --mmp-box-ratio: 1.7778;
+    --mmp-box-max: 1120px;
+    --mmp-box: min(var(--mmp-avail-w), max(var(--mmp-min), min(var(--mmp-box-max), calc((var(--mmp-avail-h) - var(--mmp-reserve)) * var(--mmp-box-ratio)))));
+}
+.mmp.mmp--nav.mmp--nav-tall {
+    --mmp-box-ratio: .5625;
+    --mmp-box-max: 480px;
+}
+.mmp-dock {
+    flex: none;
     display: flex;
+    flex-direction: column;
+    height: var(--mmp-dock);
+    padding: 0 10px;
+    border-radius: 0 0 var(--mmp-radius) var(--mmp-radius);
+    background: #0b1322;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
 }
-.mmp.is-idle .mmp-bar,
-.mmp.is-idle .mmp-center {
-    opacity: 0;
-}
-.mmp.is-idle .mmp-bar,
-.mmp.is-idle .mmp-center > button {
-    pointer-events: none;
-}
-
+/* Three groups: volume + time played · 10s back / play / 10s forward ·
+   full length + fullscreen. The side columns are equally wide, so Play stays
+   in the middle of the dock. When room is short the volume slider gives way
+   first; a column never gets narrower than its buttons, so nothing overlaps. */
 .mmp-row {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(min-content, 1fr) auto minmax(min-content, 1fr);
+    align-items: center;
+    column-gap: 4px;
+    min-height: 0;
+    padding-bottom: var(--mmp-dock-gap);
+}
+.mmp-group {
     display: flex;
     align-items: center;
-    min-width: 0;
     gap: 2px;
 }
+/* As wide as its column, so the volume slider can take the room that is there. */
+.mmp-group-start {
+    justify-self: stretch;
+}
+.mmp-group-center {
+    justify-self: center;
+    gap: 6px;
+}
+.mmp-group-end {
+    justify-self: end;
+}
+
 .mmp-btn {
     flex: none;
     display: grid;
     place-items: center;
-    width: 40px;
-    height: 40px;
+    width: var(--mmp-btn);
+    height: var(--mmp-btn);
     margin: 0;
     padding: 0;
     border: 0;
@@ -407,7 +499,7 @@ html.mmp-lock body {
     cursor: pointer;
     -webkit-appearance: none;
     appearance: none;
-    transition: background-color .15s ease;
+    transition: background-color .15s ease, transform .15s ease;
 }
 @media (hover: hover) {
     .mmp-btn:hover {
@@ -417,19 +509,50 @@ html.mmp-lock body {
 .mmp-btn:active {
     background: rgba(255, 255, 255, .24);
 }
+.mmp-skip .mmp-ic {
+    width: 27px;
+    height: 27px;
+}
+.mmp-skip .mmp-ic-line {
+    stroke-width: 1.7;
+}
+/* Play / Pause is the main button of the dock. */
+.mmp .mmp-play {
+    width: var(--mmp-play);
+    height: var(--mmp-play);
+    color: #0b1322;
+    background: #fff;
+}
+@media (hover: hover) {
+    .mmp .mmp-play:hover {
+        background: #dfeaff;
+    }
+}
+.mmp .mmp-play:active {
+    background: #cfe0ff;
+    transform: scale(.94);
+}
+.mmp .mmp-btn:disabled {
+    opacity: .38;
+    cursor: default;
+}
 .mmp .mmp-btn:focus-visible,
-.mmp .mmp-skip:focus-visible,
-.mmp .mmp-bigplay:focus-visible,
+.mmp .mmp-nav:focus-visible,
 .mmp .mmp-action:focus-visible {
     outline: 2px solid #fff;
     outline-offset: 2px;
 }
 
+/* Time played stands left of the buttons and the full length right of them:
+   the two sides weigh the same, so Play stays in the middle of the dock.
+   Both labels are as wide as the full length needs (--mmp-time-ch digits),
+   so nothing moves while the seconds count up. */
 .mmp-time {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-left: 6px;
+    flex: none;
+    box-sizing: content-box;
+    min-width: calc((var(--mmp-time-ch, 4) - 0.5) * 1ch);
+    padding: 0 6px;
+    text-align: center;
     color: #fff;
     font-size: 13px;
     font-weight: 600;
@@ -438,12 +561,8 @@ html.mmp-lock body {
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
-.mmp-time-sep {
-    opacity: .6;
-}
-.mmp-spacer {
-    flex: 1 1 auto;
-    min-width: 4px;
+.mmp-time-total {
+    opacity: .68;
 }
 
 /* Progress */
@@ -452,8 +571,9 @@ html.mmp-lock body {
     --mmp-buffered: 0;
     --mmp-tip: 0px;
     position: relative;
-    height: 22px;
-    margin: 0 6px;
+    flex: none;
+    height: var(--mmp-bar);
+    margin: 0 4px;
     border-radius: 6px;
     cursor: pointer;
     touch-action: none;
@@ -467,7 +587,7 @@ html.mmp-lock body {
     margin-top: -2px;
     overflow: hidden;
     border-radius: 4px;
-    background: rgba(255, 255, 255, .28);
+    background: rgba(255, 255, 255, .24);
     transition: height .12s ease, margin-top .12s ease;
 }
 .mmp-progress-buffer,
@@ -480,7 +600,7 @@ html.mmp-lock body {
     transform-origin: 0 50%;
 }
 .mmp-progress-buffer {
-    background: rgba(255, 255, 255, .4);
+    background: rgba(255, 255, 255, .36);
     transform: scaleX(var(--mmp-buffered));
 }
 .mmp-progress-fill {
@@ -498,28 +618,25 @@ html.mmp-lock body {
     background: #fff;
     box-shadow: 0 1px 4px rgba(0, 0, 0, .45);
     pointer-events: none;
-    transform: scale(0);
-    transition: transform .12s ease;
-}
-.mmp-progress.is-dragging .mmp-progress-thumb,
-.mmp-progress:focus-visible .mmp-progress-thumb {
-    transform: scale(1);
 }
 .mmp-progress.is-dragging .mmp-progress-track {
     height: 6px;
     margin-top: -3px;
 }
+/* The time under the pointer. It opens downwards, inside the dock, so it can
+   never cover the picture above. */
 .mmp-progress-tip {
     position: absolute;
-    bottom: 100%;
+    top: 100%;
     left: clamp(20px, var(--mmp-tip), calc(100% - 20px));
-    margin-bottom: 2px;
+    z-index: 2;
+    margin-top: -2px;
     padding: 5px 7px;
     border-radius: 6px;
-    color: #fff;
-    background: rgba(6, 14, 32, .92);
+    color: #0b1322;
+    background: #fff;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -532,9 +649,6 @@ html.mmp-lock body {
     opacity: 1;
 }
 @media (hover: hover) {
-    .mmp-progress:hover .mmp-progress-thumb {
-        transform: scale(1);
-    }
     .mmp-progress:hover .mmp-progress-track {
         height: 6px;
         margin-top: -3px;
@@ -543,27 +657,27 @@ html.mmp-lock body {
         opacity: 1;
     }
 }
-@media (hover: none) {
-    .mmp-progress-thumb {
-        transform: scale(1);
-    }
-}
-.mmp-progress[aria-valuemax='0'] {
+.mmp-progress[aria-disabled='true'] {
     cursor: default;
 }
-.mmp-progress[aria-valuemax='0'] .mmp-progress-thumb,
-.mmp-progress[aria-valuemax='0'] .mmp-progress-tip {
+.mmp-progress[aria-disabled='true'] .mmp-progress-thumb,
+.mmp-progress[aria-disabled='true'] .mmp-progress-tip {
     display: none;
 }
 
 /* Volume */
+/* 64px wide where there is room, down to 36px in a narrow dock. The width is
+   a percentage on purpose: it counts as "no fixed width" when the browser
+   works out how narrow the column may get, so the slider is what gives way. */
 .mmp-volume {
     --mmp-level: 1;
     position: relative;
-    flex: none;
-    width: 64px;
+    flex: 0 1 auto;
+    width: 100%;
+    min-width: 36px;
+    max-width: 64px;
     height: 40px;
-    margin: 0 12px 0 4px;
+    margin: 0 8px 0 4px;
     border-radius: 6px;
     cursor: pointer;
     touch-action: none;
@@ -577,7 +691,7 @@ html.mmp-lock body {
     margin-top: -2px;
     overflow: hidden;
     border-radius: 4px;
-    background: rgba(255, 255, 255, .3);
+    background: rgba(255, 255, 255, .28);
 }
 .mmp-volume-fill {
     position: absolute;
@@ -601,6 +715,10 @@ html.mmp-lock body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
     pointer-events: none;
 }
+.mmp-volume[aria-disabled='true'] {
+    opacity: .38;
+    cursor: default;
+}
 .mmp .mmp-progress:focus,
 .mmp .mmp-volume:focus {
     outline: none;
@@ -610,10 +728,26 @@ html.mmp-lock body {
     outline: 2px solid rgba(255, 255, 255, .9);
     outline-offset: 0;
 }
-/* iOS keeps volume under hardware control: only Mute is offered there. */
+/* iOS keeps volume under hardware control: only Mute is offered there.
+   Narrow frames keep Mute as well and leave the slider out. */
 .mmp--novolume .mmp-volume,
-.mmp--tiny .mmp-volume {
+.mmp--compact .mmp-volume {
     display: none;
+}
+
+/* Vimeo keeps its own control bar: the dock only adds the two 10s buttons. */
+.mmp--skips .mmp-progress,
+.mmp--skips .mmp-group-start,
+.mmp--skips .mmp-group-end,
+.mmp--skips .mmp-play {
+    display: none;
+}
+.mmp--skips .mmp-row {
+    grid-template-columns: 1fr;
+    padding: 0;
+}
+.mmp--skips .mmp-group-center {
+    gap: 28px;
 }
 
 /* ---- Message panel (playback error, external link) ---- */
@@ -623,7 +757,7 @@ html.mmp-lock body {
     right: 0;
     bottom: 0;
     left: 0;
-    z-index: 5;
+    z-index: 4;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -655,6 +789,7 @@ html.mmp-lock body {
     justify-content: center;
     gap: 8px;
     min-height: 40px;
+    max-width: 100%;
     margin: 0;
     padding: 9px 16px;
     border: 1px solid rgba(145, 196, 255, .42);
@@ -668,7 +803,6 @@ html.mmp-lock body {
     text-align: center;
     text-decoration: none;
     cursor: pointer;
-    max-width: 100%;
 }
 .mmp-action .mmp-ic {
     width: 16px;
@@ -677,6 +811,8 @@ html.mmp-lock body {
 
 .mmp-sr {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 1px;
     height: 1px;
     margin: -1px;
@@ -687,75 +823,61 @@ html.mmp-lock body {
     border: 0;
 }
 
-/* ---- Fullscreen (real, or viewport-filling fallback) ---- */
+/* ---- Fullscreen: the whole frame, so the dock stays with the picture ---- */
 .mmp-frame:fullscreen {
     width: 100% !important;
     height: 100% !important;
-    background: #000;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
 }
 .mmp-frame:-webkit-full-screen {
     width: 100% !important;
     height: 100% !important;
-    background: #000;
-}
-.mmp.mmp--fill {
-    padding: 0;
-}
-.mmp.mmp--fill .mmp-frame {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    animation: none;
-}
-.mmp.is-fullscreen .mmp-frame::before {
-    display: none;
-}
-.mmp.is-fullscreen .mmp-stage {
+    margin: 0;
     border-radius: 0;
     box-shadow: none;
+    animation: none;
 }
-.mmp.is-fullscreen .mmp-close {
-    top: 8px;
-    right: 8px;
+/* Browsers without element fullscreen (iPhone): the frame fills the window. */
+.mmp.mmp--fill .mmp-frame {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 5;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
 }
-.mmp.is-fullscreen.is-idle .mmp-close {
-    opacity: 0;
-    pointer-events: none;
+/* In fullscreen only the frame is on screen: the buttons around it are
+   hidden, which also takes them out of the Tab order. */
+.mmp.is-fullscreen .mmp-close,
+.mmp.is-fullscreen .mmp-nav {
+    visibility: hidden;
+}
+.mmp.is-fullscreen .mmp-stage {
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 0;
+    border-radius: 0;
+}
+.mmp.is-fullscreen .mmp-dock {
+    border-radius: 0;
 }
 
-/* ---- Small frames (phones, vertical Shorts) ---- */
-.mmp--compact .mmp-center {
-    /* Keep the three buttons clear of the bar on short (landscape) frames. */
-    bottom: 48px;
-    padding: 0 12px;
-}
-.mmp--compact .mmp-skip {
-    width: 46px;
-    height: 46px;
-}
-.mmp--compact .mmp-skip .mmp-ic {
-    width: 26px;
-    height: 26px;
-}
-.mmp--compact .mmp-bigplay {
-    width: 60px;
-    height: 60px;
-}
-.mmp--compact .mmp-bigplay .mmp-ic {
-    width: 30px;
-    height: 30px;
-}
-.mmp--compact .mmp-bar {
-    padding: 28px 6px 4px;
-}
-.mmp--compact .mmp-volume {
-    width: 46px;
-    margin: 0 12px 0 2px;
+/* ---- Narrow frames (phones, vertical Shorts) ---- */
+.mmp--compact .mmp-dock {
+    padding: 0 8px;
 }
 .mmp--compact .mmp-time {
-    margin-left: 0;
+    padding: 0 4px;
     font-size: 12px;
 }
 .mmp--compact .mmp-panel {
@@ -773,70 +895,69 @@ html.mmp-lock body {
     padding: 7px 13px;
     font-size: 12.5px;
 }
-/* Narrow frames (small phones). */
-.mmp--tiny .mmp-center {
-    padding: 0 8px;
+/* Small phones: the time played only. */
+.mmp--tiny .mmp-dock {
+    padding: 0 6px;
 }
-.mmp--tiny .mmp-skip {
-    width: 40px;
-    height: 40px;
+.mmp--tiny .mmp-time {
+    padding: 0 2px;
 }
-.mmp--tiny .mmp-skip .mmp-ic {
-    width: 24px;
-    height: 24px;
-}
-.mmp--tiny .mmp-bigplay {
-    width: 52px;
-    height: 52px;
-}
-.mmp--tiny .mmp-bigplay .mmp-ic {
-    width: 26px;
-    height: 26px;
+.mmp--tiny .mmp-time-total {
+    display: none;
 }
 .mmp--tiny .mmp-panel {
     padding: 12px;
 }
-/* Very narrow frames: a vertical Short on a phone held sideways. */
-.mmp--micro .mmp-center {
-    padding: 0 4px;
-}
-.mmp--micro .mmp-skip {
-    width: 36px;
-    height: 36px;
-}
-.mmp--micro .mmp-skip .mmp-ic {
-    width: 22px;
-    height: 22px;
-}
-.mmp--micro .mmp-bigplay {
-    width: 46px;
-    height: 46px;
-}
-.mmp--micro .mmp-bigplay .mmp-ic {
-    width: 24px;
-    height: 24px;
-}
-.mmp--micro .mmp-bar {
-    padding: 24px 4px 2px;
+/* The very smallest screens (280px wide): buttons only, the bar shows the time. */
+.mmp--nano .mmp-time {
+    display: none;
 }
 .mmp--micro .mmp-btn {
     width: 36px;
     height: 36px;
 }
-.mmp--micro .mmp-time {
-    display: none;
+.mmp.mmp--micro .mmp-play {
+    width: 40px;
+    height: 40px;
+}
+.mmp--micro .mmp-group-center {
+    gap: 4px;
 }
 .mmp--micro .mmp-panel {
     gap: 10px;
     padding: 10px;
 }
+
+/* ---- Touch screens: larger targets. The dock height follows from them,
+        and is the same on every frame width, so the layout never depends on
+        the width it produces. Narrow frames only use smaller side buttons. ---- */
 @media (pointer: coarse) {
-    .mmp-btn {
+    .mmp {
+        --mmp-bar: 26px;
+        --mmp-btn: 44px;
+        --mmp-play: 48px;
+        --mmp-dock-skips: 60px;
+    }
+    .mmp--compact .mmp-btn {
+        width: 40px;
+        height: 40px;
+    }
+    .mmp.mmp--compact .mmp-play {
         width: 44px;
         height: 44px;
     }
-    .mmp-progress {
-        height: 28px;
+    .mmp--micro .mmp-btn {
+        width: 36px;
+        height: 36px;
+    }
+    .mmp.mmp--micro .mmp-play {
+        width: 40px;
+        height: 40px;
+    }
+    .mmp-progress-thumb {
+        width: 16px;
+        height: 16px;
+        margin: -8px 0 0 -8px;
     }
 }
 
