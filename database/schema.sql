@@ -39,30 +39,6 @@ CREATE TABLE IF NOT EXISTS `services` (
     KEY `idx_services_active_sort` (`is_active`, `sort_order`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `packages` (
-    `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `service_id` INT UNSIGNED NOT NULL,
-    `quality` ENUM('normal', 'high', 'premium') NOT NULL,
-    `name` VARCHAR(120) NOT NULL,
-    `price` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-    `currency` VARCHAR(10) NOT NULL DEFAULT 'USD',
-    `description` TEXT NULL,
-    `features` TEXT NULL,
-    `delivery` VARCHAR(120) NULL,
-    `revisions` VARCHAR(120) NULL,
-    `badge` VARCHAR(60) NULL,
-    `highlight` TINYINT(1) NOT NULL DEFAULT 0,
-    `sort_order` INT NOT NULL DEFAULT 0,
-    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `uq_packages_service_quality` (`service_id`, `quality`),
-    KEY `idx_packages_service` (`service_id`),
-    CONSTRAINT `fk_packages_service`
-        FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
-        ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS `work_items` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(200) NOT NULL,
@@ -130,7 +106,7 @@ CREATE TABLE IF NOT EXISTS `reviews` (
 
 CREATE TABLE IF NOT EXISTS `messages` (
     `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    `type` ENUM('booking', 'contact', 'newsletter') NOT NULL DEFAULT 'booking',
+    `type` ENUM('booking', 'contact', 'newsletter') NOT NULL DEFAULT 'contact',
     `ticket_ref` VARCHAR(40) NULL,
     `name` VARCHAR(120) NULL,
     `email` VARCHAR(190) NULL,
@@ -138,10 +114,6 @@ CREATE TABLE IF NOT EXISTS `messages` (
     `subject` VARCHAR(200) NULL,
     `message` TEXT NULL,
     `service_id` INT UNSIGNED NULL,
-    `package_id` INT UNSIGNED NULL,
-    `package_quality` VARCHAR(30) NULL,
-    `quoted_price` DECIMAL(10,2) NULL,
-    `currency` VARCHAR(10) NULL DEFAULT 'USD',
     `status` ENUM('pending', 'approved', 'in_progress', 'completed', 'rejected') NOT NULL DEFAULT 'pending',
     `admin_notes` TEXT NULL,
     `ip_hash` VARCHAR(64) NULL,
@@ -151,12 +123,8 @@ CREATE TABLE IF NOT EXISTS `messages` (
     UNIQUE KEY `uq_messages_ticket_ref` (`ticket_ref`),
     KEY `idx_messages_type_status` (`type`, `status`, `created_at`),
     KEY `idx_messages_service` (`service_id`),
-    KEY `idx_messages_package` (`package_id`),
     CONSTRAINT `fk_messages_service`
         FOREIGN KEY (`service_id`) REFERENCES `services` (`id`)
-        ON DELETE SET NULL ON UPDATE CASCADE,
-    CONSTRAINT `fk_messages_package`
-        FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`)
         ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

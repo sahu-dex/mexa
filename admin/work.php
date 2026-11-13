@@ -2,19 +2,59 @@
 declare(strict_types=1);
 
 $adminPage = 'work';
-$adminTitle = 'Work & Portfolio';
+$adminTitle = 'Videos & Shorts';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
 
 $rows = db()->query('SELECT * FROM `work_items` ORDER BY `section` ASC, `sort_order` ASC, `id` DESC')->fetchAll();
+
+$videoCount = 0;
+$shortCount = 0;
+foreach ($rows as $w) {
+    if (($w['section'] ?? '') === 'short') {
+        $shortCount++;
+    } else {
+        $videoCount++;
+    }
+}
+
+$sectionLabels = [
+    'demo' => 'Videos tab',
+    'short' => 'Shorts tab',
+    'recent' => 'Recent Works',
+    'preview' => 'Home preview pool',
+];
+$maxVideoMb = (int) round(MAX_VIDEO_BYTES / 1048576);
 ?>
+
 <div class="adm-card">
     <div class="adm-card-head">
         <div>
-            <h2>Portfolio &amp; Demo Items (<?= count($rows) ?>)</h2>
-            <p>Manage Recent Works (`recent`), Long-form Demo Videos (`demo`), Vertical Shorts/Reels (`short`), and Homepage Previews (`preview`). Media paths are stored in `file_path`.</p>
+            <h2>Videos &amp; Shorts (<?= count($rows) ?>)</h2>
+            <p>
+                Upload a video or a thumbnail for each card. Items placed in the <b>Videos tab</b> appear under
+                “Videos” on the homepage; items placed in the <b>Shorts tab</b> appear under “Shorts” and play in a
+                9:16 vertical preview. Everything published here loads on the website automatically.
+            </p>
         </div>
-        <button type="button" class="adm-btn adm-btn-primary" data-modal-open="work-modal" data-title="Add Portfolio Item">
-            <i class="fa-solid fa-plus"></i> Add Work Item
+        <div class="adm-actions">
+            <button type="button" class="adm-btn adm-btn-primary" data-modal-open="work-modal" data-title="Add Video" data-preset='{"section":"demo","kind":"video"}'>
+                <i class="fa-solid fa-plus"></i> Add Video
+            </button>
+            <button type="button" class="adm-btn" data-modal-open="work-modal" data-title="Add Short" data-preset='{"section":"short","kind":"video"}'>
+                <i class="fa-solid fa-clapperboard"></i> Add Short
+            </button>
+        </div>
+    </div>
+
+    <div class="adm-tabs" aria-label="Filter work items">
+        <button type="button" class="adm-tab is-active" data-adm-filter="all" aria-pressed="true">
+            All (<?= count($rows) ?>)
+        </button>
+        <button type="button" class="adm-tab" data-adm-filter="video" aria-pressed="false">
+            Videos (<?= $videoCount ?>)
+        </button>
+        <button type="button" class="adm-tab" data-adm-filter="short" aria-pressed="false">
+            Shorts (<?= $shortCount ?>)
         </button>
     </div>
 
@@ -22,10 +62,10 @@ $rows = db()->query('SELECT * FROM `work_items` ORDER BY `section` ASC, `sort_or
         <table class="adm-table">
             <thead>
                 <tr>
-                    <th>Thumb</th>
-                    <th>Title</th>
-                    <th>Section / Kind</th>
+                    <th>Thumbnail</th>
+                    <th>Title &amp; Media</th>
                     <th>Category</th>
+                    <th>Appears In</th>
                     <th>Duration</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -33,40 +73,54 @@ $rows = db()->query('SELECT * FROM `work_items` ORDER BY `section` ASC, `sort_or
             </thead>
             <tbody>
 <?php foreach ($rows as $w):
-    $thumb = (string) ($w['thumbnail_path'] ?: ($w['kind'] === 'image' ? $w['file_path'] : ''));
-    $thumbSrc = $thumb !== '' ? (str_starts_with($thumb, 'http') ? $thumb : '../' . $thumb) : '';
+    $wSection = (string) ($w['section'] ?? 'recent');
+    $wType = $wSection === 'short' ? 'short' : 'video';
+    $wDuration = trim((string) ($w['duration'] ?? ''));
+    $thumb = work_item_thumbnail($w);
+    $thumbSrc = '';
+    if ($thumb !== '') {
+        $thumbSrc = (str_starts_with($thumb, 'http') || str_starts_with($thumb, '//') || str_starts_with($thumb, '/'))
+            ? $thumb
+            : '../' . $thumb;
+    }
     $rowJson = htmlspecialchars(json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8');
 ?>
-                <tr>
+                <tr data-work-type="<?= e($wType) ?>">
                     <td>
 <?php if ($thumbSrc !== ''): ?>
                         <img class="adm-thumb" src="<?= e($thumbSrc) ?>" alt="">
 <?php else: ?>
-                        <i class="fa-solid fa-video"></i>
+                        <span class="adm-thumb adm-thumb-empty" aria-hidden="true"><i class="fa-solid <?= $wType === 'short' ? 'fa-clapperboard' : 'fa-video' ?>"></i></span>
 <?php endif; ?>
                     </td>
                     <td>
                         <b><?= e((string) $w['title']) ?></b>
-                        <div style="font-size:11.5px;color:<?= chr(35) ?>94a3b8;max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><?= e((string) $w['file_path']) ?></div>
+                        <div class="adm-muted-line"><?= e((string) $w['file_path']) ?></div>
                     </td>
-                    <td><span class="adm-badge adm-badge-active"><?= e((string) $w['section']) ?></span> · <?= e((string) $w['kind']) ?></td>
-                    <td><?= e((string) $w['category']) ?></td>
-                    <td><?= e((string) ($w['duration'] ?? '—')) ?></td>
+                    <td><?= e((string) ($w['category'] ?: '—')) ?></td>
+                    <td>
+                        <span class="adm-badge adm-badge-active"><?= $wType === 'short' ? 'Shorts' : 'Videos' ?></span>
+                        <div class="adm-muted-line"><?= e($sectionLabels[$wSection] ?? $wSection) ?> · <?= e((string) $w['kind']) ?></div>
+                    </td>
+                    <td><?= e($wDuration !== '' ? $wDuration : '—') ?></td>
                     <td>
                         <span class="adm-badge adm-badge-<?= ($w['status'] ?? 'published') === 'published' ? 'active' : 'inactive' ?>">
                             <?= ($w['status'] ?? 'published') === 'published' ? 'Published' : 'Draft' ?>
                         </span>
                     </td>
                     <td class="adm-actions">
-                        <button type="button" class="adm-btn adm-btn-sm" data-modal-open="work-modal" data-title="Edit Portfolio Item" data-row="<?= $rowJson ?>">
+                        <button type="button" class="adm-btn adm-btn-sm" data-modal-open="work-modal" data-title="Edit <?= $wType === 'short' ? 'Short' : 'Video' ?>" data-row="<?= $rowJson ?>">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
-                        <button type="button" class="adm-btn adm-btn-sm adm-btn-danger" data-quick-api="../api/admin/work.php" data-action="delete" data-id="<?= (int) $w['id'] ?>" data-confirm="Delete this portfolio item?">
+                        <button type="button" class="adm-btn adm-btn-sm adm-btn-danger" data-quick-api="../api/admin/work.php" data-action="delete" data-id="<?= (int) $w['id'] ?>" data-confirm="Delete this item? The uploaded video and thumbnail will also be removed.">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
                 </tr>
 <?php endforeach; ?>
+                <tr id="work-empty-row" hidden>
+                    <td colspan="7" class="adm-empty-cell">No items in this category yet. Use “Add Video” or “Add Short” to publish one.</td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -75,104 +129,102 @@ $rows = db()->query('SELECT * FROM `work_items` ORDER BY `section` ASC, `sort_or
 <div class="adm-modal" id="work-modal" hidden>
     <div class="adm-modal-box">
         <div class="adm-modal-head">
-            <h3 data-modal-title>Add Portfolio Item</h3>
+            <h3 data-modal-title>Add Video</h3>
             <button type="button" class="adm-btn adm-btn-sm" data-modal-close>&times; Close</button>
         </div>
         <form data-adm-api="../api/admin/work.php" enctype="multipart/form-data">
             <input type="hidden" name="action" value="create">
             <input type="hidden" name="id" value="0">
+
             <div class="adm-grid-2">
                 <div class="adm-field">
                     <label>Title *</label>
-                    <input class="adm-input" type="text" name="title" required maxlength="180">
+                    <input class="adm-input" type="text" name="title" required maxlength="180" placeholder="e.g. Brand launch film">
                 </div>
                 <div class="adm-field">
                     <label>Category</label>
                     <input class="adm-input" type="text" name="category" value="Video Editing" maxlength="80">
                 </div>
             </div>
-            <div class="adm-grid-3">
+
+            <div class="adm-grid-2">
                 <div class="adm-field">
-                    <label>Section *</label>
+                    <label>Appears In *</label>
                     <select class="adm-select" name="section">
-                        <option value="recent">recent (Recent Works)</option>
-                        <option value="demo">demo (Long-form Demo)</option>
-                        <option value="short">short (9:16 Reels/Shorts)</option>
-                        <option value="preview">preview (Home Preview)</option>
+                        <option value="demo">Videos tab (homepage + Work page)</option>
+                        <option value="short">Shorts tab (9:16 vertical)</option>
+                        <option value="recent">Recent Works (Work page)</option>
+                        <option value="preview">Home preview pool</option>
                     </select>
+                    <small class="adm-hint">Choose “Shorts tab” for vertical 9:16 reels.</small>
                 </div>
                 <div class="adm-field">
                     <label>Media Kind *</label>
                     <select class="adm-select" name="kind">
-                        <option value="video">video</option>
-                        <option value="image">image</option>
-                    </select>
-                </div>
-                <div class="adm-field">
-                    <label>Aspect Ratio</label>
-                    <select class="adm-select" name="aspect">
-                        <option value="16:9">16:9</option>
-                        <option value="9:16">9:16</option>
-                        <option value="1:1">1:1</option>
-                        <option value="4:5">4:5</option>
+                        <option value="video">Video (plays in the preview player)</option>
+                        <option value="image">Image only</option>
                     </select>
                 </div>
             </div>
+
             <div class="adm-grid-3">
                 <div class="adm-field">
                     <label>Duration (optional)</label>
                     <input class="adm-input" type="text" name="duration" placeholder="01:45" maxlength="20">
                 </div>
                 <div class="adm-field">
-                    <label>Client Name (optional)</label>
-                    <input class="adm-input" type="text" name="client_name" maxlength="120">
-                </div>
-                <div class="adm-field">
                     <label>Sort Order</label>
                     <input class="adm-input" type="number" name="sort_order" value="0">
                 </div>
-            </div>
-            <div class="adm-field">
-                <label>Description</label>
-                <textarea class="adm-textarea" name="description"></textarea>
-            </div>
-            <div class="adm-grid-2">
                 <div class="adm-field">
-                    <label>Media `file_path` or External URL</label>
-                    <input class="adm-input" type="text" name="file_path" placeholder="uploads/videos/... or https://...">
-                </div>
-                <div class="adm-field">
-                    <label>Or Upload Media File (goes to `uploads/images/` or `uploads/videos/`)</label>
-                    <input class="adm-input" type="file" name="media_file" accept="video/mp4,video/webm,video/quicktime,image/jpeg,image/png,image/webp">
-                </div>
-            </div>
-            <div class="adm-grid-2">
-                <div class="adm-field">
-                    <label>Thumbnail Path or URL</label>
-                    <input class="adm-input" type="text" name="thumbnail_path" placeholder="uploads/images/... or https://...">
-                </div>
-                <div class="adm-field">
-                    <label>Or Upload Thumbnail Image</label>
-                    <input class="adm-input" type="file" name="thumbnail_file" accept="image/jpeg,image/png,image/webp">
-                </div>
-            </div>
-            <div class="adm-grid-2">
-                <div class="adm-field">
-                    <label>Visibility</label>
-                    <select class="adm-select" name="is_active">
-                        <option value="1">Active</option>
-                        <option value="0">Hidden</option>
+                    <label>Status</label>
+                    <select class="adm-select" name="status">
+                        <option value="published">Published</option>
+                        <option value="draft">Draft (hidden)</option>
                     </select>
                 </div>
-                <div class="adm-field" style="justify-content:flex-end">
-                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-                        <input type="checkbox" name="is_featured" value="1"> Featured on Homepage
-                    </label>
+            </div>
+
+            <div class="adm-field">
+                <label>Description (optional)</label>
+                <textarea class="adm-textarea" name="description"></textarea>
+            </div>
+
+            <div class="adm-grid-2">
+                <div class="adm-field">
+                    <label>Video URL or existing path</label>
+                    <input class="adm-input" type="text" name="file_path" placeholder="uploads/videos/… or https://youtube.com/watch?v=…">
+                    <small class="adm-hint">Paste a YouTube/Vimeo/Facebook link, or upload a file below.</small>
+                </div>
+                <div class="adm-field">
+                    <label>Upload video (MP4, WebM, MOV · max <?= $maxVideoMb ?> MB)</label>
+                    <input class="adm-input" type="file" name="media_file" accept="video/mp4,video/webm,video/quicktime">
+                    <small class="adm-hint">Uploading replaces the current media file.</small>
                 </div>
             </div>
+
+            <div class="adm-grid-2">
+                <div class="adm-field">
+                    <label>Thumbnail URL or existing path</label>
+                    <input class="adm-input" type="text" name="thumbnail_path" placeholder="uploads/images/… or https://…">
+                    <small class="adm-hint">16:9 for Videos, 9:16 for Shorts.</small>
+                </div>
+                <div class="adm-field">
+                    <label>Upload thumbnail (JPG, PNG, WebP)</label>
+                    <input class="adm-input" type="file" name="thumbnail_file" accept="image/jpeg,image/png,image/webp">
+                    <small class="adm-hint">The thumbnail is the card image with the play button.</small>
+                </div>
+            </div>
+
+            <div class="adm-field" style="justify-content:flex-end">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                    <input type="checkbox" name="is_featured" value="1"> Featured on homepage
+                </label>
+            </div>
+
             <div class="adm-actions" style="justify-content:flex-end">
                 <button type="button" class="adm-btn" data-modal-close>Cancel</button>
-                <button type="submit" class="adm-btn adm-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Work Item</button>
+                <button type="submit" class="adm-btn adm-btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save</button>
             </div>
         </form>
     </div>

@@ -11,9 +11,9 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return', 'assets/js/home-work-preview.js?v=20261113-clean-player'];
 
-$servicesBundle = get_services_with_packages(true);
+$servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
 
 $workBundle = get_work_bundle();
@@ -35,7 +35,7 @@ foreach ($allMembers as $m) {
 $gridMembers = array_slice($gridMembers, 0, 4);
 
 $heroLine1Parts = split_lines(setting('hero_line_1', "WE CREATE\nVISUALS"));
-$heroLine1Html = implode('<br>', array_map('e', $heroLine1Parts));
+$heroLine1Html = implode('<br class="ref-hero-break"> ', array_map('e', $heroLine1Parts));
 $heroLine2 = setting('hero_line_2', 'THAT GROW YOUR BRAND');
 $heroDesc = setting('hero_description', 'MEXA MOTION delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts & Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.');
 $heroDescHtml = e($heroDesc);
@@ -47,41 +47,32 @@ $heroImg = setting('hero_character_file_path', 'assets/images/hero-character.web
 $contactEmail = setting_raw('contact_email', '');
 $emailHref = ($contactEmail !== '' && !str_contains($contactEmail, '@your-domain.com') && !str_contains($contactEmail, '@example.com'))
     ? 'mailto:' . $contactEmail
-    : 'book.php';
+    : '#contact';
 $waDigits = preg_replace('/[^\d]/', '', setting_raw('whatsapp_number', ''));
-$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : 'book.php';
+$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : '#contact';
 $tgRaw = setting_raw('telegram_url', '');
-$tgHref = $tgRaw !== '' ? $tgRaw : 'book.php';
+$tgHref = $tgRaw !== '' ? $tgRaw : '#contact';
 
 include dirname(__DIR__) . '/includes/header.php';
 ?>
 <?php if (setting_raw('home_section_hero', '1') !== '0'): ?>
-        <section id="home" class="relative pt-2 pb-6 lg:pt-3 lg:pb-8 overflow-hidden bg-transparent flex items-center">
-            <div class="container mx-auto px-4 md:px-8 relative z-10">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center hero-grid">
-                    <div class="order-1 lg:col-start-1 lg:row-start-1" data-aos="fade-right" data-aos-duration="1000">
-                        <h1 class="hero-title font-extrabold leading-[0.98] mt-0">
-                            <span class="hero-line-1 text-secondary"><?= $heroLine1Html ?></span>
-                            <span class="hero-line-2 hero-title-blue"><?= e($heroLine2) ?></span>
-                        </h1>
-                        <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
-                            <?= $heroDescHtml ?>
-                        </p>
+        <section id="home" class="ref-hero" aria-label="Introduction">
+            <div class="container mx-auto ref-hero-container">
+                <div class="ref-hero-grid">
+                    <div class="ref-hero-content" data-aos="fade-right" data-aos-duration="1000">
+                        <div class="ref-hero-eyebrow"><span aria-hidden="true"></span>Video Editing Agency</div>
+                        <h1 class="hero-title ref-hero-title"><?= $heroLine1Html ?></h1>
+                        <div class="ref-hero-subtitle"><span id="ref-hero-typed" data-initial="<?= e($heroLine2) ?>"><?= e($heroLine2) ?></span></div>
+                        <p class="ref-hero-description"><?= $heroDescHtml ?></p>
+                        <div class="ref-hero-actions">
+                            <a href="service.php" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="index.php#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> Our Work</a>
+                        </div>
                     </div>
-
-                    <div class="hero-video order-2 lg:col-start-2 lg:row-start-1 relative flex items-center justify-end" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
-                        <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
-                            <img class="hero-character-img" src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
+                    <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                        <figure class="ref-hero-character" id="hero-character">
+                            <img src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" fetchpriority="high" decoding="async" draggable="false">
                         </figure>
-                    </div>
-
-                    <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
-                        <a href="service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right text-[13px]"></i>
-                        </a>
-                        <a href="book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
-                            <?= e(setting('hero_btn_secondary_text', 'Booking Now')) ?> <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
-                        </a>
                     </div>
                 </div>
             </div>
@@ -159,42 +150,83 @@ include dirname(__DIR__) . '/includes/header.php';
                     </p>
                 </div>
 
-                <div class="pf-tabs mt-7 md:mt-8 mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="80">
-                    <button type="button" id="tab-videos" class="pf-tab is-active">
+                <div class="pf-tabs mt-7 md:mt-8 mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="80" role="tablist" aria-label="Work categories">
+                    <button type="button" id="tab-videos" class="pf-tab is-active" role="tab" aria-selected="true" aria-controls="grid-videos" tabindex="0">
                         <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-play"></i></span> Videos
                     </button>
-                    <button type="button" id="tab-shorts" class="pf-tab">
+                    <button type="button" id="tab-shorts" class="pf-tab" role="tab" aria-selected="false" aria-controls="grid-shorts" tabindex="-1">
                         <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-clapperboard"></i></span> Shorts
                     </button>
                 </div>
 
-                <div id="grid-videos" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500">
+                <div id="grid-videos" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500" role="tabpanel" aria-labelledby="tab-videos">
 <?php foreach ($homeDemoVideos as $vi => $vItem):
-    $vThumb = $vItem['thumbnail_path'] !== '' ? $vItem['thumbnail_path'] : $vItem['file_path'];
-    $vHref = ($vItem['kind'] === 'video' && $vItem['file_path'] !== '') ? $vItem['file_path'] : 'work.php';
-    $vExt = str_starts_with($vHref, 'http');
-?>
-                    <a href="<?= e($vHref) ?>"<?= $vExt ? ' target="_blank" rel="noopener"' : '' ?> class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="<?= 100 + ($vi * 50) ?>">
-                        <img src="<?= e($vThumb) ?>" alt="<?= e($vItem['title']) ?>" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+    $vThumb = work_item_thumbnail($vItem);
+    $vKind = ($vItem['kind'] ?? 'video') === 'image' ? 'image' : 'video';
+    $vSrc = trim((string) ($vItem['file_path'] ?? ''));
+    $vEmbed = trim((string) ($vItem['embed_url'] ?? ''));
+    $vType = trim((string) ($vItem['embed_type'] ?? ''));
+    $vPreview = work_item_previewable($vItem);
+    $vHref = $vPreview && $vSrc !== '' ? $vSrc : 'work.php';
+?><a href="<?= e($vHref) ?>"<?= $vPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($vKind) ?>" data-mm-src="<?= e($vSrc) ?>" data-mm-embed="<?= e($vEmbed) ?>" data-mm-type="<?= e($vType) ?>" data-mm-poster="<?= e($vThumb) ?>" data-mm-title="<?= e($vItem['title']) ?>" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="<?= 100 + ($vi * 50) ?>" aria-label="<?= e(($vPreview ? 'Play ' : 'View ') . $vItem['title']) ?>">
+<?php if ($vThumb !== ''): ?>
+                        <img src="<?= e($vThumb) ?>" alt="<?= e($vItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+<?php else: ?>
+                        <span class="pf-thumb-fallback" aria-hidden="true"><i class="fa-solid fa-film"></i></span>
+<?php endif; ?>
                         <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="<?= chr(35) ?>1051DF"></path></svg></span>
                     </a>
 <?php endforeach; ?>
+<?php if (empty($homeDemoVideos)): ?>
+                    <p class="pf-empty">Videos will appear here as soon as they are published from the Admin Panel.</p>
+<?php endif; ?>
                 </div>
 
-                <div id="grid-shorts" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500 hidden">
+                <div id="grid-shorts" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500 hidden" role="tabpanel" aria-labelledby="tab-shorts" hidden>
 <?php foreach ($homeShorts as $sItem):
-    $sThumb = $sItem['thumbnail_path'] !== '' ? $sItem['thumbnail_path'] : $sItem['file_path'];
-    $sHref = ($sItem['kind'] === 'video' && $sItem['file_path'] !== '') ? $sItem['file_path'] : 'work.php';
-    $sExt = str_starts_with($sHref, 'http');
-?>
-                    <a href="<?= e($sHref) ?>"<?= $sExt ? ' target="_blank" rel="noopener"' : '' ?> class="pf-card pf-card-short">
-                        <img src="<?= e($sThumb) ?>" alt="<?= e($sItem['title']) ?>" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+    $sThumb = work_item_thumbnail($sItem);
+    $sKind = ($sItem['kind'] ?? 'video') === 'image' ? 'image' : 'video';
+    $sSrc = trim((string) ($sItem['file_path'] ?? ''));
+    $sEmbed = trim((string) ($sItem['embed_url'] ?? ''));
+    $sType = trim((string) ($sItem['embed_type'] ?? ''));
+    $sPreview = work_item_previewable($sItem);
+    $sHref = $sPreview && $sSrc !== '' ? $sSrc : 'work.php';
+?><a href="<?= e($sHref) ?>"<?= $sPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($sKind) ?>" data-mm-src="<?= e($sSrc) ?>" data-mm-embed="<?= e($sEmbed) ?>" data-mm-type="<?= e($sType) ?>" data-mm-poster="<?= e($sThumb) ?>" data-mm-title="<?= e($sItem['title']) ?>" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="<?= e(($sPreview ? 'Play ' : 'View ') . $sItem['title']) ?>">
+<?php if ($sThumb !== ''): ?>
+                        <img src="<?= e($sThumb) ?>" alt="<?= e($sItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+<?php else: ?>
+                        <span class="pf-thumb-fallback" aria-hidden="true"><i class="fa-solid fa-clapperboard"></i></span>
+<?php endif; ?>
                         <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="<?= chr(35) ?>1051DF"></path></svg></span>
                     </a>
 <?php endforeach; ?>
+<?php if (empty($homeShorts)): ?>
+                    <p class="pf-empty">Shorts will appear here as soon as they are published from the Admin Panel.</p>
+<?php endif; ?>
                 </div>
             </div>
         </section>
+
+        <div id="mm-work-modal" class="mmvp" hidden aria-hidden="true">
+            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-label="Video preview">
+                <div class="mmvp-stage">
+                    <button type="button" class="mmvp-close" data-mm-close aria-label="Close video preview">&times;</button>
+                    <div class="mmvp-player" data-mm-player></div>
+                    <div class="mmvp-loading" data-mm-loading>
+                        <span class="mmvp-spinner" aria-hidden="true"></span>
+                        <span class="sr-only">Loading video&hellip;</span>
+                    </div>
+                    <div class="mmvp-error" data-mm-error hidden>
+                        <p data-mm-error-text>This video could not be played right now.</p>
+                        <span class="mmvp-error-actions">
+                            <a class="mmvp-external" data-mm-external href="#" target="_blank" rel="noopener noreferrer">Open in a new tab</a>
+                            <button type="button" class="mmvp-retry" data-mm-retry>Try again</button>
+                        </span>
+                    </div>
+                </div>
+                <p class="mmvp-status" role="status" data-mm-status></p>
+            </div>
+        </div>
 <?php endif; ?>
 
 <?php if (setting_raw('home_section_process', '1') !== '0'): ?>

@@ -1,6 +1,7 @@
 (function () {
     'use strict';
     var SNAP = (window.__MM_DEMO_DATA__ && window.__MM_DEMO_DATA__.team) || null;
+    var SKILL_LIMIT = 4;
 
     function esc(v) {
         return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) {
@@ -35,7 +36,7 @@
         wrap.hidden = false;
 
         var src = m.file_path || m.photo_url || '';
-        var skills = list(m.skills);
+        var skills = list(m.skills).slice(0, SKILL_LIMIT);
         var bioText = m.bio || m.description || '';
         wrap.innerHTML =
             '<div class="tm-founder-photo">' +
@@ -56,7 +57,7 @@
     }
 
     function memberCard(m) {
-        var skills = list(m.skills);
+        var skills = list(m.skills).slice(0, SKILL_LIMIT);
         var desc = String(m.description || m.bio || '').trim();
 
         return '<article class="t3-card" data-member-id="' + esc(m.id) + '">' +

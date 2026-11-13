@@ -37,15 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Unlock the page before following the booking anchor on the current page.
-    const mobileBooking = document.querySelector('#mobile-menu .mm-booking-button');
-    if (mobileBooking) {
-        mobileBooking.addEventListener('click', () => {
-            const menu = document.getElementById('mobile-menu');
-            if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
-        });
-    }
-
     const mobileCloseBtn = document.getElementById('mobile-menu-close');
     if (mobileCloseBtn) mobileCloseBtn.addEventListener('click', (e) => { e.stopPropagation(); window.toggleMobileMenu(); });
 
@@ -101,6 +92,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 menu.classList.add('pointer-events-none');
                 document.getElementById('mobile-menu-backdrop').classList.add('opacity-0');
                 document.getElementById('mobile-menu-drawer').classList.add('-translate-y-full');
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+                document.body.classList.remove('mm-open');
+                const toggle = document.getElementById('header-menu-toggle');
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                    toggle.setAttribute('aria-label', 'Open menu');
+                }
             }
         }
     }, { passive: true });
@@ -139,15 +138,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridVideos = document.getElementById('grid-videos');
     const gridShorts = document.getElementById('grid-shorts');
     if (tabVideos && tabShorts && gridVideos && gridShorts) {
-        const setTab = (showVideos) => {
+        const setTab = (showVideos, moveFocus = false) => {
             tabVideos.classList.toggle('is-active', showVideos);
             tabShorts.classList.toggle('is-active', !showVideos);
+            tabVideos.setAttribute('aria-selected', showVideos ? 'true' : 'false');
+            tabShorts.setAttribute('aria-selected', showVideos ? 'false' : 'true');
+            tabVideos.tabIndex = showVideos ? 0 : -1;
+            tabShorts.tabIndex = showVideos ? -1 : 0;
             gridVideos.classList.toggle('hidden', !showVideos);
             gridShorts.classList.toggle('hidden', showVideos);
+            gridVideos.hidden = !showVideos;
+            gridShorts.hidden = showVideos;
+            if (moveFocus) (showVideos ? tabVideos : tabShorts).focus();
             if (window.AOS) setTimeout(() => AOS.refresh(), 50);
         };
         tabVideos.addEventListener('click', () => setTab(true));
         tabShorts.addEventListener('click', () => setTab(false));
+        [tabVideos, tabShorts].forEach((tab) => {
+            tab.addEventListener('keydown', (event) => {
+                if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight' && event.key !== 'Home' && event.key !== 'End') return;
+                event.preventDefault();
+                if (event.key === 'Home') setTab(true, true);
+                else if (event.key === 'End') setTab(false, true);
+                else setTab(tab === tabVideos ? false : true, true);
+            });
+        });
     }
 
     window.handleNewsletterSubscribe = async function (form) {
@@ -211,6 +226,7 @@ window.showCustomMessage = function (text) {
         en: {
             'nav.service': 'Service', 'nav.work': 'Work', 'nav.review': 'Review', 'nav.headerTeam': 'Team',
             'brand.tagline': window.__MM_TAGLINE__ || 'Video Editing Agency',
+            'header.ourServices': 'Our Services',
             'nav.home': 'Home', 'nav.about': 'About', 'nav.services': 'Services',
             'nav.portfolio': 'Portfolio', 'nav.reviews': 'Reviews', 'nav.team': 'Our Team',
             'nav.contact': 'Contact', 'cta.quote': 'Get Free Quote', 'menu.title': 'Menu'
@@ -218,6 +234,7 @@ window.showCustomMessage = function (text) {
         bn: {
             'nav.service': 'সার্ভিস', 'nav.work': 'কাজ', 'nav.review': 'রিভিউ', 'nav.headerTeam': 'টিম',
             'brand.tagline': 'ভিডিও এডিটিং এজেন্সি',
+            'header.ourServices': 'আমাদের সার্ভিস',
             'nav.home': 'হোম', 'nav.about': 'আমাদের সম্পর্কে', 'nav.services': 'সার্ভিস',
             'nav.portfolio': 'পোর্টফোলিও', 'nav.reviews': 'রিভিউ', 'nav.team': 'আমাদের টিম',
             'nav.contact': 'যোগাযোগ', 'cta.quote': 'ফ্রি কোটেশন নিন', 'menu.title': 'মেনু'
@@ -261,7 +278,7 @@ window.showCustomMessage = function (text) {
         if (!rawUrl) {
             const portfolio = document.getElementById('portfolio');
             if (portfolio) {
-                const headerOffset = document.getElementById('header')?.getBoundingClientRect().height || 0;
+                const headerOffset = Math.max(0, document.getElementById('header')?.getBoundingClientRect().bottom || 0);
                 const targetTop = portfolio.getBoundingClientRect().top + window.scrollY - headerOffset;
                 window.scrollTo({ top: targetTop, behavior: 'smooth' });
             }

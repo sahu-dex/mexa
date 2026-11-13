@@ -1,0 +1,31 @@
+/* Keep desktop page content just inside the floating header's edges, while
+   allowing section backgrounds and dialogs to span the viewport. */
+@media (min-width: 1024px) {
+    body .container:not(#header > .container) {
+        width: calc(100% - 32px) !important;
+        max-width: 1248px !important;
+    }
+    body #home > .container {
+        width: calc(100% - 32px) !important;
+        max-width: 1248px !important;
+        padding-inline: 32px !important;
+    }
+    body :is(.wk-wrap, .wk-sec, .rvx-wrap) {
+        width: calc(100% - 32px);
+        max-width: 1248px !important;
+        margin-inline: auto;
+        padding-inline: 32px !important;
+    }
+    /* Only the review rail breaks out of the centered page column. The
+       existing scroll/drag and looping slider continue to use this element. */
+    body #reviews .reviews-container {
+        width: 100vw;
+        max-width: none;
+        margin-left: calc(50% - 50vw);
+        margin-right: 0;
+        padding-inline: 24px;
+        box-sizing: border-box;
+        -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+        mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+    }
+}

@@ -39,7 +39,10 @@ $title = trim((string) ($_POST['title'] ?? ''));
 $category = trim((string) ($_POST['category'] ?? 'General'));
 $kind = in_array($_POST['kind'] ?? '', ['video', 'image'], true) ? (string) $_POST['kind'] : 'video';
 $section = in_array($_POST['section'] ?? '', ['recent', 'demo', 'short', 'preview'], true) ? (string) $_POST['section'] : 'recent';
-$platform = trim((string) ($_POST['platform'] ?? 'youtube'));
+$platform = trim((string) ($_POST['platform'] ?? ''));
+if ($platform === '') {
+    $platform = $kind === 'image' ? 'image' : 'youtube';
+}
 $duration = trim((string) ($_POST['duration'] ?? ''));
 $serviceName = trim((string) ($_POST['service_name'] ?? ''));
 $description = trim((string) ($_POST['description'] ?? ''));
@@ -69,52 +72,77 @@ if ($action === 'update') {
     }
 }
 
+$oldMediaPath = (string) ($existing['file_path'] ?? '');
+$oldThumbPath = (string) ($existing['thumbnail_path'] ?? '');
+$uploadedMediaPath = '';
+$uploadedThumbPath = '';
+
 if (!empty($_FILES['media_file']) && (int) ($_FILES['media_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
     $up = upload_media($_FILES['media_file'], $kind === 'image' ? 'image' : 'video');
     if (!$up['ok']) {
         json_response(['ok' => false, 'error' => $up['error']], 422);
     }
-    if ($existing && !empty($existing['file_path'])) {
-        delete_uploaded_file((string) $existing['file_path']);
-    }
-    $filePath = (string) $up['file_path'];
+    $uploadedMediaPath = (string) $up['file_path'];
+    $filePath = $uploadedMediaPath;
 }
 
 if (!empty($_FILES['thumbnail_file']) && (int) ($_FILES['thumbnail_file']['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE) {
     $up = upload_media($_FILES['thumbnail_file'], 'image');
     if (!$up['ok']) {
+        // The video may already be stored; do not leave an orphan behind.
+        if ($uploadedMediaPath !== '') {
+            delete_uploaded_file($uploadedMediaPath);
+        }
         json_response(['ok' => false, 'error' => $up['error']], 422);
     }
-    if ($existing && !empty($existing['thumbnail_path'])) {
-        delete_uploaded_file((string) $existing['thumbnail_path']);
-    }
-    $thumbPath = (string) $up['file_path'];
+    $uploadedThumbPath = (string) $up['file_path'];
+    $thumbPath = $uploadedThumbPath;
 }
 
 if ($filePath === '') {
+    if ($uploadedMediaPath !== '') {
+        delete_uploaded_file($uploadedMediaPath);
+    }
+    if ($uploadedThumbPath !== '') {
+        delete_uploaded_file($uploadedThumbPath);
+    }
     json_response(['ok' => false, 'error' => 'Please upload a media file or enter a file path / URL.'], 422);
 }
+
+$cleanupUploads = static function () use ($uploadedMediaPath, $uploadedThumbPath): void {
+    if ($uploadedMediaPath !== '') {
+        delete_uploaded_file($uploadedMediaPath);
+    }
+    if ($uploadedThumbPath !== '') {
+        delete_uploaded_file($uploadedThumbPath);
+    }
+};
 
 if ($action === 'create') {
     $ins = $pdo->prepare(
         'INSERT INTO `work_items` (`title`, `category`, `kind`, `platform`, `section`, `duration`, `service_name`, `description`, `file_path`, `thumbnail_path`, `is_featured`, `sort_order`, `status`)
          VALUES (:title, :category, :kind, :platform, :section, :duration, :service_name, :description, :file_path, :thumbnail_path, :is_featured, :sort_order, :status)'
     );
-    $ins->execute([
-        ':title' => mb_substr($title, 0, 200),
-        ':category' => mb_substr($category, 0, 80),
-        ':kind' => $kind,
-        ':platform' => mb_substr($platform ?: 'youtube', 0, 40),
-        ':section' => $section,
-        ':duration' => $duration !== '' ? mb_substr($duration, 0, 20) : null,
-        ':service_name' => $serviceName !== '' ? mb_substr($serviceName, 0, 150) : null,
-        ':description' => $description !== '' ? $description : null,
-        ':file_path' => $filePath,
-        ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
-        ':is_featured' => $isFeatured,
-        ':sort_order' => $sortOrder,
-        ':status' => $status,
-    ]);
+    try {
+        $ins->execute([
+            ':title' => mb_substr($title, 0, 200),
+            ':category' => mb_substr($category, 0, 80),
+            ':kind' => $kind,
+            ':platform' => mb_substr($platform, 0, 40),
+            ':section' => $section,
+            ':duration' => $duration !== '' ? mb_substr($duration, 0, 20) : null,
+            ':service_name' => $serviceName !== '' ? mb_substr($serviceName, 0, 150) : null,
+            ':description' => $description !== '' ? $description : null,
+            ':file_path' => $filePath,
+            ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
+            ':is_featured' => $isFeatured,
+            ':sort_order' => $sortOrder,
+            ':status' => $status,
+        ]);
+    } catch (Throwable $e) {
+        $cleanupUploads();
+        json_response(['ok' => false, 'error' => 'Could not save this item. Please try again.'], 500);
+    }
     json_response(['ok' => true, 'id' => (int) $pdo->lastInsertId()]);
 }
 
@@ -126,21 +154,34 @@ $upd = $pdo->prepare(
          `sort_order` = :sort_order, `status` = :status
      WHERE `id` = :id'
 );
-$upd->execute([
-    ':title' => mb_substr($title, 0, 200),
-    ':category' => mb_substr($category, 0, 80),
-    ':kind' => $kind,
-    ':platform' => mb_substr($platform ?: 'youtube', 0, 40),
-    ':section' => $section,
-    ':duration' => $duration !== '' ? mb_substr($duration, 0, 20) : null,
-    ':service_name' => $serviceName !== '' ? mb_substr($serviceName, 0, 150) : null,
-    ':description' => $description !== '' ? $description : null,
-    ':file_path' => $filePath,
-    ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
-    ':is_featured' => $isFeatured,
-    ':sort_order' => $sortOrder,
-    ':status' => $status,
-    ':id' => $id,
-]);
+try {
+    $upd->execute([
+        ':title' => mb_substr($title, 0, 200),
+        ':category' => mb_substr($category, 0, 80),
+        ':kind' => $kind,
+        ':platform' => mb_substr($platform, 0, 40),
+        ':section' => $section,
+        ':duration' => $duration !== '' ? mb_substr($duration, 0, 20) : null,
+        ':service_name' => $serviceName !== '' ? mb_substr($serviceName, 0, 150) : null,
+        ':description' => $description !== '' ? $description : null,
+        ':file_path' => $filePath,
+        ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
+        ':is_featured' => $isFeatured,
+        ':sort_order' => $sortOrder,
+        ':status' => $status,
+        ':id' => $id,
+    ]);
+} catch (Throwable $e) {
+    $cleanupUploads();
+    json_response(['ok' => false, 'error' => 'Could not update this item. Please try again.'], 500);
+}
+
+// Only remove replaced files after the new paths are safely stored.
+if ($uploadedMediaPath !== '' && $oldMediaPath !== '' && $oldMediaPath !== $uploadedMediaPath) {
+    delete_uploaded_file($oldMediaPath);
+}
+if ($uploadedThumbPath !== '' && $oldThumbPath !== '' && $oldThumbPath !== $uploadedThumbPath) {
+    delete_uploaded_file($oldThumbPath);
+}
 
 json_response(['ok' => true, 'id' => $id]);

@@ -2037,12 +2037,14 @@ body .tk-founder-photo img {
 
 /* Footer — brand blue background */
 body footer {
-    border-top: 1px solid rgba(255, 255, 255, .16) !important;
+    border-top: 1px solid rgba(255, 255, 255, .14) !important;
+    /* Softer, premium blue: lower brightness and saturation than the old
+       #04225E → #0A63EC ramp, while keeping the brand blue identity. */
     background:
-        radial-gradient(120% 90% at 100% 0%, rgba(96, 198, 255, .3) 0%, rgba(96, 198, 255, 0) 58%),
-        radial-gradient(90% 80% at 0% 8%, rgba(0, 124, 255, .38) 0%, rgba(0, 124, 255, 0) 62%),
-        linear-gradient(155deg, #04225E 0%, #0A3BAE 48%, #0A63EC 100%) !important;
-    color: rgba(255, 255, 255, .78) !important;
+        radial-gradient(120% 90% at 100% 0%, rgba(118, 184, 232, .16) 0%, rgba(118, 184, 232, 0) 58%),
+        radial-gradient(92% 82% at 0% 8%, rgba(28, 104, 196, .2) 0%, rgba(28, 104, 196, 0) 62%),
+        linear-gradient(155deg, #0A2A55 0%, #0C3B7E 46%, #10539F 100%) !important;
+    color: rgba(255, 255, 255, .8) !important;
 }
 
 body footer .footer-brand-word {

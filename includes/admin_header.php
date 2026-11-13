@@ -27,7 +27,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
-    <link rel="stylesheet" href="../assets/css/admin-theme.css?v=20261112">
+    <link rel="stylesheet" href="../assets/css/admin-theme.css?v=20261112-skill-limit2">
 </head>
 <body>
 <div class="adm-shell">
@@ -50,9 +50,6 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
             <a class="adm-link<?= $adminPage === 'services' ? ' is-active' : '' ?>" href="services.php">
                 <i class="fa-solid fa-layer-group"></i><span>Services</span>
             </a>
-            <a class="adm-link<?= $adminPage === 'packages' ? ' is-active' : '' ?>" href="packages.php">
-                <i class="fa-solid fa-tags"></i><span>Packages &amp; Pricing</span>
-            </a>
             <a class="adm-link<?= $adminPage === 'work' ? ' is-active' : '' ?>" href="work.php">
                 <i class="fa-solid fa-photo-film"></i><span>Work / Portfolio</span>
             </a>
@@ -68,7 +65,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
 <?php endif; ?>
             </a>
             <a class="adm-link<?= $adminPage === 'messages' ? ' is-active' : '' ?>" href="messages.php">
-                <i class="fa-solid fa-inbox"></i><span>Tickets &amp; Messages</span>
+                <i class="fa-solid fa-inbox"></i><span>Messages</span>
 <?php if ($pendingMessagesCount > 0): ?>
                 <span class="adm-pill-cnt"><?= $pendingMessagesCount ?></span>
 <?php endif; ?>

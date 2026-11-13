@@ -50,7 +50,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <p>We only ask for what we need to answer you and deliver the work you request.</p>
                     <h3>Information you give us</h3>
                     <ul>
-                        <li><strong>Booking details</strong> — the service and package you select, the message you write about your project, and any email address, WhatsApp number, deadline or reference links you include in it.</li>
+                        <li><strong>Project inquiries</strong> — details you share about your project and how we can contact you.</li>
                         <li><strong>Contact details</strong> — anything you send us through Telegram, WhatsApp, Facebook or email, such as your name and how we can reply.</li>
                         <li><strong>Reviews</strong> — the name or alias, star rating and text you submit on our review page. Reviews are published only after moderation.</li>
                         <li><strong>Newsletter</strong> — the email address you submit in the footer subscription form. We use it only to send editing tips, offers and studio updates.</li>
@@ -59,7 +59,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <h3>Information collected automatically</h3>
                     <ul>
                         <li>Technical data such as browser and device type, approximate location derived from your IP address, the pages you view and the date and time of your visit.</li>
-                        <li>A session cookie that protects the booking form against cross-site request forgery, and an anti-spam check that blocks automated submissions.</li>
+                        <li>A session cookie that protects website forms against cross-site request forgery, and an anti-spam check that blocks automated submissions.</li>
                     </ul>
                     <p class="legal-callout">
                         We never ask for passwords, card numbers or identity documents through the website forms. If somebody
@@ -68,8 +68,8 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <h2>3. How we use it</h2>
                     <ul>
-                        <li>To confirm your booking ticket, quote a scope and reply with the next steps.</li>
-                        <li>To produce, revise and deliver the edit you ordered, and to keep a record of the agreed package.</li>
+                        <li>To respond to your inquiry, quote a scope and explain the next steps.</li>
+                        <li>To produce, revise and deliver the edit you ordered, and to keep a record of the agreed project scope.</li>
                         <li>To publish a review you submitted once our team has approved it.</li>
                         <li>To send the newsletter you opted into — every message includes an unsubscribe option.</li>
                         <li>To keep the site secure, prevent spam and understand which pages and services people look for.</li>
@@ -86,13 +86,13 @@ include dirname(__DIR__) . '/includes/header.php';
                         advertising networks or sell audience data.
                     </p>
                     <ul>
-                        <li><strong>Session cookie</strong> — required for the booking and review forms to work safely.</li>
+                        <li><strong>Session cookie</strong> — required for the website forms to work safely.</li>
                         <li><strong>Preference storage</strong> — remembers simple choices such as the language you picked, so the site does not reset them on every page.</li>
                         <li><strong>Security storage</strong> — short-lived tokens that stop duplicate or automated form submissions.</li>
                     </ul>
                     <p>
                         You can clear cookies and site data from your browser settings at any time. Blocking the session
-                        cookie will stop the booking form from submitting.
+                        cookie may stop protected forms from submitting.
                     </p>
 
                     <h2>5. Sharing and third parties</h2>
@@ -110,7 +110,7 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <h2>6. How long we keep data</h2>
                     <ul>
-                        <li><strong>Booking tickets</strong> — kept while the project is active and for up to 24 months afterwards so we can handle follow-ups and repeat work.</li>
+                        <li><strong>Project inquiries</strong> — kept while the project is active and for up to 24 months afterwards so we can handle follow-ups and repeat work.</li>
                         <li><strong>Project files</strong> — kept for up to 90 days after final delivery, then deleted unless you ask us to keep them longer.</li>
                         <li><strong>Newsletter email</strong> — kept until you unsubscribe or ask us to remove it.</li>
                         <li><strong>Reviews</strong> — kept while they are published, and removed on request.</li>
@@ -134,7 +134,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <h2>8. Data security</h2>
                     <p>
                         The website runs over an encrypted connection, forms are protected against cross-site forgery and spam,
-                        and access to the booking database is limited to the founder and the team members who need it to deliver
+                        and access to the messages database is limited to the founder and the team members who need it to deliver
                         your project. No system is perfect — if a breach ever affects your information, we will tell you what
                         happened and what we did about it.
                     </p>
@@ -142,7 +142,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     <h2>9. Children and minors</h2>
                     <p>
                         Our services and this website are intended for people aged 18 and over. We do not knowingly collect
-                        information from children. If a booking was submitted by a minor, or you believe we hold a child's data,
+                        information from children. If a request was submitted by a minor, or you believe we hold a child's data,
                         contact us and we will delete it.
                     </p>
 
@@ -166,7 +166,7 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <hr>
                     <p class="legal-back">
-                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="terms.php">Terms of Service</a> &nbsp;·&nbsp; <a href="book.php">Book a service</a>
+                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="terms.php">Terms of Service</a>
                     </p>
                 </article>
             </div>

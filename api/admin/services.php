@@ -128,31 +128,6 @@ if ($action === 'create') {
     ]);
     $newId = (int) $pdo->lastInsertId();
 
-    $defaults = [
-        ['premium', 'Premium Quality', 179.00, '1–2 business days', 'Unlimited revisions', 'Best Value', 0, 1],
-        ['high', 'High Quality', 89.00, '2–3 business days', '3 revisions', 'Most Popular', 1, 2],
-        ['normal', 'Normal Quality', 39.00, '3–4 business days', '1 revision', '', 0, 3],
-    ];
-    $pkgIns = $pdo->prepare(
-        'INSERT INTO `packages` (`service_id`, `quality`, `name`, `price`, `currency`, `delivery`, `revisions`, `badge`, `highlight`, `description`, `features`, `sort_order`)
-         VALUES (:sid, :q, :n, :p, :c, :d, :r, :b, :h, :desc, :f, :so)'
-    );
-    foreach ($defaults as $df) {
-        $pkgIns->execute([
-            ':sid' => $newId,
-            ':q' => $df[0],
-            ':n' => $df[1],
-            ':p' => $df[2],
-            ':c' => 'USD',
-            ':d' => $df[3],
-            ':r' => $df[4],
-            ':b' => $df[5] !== '' ? $df[5] : null,
-            ':h' => $df[6],
-            ':desc' => $description,
-            ':f' => $bullets !== '' ? $bullets : "Story-first edit structure\nColour correction and sound balance\nPlatform-ready exports (1080p / 4K)",
-            ':so' => $df[7],
-        ]);
-    }
     json_response(['ok' => true, 'id' => $newId]);
 }
 

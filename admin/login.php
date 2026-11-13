@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="adm-auth-wrap">
     <div class="adm-auth-card">
         <h1>Mexa Motion Admin</h1>
-        <p>Sign in to manage services, pricing, portfolio work, team, reviews, and site settings.</p>
+        <p>Sign in to manage services, portfolio work, team, reviews, and site settings.</p>
 <?php if ($error !== ''): ?>
         <div class="adm-alert adm-alert-err"><?= e($error) ?></div>
 <?php endif; ?>

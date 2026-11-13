@@ -1,13 +1,6 @@
 (function () {
     'use strict';
     var DATA = window.__MM_DEMO_DATA__ || {};
-    function money(price, currency) {
-        var cur = String(currency || 'USD').toUpperCase();
-        var sym = cur === 'USD' ? '$' : cur === 'BDT' ? '৳' : cur === 'EUR' ? '€' : cur + ' ';
-        var n = Number(price);
-        if (!isFinite(n)) return '—';
-        return sym + (n % 1 === 0 ? String(n) : n.toFixed(2));
-    }
     function normalizeService(raw) {
         if (!raw) return null;
         if (raw.media && raw.features && raw.label) return raw;
@@ -38,35 +31,15 @@
     function services() {
         return (DATA.services || []).map(normalizeService).filter(Boolean);
     }
-    function packagesFor(serviceId) {
-        var rows = (DATA.packages || []).filter(function (p) {
-            return String(p.serviceId) === String(serviceId);
-        });
-        var rank = { premium: 1, high: 2, normal: 3 };
-        return rows.sort(function (a, b) { return (rank[a.quality] || 9) - (rank[b.quality] || 9); });
-    }
-    function packageOf(serviceId, quality) {
-        var rows = packagesFor(serviceId);
-        for (var i = 0; i < rows.length; i++) if (rows[i].quality === quality) return rows[i];
-        return rows[0] || null;
-    }
     window.MMStore = {
-        money: money,
-        QUALITIES: [
-            { key: 'premium', name: 'Premium Quality' },
-            { key: 'high', name: 'High Quality' },
-            { key: 'normal', name: 'Normal Quality' }
-        ],
         catalog: {
-            ensure: function () { return { services: services(), packages: DATA.packages || [] }; },
+            ensure: function () { return { services: services() }; },
             services: services,
             service: function (id) {
                 var list = services();
                 for (var i = 0; i < list.length; i++) if (String(list[i].id) === String(id)) return list[i];
                 return list[0] || null;
-            },
-            packagesFor: packagesFor,
-            package: packageOf
+            }
         }
     };
 })();

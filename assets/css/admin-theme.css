@@ -541,3 +541,232 @@ body :focus-visible {
         transition-duration: .01ms !important;
     }
 }
+
+/* Work / portfolio manager helpers */
+.adm-muted-line {
+    margin-top: 3px;
+    max-width: 320px;
+    overflow: hidden;
+    color: #8492a8 !important;
+    font-size: 11.5px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.adm-hint {
+    display: block;
+    margin-top: 5px;
+    color: #8492a8;
+    font-size: 11.5px;
+    line-height: 1.45;
+}
+
+.adm-thumb-empty {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #8fa6c8;
+    background: #eef3fb;
+    border: 1px solid var(--adm-border, #e7ecf4);
+    font-size: 15px;
+}
+
+.adm-empty-cell {
+    padding: 24px 12px !important;
+    color: #7b889d !important;
+    font-size: 13px;
+    text-align: center;
+}
+
+.adm-card-head .adm-actions {
+    justify-content: flex-end;
+}
+
+@media (max-width: 720px) {
+    .adm-card-head .adm-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+}
+
+.adm-table tr[hidden] {
+    display: none !important;
+}
+
+/* Team member skills manager — hard limit of four badges per member. */
+.adm-skill-limit-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    padding: 3px 9px;
+    border: 1px solid #d5e4f8;
+    border-radius: 999px;
+    background: #eef5ff;
+    color: var(--adm-blue);
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.adm-skill-manager {
+    display: grid;
+    gap: 10px;
+}
+
+.adm-skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 7px;
+    min-height: 46px;
+    margin: 0;
+    padding: 9px;
+    border: 1px dashed #d3e1f4;
+    border-radius: 13px;
+    background: #f8fbff;
+    list-style: none;
+}
+
+.adm-skill-chip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-width: 0;
+    border: 1px solid #cfe1f7;
+    border-radius: 9px;
+    background: #eaf3ff;
+    color: #294a78;
+}
+
+.adm-skill-chip.is-over {
+    border-color: #f0c7c7;
+    background: #fff4f4;
+    color: #a53636;
+}
+
+.adm-skill-edit {
+    max-width: 100%;
+    padding: 5px 4px 5px 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: left;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+}
+
+.adm-skill-edit:hover {
+    color: var(--adm-blue);
+}
+
+.adm-skill-remove {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    margin-right: 3px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #7387a4;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.adm-skill-remove:hover {
+    background: #dbeaff;
+    color: #a53636;
+}
+
+.adm-skill-chip.is-over .adm-skill-remove:hover {
+    background: #f7dddd;
+    color: #8f2727;
+}
+
+.adm-skill-empty {
+    padding: 3px 4px;
+    color: #8994a7;
+    font-size: 12px;
+}
+
+.adm-skill-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.adm-skill-row .adm-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.adm-skill-row .adm-btn {
+    flex: 0 0 auto;
+    min-height: 42px;
+    white-space: nowrap;
+}
+
+.adm-skill-row .adm-input:disabled,
+.adm-skill-row .adm-btn:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+}
+
+.adm-skill-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 14px;
+    color: #71809a;
+    font-size: 11.5px;
+    line-height: 1.5;
+}
+
+#team-skills-count {
+    font-weight: 800;
+    color: var(--adm-blue);
+}
+
+#team-skills-count.is-full {
+    color: #18835d;
+}
+
+#team-skills-count.is-over,
+#team-skills-hint.is-warning {
+    color: #b54444;
+}
+
+@media (max-width: 560px) {
+    .adm-skill-row {
+        flex-direction: column;
+    }
+
+    .adm-skill-row .adm-btn {
+        width: 100%;
+    }
+}
+
+/* Extra legacy skills retained in the database but hidden by the 4-skill cap. */
+.adm-skill-extra {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    padding: 2px 7px;
+    border: 1px solid #cfe1f7;
+    border-radius: 999px;
+    background: #eaf3ff;
+    color: #294a78;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    vertical-align: middle;
+}

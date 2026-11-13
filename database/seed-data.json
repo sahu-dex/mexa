@@ -97,7 +97,7 @@
     },
     {
       "key": "welcome_message",
-      "value": "Thanks for choosing a package. Send me the details of your project and I will personally confirm the timeline before we start.",
+      "value": "Send me the details of your project and I will personally confirm the timeline before we start.",
       "group": "contact"
     },
     {
@@ -153,11 +153,6 @@
     {
       "key": "hero_btn_primary_text",
       "value": "Our Services",
-      "group": "home"
-    },
-    {
-      "key": "hero_btn_secondary_text",
-      "value": "Booking Now",
       "group": "home"
     },
     {
@@ -432,16 +427,11 @@
     },
     {
       "key": "services_intro",
-      "value": "Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.",
+      "value": "Eight in-house services with one demo each. Watch the one you need and read what is included.",
       "group": "pages"
     },
     {
       "key": "show_services",
-      "value": "1",
-      "group": "pages"
-    },
-    {
-      "key": "show_packages",
       "value": "1",
       "group": "pages"
     },
@@ -501,11 +491,6 @@
       "group": "pages"
     },
     {
-      "key": "book_lead",
-      "value": "Your selected service and package are already loaded. Add your project details and the ticket goes straight to the founder with status Pending.",
-      "group": "pages"
-    },
-    {
       "key": "site_tagline",
       "value": "Video Editing Agency",
       "group": "site"
@@ -552,7 +537,7 @@
     },
     {
       "key": "services_subtitle",
-      "value": "Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.",
+      "value": "Eight in-house services with one demo each. Watch the one you need and read what is included.",
       "group": "services"
     },
     {
@@ -826,344 +811,6 @@
       "demo_videos_json": "[]",
       "is_active": 1,
       "sort_order": 8
-    }
-  ],
-  "packages": [
-    {
-      "service_id": 5,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 179,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 5,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 89,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 5,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 39,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 1,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 179,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 1,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 89,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 1,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 39,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 2,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 100,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 2,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 50,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 2,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 22,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 3,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 239,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 3,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 119,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 3,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 52,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 4,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 60,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 4,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 30,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 4,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 13,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 6,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 478,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 6,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 238,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 6,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 104,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 8,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 299,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 8,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 149,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 8,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 65,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 9,
-      "quality": "premium",
-      "name": "Premium Quality",
-      "price": 597,
-      "currency": "USD",
-      "revisions": "Unlimited revisions",
-      "badge": "Best Value",
-      "description": "Highest quality — cinematic finish with custom motion and priority delivery.",
-      "features": "Advanced cinematic editing\nProfessional colour grading\nCustom motion graphics\nPremium visual effects\nPriority delivery (1–2 business days)\nUnlimited revisions",
-      "sort_order": 1,
-      "delivery": "1–2 business days",
-      "highlight": 0
-    },
-    {
-      "service_id": 9,
-      "quality": "high",
-      "name": "High Quality",
-      "price": 297,
-      "currency": "USD",
-      "revisions": "3 revision rounds",
-      "badge": "Most Popular",
-      "description": "Advanced quality — colour, transitions and sound design included.",
-      "features": "Advanced video editing\nColour correction\nSmooth transitions\nBackground music & sound effects\n3 revision rounds\nDelivery in 2–3 business days",
-      "sort_order": 2,
-      "delivery": "2–3 business days",
-      "highlight": 1
-    },
-    {
-      "service_id": 9,
-      "quality": "normal",
-      "name": "Normal Quality",
-      "price": 131,
-      "currency": "USD",
-      "revisions": "1 revision round",
-      "badge": "",
-      "description": "Everyday quality — clean edits with a standard export.",
-      "features": "Basic video editing\nCutting, trimming & merging\nStandard export quality (1080p)\n1 revision round\nDelivery in 3–4 business days",
-      "sort_order": 3,
-      "delivery": "3–4 business days",
-      "highlight": 0
     }
   ],
   "work_items": [

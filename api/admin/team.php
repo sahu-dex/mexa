@@ -54,7 +54,14 @@ if ($name === '' || $role === '') {
     json_response(['ok' => false, 'error' => 'Name and role are required.'], 422);
 }
 
-$skillsList = array_values(array_filter(array_map('trim', preg_split('/\r\n|\r|\n|,/', $skillsRaw) ?: [])));
+$skillsList = parse_team_skills($skillsRaw);
+if (count($skillsList) > TEAM_SKILL_LIMIT) {
+    $extra = count($skillsList) - TEAM_SKILL_LIMIT;
+    json_response([
+        'ok' => false,
+        'error' => 'A team member can have a maximum of ' . TEAM_SKILL_LIMIT . ' skills. Remove ' . $extra . ' skill' . ($extra === 1 ? '' : 's') . ' and try again.',
+    ], 422);
+}
 $skills = implode("\n", $skillsList);
 
 $existing = null;

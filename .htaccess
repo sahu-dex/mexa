@@ -13,7 +13,7 @@ Options -Indexes
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^(config|includes|database|storage|pages)(/|$) - [F,L]
-    RewriteRule ^(index|service|work|review|team|book)\.html$ $1.php [R=301,L,QSA]
+    RewriteRule ^(index|service|work|review|team)\.html$ $1.php [R=301,L,QSA]
 </IfModule>
 
 <IfModule mod_headers.c>

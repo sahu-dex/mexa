@@ -84,6 +84,38 @@ function split_lines(?string $text): array
     return $out;
 }
 
+function parse_team_skills(?string $text): array
+{
+    $text = trim((string) $text);
+    // Older rows stored a JSON array; accept that without changing the
+    // canonical newline-separated format used by the current admin form.
+    if ($text !== '' && $text[0] === '[' && str_ends_with($text, ']')) {
+        $decoded = json_decode($text, true);
+        if (is_array($decoded)) {
+            $text = implode("\n", array_filter($decoded, 'is_string'));
+        }
+    }
+
+    $out = [];
+    $seen = [];
+    foreach (split_lines($text) as $chunk) {
+        $parts = preg_split('/,/', $chunk) ?: [];
+        foreach ($parts as $part) {
+            $skill = preg_replace('/\s+/u', ' ', trim($part)) ?? '';
+            if ($skill === '') {
+                continue;
+            }
+            $key = mb_strtolower($skill, 'UTF-8');
+            if (isset($seen[$key])) {
+                continue;
+            }
+            $seen[$key] = true;
+            $out[] = $skill;
+        }
+    }
+    return $out;
+}
+
 function start_secure_session(): void
 {
     mexa_start_session();
@@ -461,7 +493,7 @@ function admin_logout_user(): void
     session_destroy();
 }
 
-function get_services_with_packages(bool $onlyActive = true): array
+function get_services_catalog(bool $onlyActive = true): array
 {
     $pdo = db();
     $sql = 'SELECT * FROM `services`';
@@ -471,30 +503,7 @@ function get_services_with_packages(bool $onlyActive = true): array
     $sql .= ' ORDER BY `sort_order` ASC, `id` ASC';
     $services = $pdo->query($sql)->fetchAll();
 
-    $packages = $pdo->query('SELECT * FROM `packages` ORDER BY `sort_order` ASC, `id` ASC')->fetchAll();
-    $pkgMap = [];
-    foreach ($packages as $pkg) {
-        $sid = (int) $pkg['service_id'];
-        $pkgMap[$sid][] = [
-            'id' => (int) $pkg['id'],
-            'serviceId' => $sid,
-            'service_id' => $sid,
-            'quality' => (string) $pkg['quality'],
-            'name' => (string) $pkg['name'],
-            'price' => (float) $pkg['price'],
-            'currency' => (string) $pkg['currency'],
-            'description' => (string) ($pkg['description'] ?? ''),
-            'features' => split_lines($pkg['features'] ?? ''),
-            'delivery' => (string) ($pkg['delivery'] ?? ''),
-            'revisions' => (string) ($pkg['revisions'] ?? ''),
-            'badge' => (string) ($pkg['badge'] ?? ''),
-            'highlight' => (int) $pkg['highlight'] === 1,
-            'sort_order' => (int) $pkg['sort_order'],
-        ];
-    }
-
     $formattedServices = [];
-    $flatPackages = [];
 
     foreach ($services as $svc) {
         $sid = (int) $svc['id'];
@@ -507,10 +516,6 @@ function get_services_with_packages(bool $onlyActive = true): array
         }
         $filePath = (string) ($svc['file_path'] ?? '');
         $thumbPath = (string) ($svc['thumbnail_path'] ?? '');
-        $svcPackages = $pkgMap[$sid] ?? [];
-        foreach ($svcPackages as $sp) {
-            $flatPackages[] = $sp;
-        }
         $formattedServices[] = [
             'id' => $sid,
             'name' => (string) $svc['name'],
@@ -537,14 +542,58 @@ function get_services_with_packages(bool $onlyActive = true): array
             'demo_videos' => $demos,
             'is_active' => (int) $svc['is_active'],
             'sort_order' => (int) $svc['sort_order'],
-            'packages' => $svcPackages,
         ];
     }
 
     return [
         'services' => $formattedServices,
-        'packages' => $flatPackages,
     ];
+}
+
+/**
+ * Extract a YouTube video ID from any public YouTube URL (watch, embed, shorts, live, youtu.be).
+ */
+function work_youtube_id(string $url): string
+{
+    if ($url === '') {
+        return '';
+    }
+    if (preg_match('~(?:youtube(?:-nocookie)?\.com/(?:watch\?(?:[^#]*&)?v=|embed/|shorts/|live/)|youtu\.be/)([A-Za-z0-9_-]{6,})~i', $url, $m)) {
+        return (string) $m[1];
+    }
+    return '';
+}
+
+/**
+ * Resolve the best available thumbnail for a work item.
+ *
+ * Uploaded thumbnails win, then image items use their own file, and YouTube
+ * links fall back to the provider thumbnail so cards never render a video
+ * file inside an <img> tag.
+ */
+function work_item_thumbnail(array $item): string
+{
+    $thumb = trim((string) ($item['thumbnail_path'] ?? ''));
+    if ($thumb !== '') {
+        return $thumb;
+    }
+    if (($item['kind'] ?? '') === 'image') {
+        return trim((string) ($item['file_path'] ?? ''));
+    }
+    $ytId = work_youtube_id((string) ($item['file_path'] ?? ''));
+    if ($ytId === '') {
+        $ytId = work_youtube_id((string) ($item['embed_url'] ?? ''));
+    }
+    return $ytId !== '' ? 'https://i.ytimg.com/vi/' . $ytId . '/hqdefault.jpg' : '';
+}
+
+/**
+ * Whether a work item has a media source that can be opened in the preview player.
+ */
+function work_item_previewable(array $item): bool
+{
+    return trim((string) ($item['file_path'] ?? '')) !== ''
+        || trim((string) ($item['embed_url'] ?? '')) !== '';
 }
 
 function get_work_bundle(?string $kind = null, ?string $category = null, ?string $section = null): array
@@ -734,7 +783,7 @@ function get_team_bundle(): array
             'role' => (string) $m['role'],
             'bio' => team_profile_excerpt((string) ($m['bio'] ?? '')),
             'description' => team_profile_excerpt((string) ($m['description'] ?? '')),
-            'skills' => split_lines($m['skills'] ?? ''),
+            'skills' => array_slice(parse_team_skills((string) ($m['skills'] ?? '')), 0, TEAM_SKILL_LIMIT),
             'responsibilities' => split_lines($m['responsibilities'] ?? ''),
             'file_path' => $fp,
             'photo_url' => $fp,
@@ -755,14 +804,21 @@ function get_team_bundle(): array
     ];
 }
 
+/** Keep the retired default package copy off the site before the DB migration. */
+function services_intro_text(): string
+{
+    $intro = setting('services_intro', '');
+    $old = 'Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.';
+    return $intro === $old ? 'Eight in-house services with one demo each. Watch the one you need and read what is included.' : $intro;
+}
+
 function build_page_payload(string $pageKey): array
 {
     $payload = [
         'content' => [
             'services_heading' => setting('services_heading', 'Our Services'),
-            'services_intro' => setting('services_intro', ''),
+            'services_intro' => services_intro_text(),
             'show_services' => setting_raw('show_services', '1'),
-            'show_packages' => setting_raw('show_packages', '1'),
             'show_overview' => setting_raw('show_overview', '1'),
             'overview_video_url' => setting_raw('overview_video_file_path', ''),
             'overview_poster_url' => setting_raw('overview_poster_file_path', ''),
@@ -788,10 +844,9 @@ function build_page_payload(string $pageKey): array
         ],
     ];
 
-    if (in_array($pageKey, ['service', 'book'], true)) {
-        $cat = get_services_with_packages(true);
+    if ($pageKey === 'service') {
+        $cat = get_services_catalog(true);
         $payload['services'] = $cat['services'];
-        $payload['packages'] = $cat['packages'];
     }
     if ($pageKey === 'work') {
         $work = get_work_bundle();
@@ -801,7 +856,7 @@ function build_page_payload(string $pageKey): array
     if ($pageKey === 'review') {
         $payload['reviews'] = get_reviews_bundle(false);
     }
-    if (in_array($pageKey, ['team', 'book'], true)) {
+    if ($pageKey === 'team') {
         $payload['team'] = get_team_bundle();
     }
 
@@ -819,11 +874,11 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-hero-character.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/home-hero.css',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/mm-services-cta.css',
-            'assets/css/home-ui-fixes.css',
+            'assets/css/home-ui-fixes.css?v=20261112-work-preview',
         ],
         'service' => [
             'assets/css/site-vendor-base.css',
@@ -834,7 +889,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'work' => [
@@ -847,7 +902,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/wk-layout-fix.css',
         ],
@@ -861,7 +916,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/rvx-layout-v2.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'team' => [
@@ -873,18 +928,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
-            'assets/css/mm-subscribe-fix.css',
-        ],
-        'book' => [
-            'assets/css/site-vendor-base.css',
-            'assets/css/tailwind-book.css',
-            'assets/css/site-image-fallbacks.css',
-            'assets/css/site-header-lockup.css',
-            'assets/css/service-booking-theme.css',
-            'assets/css/mobile-menu.css',
-            'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'privacy' => [
@@ -894,7 +938,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -905,7 +949,7 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css',
+            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -913,16 +957,25 @@ function page_stylesheets(string $pageKey): array
     $stylesheets = array_merge($map[$pageKey] ?? $map['home'], [
         'assets/css/plus-jakarta-font.css',
         'assets/css/premium-design-system.css?v=20261112-tabs2',
-        'assets/css/visual-refresh.css?v=20261112-tabs2',
+        'assets/css/visual-refresh.css?v=20261112-footer-soft',
     ]);
     if ($pageKey === 'home') {
-        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112';
-    } elseif ($pageKey === 'book') {
-        $stylesheets[] = 'assets/css/book-header-fix.css?v=20261112';
-        $stylesheets[] = 'assets/css/book-layout.css?v=20261112-blue-summary';
+        $stylesheets[] = 'assets/css/home-hero-reference.css?v=20261112-hero-blend2';
     }
     if ($pageKey === 'home' || $pageKey === 'team') {
         $stylesheets[] = 'assets/css/team-photos.css?v=20261112';
+    }
+    // Final visual grade for every public page — keep this last so the
+    // light-blue palette wins over page-specific theme files.
+    $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
+    // Shared reference-inspired colour and font grade; leaves page structure intact.
+    $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-wide';
+    $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
+    $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
+    $stylesheets[] = 'assets/css/video-close-button.css?v=20261113';
+    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261113';
+    if ($pageKey === 'home') {
+        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
     return $stylesheets;
 }
