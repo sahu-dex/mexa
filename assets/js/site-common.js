@@ -101,6 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 menu.classList.add('pointer-events-none');
                 document.getElementById('mobile-menu-backdrop').classList.add('opacity-0');
                 document.getElementById('mobile-menu-drawer').classList.add('-translate-y-full');
+                document.documentElement.style.overflow = '';
+                document.body.style.overflow = '';
+                document.body.classList.remove('mm-open');
+                const toggle = document.getElementById('header-menu-toggle');
+                if (toggle) {
+                    toggle.setAttribute('aria-expanded', 'false');
+                    toggle.setAttribute('aria-label', 'Open menu');
+                }
             }
         }
     }, { passive: true });
