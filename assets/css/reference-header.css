@@ -16,6 +16,18 @@ body #header.hdr-bar-wrap {
         height: 68px !important;
         min-height: 68px !important;
         max-height: 68px !important;
+        isolation: isolate;
+    }
+    /* Cover the strip above the floating header so scrolling content cannot
+       appear through its top gap or around its rounded corners. */
+    body #header.hdr-bar-wrap::before {
+        content: "";
+        position: fixed;
+        inset: 0 0 auto;
+        height: 84px;
+        background: #e8effb;
+        z-index: -1;
+        pointer-events: none;
     }
 }
 body #header > .container {
@@ -30,6 +42,13 @@ body #header > .container {
     box-shadow: 0 8px 32px rgba(17,82,223,.04);
     -webkit-backdrop-filter: none !important;
     backdrop-filter: none !important;
+}
+@media (min-width: 1024px) {
+    body #header > .container {
+        background: #d5e4ff !important;
+        border-color: #bdcff2 !important;
+        box-shadow: 0 8px 28px rgba(27, 71, 145, .12) !important;
+    }
 }
 body #header .brand-logo-badge {
     width: 36px !important; height: 36px !important; flex-basis: 36px !important;
