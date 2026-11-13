@@ -128,7 +128,8 @@
         if (svcVideo) svcVideo.removeAttribute('controls');
         // Provider iframes keep their own controls; native video gets the
         // shared player control bar.
-        window.MXVideoPlayer.bind(svcVideo || null);
+        var stageEl = el('sv2-video-stage');
+        window.MXVideoPlayer.bind(svcVideo || null, stageEl || null);
         m.hidden = false; lock(true);
         var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
     }

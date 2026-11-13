@@ -140,7 +140,8 @@
         if (mediaEl) mediaEl.removeAttribute('controls');
         // Bind the shared player controls (native controls stay in the source
         // markup but are replaced by the custom control bar at runtime).
-        window.MXVideoPlayer.bind(mediaEl || null);
+        var stageEl = modal.querySelector('.wk-modal-box');
+        window.MXVideoPlayer.bind(mediaEl || null, stageEl || null);
         modal.classList.toggle('is-vertical', !!vertical);
         modal.hidden = false;
         document.body.style.overflow = 'hidden';

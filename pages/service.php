@@ -102,14 +102,18 @@ include dirname(__DIR__) . '/includes/header.php';
     <div class="sv2-modal-box" role="dialog" aria-modal="true" aria-label="Service video">
         <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close video"></button>
         <div class="sv2-stage" id="sv2-video-stage">
+            <button type="button" class="vp-center-play" aria-label="Play video"><i class="fa-solid fa-play"></i></button>
+            <div class="vp-skip-indicator" aria-hidden="true"></div>
             <div class="vp-controls" data-vp-controls hidden>
+                <button type="button" class="vp-btn vp-skip-back" data-vp-skip-back aria-label="5 seconds backward">⏮ 5s</button>
                 <button type="button" class="vp-btn vp-play-pause" data-vp-play-pause aria-label="Play video">
                     <span class="vp-ic-play"><i class="fa-solid fa-play"></i></span>
                     <span class="vp-ic-pause" style="display:none"><i class="fa-solid fa-pause"></i></span>
                 </button>
-                <button type="button" class="vp-btn vp-skip-back" data-vp-skip-back aria-label="10 seconds backward"><i class="fa-solid fa-backward-step"></i></button>
+                <button type="button" class="vp-btn vp-skip-forward" data-vp-skip-forward aria-label="5 seconds forward">5s ⏭</button>
+                <span class="vp-time-current">0:00</span>
                 <input type="range" class="vp-progress" data-vp-progress min="0" max="100" value="0">
-                <button type="button" class="vp-btn vp-skip-forward" data-vp-skip-forward aria-label="10 seconds forward"><i class="fa-solid fa-forward-step"></i></button>
+                <span class="vp-time-duration">0:00</span>
                 <button type="button" class="vp-btn vp-volume" data-vp-volume aria-label="Volume">
                     <span class="vp-ic-volume-up"><i class="fa-solid fa-volume-up"></i></span>
                     <span class="vp-ic-volume-off" style="display:none"><i class="fa-solid fa-volume-mute"></i></span>

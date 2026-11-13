@@ -205,7 +205,7 @@
             media = buildFrame(embedUrl(embed));
             isFrame = true;
         } else {
-            window.MXVideoPlayer.bind(null);
+            window.MXVideoPlayer.bind(null, null);
             showError('No playable media is attached to this card yet.', '');
             return;
         }
@@ -223,7 +223,8 @@
         }
 
         // Bind the shared controls to this video; images/iframes hide the bar.
-        window.MXVideoPlayer.bind(media.tagName === 'VIDEO' ? media : null);
+        var stageEl = modal.querySelector('.mmvp-stage');
+        window.MXVideoPlayer.bind(media.tagName === 'VIDEO' ? media : null, stageEl || null);
 
         // Never leave the loading veil on screen if a provider stays silent.
         fallbackTimer = window.setTimeout(function () {

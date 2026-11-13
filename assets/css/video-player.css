@@ -1,10 +1,68 @@
 /*!
- * Mexa Motion — common professional video player controls.
+ * Mexa Motion — Universal YouTube-style video player controls.
  *
- * Shared by the video modals on Home, Work and Service pages. The control bar
- * sits over the bottom of the video; provider iframes (YouTube/Vimeo/etc.)
- * keep their own controls and simply hide this bar.
+ * Shared by the video modals on Home, Work and Service pages.
+ * Provides:
+ *   - Center Play / Pause overlay
+ *   - 5-second skip backward / forward buttons + skip indicator
+ *   - Bottom playback bar: progress, current time, duration, volume, fullscreen
+ *   - Auto-hide controls after inactivity
+ *   - Original aspect ratio preserved (portrait / landscape)
  */
+
+/* Stage containers must allow the overlay controls to sit on top. */
+#wk-modal-player,
+#mm-work-player,
+#sv2-video-stage {
+    position: relative;
+}
+.wk-modal-box #wk-modal-player,
+.mmvp-stage #mm-work-player,
+.sv2-modal-box #sv2-video-stage {
+    overflow: visible;
+}
+
+/* --------------------------------------------------------------
+   Center Play / Pause overlay
+   -------------------------------------------------------------- */
+.vp-center-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .65);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .45);
+    opacity: 1;
+    transition: opacity .18s ease, transform .18s ease;
+}
+.vp-center-play:hover {
+    background: rgba(0, 0, 0, .8);
+    transform: translate(-50%, -50%) scale(1.06);
+}
+.vp-center-play:focus-visible {
+    outline: 2px solid #3b8df6;
+    outline-offset: 4px;
+}
+.vp-center-play i {
+    font-size: 30px;
+    /* nudge play icon slightly right to account for triangle center */
+    transform: translateX(2px);
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------
+   Bottom playback controls bar
+   -------------------------------------------------------------- */
 .vp-controls {
     position: absolute;
     left: 0;
@@ -14,32 +72,27 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 9px 10px 11px;
-    background: linear-gradient(to top, rgba(2, 6, 14, .84), transparent);
-    backdrop-filter: blur(8px);
+    padding: 10px 12px 12px;
+    background: linear-gradient(to top, rgba(2, 6, 14, .85), transparent);
+    backdrop-filter: blur(10px);
     color: #fff;
     font: 400 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
     box-sizing: border-box;
+    opacity: 1;
+    transition: opacity .24s ease, transform .24s ease;
 }
 .vp-controls[hidden],
 .vp-controls.hidden {
     display: none !important;
 }
-
-/* Make sure the media container can position the bar and stays rounded. */
-#wk-modal-player,
-#mm-work-player,
-#sv2-video-stage {
-    position: relative;
+.vp-controls.vp-hide {
+    opacity: 0;
+    pointer-events: none;
 }
 
-/* Keep custom controls above the rounded media corners. */
-.wk-modal-box #wk-modal-player,
-.mmvp-stage #mm-work-player,
-.sv2-modal-box #sv2-video-stage {
-    overflow: visible;
-}
-
+/* --------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------- */
 .vp-btn {
     display: grid;
     place-items: center;
@@ -72,16 +125,51 @@
     pointer-events: none;
 }
 
+/* Skip indicator overlay (centered, fades out) */
+.vp-skip-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 6;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    padding: 8px 14px;
+    border-radius: 24px;
+    background: rgba(0, 0, 0, .75);
+    color: #fff;
+    font: 700 15px/1 system-ui, sans-serif;
+    letter-spacing: .02em;
+    opacity: 0;
+    transition: opacity .18s ease;
+    pointer-events: none;
+}
+
+/* --------------------------------------------------------------
+   Progress bar + time labels
+   -------------------------------------------------------------- */
+.vp-time-current,
+.vp-time-duration {
+    flex-shrink: 0;
+    font-size: 12px;
+    color: #e2e8f0;
+    min-width: 32px;
+    text-align: left;
+}
+.vp-time-duration { text-align: right; }
+
 .vp-progress {
     flex: 1 1 auto;
-    min-width: 140px;
+    min-width: 120px;
     height: 6px;
     border-radius: 3px;
     background: rgba(255, 255, 255, .42);
     border: none;
     outline: none;
     padding: 0;
-    margin: 0 2px;
+    margin: 0 6px;
     -webkit-appearance: none;
     appearance: none;
     cursor: pointer;
@@ -118,6 +206,9 @@
     box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
 }
 
+/* --------------------------------------------------------------
+   Volume
+   -------------------------------------------------------------- */
 .vp-volume-range {
     width: 84px;
     height: 6px;
@@ -161,15 +252,21 @@
     cursor: pointer;
 }
 
-/* Volume slider is always on; on small screens the mute toggle alone is used. */
+/* --------------------------------------------------------------
+   Responsive
+   -------------------------------------------------------------- */
 @media (max-width: 600px) {
     .vp-volume-range { display: none; }
     .vp-controls { padding: 8px 8px 10px; gap: 7px; }
     .vp-btn { width: 34px; height: 34px; font-size: 15px; }
-    .vp-progress { min-width: 100px; }
+    .vp-progress { min-width: 90px; }
+    .vp-center-play { width: 60px; height: 60px; }
+    .vp-center-play i { font-size: 26px; }
 }
 
-/* Fullscreen state of the whole modal. */
+/* --------------------------------------------------------------
+   Fullscreen state of the whole modal
+   -------------------------------------------------------------- */
 .vp-is-fullscreen {
     position: fixed !important;
     inset: 0 !important;
@@ -182,7 +279,9 @@
     box-shadow: none !important;
 }
 
-/* Native controls are removed by script and replaced by the custom bar above. */
+/* --------------------------------------------------------------
+   Hide native media controls — our custom bar replaces them
+   -------------------------------------------------------------- */
 #wk-modal-player video::-webkit-media-controls,
 #mm-work-player video::-webkit-media-controls,
 #sv2-video-stage video::-webkit-media-controls,
