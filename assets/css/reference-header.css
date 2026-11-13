@@ -54,18 +54,7 @@ body #header > .container {
         box-shadow: 0 8px 32px rgba(17,82,223,.06) !important;
     }
 }
-body #header .header-service-label { display: none; }
-@media (min-width: 1024px) {
-    body #header .header-service-label {
-        display: block;
-        grid-column: 3;
-        justify-self: end;
-        color: #475569;
-        font: 500 clamp(11px, 1vw, 13px)/1.3 'Poppins', sans-serif;
-        white-space: nowrap;
-    }
-}
-/* Service CTA beside the desktop label, with a compact mobile variant. */
+/* Service CTA with a compact mobile variant. */
 body #header .header-service-button {
     display: inline-flex;
     align-items: center;
