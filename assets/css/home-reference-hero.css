@@ -72,11 +72,11 @@ body #home .ref-hero-visual { position: relative; }
 
 /* Keep the original character uncropped, with its intrinsic proportions. */
 body #home .ref-hero-character { display: flex; justify-content: center; align-items: center; margin: 0; }
-body #home .ref-hero-character img { display: block; width: auto; height: auto; max-width: 100%; max-height: min(62vh, 510px); object-fit: contain; }
+body #home .ref-hero-character img { display: block; width: auto; height: auto; max-width: 100%; max-height: min(72vh, 550px); object-fit: contain; filter: drop-shadow(0 10px 14px rgba(33, 40, 50, .10)); }
 @media (max-width: 1023px) {
     body #home .ref-hero-grid { row-gap: 0; }
     body #home .ref-hero-content { display: contents; }
     body #home .ref-hero-visual { order: 1; width: 100%; margin: 0 auto 24px; }
-    body #home .ref-hero-character img { width: min(100%, 400px); max-height: none; }
+    body #home .ref-hero-character img { width: min(100%, 420px); max-height: none; }
     body #home .ref-hero-actions { order: 2; }
 }
