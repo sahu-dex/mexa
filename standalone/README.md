@@ -12,13 +12,16 @@ It exists so the design can be reviewed without touching the live PHP site.
 standalone/
   index.html                    # the page itself
   assets/
-    css/home-reference-design.css
+    css/                        # all 19 stylesheets used by the page
+    js/                         # site-common.js, AOS, work preview, avatar fallback
     fonts/poppins/              # Poppins 300–800 + OFL licence
-    js/home-extra.js            # review avatar fallback for this preview
+    images/                     # hero, team and other local images
+    about/                      # about-section photos
 ```
 
-Shared site assets (images, the other CSS files, site-common.js, the work preview modal)
-are read from the repository root with `../assets/...`; nothing is duplicated.
+Every CSS, JS, font and local image the page needs is inside this folder. The only
+external files are the inner PHP pages linked from the nav/footer and the remote
+Unsplash photos used by the portfolio/review cards.
 
 ## How to view
 
@@ -34,8 +37,9 @@ For the local preview used during development, that is:
 http://127.0.0.1:8099/standalone/index.html
 ```
 
-Opening the file directly with `file://` also renders the page, but the links to
-`service.php`, `work.php`, etc. and the newsletter need the PHP site to be running.
+Opening the file directly with `file://` renders the full design because all CSS, JS and
+local images are bundled; only the links to `service.php`, `work.php`, etc. and the
+newsletter need the PHP site to be running.
 
 ## Notes
 

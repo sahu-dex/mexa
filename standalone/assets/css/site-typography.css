@@ -1,0 +1,98 @@
+@layer mx-typography {
+  :where(html) {
+    font-synthesis: none;
+    text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    font-family: var(--mx-font, 'MX Jakarta', 'Noto Sans Bengali', Poppins, system-ui, sans-serif) !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-kerning: normal;
+  }
+  body :is(main, section, article, footer) h1:not(:where(
+    .hero-title, .hero-title-blue, .hero-line-1, .hero-line-2,
+    .mh-line1, .mh-line2, .sv2-hero-title, #sv2-tagline
+  )) {
+    font-family: inherit !important;
+    font-size: clamp(2.05rem, 1.4rem + 2.4vw, 3.75rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.032em !important;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  body :is(main, section, article, footer) h2:not(:where(
+    .hero-title, .hero-title-blue, .hero-line-1, .hero-line-2,
+    .mh-line1, .mh-line2, .sv2-hero-title, #sv2-tagline,
+    .wk-h2, .rvx-form-head h2, .rvx-modal-box h2
+  )) {
+    font-family: inherit !important;
+    font-size: clamp(1.55rem, 1.12rem + 1.45vw, 2.55rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.18 !important;
+    letter-spacing: -0.026em !important;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  body :is(main, section, article, footer) h3:not(:where(
+    .hero-title, .hero-title-blue, .hero-line-1, .hero-line-2,
+    .mh-line1, .mh-line2, .sv2-hero-title, #sv2-tagline
+  )) {
+    font-family: inherit !important;
+    font-size: clamp(1.125rem, 1rem + 0.42vw, 1.4rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.28 !important;
+    letter-spacing: -0.016em !important;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  body :is(main, section, article, footer) :is(h4, h5, h6) {
+    font-family: inherit !important;
+    font-size: clamp(0.98rem, 0.92rem + 0.24vw, 1.18rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.38 !important;
+    letter-spacing: -0.01em !important;
+    overflow-wrap: break-word;
+    text-wrap: balance;
+  }
+  body :is(main, section, article, footer) :is(p, li, dd, blockquote) {
+    font-family: inherit !important;
+    font-size: clamp(0.9rem, 0.88rem + 0.14vw, 1rem) !important;
+    line-height: 1.7 !important;
+    letter-spacing: 0 !important;
+    overflow-wrap: break-word;
+    text-wrap: pretty;
+  }
+  body :is(main, section, article, footer) :is(h1, h2, h3, h4) + p {
+    margin-block-start: 0.62rem !important;
+  }
+  body :is(main, section, article, footer) :is(p, ul, ol, blockquote) + :is(p, ul, ol, blockquote) {
+    margin-block-start: 0.68rem !important;
+  }
+  body :is(button, [role='button'], input[type='button'], input[type='submit'], nav a) {
+    font-family: inherit !important;
+    font-size: clamp(0.875rem, 0.84rem + 0.13vw, 1rem) !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.005em !important;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
+  }
+  body :is(input, textarea, select) {
+    font-family: inherit !important;
+    font-size: clamp(0.9rem, 0.88rem + 0.14vw, 1rem) !important;
+    line-height: 1.5 !important;
+  }
+  @media (max-width: 640px) {
+    body :is(main, section, article, footer) :is(h1, h2, h3, h4, h5, h6) {
+      letter-spacing: -0.016em !important;
+    }
+    body :is(main, section, article, footer) :is(p, li, dd, blockquote) {
+      line-height: 1.68 !important;
+    }
+    body :is(main, section, article, footer) :is(h1, h2, h3, h4) + p {
+      margin-block-start: 0.54rem !important;
+    }
+  }
+}
