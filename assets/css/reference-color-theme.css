@@ -89,3 +89,22 @@ body :is(.glass-btn-secondary) {
     color: #1152df !important;
     box-shadow: 0 4px 24px -4px rgba(0,0,0,.05) !important;
 }
+
+/* Homepage founder card: softer blue with readable white text. */
+body #team .mx-founder-card.mx-profile-card {
+    background: linear-gradient(115deg, #1d56aa 0%, #2f6cba 100%) !important;
+    box-shadow: 0 20px 48px rgba(29,86,170,.18), 0 8px 20px rgba(29,86,170,.10) !important;
+}
+body #team .mx-founder-card.mx-profile-card :is(.tm-founder-name, .tm-founder-role, .tm-founder-bio, .tm-perk-title, .tm-perk-text, .tm-perk-ic) {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+}
+body #team .mx-founder-card.mx-profile-card .tm-perk {
+    background: rgba(255,255,255,.06) !important;
+    border-color: rgba(255,255,255,.3) !important;
+}
+body #team .mx-founder-card.mx-profile-card .tm-perk-ic {
+    color: #fff !important;
+    border-color: rgba(255,255,255,.9) !important;
+    background: transparent !important;
+}
