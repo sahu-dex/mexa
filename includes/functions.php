@@ -973,7 +973,7 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-clear-top-gap';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     if ($pageKey === 'home') {
-        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-character-blend';
+        $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
     return $stylesheets;
 }
