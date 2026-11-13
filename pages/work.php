@@ -75,8 +75,27 @@ include dirname(__DIR__) . '/includes/header.php';
         <div class="wk-modal" id="wk-modal" hidden>
             <div class="wk-modal-bd" data-wk-close="1"></div>
             <div class="wk-modal-box" role="dialog" aria-modal="true" aria-label="Video preview">
-                <button class="wk-modal-x" data-wk-close="1" aria-label="Close">&times;</button>
-                <div id="wk-modal-player"></div>
+                <button class="wk-modal-x" data-wk-close="1" aria-label="Close video"></button>
+                <div id="wk-modal-player">
+                    <div class="vp-controls" data-vp-controls hidden>
+                        <button type="button" class="vp-btn vp-play-pause" data-vp-play-pause aria-label="Play video">
+                            <span class="vp-ic-play"><i class="fa-solid fa-play"></i></span>
+                            <span class="vp-ic-pause" style="display:none"><i class="fa-solid fa-pause"></i></span>
+                        </button>
+                        <button type="button" class="vp-btn vp-skip-back" data-vp-skip-back aria-label="10 seconds backward"><i class="fa-solid fa-backward-step"></i></button>
+                        <input type="range" class="vp-progress" data-vp-progress min="0" max="100" value="0">
+                        <button type="button" class="vp-btn vp-skip-forward" data-vp-skip-forward aria-label="10 seconds forward"><i class="fa-solid fa-forward-step"></i></button>
+                        <button type="button" class="vp-btn vp-volume" data-vp-volume aria-label="Volume">
+                            <span class="vp-ic-volume-up"><i class="fa-solid fa-volume-up"></i></span>
+                            <span class="vp-ic-volume-off" style="display:none"><i class="fa-solid fa-volume-mute"></i></span>
+                        </button>
+                        <input type="range" class="vp-volume-range" data-vp-volume-range min="0" max="1" step="0.05" value="1" aria-label="Volume level">
+                        <button type="button" class="vp-btn vp-fullscreen" data-vp-fullscreen aria-label="Fullscreen">
+                            <span class="vp-ic-expand"><i class="fa-solid fa-expand"></i></span>
+                            <span class="vp-ic-compress" style="display:none"><i class="fa-solid fa-compress"></i></span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 <?php include dirname(__DIR__) . '/includes/footer.php'; ?>

@@ -205,6 +205,7 @@
             media = buildFrame(embedUrl(embed));
             isFrame = true;
         } else {
+            window.MXVideoPlayer.bind(null);
             showError('No playable media is attached to this card yet.', '');
             return;
         }
@@ -212,12 +213,17 @@
         player.appendChild(media);
 
         if (media.tagName === 'VIDEO') {
-            // Autoplay may be blocked; native controls keep the player usable.
+            // Native controls are replaced by the shared player controls.
+            media.removeAttribute('controls');
+            // Autoplay may be blocked; the shared controls keep the player usable.
             var playAttempt = media.play();
             if (playAttempt && typeof playAttempt.catch === 'function') {
                 playAttempt.catch(function () {});
             }
         }
+
+        // Bind the shared controls to this video; images/iframes hide the bar.
+        window.MXVideoPlayer.bind(media.tagName === 'VIDEO' ? media : null);
 
         // Never leave the loading veil on screen if a provider stays silent.
         fallbackTimer = window.setTimeout(function () {
@@ -235,6 +241,8 @@
     function closeModal() {
         if (modal.hidden) return;
 
+        window.MXVideoPlayer.release();
+        if (document.fullscreenElement) document.exitFullscreen();
         stopPlayback();
         hideError();
         setLoading(false);

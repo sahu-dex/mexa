@@ -122,7 +122,13 @@
     function openVideo(url) {
         var m = el('sv2-video');
         if (!m) return;
-        el('sv2-video-stage').innerHTML = playerMarkup(url);
+        var stage = el('sv2-video-stage');
+        stage.innerHTML = playerMarkup(url);
+        var svcVideo = stage.querySelector('video');
+        if (svcVideo) svcVideo.removeAttribute('controls');
+        // Provider iframes keep their own controls; native video gets the
+        // shared player control bar.
+        window.MXVideoPlayer.bind(svcVideo || null);
         m.hidden = false; lock(true);
         var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
     }
@@ -138,6 +144,10 @@
         var v = el('sv2-video'), i = el('sv2-image');
         if (v && !v.hidden) { v.hidden = true; el('sv2-video-stage').innerHTML = ''; }
         if (i && !i.hidden) { i.hidden = true; el('sv2-image-img').removeAttribute('src'); }
+
+        window.MXVideoPlayer.release();
+        if (document.fullscreenElement) document.exitFullscreen();
+
         if (!locked) return;
         lock(false);
     }

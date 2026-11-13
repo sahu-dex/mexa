@@ -136,6 +136,11 @@
         }
         lastFocused = document.activeElement;
         player.innerHTML = html;
+        var mediaEl = player.querySelector('video');
+        if (mediaEl) mediaEl.removeAttribute('controls');
+        // Bind the shared player controls (native controls stay in the source
+        // markup but are replaced by the custom control bar at runtime).
+        window.MXVideoPlayer.bind(mediaEl || null);
         modal.classList.toggle('is-vertical', !!vertical);
         modal.hidden = false;
         document.body.style.overflow = 'hidden';
@@ -143,6 +148,10 @@
     }
     function closeModal() {
         if (!modal || !player) return;
+
+        window.MXVideoPlayer.release();
+        if (document.fullscreenElement) document.exitFullscreen();
+
         modal.hidden = true;
         player.innerHTML = '';
         document.body.style.overflow = '';

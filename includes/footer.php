@@ -99,6 +99,7 @@ $accentHex = chr(35) . '1051DF';
     </script>
     <script src="assets/js/vendor-aos.js"></script>
     <script src="assets/js/site-common.js?v=20261113-header-services-2"></script>
+    <script src="assets/js/video-player.js?v=20261113"></script>
 <?php foreach ($pageScripts as $jsSrc): ?>
     <script src="<?= e($jsSrc) ?>"></script>
 <?php endforeach; ?>

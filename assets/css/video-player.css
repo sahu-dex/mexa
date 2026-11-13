@@ -1,0 +1,193 @@
+/*!
+ * Mexa Motion — common professional video player controls.
+ *
+ * Shared by the video modals on Home, Work and Service pages. The control bar
+ * sits over the bottom of the video; provider iframes (YouTube/Vimeo/etc.)
+ * keep their own controls and simply hide this bar.
+ */
+.vp-controls {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px 11px;
+    background: linear-gradient(to top, rgba(2, 6, 14, .84), transparent);
+    backdrop-filter: blur(8px);
+    color: #fff;
+    font: 400 13px/1 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    box-sizing: border-box;
+}
+.vp-controls[hidden],
+.vp-controls.hidden {
+    display: none !important;
+}
+
+/* Make sure the media container can position the bar and stays rounded. */
+#wk-modal-player,
+#mm-work-player,
+#sv2-video-stage {
+    position: relative;
+}
+
+/* Keep custom controls above the rounded media corners. */
+.wk-modal-box #wk-modal-player,
+.mmvp-stage #mm-work-player,
+.sv2-modal-box #sv2-video-stage {
+    overflow: visible;
+}
+
+.vp-btn {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .5);
+    background: rgba(255, 255, 255, .14);
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.vp-btn:hover {
+    background: rgba(255, 255, 255, .26);
+    border-color: rgba(255, 255, 255, .85);
+}
+.vp-btn:active { background: rgba(255, 255, 255, .18); }
+.vp-btn:focus-visible {
+    outline: 2px solid #3b8df6;
+    outline-offset: 2px;
+}
+.vp-btn svg,
+.vp-btn i {
+    width: 17px;
+    height: 17px;
+    stroke-width: 1.6;
+    pointer-events: none;
+}
+
+.vp-progress {
+    flex: 1 1 auto;
+    min-width: 140px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0 2px;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+}
+.vp-progress::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+}
+.vp-progress::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+}
+.vp-progress::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+}
+.vp-progress::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .35);
+}
+
+.vp-volume-range {
+    width: 84px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+    outline: none;
+    padding: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.vp-volume-range::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+}
+.vp-volume-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+}
+.vp-volume-range::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, .42);
+    border: none;
+}
+.vp-volume-range::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+/* Volume slider is always on; on small screens the mute toggle alone is used. */
+@media (max-width: 600px) {
+    .vp-volume-range { display: none; }
+    .vp-controls { padding: 8px 8px 10px; gap: 7px; }
+    .vp-btn { width: 34px; height: 34px; font-size: 15px; }
+    .vp-progress { min-width: 100px; }
+}
+
+/* Fullscreen state of the whole modal. */
+.vp-is-fullscreen {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 2147483647 !important;
+    background: #000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Native controls are removed by script and replaced by the custom bar above. */
+#wk-modal-player video::-webkit-media-controls,
+#mm-work-player video::-webkit-media-controls,
+#sv2-video-stage video::-webkit-media-controls,
+#wk-modal-player video::-webkit-media-controls-panel,
+#mm-work-player video::-webkit-media-controls-panel,
+#sv2-video-stage video::-webkit-media-controls-panel {
+    display: none !important;
+}

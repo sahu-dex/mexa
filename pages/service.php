@@ -100,14 +100,33 @@ include dirname(__DIR__) . '/includes/header.php';
 
 <div id="sv2-video" class="sv2-modal" hidden>
     <div class="sv2-modal-box" role="dialog" aria-modal="true" aria-label="Service video">
-        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close video"><i class="fa-solid fa-xmark"></i></button>
-        <div class="sv2-stage" id="sv2-video-stage"></div>
+        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close video"></button>
+        <div class="sv2-stage" id="sv2-video-stage">
+            <div class="vp-controls" data-vp-controls hidden>
+                <button type="button" class="vp-btn vp-play-pause" data-vp-play-pause aria-label="Play video">
+                    <span class="vp-ic-play"><i class="fa-solid fa-play"></i></span>
+                    <span class="vp-ic-pause" style="display:none"><i class="fa-solid fa-pause"></i></span>
+                </button>
+                <button type="button" class="vp-btn vp-skip-back" data-vp-skip-back aria-label="10 seconds backward"><i class="fa-solid fa-backward-step"></i></button>
+                <input type="range" class="vp-progress" data-vp-progress min="0" max="100" value="0">
+                <button type="button" class="vp-btn vp-skip-forward" data-vp-skip-forward aria-label="10 seconds forward"><i class="fa-solid fa-forward-step"></i></button>
+                <button type="button" class="vp-btn vp-volume" data-vp-volume aria-label="Volume">
+                    <span class="vp-ic-volume-up"><i class="fa-solid fa-volume-up"></i></span>
+                    <span class="vp-ic-volume-off" style="display:none"><i class="fa-solid fa-volume-mute"></i></span>
+                </button>
+                <input type="range" class="vp-volume-range" data-vp-volume-range min="0" max="1" step="0.05" value="1" aria-label="Volume level">
+                <button type="button" class="vp-btn vp-fullscreen" data-vp-fullscreen aria-label="Fullscreen">
+                    <span class="vp-ic-expand"><i class="fa-solid fa-expand"></i></span>
+                    <span class="vp-ic-compress" style="display:none"><i class="fa-solid fa-compress"></i></span>
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 
 <div id="sv2-image" class="sv2-modal" hidden>
     <div class="sv2-modal-box is-image" role="dialog" aria-modal="true" aria-label="Service image preview">
-        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close image"><i class="fa-solid fa-xmark"></i></button>
+        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close image"></button>
         <img id="sv2-image-img" alt="Service image preview" decoding="async" loading="lazy">
     </div>
 </div>
