@@ -74,7 +74,6 @@ include dirname(__DIR__) . '/includes/header.php';
                         <figure class="ref-hero-character" id="hero-character">
                             <img src="<?= e($heroImg) ?>" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" fetchpriority="high" decoding="async" draggable="false">
                         </figure>
-                        <div class="ref-hero-rating"><i class="fa-solid fa-star" aria-hidden="true"></i><div><b>4.9/5</b><span>Client Rating</span></div></div>
                     </div>
                 </div>
             </div>
