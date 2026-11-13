@@ -13,9 +13,9 @@ body #header.hdr-bar-wrap {
 }
 @media (min-width: 1024px) {
     body #header.hdr-bar-wrap {
-        height: 68px !important;
-        min-height: 68px !important;
-        max-height: 68px !important;
+        height: 82px !important;
+        min-height: 82px !important;
+        max-height: 82px !important;
         isolation: isolate;
     }
     /* Cover the strip above the floating header so scrolling content cannot
@@ -24,7 +24,7 @@ body #header.hdr-bar-wrap {
         content: "";
         position: fixed;
         inset: 0 0 auto;
-        height: 84px;
+        height: 98px;
         background: #e8effb;
         z-index: -1;
         pointer-events: none;
@@ -44,7 +44,10 @@ body #header > .container {
     backdrop-filter: none !important;
 }
 @media (min-width: 1024px) {
+    body .header-spacer { height: 98px; flex-basis: 98px; }
+    body section[id], body .rvx-list, body .rvx-write { scroll-margin-top: 110px; }
     body #header > .container {
+        border-radius: 20px;
         background: #d5e4ff !important;
         border-color: #bdcff2 !important;
         box-shadow: 0 8px 28px rgba(27, 71, 145, .12) !important;
