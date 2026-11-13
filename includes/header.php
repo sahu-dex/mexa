@@ -74,6 +74,8 @@ $navItems = [
 <?php endforeach; ?>
                 </nav>
 
+                <span class="header-service-label" data-i18n="header.serviceLabel">Professional Video Editing</span>
+
                 <button type="button" id="header-menu-toggle" onclick="toggleMobileMenu()" aria-controls="mobile-menu-drawer" aria-expanded="false" aria-label="Open menu" class="hdr-burger lg:hidden flex flex-col items-end justify-center gap-[6px] flex-shrink-0">
                     <span class="hdr-bar"></span>
                     <span class="hdr-bar"></span>

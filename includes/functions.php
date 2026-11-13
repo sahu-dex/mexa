@@ -970,7 +970,7 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
     // Shared reference-inspired colour and font grade; leaves page structure intact.
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-compact';
-    $stylesheets[] = 'assets/css/reference-header.css?v=20261113-rounded-desktop';
+    $stylesheets[] = 'assets/css/reference-header.css?v=20261113-classic-color';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     return $stylesheets;
 }
