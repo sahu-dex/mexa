@@ -64,16 +64,6 @@ include dirname(__DIR__) . '/includes/header.php';
                         <h1 class="hero-title ref-hero-title"><?= $heroLine1Html ?></h1>
                         <div class="ref-hero-subtitle"><span id="ref-hero-typed" data-initial="<?= e($heroLine2) ?>"><?= e($heroLine2) ?></span></div>
                         <p class="ref-hero-description"><?= $heroDescHtml ?></p>
-                        <div class="ref-hero-tools" aria-label="Creative tools">
-<?php foreach ([
-    ['Premiere Pro', 'Pr', 'https://upload.wikimedia.org/wikipedia/commons/4/40/Adobe_Premiere_Pro_CC_icon.svg'],
-    ['After Effects', 'Ae', 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Adobe_After_Effects_CC_icon.svg'],
-    ['Adobe Photoshop', 'Ps', 'https://upload.wikimedia.org/wikipedia/commons/a/af/Adobe_Photoshop_CC_icon.svg'],
-    ['Adobe Illustrator', 'Ai', 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Adobe_Illustrator_CC_icon.svg'],
-] as [$toolName, $toolInitials, $toolImage]): ?>
-                            <div class="ref-hero-tool" title="<?= e($toolName) ?>"><span aria-hidden="true"><?= e($toolInitials) ?></span><img src="<?= e($toolImage) ?>" alt="<?= e($toolName) ?>" loading="lazy"></div>
-<?php endforeach; ?>
-                        </div>
                         <div class="ref-hero-actions">
                             <a href="service.php" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
                             <a href="#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> View Portfolio</a>

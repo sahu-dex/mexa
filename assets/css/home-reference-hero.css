@@ -16,11 +16,6 @@ body #home .ref-hero-subtitle { min-height: 40px; margin-bottom: 24px; font-size
 body #home .ref-hero-subtitle span { background: linear-gradient(135deg,#1152df,#5ac8fa); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 body #home .ref-hero-subtitle span::after { content: '|'; animation: ref-hero-blink 1s step-end infinite; }
 body #home .ref-hero-description { max-width: 32rem; margin: 0 0 32px !important; color: #475569 !important; }
-body #home .ref-hero-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 40px; }
-body #home .ref-hero-tool { position: relative; display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.8); border-radius: 12px; background: rgba(255,255,255,.65); box-shadow: 0 8px 32px rgba(17,82,223,.04); transition: transform .3s; }
-body #home .ref-hero-tool:hover { transform: translateY(-4px); }
-body #home .ref-hero-tool span { color: #1152df; font-size: 12px; font-weight: 700; }
-body #home .ref-hero-tool img { position: absolute; width: 24px; height: 24px; object-fit: contain; }
 body #home .ref-hero-actions { display: flex; flex-wrap: wrap; gap: 16px; }
 body #home .ref-hero-actions a { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 32px; border-radius: 9999px; font-size: 16px; font-weight: 600; text-decoration: none; transition: transform .3s, box-shadow .3s; }
 body #home .ref-hero-actions a:hover { transform: translateY(-2px); }
