@@ -1,0 +1,886 @@
+<!--
+  Standalone static preview of the Mexa Motion home page.
+  Design: home-reference-design.css (glass / Poppins / reference UI).
+  The live PHP site is not modified. Shared images and site assets live in ../assets.
+  Newsletter is a local demo on this static copy.
+-->
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="a487ff2ae0332863884ed8ad275b46c2e5a4a4685e19e4858035956ef55cace7">
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    <title>Mexa Motion | Professional Video Editing Agency</title>
+    <meta name="description" content="Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.">
+    <link rel="preload" href="assets/fonts/poppins/poppins-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="assets/fonts/poppins/poppins-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="../assets/css/site-vendor-base.css">
+    <link rel="stylesheet" href="../assets/css/tailwind-home.css">
+    <link rel="stylesheet" href="../assets/css/site-image-fallbacks.css">
+    <link rel="stylesheet" href="../assets/css/site-header-lockup.css">
+    <link rel="stylesheet" href="../assets/css/mm-hero-character.css">
+    <link rel="stylesheet" href="../assets/css/mobile-menu.css">
+    <link rel="stylesheet" href="../assets/css/site-typography.css">
+    <link rel="stylesheet" href="../assets/css/video-preview.css?v=20261112-work-preview2">
+    <link rel="stylesheet" href="../assets/css/home-hero.css">
+    <link rel="stylesheet" href="../assets/css/mm-subscribe-fix.css">
+    <link rel="stylesheet" href="../assets/css/mm-services-cta.css">
+    <link rel="stylesheet" href="../assets/css/home-ui-fixes.css?v=20261112-work-preview">
+    <link rel="stylesheet" href="../assets/css/plus-jakarta-font.css">
+    <link rel="stylesheet" href="../assets/css/premium-design-system.css?v=20261112-tabs2">
+    <link rel="stylesheet" href="../assets/css/visual-refresh.css?v=20261112-footer-soft">
+    <link rel="stylesheet" href="../assets/css/home-hero-reference.css?v=20261112-hero-blend2">
+    <link rel="stylesheet" href="../assets/css/team-photos.css?v=20261112">
+    <link rel="stylesheet" href="../assets/css/premium-light-blue.css?v=20261112-ice-theme">
+    <link rel="stylesheet" href="assets/css/home-reference-design.css?v=20261112-ref-ui">
+</head>
+<body class="page-home font-sans text-slate-700 bg-white antialiased overflow-x-hidden relative">
+    <div class="cursor-dot"></div>
+    <div class="cursor-glow"></div>
+
+    <div class="w-full max-w-full overflow-x-hidden relative flex flex-col min-h-screen z-10">
+        <header id="header" class="hdr-bar-wrap flex items-center bg-white">
+            <div class="container mx-auto px-4 md:px-8 flex justify-between items-center w-full h-full gap-4">
+                <a href="../index.php" aria-label="Mexa Motion — Video Editing Agency" class="mm-brand-link flex items-center gap-2 group flex-shrink-0">
+                    <span class="brand-logo-badge">
+                        <svg class="brand-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-labelledby="title042 desc042">
+                            <title id="title042">Mexa Motion M Mark 042</title>
+                            <desc id="desc042">Forward Cut logo concept with motion-inspired detail.</desc>
+                            <defs>
+                                <linearGradient id="g042" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#08264F"/><stop offset="1" stop-color="#1E5FEA"/></linearGradient>
+                                <linearGradient id="ag042" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#49B8FF"/><stop offset="1" stop-color="#1E5FEA"/></linearGradient>
+                            </defs>
+                            <g>
+                                <path d="M 17 89 L 25 11 L 47 11 L 64 43 L 91 11 L 112 11 L 104 89 L 81 89 L 85 51 L 62 78 L 41 50 L 37 89 Z" fill="url(#g042)"/>
+                                <path d="M 2 31 H 18 M 0 47 H 16 M 3 63 H 18" fill="none" stroke="#49B8FF" stroke-width="4" stroke-linecap="round"/>
+                            </g>
+                        </svg>
+                    </span>
+                    <span class="brand-copy"><span class="brand-word text-[19px] lg:text-[20px] xl:text-[21px] font-extrabold whitespace-nowrap"><span class="brand-a">MEXA</span> <span class="brand-b">MOTION</span></span><span class="brand-tagline" data-i18n="brand.tagline">Video Editing Agency</span></span>
+                </a>
+
+                <nav class="nav-desk hidden lg:flex items-center gap-6 xl:gap-8 mx-auto">
+                    <a href="../index.php" data-nav="home" aria-current="page" class="nav-link nav-underline is-active text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.home">Home</span></a>
+                    <a href="../service.php" data-nav="service" class="nav-link nav-underline text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.service">Service</span></a>
+                    <a href="../work.php" data-nav="work" class="nav-link nav-underline text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.work">Work</span></a>
+                    <a href="../review.php" data-nav="review" class="nav-link nav-underline text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.review">Review</span></a>
+                    <a href="../team.php" data-nav="team" class="nav-link nav-underline text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.headerTeam">Team</span></a>
+                    <a href="#contact" data-nav="contact" class="nav-link nav-underline text-[13.5px] xl:text-[14px] font-medium tracking-normal"><span data-i18n="nav.contact">Contact</span></a>
+                </nav>
+
+                <div class="hidden lg:flex items-center gap-3 flex-shrink-0">
+                    <a href="../service.php#packages" class="header-booking-button" aria-label="Booking Now">
+                        <span>Booking Now</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                    </a>
+                </div>
+
+                <button type="button" id="header-menu-toggle" onclick="toggleMobileMenu()" aria-controls="mobile-menu-drawer" aria-expanded="false" aria-label="Open menu" class="hdr-burger lg:hidden flex flex-col items-end justify-center gap-[6px] flex-shrink-0">
+                    <span class="hdr-bar"></span>
+                    <span class="hdr-bar"></span>
+                    <span class="hdr-bar"></span>
+                </button>
+            </div>
+        </header>
+        <div class="header-spacer lg:hidden"></div>
+        <div class="header-spacer hidden lg:block"></div>
+
+        <div id="mobile-menu" class="fixed inset-0 z-[9999] lg:hidden pointer-events-none mm-root" style="top: 0; height: 100dvh;">
+            <div id="mobile-menu-backdrop" class="mm-backdrop absolute inset-0 opacity-0 transition-opacity duration-300"></div>
+            <div id="mobile-menu-drawer" class="mm-drawer absolute top-0 left-0 right-0 bg-white flex flex-col transform -translate-y-full transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] overscroll-contain">
+                <div class="mm-head">
+                    <a href="../index.php" class="mm-brand" aria-label="Mexa Motion — Video Editing Agency">
+                        <span class="mm-brand-mark" aria-hidden="true"><i class="fa-solid fa-play"></i></span>
+                        <span class="mm-brand-copy"><span class="mm-brand-word">MEXA MOTION</span><span class="mm-brand-tag">Video Editing Agency</span></span>
+                    </a>
+                    <button type="button" id="mobile-menu-close" class="mm-close" aria-label="Close menu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                    </button>
+                </div>
+                <nav class="mm-nav" aria-label="Mobile navigation">
+                    <a href="../index.php" data-nav="home" aria-current="page" class="mobile-nav-item mm-item is-active"><span class="mm-label" data-i18n="nav.home">Home</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="../service.php" data-nav="service" class="mobile-nav-item mm-item"><span class="mm-label" data-i18n="nav.service">Service</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="../work.php" data-nav="work" class="mobile-nav-item mm-item"><span class="mm-label" data-i18n="nav.work">Work</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="../review.php" data-nav="review" class="mobile-nav-item mm-item"><span class="mm-label" data-i18n="nav.review">Review</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="../team.php" data-nav="team" class="mobile-nav-item mm-item"><span class="mm-label" data-i18n="nav.headerTeam">Team</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="#contact" data-nav="contact" class="mobile-nav-item mm-item"><span class="mm-label" data-i18n="nav.contact">Contact</span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                </nav>
+                <div class="mm-foot">
+                    <p class="mm-foot-tag"><i class="fa-solid fa-clapperboard" aria-hidden="true"></i> Video Editing Agency</p>
+                    <a class="mm-booking-button" href="../service.php#packages" aria-label="Booking Now">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                            <path d="M16 3v4M8 3v4M3 11h18"></path>
+                            <path d="M8 15h2M14 15h2M8 18h2"></path>
+                        </svg>
+                        <span>Booking Now</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <section id="home" class="relative pt-2 pb-6 lg:pt-3 lg:pb-8 overflow-hidden bg-transparent flex items-center">
+            <div class="container mx-auto px-4 md:px-8 relative z-10">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center hero-grid">
+                    <div class="order-1 lg:col-start-1 lg:row-start-1" data-aos="fade-right" data-aos-duration="1000">
+                        <div class="ref-hero-badge apple-glass-card">
+                            <span class="ref-hero-dot" aria-hidden="true"></span>
+                            <span>Video Editing Agency</span>
+                        </div>
+                        <h1 class="hero-title font-extrabold leading-[0.98] mt-0">
+                            <span class="hero-line-1 text-secondary">WE CREATE<br>VISUALS</span>
+                            <span class="hero-line-2 hero-title-blue">THAT GROW YOUR BRAND</span>
+                        </h1>
+                        <p class="text-slate-600 text-[15px] md:text-base lg:text-[16.5px] mt-5 mb-0 max-w-xl leading-[1.75]">
+                            <strong>MEXA MOTION</strong> delivers professional, high-quality video editing services at budget-friendly prices. From YouTube videos, Shorts &amp; Reels, and Motion Graphics to Thumbnail Design and Brand Videos, we bring your creative vision to life.                        </p>
+                        <div class="hero-cta flex flex-col sm:flex-row gap-3 lg:gap-4 mt-7">
+                            <a href="../service.php" class="hero-btn glass-btn-primary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
+                                Our Services <i class="fa-solid fa-arrow-right text-[13px]"></i>
+                            </a>
+                            <a href="../book.php" class="hero-btn glass-btn-secondary px-7 py-3.5 lg:py-3 rounded-full font-bold text-[15px] transition-all duration-300 flex items-center justify-center gap-2.5">
+                                Booking Now <i class="fa-solid fa-arrow-right text-[13px] pointer-events-none"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="hero-video order-2 lg:col-start-2 lg:row-start-1 relative flex items-center justify-end" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                        <figure class="hero-character" id="hero-character" aria-label="MEXA MOTION character">
+                            <img class="hero-character-img" src="../assets/images/hero-character.webp" alt="MEXA MOTION — Motion Graphic Designer &amp; Video Editor character" width="1024" height="969" decoding="async" fetchpriority="high" draggable="false">
+                        </figure>
+                        <div class="ref-hero-rating apple-glass-card">
+                            <span class="ref-hero-rating-star" aria-hidden="true"><i class="fa-solid fa-star"></i></span>
+                            <span class="ref-hero-rating-copy">
+                                <span class="ref-hero-rating-value">4.9/5</span>
+                                <span class="ref-hero-rating-label">Client Rating</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div id="showreel-modal" class="showreel-modal" aria-hidden="true">
+            <div class="showreel-backdrop" onclick="closeShowreel()"></div>
+            <div class="showreel-box" role="dialog" aria-modal="true" aria-label="Showreel video">
+                <button type="button" class="showreel-close" onclick="closeShowreel()" aria-label="Close video">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="showreel-frame" id="showreel-frame"></div>
+            </div>
+        </div>
+
+        <section class="pb-16 pt-8 bg-transparent relative z-10">
+            <div class="container mx-auto px-4 md:px-8">
+                <div id="stats-container" data-aos="fade-up" data-aos-duration="1000">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 apple-glass-card rounded-3xl p-8 ref-stats-card">
+                        <div class="text-center group">
+                            <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
+                                <span class="counter" data-target="500">0</span><span class="text-white">+</span>
+                            </h3>
+                            <p class="text-white font-medium text-sm tracking-wide">Happy Clients</p>
+                        </div>
+                        <div class="text-center group">
+                            <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
+                                <span class="counter" data-target="1500">0</span><span class="text-white">+</span>
+                            </h3>
+                            <p class="text-white font-medium text-sm tracking-wide">Videos Edited</p>
+                        </div>
+                        <div class="text-center group">
+                            <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
+                                <span class="counter" data-target="5">0</span><span class="text-white">+</span>
+                            </h3>
+                            <p class="text-white font-medium text-sm tracking-wide">Years Exp.</p>
+                        </div>
+                        <div class="text-center group">
+                            <h3 class="text-4xl font-bold text-white mb-2 flex justify-center items-center">
+                                <span class="counter" data-target="20">0</span><span class="text-white">+</span>
+                            </h3>
+                            <p class="text-white font-medium text-sm tracking-wide">Countries</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="services" class="py-20 md:py-24 relative bg-transparent">
+            <div class="container mx-auto px-4 md:px-8 relative z-10">
+                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-14 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">What We Do</span>
+                    <h2 class="svc-title font-extrabold">
+                        <span class="hidden md:block text-secondary">Premium Video Editing</span>
+                        <span class="hidden md:block svc-title-blue">Solutions</span>
+                        <span class="md:hidden block text-secondary">Premium Video</span>
+                        <span class="md:hidden block"><span class="text-secondary">Editing </span><span class="svc-title-blue">Solutions</span></span>
+                    </h2>
+                    <p class="svc-sub text-slate-500 mt-5 md:mt-6 mx-auto">
+                        We offer a wide range of specialized post-production services tailored to meet the specific needs of modern creators and brands.                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6 lg:gap-7 max-w-[1030px] mx-auto">
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="svc-icon"><i class="fa-solid fa-video"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Professional Video Editing</h3>
+                            <p class="svc-card-text">Creative, high-quality video editing tailored to your content and brand.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="180">
+                        <div class="svc-icon"><i class="fa-brands fa-youtube"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">YouTube Editing</h3>
+                            <p class="svc-card-text">Retention-focused long-form edits that keep viewers watching till the end.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="260">
+                        <div class="svc-icon"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Shorts &amp; Reels</h3>
+                            <p class="svc-card-text">Punchy vertical cuts for TikTok, Reels and Shorts — built to go viral.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="340">
+                        <div class="svc-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Motion Graphics</h3>
+                            <p class="svc-card-text">Custom intros, lower thirds and animated graphics that elevate your brand.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="420">
+                        <div class="svc-icon"><i class="fa-solid fa-image"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Thumbnail Design</h3>
+                            <p class="svc-card-text">Scroll-stopping, high-CTR thumbnails that boost your click-through rate.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="500">
+                        <div class="svc-icon"><i class="fa-solid fa-layer-group"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Brand Videos</h3>
+                            <p class="svc-card-text">Promotional and corporate videos that tell your brand story with impact.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="580">
+                        <div class="svc-icon"><i class="fa-solid fa-bullhorn"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Social Media Ads</h3>
+                            <p class="svc-card-text">High-converting ad creatives for Facebook, Instagram, TikTok and Reels.</p>
+                        </div>
+                    </div>
+                    <div class="svc-card" data-aos="fade-up" data-aos-delay="660">
+                        <div class="svc-icon"><i class="fa-solid fa-box-open"></i></div>
+                        <div class="min-w-0">
+                            <h3 class="svc-card-title">Product Videos</h3>
+                            <p class="svc-card-text">Clean, engaging product showcases that turn viewers into customers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="portfolio" class="py-20 md:py-24 bg-transparent relative">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="text-center max-w-4xl mx-auto ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Latest Portfolio</span>
+                    <h2 class="pf-title font-extrabold">
+                        <span class="text-secondary">Explore Our Recent </span><span class="pf-title-blue">Work &amp; Video Demos</span>
+                    </h2>
+                    <p class="pf-sub text-slate-500 mt-4 md:mt-5 mx-auto">
+                        See real examples of our video editing projects and the quality we deliver. Watch our work and get an idea of what we can create for you.                    </p>
+                </div>
+
+                <div class="pf-tabs mt-7 md:mt-8 mb-8 md:mb-10" data-aos="fade-up" data-aos-delay="80" role="tablist" aria-label="Work categories">
+                    <button type="button" id="tab-videos" class="pf-tab is-active" role="tab" aria-selected="true" aria-controls="grid-videos" tabindex="0">
+                        <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-play"></i></span> Videos
+                    </button>
+                    <button type="button" id="tab-shorts" class="pf-tab" role="tab" aria-selected="false" aria-controls="grid-shorts" tabindex="-1">
+                        <span class="pf-tab-ic" aria-hidden="true"><i class="fa-solid fa-clapperboard"></i></span> Shorts
+                    </button>
+                </div>
+
+                <div id="grid-videos" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500" role="tabpanel" aria-labelledby="tab-videos">
+<a href="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-2-arif-hossain.jpg" data-mm-title="Studio edit — brand spot" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="100" aria-label="Play Studio edit — brand spot">
+                        <img src="../assets/images/team/member-2-arif-hossain.jpg" alt="Studio edit — brand spot thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-4-tanvir-ahmed.jpg" data-mm-title="Timeline &amp; colour pass" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="150" aria-label="Play Timeline &amp; colour pass">
+                        <img src="../assets/images/team/member-4-tanvir-ahmed.jpg" alt="Timeline &amp; colour pass thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-6-rakib-hasan.jpg" data-mm-title="Motion graphics frame" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="200" aria-label="Play Motion graphics frame">
+                        <img src="../assets/images/team/member-6-rakib-hasan.jpg" alt="Motion graphics frame thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-1-rowshan-taieen.jpg" data-mm-title="Cinematic grade" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="250" aria-label="Play Cinematic grade">
+                        <img src="../assets/images/team/member-1-rowshan-taieen.jpg" alt="Cinematic grade thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-3-nusrat-jahan.jpg" data-mm-title="Product film still" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="300" aria-label="Play Product film still">
+                        <img src="../assets/images/team/member-3-nusrat-jahan.jpg" alt="Product film still thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-5-sadia-islam.jpg" data-mm-title="Thumbnail design pass" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="350" aria-label="Play Thumbnail design pass">
+                        <img src="../assets/images/team/member-5-sadia-islam.jpg" alt="Thumbnail design pass thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1578022761797-b8636ac1773c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1578022761797-b8636ac1773c?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-7-mim-akter.jpg" data-mm-title="Sound design session" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="400" aria-label="Play Sound design session">
+                        <img src="../assets/images/team/member-7-mim-akter.jpg" alt="Sound design session thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1571171637578-41bc2dd41cd2?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=1200&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-2-arif-hossain.jpg" data-mm-title="Final delivery frame" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="450" aria-label="Play Final delivery frame">
+                        <img src="../assets/images/team/member-2-arif-hossain.jpg" alt="Final delivery frame thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+                </div>
+
+                <div id="grid-shorts" class="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 transition-opacity duration-500 hidden" role="tabpanel" aria-labelledby="tab-shorts" hidden>
+<a href="https://images.unsplash.com/photo-1616469829941-c7200edec809?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1616469829941-c7200edec809?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-4-tanvir-ahmed.jpg" data-mm-title="Shorts — product reveal" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="Play Shorts — product reveal">
+                        <img src="../assets/images/team/member-4-tanvir-ahmed.jpg" alt="Shorts — product reveal thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-6-rakib-hasan.jpg" data-mm-title="Shorts — gaming clip" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="Play Shorts — gaming clip">
+                        <img src="../assets/images/team/member-6-rakib-hasan.jpg" alt="Shorts — gaming clip thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1601944179066-29786cb9d32a?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1601944179066-29786cb9d32a?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-1-rowshan-taieen.jpg" data-mm-title="Shorts — talking head" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="Play Shorts — talking head">
+                        <img src="../assets/images/team/member-1-rowshan-taieen.jpg" alt="Shorts — talking head thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-3-nusrat-jahan.jpg" data-mm-title="Shorts — reel hook" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="Play Shorts — reel hook">
+                        <img src="../assets/images/team/member-3-nusrat-jahan.jpg" alt="Shorts — reel hook thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+<a href="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-media="1" data-mm-kind="image" data-mm-src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=900&amp;q=75" data-mm-embed="" data-mm-type="image" data-mm-poster="../assets/images/team/member-5-sadia-islam.jpg" data-mm-title="Shorts — cutdown" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="Play Shorts — cutdown">
+                        <img src="../assets/images/team/member-5-sadia-islam.jpg" alt="Shorts — cutdown thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
+                        <span class="pf-play"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 5.5v13l11-6.5z" fill="#1051DF"></path></svg></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <div id="mm-work-modal" class="mmvp" hidden aria-hidden="true">
+            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-labelledby="mm-work-modal-title">
+                <div class="mmvp-stage">
+                    <button type="button" class="mmvp-close" data-mm-close aria-label="Close video preview">&times;</button>
+                    <div class="mmvp-player" data-mm-player></div>
+                    <div class="mmvp-loading" data-mm-loading>
+                        <span class="mmvp-spinner" aria-hidden="true"></span>
+                        <span>Loading video&hellip;</span>
+                    </div>
+                    <div class="mmvp-error" data-mm-error hidden>
+                        <p data-mm-error-text>This video could not be played right now.</p>
+                        <span class="mmvp-error-actions">
+                            <a class="mmvp-external" data-mm-external href="#" target="_blank" rel="noopener noreferrer">Open in a new tab</a>
+                            <button type="button" class="mmvp-retry" data-mm-retry>Try again</button>
+                        </span>
+                    </div>
+                </div>
+                <div class="mmvp-meta">
+                    <h3 class="mmvp-title" id="mm-work-modal-title"></h3>
+                    <p class="mmvp-hint">Press Esc or click outside the player to close.</p>
+                </div>
+                <p class="mmvp-status" role="status" data-mm-status></p>
+            </div>
+        </div>
+
+        <section id="process" class="py-20 md:py-24 relative bg-transparent">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="text-center rv-head" data-aos="fade-up">
+                    <span class="rv-kicker">How It Works</span>
+                    <h2 class="rv-title font-extrabold mt-4">Simple &amp; Transparent Process</h2>
+                    <p class="rv-sub text-slate-500">Four simple steps from raw footage to a publish-ready video.</p>
+                </div>
+
+                <div class="pr-grid">
+                    <div class="pr-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="pr-top"></div>
+                        <div class="pr-body">
+                            <span class="pr-step">Step 01</span>
+                            <h3 class="pr-title">Submit Footage</h3>
+                            <p class="pr-text">Upload your raw files via our secure client portal and provide your creative brief.</p>
+                        </div>
+                    </div>
+                    <div class="pr-card" data-aos="fade-up" data-aos-delay="180">
+                        <div class="pr-top"></div>
+                        <div class="pr-body">
+                            <span class="pr-step">Step 02</span>
+                            <h3 class="pr-title">Creative Editing</h3>
+                            <p class="pr-text">Our expert team cuts, grades, and adds motion graphics to bring your vision to life.</p>
+                        </div>
+                    </div>
+                    <div class="pr-card" data-aos="fade-up" data-aos-delay="260">
+                        <div class="pr-top"></div>
+                        <div class="pr-body">
+                            <span class="pr-step">Step 03</span>
+                            <h3 class="pr-title">Review &amp; Refine</h3>
+                            <p class="pr-text">We send you a draft. You can leave frame-accurate comments for any revisions.</p>
+                        </div>
+                    </div>
+                    <div class="pr-card" data-aos="fade-up" data-aos-delay="340">
+                        <div class="pr-top"></div>
+                        <div class="pr-body">
+                            <span class="pr-step">Step 04</span>
+                            <h3 class="pr-title">Final Delivery</h3>
+                            <p class="pr-text">Receive your polished, high-resolution video ready to be published and go viral.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="reviews" class="py-20 md:py-24 relative overflow-hidden bg-transparent">
+            <div class="container mx-auto px-4 md:px-8 relative z-10">
+                <div class="rv-head text-center" data-aos="fade-up">
+                    <h2 class="rv-title font-extrabold mt-4">What Our Clients Say</h2>
+                    <p class="rv-sub text-slate-500">What creators, brands and agencies value most about working with Mexa Motion.</p>
+                </div>
+
+                <div class="rs-wrap" data-aos="fade-up" data-aos-delay="120">
+                    <div class="reviews-container">
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Mexa Motion completely transformed my YouTube channel. Their retention editing style boosted my average view duration by 40%. Highly recommend!"</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="James Wilson" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">James Wilson</h5>
+                                    <p class="text-primary text-xs">USA - Tech YouTuber</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"The speed and quality of delivery are unmatched. They handled our commercial ad campaign edits flawlessly with zero need for revisions."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Amanda Lee" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Amanda Lee</h5>
+                                    <p class="text-primary text-xs">UK - Marketing Director</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Best investment for my podcast. The sound mixing and the micro-content clips they provide for TikTok have grown my audience massively."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Marcus Johnson" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Marcus Johnson</h5>
+                                    <p class="text-primary text-xs">Canada - Podcaster</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"আমার ফুড চ্যানেলের প্রতিটি ভিডিও এখন আরও প্রফেশনাল লাগে। কলার গ্রেডিং আর বি-রোল সিলেকশন দেখে সাবস্ক্রাইবাররাও অবাক হয়।"</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Sadia Rahman" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Sadia Rahman</h5>
+                                    <p class="text-primary text-xs">Bangladesh - Food Creator</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"They turned my long workout sessions into punchy reels that actually convert. My Instagram reach tripled in six weeks."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Daniel Ortega" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Daniel Ortega</h5>
+                                    <p class="text-primary text-xs">Spain - Fitness Coach</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"টিমটা খুবই কো-অপারেটিভ। ডেডলাইনের আগেই ডেলিভারি দিয়েছে আর রিভিশন প্রসেসটা একদম সহজ।"</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Nusrat Jahan" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Nusrat Jahan</h5>
+                                    <p class="text-primary text-xs">Bangladesh - Lifestyle Vlogger</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Our product launch video looked like it came from a big agency. Clean motion graphics, perfect pacing, and great communication throughout."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Michael Chen" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Michael Chen</h5>
+                                    <p class="text-primary text-xs">Singapore - SaaS Founder</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Editing 40+ course lessons sounded terrifying until I found Mexa Motion. Consistent style, fast turnaround, and zero stress."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Emily Carter" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Emily Carter</h5>
+                                    <p class="text-primary text-xs">Australia - Course Creator</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"গেমিং হাইলাইটস এডিটিংয়ে ওরা আসলেই দুর্দান্ত। হুক, ট্রানজিশন আর সাউন্ড ইফেক্টের কম্বিনেশনে ভিউ অনেক বেড়েছে।"</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Rakib Hasan" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Rakib Hasan</h5>
+                                    <p class="text-primary text-xs">Bangladesh - Gaming Creator</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"The brand videos they produced elevated our whole visual identity. Colour grading and typography were spot on for our audience."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Sofia Rossi" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Sofia Rossi</h5>
+                                    <p class="text-primary text-xs">Italy - Fashion Brand</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Our product ads finally look like the ones big brands put out. The team understood our price point, turned 12 raw clips into 4 clean cutdowns, and delivered two days before launch."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1531384441138-2736e62e0919?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Farhan Ahmed" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Farhan Ahmed</h5>
+                                    <p class="text-primary text-xs">Bangladesh - E-commerce Brand Owner</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"We send raw two-camera episodes every Friday and get back a fully cut episode with chapters, captions and three social clips. I have stopped worrying about our publishing schedule."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1548142813-c348350df52b?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Laura Bennett" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Laura Bennett</h5>
+                                    <p class="text-primary text-xs">USA - Podcast Producer</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"Fast turnaround even with the time difference. The colour grading on my Kyoto series matched the mood I described better than my last three editors managed."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Kenji Watanabe" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Kenji Watanabe</h5>
+                                    <p class="text-primary text-xs">Japan - Travel Vlogger</p>
+                                </div>
+                            </div>
+                        </article>
+                        <article class="review-card flex-none w-[300px] md:w-[400px] apple-glass-card p-8 rounded-[2rem] hover:shadow-[0_15px_40px_rgba(16,81,223,0.1)] transition-shadow">
+                            <div class="rv-card-top">
+                                <span class="rv-story"><i class="fa-solid fa-quote-left"></i>Customer Story</span>
+                                <span class="rv-stars text-yellow-400"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+                            </div>
+                            <p class="rv-quote text-slate-600 text-sm leading-relaxed italic">"They edited nine property walkthroughs in one batch. Clean pacing, music that actually fits the listing, and consistent branding across every video."</p>
+                            <div class="rv-person">
+                                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&amp;auto=format&amp;fit=crop&amp;w=150&amp;q=80" alt="Aisha Al-Mansour" class="rv-avatar w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async">
+                                <div class="min-w-0">
+                                    <h5 class="font-bold text-secondary text-sm">Aisha Al-Mansour</h5>
+                                    <p class="text-primary text-xs">UAE - Real Estate Marketer</p>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <div class="rs-foot">
+                        <a href="../review.php" class="seen-more-link">Seen More <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+                    <p class="rv-note">Sample testimonials shown for layout preview — replace with verified client feedback before launch.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="py-20 md:py-24 bg-transparent overflow-hidden relative">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-9 md:mb-12 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Meet The Creative Minds</span>
+                    <h2 class="tm-title font-extrabold">
+                        <span class="text-secondary">Our </span><span class="tm-title-blue">Team</span>
+                    </h2>
+                    <p class="tm-sub text-slate-500 mt-3 md:mt-4">A passionate team working together to provide the best service for you.</p>
+                </div>
+
+                <div class="tm-strip" data-aos="fade-up">
+                <div class="mx-founder-card mx-profile-card">
+                    <div class="tm-founder-photo">
+                        <img src="../assets/images/team/member-1-rowshan-taieen.jpg" alt="Rowshan Taieen" loading="lazy" decoding="async">
+                        <span class="tm-founder-badge">Founder</span>
+                    </div>
+
+                    <div class="mx-profile-body">
+                        <h3 class="tm-founder-name">Rowshan Taieen</h3>
+                        <p class="tm-founder-role">Founder &amp; Lead Mentor</p>
+                        <p class="tm-founder-bio">রোশন তাইয়িন মেক্সা মোশনের প্রতিষ্ঠাতা ও লিড মেন্টর। ছয় বছরের বেশি অভিজ্ঞতায় তিনি শীর্ষ চ্যানেল ও Voice of Dhaka-র সঙ্গে কাজ করেছেন। ভিডিও এডিটিং ও স্টোরিটেলিংয়ে দক্ষ রোশন টিম পরিচালনা, মান যাচাই ও নতুন সদস্যদের মেন্টরিং করেন।</p>
+
+                        <div class="mx-profile-perks">
+                            <div class="tm-perk">
+                                <span class="tm-perk-ic"><svg class="tm-perk-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.6V12l3.1 1.9"/></svg></span>
+                                <div>
+                                    <p class="tm-perk-title">6+ Years Exp.</p>
+                                    <p class="tm-perk-text">Industry Veteran</p>
+                                </div>
+                            </div>
+                            <div class="tm-perk">
+                                <span class="tm-perk-ic"><svg class="tm-perk-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="9" r="5.6"/><path d="M8.7 13.7 7 21l5-2.6L17 21l-1.7-7.3"/><path d="m10.2 8.9 1.3 1.3 2.4-2.4"/></svg></span>
+                                <div>
+                                    <p class="tm-perk-title">Certified Pro</p>
+                                    <p class="tm-perk-text">Adobe Workflow Expert</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5 max-w-6xl mx-auto mt-6 md:mt-8">
+                    <div class="tm-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="tm-photo">
+                            <img src="../assets/images/team/member-2-arif-hossain.jpg" alt="Arif Hossain" loading="lazy" decoding="async">
+                        </div>
+                        <div class="tm-body">
+                            <h4 class="tm-name">Arif Hossain</h4>
+                            <p class="tm-role">Senior Video Editor</p>
+                        </div>
+                    </div>
+                    <div class="tm-card" data-aos="fade-up" data-aos-delay="180">
+                        <div class="tm-photo">
+                            <img src="../assets/images/team/member-3-nusrat-jahan.jpg" alt="Nusrat Jahan" loading="lazy" decoding="async">
+                        </div>
+                        <div class="tm-body">
+                            <h4 class="tm-name">Nusrat Jahan</h4>
+                            <p class="tm-role">YouTube Editor</p>
+                        </div>
+                    </div>
+                    <div class="tm-card" data-aos="fade-up" data-aos-delay="260">
+                        <div class="tm-photo">
+                            <img src="../assets/images/team/member-4-tanvir-ahmed.jpg" alt="Tanvir Ahmed" loading="lazy" decoding="async">
+                        </div>
+                        <div class="tm-body">
+                            <h4 class="tm-name">Tanvir Ahmed</h4>
+                            <p class="tm-role">Motion Graphics Designer</p>
+                        </div>
+                    </div>
+                    <div class="tm-card" data-aos="fade-up" data-aos-delay="340">
+                        <div class="tm-photo">
+                            <img src="../assets/images/team/member-5-sadia-islam.jpg" alt="Sadia Islam" loading="lazy" decoding="async">
+                        </div>
+                        <div class="tm-body">
+                            <h4 class="tm-name">Sadia Islam</h4>
+                            <p class="tm-role">Thumbnail Designer</p>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="py-20 md:py-24 bg-transparent relative">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="abt-grid">
+                    <div class="abt-collage" data-aos="fade-right">
+                        <img class="abt-photo abt-a" src="../assets/about/editing-suite.jpg" alt="Video editing suite" width="1280" height="720" loading="lazy" decoding="async" draggable="false">
+                        <img class="abt-photo abt-b" src="../assets/about/motion-graphics.jpg" alt="Motion graphics design" width="1280" height="720" loading="lazy" decoding="async" draggable="false">
+                        <div class="abt-c-wrap">
+                            <img class="abt-photo abt-c" src="../assets/about/color-grading.jpg" alt="Color grading studio" width="1280" height="720" loading="lazy" decoding="async" draggable="false">
+                            <div class="abt-float" aria-label="4.9/5 Client Rating">
+                                <span class="abt-float-ic"><i class="fa-solid fa-star" aria-hidden="true"></i></span>
+                                4.9/5 Client Rating                            </div>
+                        </div>
+                    </div>
+
+                    <div class="abt-body" data-aos="fade-left">
+                        <h2 class="abt-title"><span class="abt-title-dark">About</span> <span class="abt-title-blue">Mexa Motion</span></h2>
+                        <h3 class="abt-heading">Real people, real timelines, real results</h3>
+                        <p class="abt-text">Our team of professional video editors and motion designers creates high-quality content for YouTubers, businesses, agencies and brands.</p>
+                        <p class="abt-text">From engaging social media content to cinematic commercials, we focus on videos that capture attention and drive results.</p>
+                        <div class="abt-services-cta abt-services-cta--inline">
+                            <a href="../service.php" class="hero-btn glass-btn-primary abt-services-btn" aria-label="Go to Our Services">
+                                Our Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="contact" class="py-20 md:py-24 bg-transparent relative">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="text-center max-w-2xl mx-auto mb-10 md:mb-12 ref-section-head" data-aos="fade-up">
+                    <span class="ref-kicker">Let’s Talk</span>
+                    <h2 class="ct-title font-extrabold mt-3">Let’s Work Together</h2>
+                    <p class="ct-sub text-slate-500 mt-4 mx-auto">Have a project in mind? Send us a message and let’s create something amazing.</p>
+                </div>
+
+                <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
+                    <a href="mailto:hello@mexamotion.com" class="ct-card" data-aos="fade-up" data-aos-delay="100">
+                        <span class="ct-icon"><i class="fa-solid fa-envelope"></i></span>
+                        <h3 class="ct-card-title">Email</h3>
+                        <p class="ct-card-text">Email us about your project</p>
+                    </a>
+
+                    <a href="../book.php" class="ct-card" data-aos="fade-up" data-aos-delay="180">
+                        <span class="ct-icon"><i class="fa-brands fa-whatsapp"></i></span>
+                        <h3 class="ct-card-title">WhatsApp</h3>
+                        <p class="ct-card-text">Chat with us about your next video</p>
+                    </a>
+
+                    <a href="../book.php" class="ct-card" data-aos="fade-up" data-aos-delay="260">
+                        <span class="ct-icon"><i class="fa-brands fa-telegram"></i></span>
+                        <h3 class="ct-card-title">Telegram</h3>
+                        <p class="ct-card-text">Share your ideas with our team</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <div id="custom-msg-box" class="fixed bottom-10 right-10 apple-glass-card border-l-4 border-primary rounded-r-xl p-4 transform translate-x-[200%] transition-transform duration-300 z-[9999] flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-100 text-green-500 flex items-center justify-center">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <p id="custom-msg-text" class="text-secondary font-medium text-sm"></p>
+        </div>
+
+        <footer class="text-slate-600 pt-20 pb-10 border-t border-slate-200/50 bg-transparent">
+            <div class="container mx-auto px-4 md:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
+                    <div>
+                        <a href="../index.php" class="flex items-center gap-2 mb-6 group">
+                            <span class="footer-brand-word text-2xl font-extrabold tracking-tight transition" aria-label="MEXA MOTION" title="MEXA MOTION">MEXA MOTION</span>
+                        </a>
+                        <p class="text-sm text-slate-500 mb-6 leading-relaxed">Elevating brands through premium video editing and motion graphics. Your vision, expertly crafted.</p>
+                        <div class="flex gap-3">
+                            <a href="#" aria-label="Facebook" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Telegram" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-telegram"></i></a>
+                            <a href="#" aria-label="WhatsApp" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-whatsapp"></i></a>
+                            <a href="#" aria-label="YouTube" class="w-10 h-10 rounded-full apple-glass-card flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all text-sm"><i class="fa-brands fa-youtube"></i></a>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-secondary font-bold mb-6">Quick Links</h4>
+                        <ul class="space-y-3">
+                            <li><a href="../index.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Home</a></li>
+                            <li><a href="../service.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Service</a></li>
+                            <li><a href="../work.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Work</a></li>
+                            <li><a href="../review.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Review</a></li>
+                            <li><a href="../team.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Team</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-secondary font-bold mb-6">Services</h4>
+                        <ul class="space-y-3">
+                            <li><a href="../service.php#svc-5" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Professional Video Editing</a></li>
+                            <li><a href="../service.php#svc-1" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> YouTube Editing</a></li>
+                            <li><a href="../service.php#svc-2" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Shorts &amp; Reels</a></li>
+                            <li><a href="../service.php#svc-3" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Motion Graphics</a></li>
+                            <li><a href="../service.php#svc-4" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: #1051DF;"></i> Thumbnail Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h4 class="text-secondary font-bold mb-6">Newsletter</h4>
+                        <p class="text-sm text-slate-500 mb-4">Subscribe to get the latest editing tips and special offers.</p>
+                        <form id="newsletter-form" onsubmit="event.preventDefault(); if (window.handleNewsletterSubscribe) { window.handleNewsletterSubscribe(this); }" class="newsletter-form">
+                            <input type="hidden" name="_csrf" value="a487ff2ae0332863884ed8ad275b46c2e5a4a4685e19e4858035956ef55cace7">                            <div style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden" aria-hidden="true"><label>Website <input type="text" name="website_url" value="" tabindex="-1" autocomplete="off"></label></div>                            <input type="email" name="email" required placeholder="Your email address" aria-label="Your email address" class="newsletter-input apple-glass-card">
+                            <button type="submit" class="newsletter-btn glass-btn-primary">Subscribe</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p class="text-sm text-slate-500">© 2026 Mexa Motion. All rights reserved.</p>
+                    <div class="flex gap-6 text-sm text-slate-500">
+                        <a href="../privacy.php" class="hover:text-primary transition-colors">Privacy Policy</a>
+                        <a href="../terms.php" class="hover:text-primary transition-colors">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        window.__MM_DEMO_DATA__ = {"content":{"services_heading":"Our Services","services_intro":"Eight in-house services with one demo each. Watch the one you need, read what is included, then choose a quality package at the end.","show_services":"1","show_packages":"1","show_overview":"1","overview_video_url":"https://media.w3.org/2010/05/sintel/trailer.mp4","overview_poster_url":"https://images.pexels.com/videos/36036747/pexels-photo-36036747.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=630&w=1200","overview_video_embed_type":"video","overview_video_embed_url":"https://media.w3.org/2010/05/sintel/trailer.mp4","overview_video_provider":"media.w3.org","review_heading":"Client Review","review_hero_image":"../assets/images/review-hero.jpg","review_hero_desc":"Honest feedback from creators, shops and brands we edit for. Every review below is read and published by our team — nothing is auto-posted.","team_heading":"Our Team","team_intro":"A small studio of editors, designers and motion artists. Every project is handled by the person who will actually cut it — no account managers in between. Below is the founder and the team you will be working with."},"contact":{"founder_name":"Rowshan Taieen","founder_role":"Founder & Lead Mentor","founder_bio":"Founder of Mexa Motion — a creative content studio helping creators and brands turn raw footage into visuals that perform.","welcome_message":"Thanks for choosing a package. Send me the details of your project and I will personally confirm the timeline before we start.","whatsapp_number":"","telegram_url":"","call_number":"","email":"hello@mexamotion.com","facebook_url":""}};
+        window.__MM_SHOWREEL_URL__ = "";
+        window.__MM_TAGLINE__ = "Video Editing Agency";
+    </script>
+    <script src="../assets/js/vendor-aos.js"></script>
+    <script src="../assets/js/site-common.js?v=20261112-work-preview"></script>
+    <script src="assets/js/home-extra.js"></script>
+    <script src="../assets/js/home-work-preview.js?v=20261112-work-preview2"></script>
+<script>
+/* Standalone preview: keep the newsletter form usable without the PHP backend. */
+document.addEventListener('submit', function (event) {
+  var form = event.target;
+  if (!form || form.id !== 'newsletter-form') return;
+  event.preventDefault();
+  event.stopPropagation();
+  var email = form.querySelector('input[type="email"]');
+  if (email && !email.checkValidity()) { email.reportValidity(); return; }
+  var box = document.getElementById('custom-msg-box');
+  var text = document.getElementById('custom-msg-text');
+  if (box && text) {
+    text.textContent = 'Subscribed! (static preview)';
+    box.classList.remove('translate-x-[200%]');
+    setTimeout(function () { box.classList.add('translate-x-[200%]'); }, 3000);
+  }
+  form.reset();
+}, true);
+</script>
+</body>
+</html>
