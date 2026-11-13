@@ -127,3 +127,16 @@ body #team-page #t3-founder .tm-perk-ic {
     background: transparent !important;
     border-color: rgba(255,255,255,.7) !important;
 }
+
+/* Keep the team founder profile and its two detail boxes compact on desktop. */
+@media (min-width: 1024px) {
+    body #team-page #t3-founder.mx-founder-card {
+        max-width: 960px !important;
+        padding: 28px !important;
+        gap: 28px !important;
+    }
+    body #team-page #t3-founder .t3-founder-keywords { margin-top: 16px; }
+    body #team-page #t3-founder .t3-founder-info > .grid { margin-top: 20px; gap: 12px; }
+    body #team-page #t3-founder .tm-perk { padding: 10px 12px !important; gap: 10px; }
+    body #team-page #t3-founder .tm-perk-ic { width: 32px; height: 32px; flex-basis: 32px; }
+}
