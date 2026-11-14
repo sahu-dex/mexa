@@ -104,13 +104,21 @@ test('nothing here applies to the desktop header', () => {
 test('the header keeps its logo, service button and hamburger untouched', () => {
     const sheet = css();
 
-    // Identity: this sheet only moves the bar and clears its background. It may
-    // not restyle the brand lockup, the service CTA or the burger.
-    // (.hdr-bar-wrap is the bar itself and is expected; the controls are not.)
-    for (const sel of ['.brand-word', '.brand-tagline', '.brand-logo', '.header-service-button', '.hdr-burger', '.hdr-bar']) {
+    // Identity: this sheet moves the bar, clears its background, and hides the
+    // services CTA at mobile widths (it lives in the drawer there). It may not
+    // restyle anything else: the brand lockup and the burger must keep their
+    // own design, and the CTA's only permitted rule is that one mobile hide.
+    for (const sel of ['.brand-word', '.brand-tagline', '.brand-logo', '.hdr-burger', '.hdr-bar']) {
         const re = new RegExp(sel.replace('.', '\\.') + '(?![-\\w])');
         assert.doesNotMatch(sheet, re, sel + ' must not be restyled by the header fix');
     }
+
+    // The service CTA may only be *hidden*, never restyled: one rule, display
+    // only, and it is a mobile rule (covered by its own test).
+    const ctaRules = sheet.match(/[^}]*\.header-service-button[^{]*\{[^}]*\}/g) || [];
+    assert.equal(ctaRules.length, 1, 'the CTA gets exactly one rule here');
+    const decls = ctaRules[0].slice(ctaRules[0].indexOf('{') + 1, ctaRules[0].lastIndexOf('}')).replace(/\s+/g, ' ').trim();
+    assert.equal(decls, 'display: none !important;', 'the CTA rule may only hide it, got: ' + decls);
 });
 
 test('the mobile drawer opens under the bar, and the sheet loads last', () => {
@@ -171,4 +179,55 @@ test('the scrolled state cannot repaint or move the bar', () => {
     const body = sheet.match(/html body #header\.hdr-bar-wrap\s*\{[^}]*\}/)[0];
     assert.match(body, /box-shadow:[^;]*!important/);
     assert.match(body, /border-bottom:[^;]*!important/);
+});
+
+// ---------------------------------------------------------------------------
+// The bar on phones carries the brand and the menu toggle, nothing else. The
+// services CTA used to sit between them as a compact "Service" pill, which read
+// as a menu item stranded outside the menu. Service is a card in the drawer, so
+// the header must not repeat it at mobile widths — and must keep it on desktop.
+// ---------------------------------------------------------------------------
+
+test('the services CTA is not shown in the mobile header', () => {
+    const sheet = css();
+
+    const rule = sheet.match(/html body #header \.header-service-button\s*\{[^}]*\}/);
+    assert.ok(rule, 'the header sheet must hide the mobile services CTA');
+    assert.match(rule[0], /display:\s*none\s*!important/);
+
+    // Only below 1024px: the rule has to live inside that media query.
+    const before = sheet.slice(0, sheet.indexOf('html body #header .header-service-button'));
+    const mediaAt = before.lastIndexOf('@media (max-width: 1023.98px)');
+    assert.ok(mediaAt > -1, 'the hide must be inside the mobile media query');
+    const open = (before.slice(mediaAt).match(/\{/g) || []).length;
+    const closed = (before.slice(mediaAt).match(/\}/g) || []).length;
+    assert.ok(open > closed, 'the rule must still be inside the media query block');
+
+    // And nothing re-shows it inside a desktop media query.
+    assert.doesNotMatch(sheet, /@media \(min-width: 1024px\)[\s\S]*header-service-button\s*\{[^}]*display:\s*none/);
+});
+
+test('service is still reachable on mobile through the drawer', () => {
+    const markup = read('includes/header.php');
+
+    // The desktop button stays in the markup, label and i18n intact.
+    assert.match(markup, /class="header-service-button"[^>]*href="service\.php"/);
+    assert.match(markup, /data-i18n="header\.ourServices"/);
+
+    // Service is a drawer card, and the action routes to the services page.
+    assert.match(markup, /'key' => 'service'[\s\S]{0,140}label' => 'Service'/);
+    assert.match(markup, /foreach \(\$navItems as \$item\)/);
+    assert.match(markup, /class="mm-action-button"[\s\S]{0,200}href="service\.php"|href="service\.php" class="mm-action-button"/);
+});
+
+test('hiding the CTA leaves the brand and the hamburger untouched', () => {
+    const sheet = css().replace(/\/\*[\s\S]*?\*\//g, '');
+
+    // The header fix must not restyle the logo or the toggle.
+    assert.doesNotMatch(sheet, /\.brand-logo|\sbrand-word\s*\{|\sbrand-tagline\s*\{/);
+    assert.doesNotMatch(sheet, /\.hdr-burger\s*\{|\.hdr-bar\s*\{/);
+
+    // Two visible children remain, so `justify-between` still splits them.
+    const markup = read('includes/header.php');
+    assert.match(markup, /flex justify-between items-center/);
 });

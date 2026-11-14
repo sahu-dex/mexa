@@ -25,9 +25,15 @@
  *
  * This file is loaded last and pins the geometry: the bar is flush with the top
  * of the viewport, fully opaque, and the spacer reserves exactly its height.
- * Only the bar itself, its spacer and the page background's scroll behaviour
- * are touched — the logo, service button, hamburger and desktop header are left
- * exactly as they are.
+ *
+ * On phones the bar holds the brand and the menu toggle only: the services CTA
+ * is hidden here at these widths (it lives inside the hamburger drawer instead),
+ * because a second button in a 54px bar read as a stray menu item outside the
+ * menu. Desktop keeps it untouched.
+ *
+ * Only the bar, its spacer, the page background's scroll behaviour and that one
+ * mobile-only visibility are touched — the logo, the brand block, the hamburger
+ * and the desktop header are left exactly as they are.
  */
 
 /* ---------------------------------------------------------------- the page */
@@ -103,6 +109,19 @@
     }
 
     /* The desktop spacer keeps `hidden lg:block` and is not touched here. */
+
+    /* ------------------------------------------------- the services button */
+
+    /* Below 1024px the header is the brand plus the menu toggle, nothing else.
+       The services CTA used to sit between them (a compact "Service" pill at
+       this width) and looked like a stray menu item outside the menu. Service
+       is already the second card inside the hamburger drawer, so the header
+       keeps no duplicate of it. The button itself is left in the markup and
+       only hidden at these widths, which keeps the desktop bar, its shared
+       label and the i18n hook exactly as they are. */
+    html body #header .header-service-button {
+        display: none !important;
+    }
 
     /* Anchor jumps must clear the fixed bar. */
     html {
