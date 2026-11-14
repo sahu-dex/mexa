@@ -204,7 +204,7 @@ test('the bottom bar keeps every control, fullscreen last on the right', () => {
     );
     assert.match(
         css,
-        /body \.mxvp \.mxvp__btn--fs \{\s*margin-inline-start:\s*auto !important;/,
+        /body \.mxvp \.mxvp__stage \.mxvp__btn--fs \{\s*margin-inline-start:\s*auto !important;/,
         'fullscreen is pinned to the right'
     );
     assert.match(js, /SKIP_SECONDS = 10/);

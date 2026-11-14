@@ -147,6 +147,7 @@
     var lastTouchAt = 0;
     var hintTimer = 0;
     var draggingVolume = false;
+    var volumePointerDown = false;
 
     /* ---------------------------------------------------------------- media */
 
@@ -343,9 +344,25 @@
         refs.back.addEventListener('click', function () { skip(-SKIP_SECONDS); });
         refs.forward.addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.mute.addEventListener('click', toggleMute);
-        refs.volume.addEventListener('pointerdown', function () { draggingVolume = true; });
+        // While the slider is under a finger/pointer it must not be moved by
+        // provider events, so the thumb stays where the user put it.
+        refs.volume.addEventListener('pointerdown', function () {
+            draggingVolume = true;
+            volumePointerDown = true;
+        });
         ['pointerup', 'pointercancel', 'change', 'blur'].forEach(function (type) {
-            refs.volume.addEventListener(type, function () { draggingVolume = false; });
+            refs.volume.addEventListener(type, function () {
+                draggingVolume = false;
+                volumePointerDown = false;
+            });
+        });
+        // A pointer released outside the player never fires pointerup on the
+        // slider, so the flag is also cleared on any release anywhere.
+        ['pointerup', 'pointercancel'].forEach(function (type) {
+            document.addEventListener(type, function () {
+                draggingVolume = false;
+                volumePointerDown = false;
+            }, true);
         });
         refs.volume.addEventListener('input', function () {
             draggingVolume = true;
@@ -690,8 +707,8 @@
         refs.mute.innerHTML = muted ? ICON.muted : ICON.volume;
         refs.mute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
         // The slider shows the real level; only the icon says "muted".
-        // While it is being dragged it stays under the user's finger.
-        if (!draggingVolume) refs.volume.value = String(volume);
+        // While a pointer is really held down it stays under the finger.
+        if (!draggingVolume || !volumePointerDown) refs.volume.value = String(volume);
         refs.volume.style.setProperty('--mxvp-volume', volume * 100 + '%');
     }
 

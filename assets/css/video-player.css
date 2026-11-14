@@ -14,11 +14,18 @@
  * play/pause, ±10s, volume, progress, times, fullscreen — sit in .mxvp__bar at
  * the bottom.
  *
- * The bar owns its own look completely. Every rule that styles a form control
- * is scoped to `body .mxvp …` and pins its properties with !important, because
- * the site's premium-design-system.css paints every non-checkbox input white
- * (`body :is(input…) { background:#fff!important; border-radius:12px!important }`),
- * which used to turn the two range sliders into white pills in the bar.
+ * The bar owns its own look completely, and the selector strength is the part
+ * that matters. The site's premium-design-system.css paints every non-checkbox
+ * input white with
+ *
+ *     body :is(input:not([type=radio])…, textarea, select)   // (0,3,2)
+ *         { background:#fff!important; border-radius:12px!important; … }
+ *
+ * A single-class or two-class player rule loses to that (it did, twice), which
+ * is why the timeline and the volume slider stayed white pills in the browser.
+ * Their rules therefore carry the full ancestor chain plus [type="range"]
+ * (0,5,1) and pin every property, and tests/video-player-cascade.test.js proves
+ * the arithmetic against every stylesheet the site loads.
  *
  * The timeline is a dark grey track with a coloured played section and a
  * matching handle: YouTube red (#FF0033) for YouTube clips and vertical Shorts,
@@ -374,7 +381,22 @@
  * to `body .mxvp` (higher specificity) and pinning every property with
  * !important keeps the player independent of that global rule.
  */
-body .mxvp .mxvp__seek {
+/*
+ * The one rule that kills the site-wide input skin inside the player. It sets
+ * only the few properties that skin touches (background, border, radius,
+ * colour, shadow) and is placed in the file that loads last, with far stronger
+ * selectors than `body :is(input…)` — so the player never fights the theme.
+ */
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek[type="range"],
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume[type="range"] {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    color: transparent !important;
+    box-shadow: none !important;
+}
+
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek {
     -webkit-appearance: none !important;
     appearance: none !important;
     display: block !important;
@@ -392,18 +414,20 @@ body .mxvp .mxvp__seek {
     --mxvp-accent: #2f7cf6;
 }
 
-/* YouTube and Shorts: YouTube's own red, on the same dark grey track. */
-body .mxvp.is-youtube .mxvp__seek,
-body .mxvp.is-vertical .mxvp__seek {
+/* YouTube and Shorts: YouTube's own red, on the same dark grey track.
+   These selectors must outrank the blue default above (which is scoped to the
+   full ancestor chain), so they use the same chain plus the mode class. */
+body .mxvp.is-youtube .mxvp__stage .mxvp__bar .mxvp__seek,
+body .mxvp.is-vertical .mxvp__stage .mxvp__bar .mxvp__seek {
     --mxvp-accent: #ff0033;
 }
 
-body .mxvp .mxvp__seek:focus {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:focus {
     outline: none !important;
     box-shadow: none !important;
 }
 
-body .mxvp .mxvp__seek:focus-visible {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:focus-visible {
     outline: 2px solid rgba(255, 255, 255, .85) !important;
     outline-offset: 4px;
     border-radius: 999px;
@@ -411,7 +435,7 @@ body .mxvp .mxvp__seek:focus-visible {
 
 /* WebKit / Blink ---------------------------------------------------------- */
 
-body .mxvp .mxvp__seek::-webkit-slider-runnable-track {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek::-webkit-slider-runnable-track {
     height: 4px;
     border: 0;
     border-radius: 999px;
@@ -420,7 +444,7 @@ body .mxvp .mxvp__seek::-webkit-slider-runnable-track {
     transition: height .12s ease;
 }
 
-body .mxvp .mxvp__seek::-webkit-slider-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek::-webkit-slider-thumb {
     -webkit-appearance: none !important;
     appearance: none !important;
     width: 12px;
@@ -437,44 +461,54 @@ body .mxvp .mxvp__seek::-webkit-slider-thumb {
 
 /* Under the pointer the bar thickens and the handle grows a little, exactly
    like YouTube's timeline. */
-body .mxvp .mxvp__seek:hover::-webkit-slider-runnable-track,
-body .mxvp .mxvp__seek:focus-visible::-webkit-slider-runnable-track,
-body .mxvp .mxvp__seek:active::-webkit-slider-runnable-track {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:hover::-webkit-slider-runnable-track,
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:focus-visible::-webkit-slider-runnable-track,
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:active::-webkit-slider-runnable-track {
     height: 5px;
 }
 
-body .mxvp .mxvp__seek:hover::-webkit-slider-thumb,
-body .mxvp .mxvp__seek:focus-visible::-webkit-slider-thumb,
-body .mxvp .mxvp__seek:active::-webkit-slider-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:hover::-webkit-slider-thumb,
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:focus-visible::-webkit-slider-thumb,
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:active::-webkit-slider-thumb {
     transform: scale(1.15);
 }
 
-body .mxvp .mxvp__seek:hover::-webkit-slider-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek:hover::-webkit-slider-thumb {
     margin-top: -3.5px;
 }
 
 /* Firefox ----------------------------------------------------------------- */
 
-body .mxvp .mxvp__seek::-moz-range-track {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek::-moz-range-track {
     height: 4px;
     border: 0;
     border-radius: 999px;
     background: rgba(255, 255, 255, .26) !important;
 }
 
-body .mxvp .mxvp__seek::-moz-range-progress {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek::-moz-range-progress {
     height: 4px;
     border-radius: 999px;
     background: var(--mxvp-accent) !important;
 }
 
-body .mxvp .mxvp__seek::-moz-range-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__seek::-moz-range-thumb {
     width: 12px;
     height: 12px;
     border: 0;
     border-radius: 50%;
     background: var(--mxvp-accent) !important;
     box-shadow: none;
+}
+
+/*
+ * Every child of the control bar is one of the player's own parts. This guard
+ * makes that explicit — a stray element (a theme decoration, an injected
+ * markup, a leftover "pill") cannot paint itself inside the bar, because the
+ * only things allowed to have a background there are the real controls.
+ */
+body .mxvp .mxvp__stage .mxvp__bar > :not(.mxvp__scrub):not(.mxvp__row) {
+    display: none !important;
 }
 
 /* Buttons row ------------------------------------------------------------- */
@@ -490,7 +524,7 @@ body .mxvp .mxvp__seek::-moz-range-thumb {
 
 /* Real buttons, never a form field: the site's global input/button styling
    must not reach inside the player. */
-body .mxvp .mxvp__btn {
+body .mxvp .mxvp__stage .mxvp__btn {
     display: grid !important;
     place-items: center;
     flex: 0 0 auto;
@@ -511,22 +545,22 @@ body .mxvp .mxvp__btn {
     transition: background .16s ease, transform .16s ease;
 }
 
-body .mxvp .mxvp__btn svg {
+body .mxvp .mxvp__stage .mxvp__btn svg {
     display: block;
     width: 21px;
     height: 21px;
     pointer-events: none;
 }
 
-body .mxvp .mxvp__btn:hover {
+body .mxvp .mxvp__stage .mxvp__btn:hover {
     background: rgba(255, 255, 255, .16) !important;
 }
 
-body .mxvp .mxvp__btn:active {
+body .mxvp .mxvp__stage .mxvp__btn:active {
     transform: scale(.94);
 }
 
-body .mxvp .mxvp__btn:focus-visible {
+body .mxvp .mxvp__stage .mxvp__btn:focus-visible {
     outline: 2px solid rgba(255, 255, 255, .85) !important;
     outline-offset: 2px;
     border-radius: 50%;
@@ -534,7 +568,7 @@ body .mxvp .mxvp__btn:focus-visible {
 
 /* Fullscreen is the last control of the row and is pushed to the far right.
    margin-inline-start (not margin-left) keeps that true in right-to-left too. */
-body .mxvp .mxvp__btn--fs {
+body .mxvp .mxvp__stage .mxvp__btn--fs {
     margin-inline-start: auto !important;
     margin-right: 0;
 }
@@ -549,7 +583,7 @@ body .mxvp .mxvp__btn--fs {
 
 /* Volume slider: a slim white line with a small white knob. It stays quiet
    until the pointer is over the control, exactly like YouTube's. */
-body .mxvp .mxvp__volume {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume {
     -webkit-appearance: none !important;
     appearance: none !important;
     display: block !important;
@@ -569,12 +603,12 @@ body .mxvp .mxvp__volume {
     --mxvp-volume: 100%;
 }
 
-body .mxvp .mxvp__volume:focus {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume:focus {
     outline: none !important;
     box-shadow: none !important;
 }
 
-body .mxvp .mxvp__volume::-webkit-slider-runnable-track {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume::-webkit-slider-runnable-track {
     height: 3px;
     border: 0;
     border-radius: 999px;
@@ -582,7 +616,7 @@ body .mxvp .mxvp__volume::-webkit-slider-runnable-track {
         linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .3) var(--mxvp-volume) 100%) !important;
 }
 
-body .mxvp .mxvp__volume::-webkit-slider-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume::-webkit-slider-thumb {
     -webkit-appearance: none !important;
     appearance: none !important;
     width: 11px;
@@ -594,20 +628,20 @@ body .mxvp .mxvp__volume::-webkit-slider-thumb {
     box-shadow: 0 1px 3px rgba(0, 0, 0, .45);
 }
 
-body .mxvp .mxvp__volume::-moz-range-track {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume::-moz-range-track {
     height: 3px;
     border: 0;
     border-radius: 999px;
     background: rgba(255, 255, 255, .3) !important;
 }
 
-body .mxvp .mxvp__volume::-moz-range-progress {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume::-moz-range-progress {
     height: 3px;
     border-radius: 999px;
     background: #fff !important;
 }
 
-body .mxvp .mxvp__volume::-moz-range-thumb {
+body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume::-moz-range-thumb {
     width: 11px;
     height: 11px;
     border: 0;
@@ -752,17 +786,17 @@ body.mxvp-open {
         gap: 0;
     }
 
-    body .mxvp .mxvp__btn {
+    body .mxvp .mxvp__stage .mxvp__btn {
         width: 32px;
         height: 32px;
     }
 
-    body .mxvp .mxvp__btn svg {
+    body .mxvp .mxvp__stage .mxvp__btn svg {
         width: 19px;
         height: 19px;
     }
 
-    body .mxvp .mxvp__volume {
+    body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume {
         width: 46px;
         min-width: 30px;
     }
@@ -782,17 +816,17 @@ body.mxvp-open {
         padding: 22px 6px 6px;
     }
 
-    body .mxvp .mxvp__btn {
+    body .mxvp .mxvp__stage .mxvp__btn {
         width: 30px;
         height: 30px;
     }
 
-    body .mxvp .mxvp__btn svg {
+    body .mxvp .mxvp__stage .mxvp__btn svg {
         width: 18px;
         height: 18px;
     }
 
-    body .mxvp .mxvp__volume {
+    body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume {
         width: 34px;
         min-width: 26px;
     }
@@ -815,17 +849,17 @@ body.mxvp-open {
         padding: 20px 4px 4px;
     }
 
-    body .mxvp .mxvp__btn {
+    body .mxvp .mxvp__stage .mxvp__btn {
         width: 27px;
         height: 27px;
     }
 
-    body .mxvp .mxvp__btn svg {
+    body .mxvp .mxvp__stage .mxvp__btn svg {
         width: 16px;
         height: 16px;
     }
 
-    body .mxvp .mxvp__volume {
+    body .mxvp .mxvp__stage .mxvp__bar .mxvp__volume {
         width: 26px;
         min-width: 22px;
     }
