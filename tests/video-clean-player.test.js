@@ -142,7 +142,7 @@ test('the centre cluster, auto-hide and time label match the brief', () => {
     assert.match(css, /\.mxvp\.is-idle \.mxvp__center \{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/, 'cluster leaves the way when the controls fade');
 
     // Controls fade by themselves and come back on any mouse/touch activity.
-    assert.match(js, /var HIDE_DELAY = 2800;/, 'controls hide after a short idle period');
+    assert.match(js, /var HIDE_DELAY = 1500;/, 'controls hide after a short idle period');
     assert.match(js, /\['pointerdown', 'touchstart', 'focusin'\]/, 'activity wakes the controls');
     assert.match(js, /addEventListener\('pointermove', onMove/, 'real pointer movement wakes the controls');
 

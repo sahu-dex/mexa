@@ -102,7 +102,7 @@
     var isOpen = false;
     var lastFocus = null;
     var hideTimer = 0;
-    var HIDE_DELAY = 2800;
+    var HIDE_DELAY = 1500;
     var lastPointerType = 'mouse';  // 'mouse' | 'touch' | 'pen'
     var tapFoundIdle = false;       // the current touch began with hidden controls
     var keyboardNav = false;        // the viewer is driving the player by keyboard
