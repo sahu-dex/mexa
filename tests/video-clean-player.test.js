@@ -39,6 +39,56 @@ test('the player renders exactly one close button with no generated × glyph', (
     assert.doesNotMatch(css, /mxvp__close\s*::?(?:before|after)/);
 });
 
+test('YouTube clips play through a clean, chrome-free IFrame API player', () => {
+    const js = read('assets/js/video-player.js');
+
+    assert.match(js, /youtube\.com\/iframe_api/, 'loads the YouTube IFrame Player API');
+    assert.match(js, /mode: 'youtube'/, 'YouTube gets its own playback mode');
+    assert.match(js, /new YT\.Player\(/, 'creates a YouTube API player');
+
+    [
+        ['controls', '0'],
+        ['modestbranding', '1'],
+        ['rel', '0'],
+        ['showinfo', '0'],
+        ['iv_load_policy', '3'],
+        ['disablekb', '1'],
+        ['fs', '0'],
+        ['autoplay', '1'],
+        ['playsinline', '1']
+    ].forEach(([key, value]) => {
+        assert.match(
+            js,
+            new RegExp(key + '\\s*:\\s*' + value + '\\b'),
+            'YouTube player var missing: ' + key + '=' + value
+        );
+    });
+
+    // The end screen ("More videos") is hidden behind our own replay plate.
+    assert.match(js, /showEndPlate\(/);
+    assert.match(read('assets/css/video-player.css'), /\.mxvp\.is-ended \.mxvp__media/);
+});
+
+test('YouTube falls back to a normal embed when the API cannot load', () => {
+    const js = read('assets/js/video-player.js');
+    assert.match(js, /loadYoutubeApi\(\)/);
+    assert.match(js, /\.catch\(function \(\) \{/);
+    assert.match(js, /fallbackYoutubeFrame\(/);
+    assert.match(js, /youtube-nocookie\.com\/embed\//);
+});
+
+test('the close button sits on the very top-right corner of the player', () => {
+    const css = read('assets/css/video-player.css');
+    const close = css.match(/\n\.mxvp__close \{([^}]*)\}/);
+    assert.ok(close, 'close button rule exists');
+    assert.match(close[1], /top:\s*-\d+px/, 'close button sits above the top edge of the stage');
+    assert.match(close[1], /right:\s*-\d+px/, 'close button sits past the right edge of the stage');
+    // Style itself is unchanged (size, colours, icon).
+    assert.match(close[1], /width:\s*40px/);
+    assert.match(close[1], /height:\s*40px/);
+    assert.match(close[1], /border-radius:\s*50%/);
+});
+
 test('the shared player offers the full control set', () => {
     const js = read('assets/js/video-player.js');
 
