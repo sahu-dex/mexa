@@ -102,7 +102,14 @@
     var isOpen = false;
     var lastFocus = null;
     var hideTimer = 0;
-    var touchRevealed = false;
+    var HIDE_DELAY = 2800;
+    var lastPointerType = 'mouse';  // 'mouse' | 'touch' | 'pen'
+    var tapFoundIdle = false;       // the current touch began with hidden controls
+    var keyboardNav = false;        // the viewer is driving the player by keyboard
+    var hoverControls = false;      // a real mouse rests on the bar / centre buttons
+    var lastMoveX = -1;
+    var lastMoveY = -1;
+    var ytWasPlaying = false;       // playback intent, so buffering is not "paused"
     var seeking = false;
     var rememberVolume = 1;
     var prevOverflow = '';
@@ -359,11 +366,12 @@
             if (!layer) return;
             layer.addEventListener('click', function () {
                 if (!hasTransport()) return;
-                // Touch screens, like YouTube: the first tap on a playing
-                // video only brings the hidden controls back.
-                if (touchRevealed) {
-                    touchRevealed = false;
-                    wake();
+                // Touch screens behave like YouTube: a tap on the picture
+                // only shows or hides the controls; playback is toggled with
+                // the centre button. A mouse click toggles playback.
+                if (lastPointerType === 'touch') {
+                    if (!tapFoundIdle && isPlaying()) hideControls();
+                    else wake();
                     return;
                 }
                 togglePlay();
@@ -373,24 +381,77 @@
             });
         });
 
-        // Runs before wake(): remember whether this touch found the controls hidden.
+        // Capture phase, i.e. before wake(): remember what kind of pointer
+        // this is and whether it found the controls hidden.
+        var notePointer = function (type) {
+            lastPointerType = type || 'mouse';
+            tapFoundIdle = modal.classList.contains('is-idle');
+            keyboardNav = false;
+        };
         refs.stage.addEventListener('pointerdown', function (event) {
-            touchRevealed = event.pointerType === 'touch' &&
-                modal.classList.contains('is-idle') && isPlaying();
+            notePointer(event.pointerType);
         }, { capture: true, passive: true });
+        if (!window.PointerEvent) {
+            refs.stage.addEventListener('touchstart', function () {
+                notePointer('touch');
+            }, { capture: true, passive: true });
+            refs.stage.addEventListener('mousedown', function () {
+                // Ignore the compatibility mouse events that follow a touch.
+                if (lastPointerType !== 'touch') notePointer('mouse');
+            }, { capture: true, passive: true });
+        }
 
-        ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
+        ['pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
             refs.stage.addEventListener(type, wake, { passive: true });
         });
 
-        modal.addEventListener('mousemove', wake, { passive: true });
+        // Browsers fire "phantom" move events when the element under a
+        // resting cursor changes (for example when the controls fade out).
+        // Only a pointer that really changed position may wake the controls,
+        // otherwise they would pop back up the moment they hide.
+        var onMove = function (event) {
+            if (event.pointerType === 'touch') return;
+            var x = event.screenX;
+            var y = event.screenY;
+            if (x === lastMoveX && y === lastMoveY) return;
+            lastMoveX = x;
+            lastMoveY = y;
+            wake();
+        };
+        refs.stage.addEventListener('pointermove', onMove, { passive: true });
+        modal.addEventListener('mousemove', onMove, { passive: true });
+
+        // Like YouTube, the controls stay while a real mouse rests on them.
+        // Only the bottom bar counts: the centre buttons sit exactly where the
+        // cursor rests after pressing play, and must still fade away.
+        [refs.bar].forEach(function (zone) {
+            if (!zone) return;
+            zone.addEventListener('pointerenter', function (event) {
+                if (event.pointerType === 'mouse') hoverControls = true;
+            });
+            zone.addEventListener('pointerleave', function () {
+                hoverControls = false;
+            });
+        });
+
+        // ...and leave as soon as the mouse leaves the player.
+        refs.stage.addEventListener('mouseleave', function () {
+            hoverControls = false;
+            if (lastPointerType !== 'touch' && isPlaying() && !seeking) hideControls();
+        });
 
         // YouTube posts its player events to this window.
         window.addEventListener('message', onYtMessage);
 
         document.addEventListener('keydown', onKeydown);
-        document.addEventListener('fullscreenchange', syncFullscreenButton);
-        document.addEventListener('webkitfullscreenchange', syncFullscreenButton);
+        var onFullscreenChange = function () {
+            syncFullscreenButton();
+            // Entering/leaving fullscreen restarts the same auto-hide cycle.
+            hoverControls = false;
+            wake();
+        };
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', onFullscreenChange);
     }
 
     /* ---------------------------------------------------- playback primitives */
@@ -412,7 +473,12 @@
     }
 
     function isPlaying() {
-        if (mode === 'youtube') return ytPlayerState === YT_PLAYING;
+        if (mode === 'youtube') {
+            // Buffering in the middle of playback (after a seek or a slow
+            // network) is still "playing" for the controls.
+            return ytPlayerState === YT_PLAYING ||
+                (ytPlayerState === YT_BUFFERING && ytWasPlaying);
+        }
         var video = currentVideo();
         return !!video && !video.paused && !video.ended;
     }
@@ -549,18 +615,51 @@
         modal.classList.toggle('is-idle', !visible);
     }
 
+    function cancelHide() {
+        window.clearTimeout(hideTimer);
+        hideTimer = 0;
+    }
+
+    function hideControls() {
+        cancelHide();
+        if (!isOpen || !isPlaying()) return;
+        setControlsVisible(false);
+    }
+
+    /** True while something legitimately needs the controls on screen. */
+    function controlsBusy() {
+        if (seeking || hoverControls) return true;
+        // Keyboard users keep the controls while one of them has focus. A
+        // control that was merely clicked or tapped does not count, otherwise
+        // the controls would never leave after using the bar.
+        if (keyboardNav && document.activeElement && document.activeElement.closest &&
+            document.activeElement.closest('.mxvp__bar, .mxvp__center')) return true;
+        return false;
+    }
+
+    /**
+     * The single auto-hide timer. It only ever runs while the clip plays, and
+     * it re-arms itself instead of giving up when the controls are in use.
+     */
+    function scheduleHide() {
+        cancelHide();
+        if (!isOpen || !isPlaying()) return;
+        hideTimer = window.setTimeout(function () {
+            hideTimer = 0;
+            if (!isOpen || !isPlaying()) return;
+            if (controlsBusy()) {
+                scheduleHide();
+                return;
+            }
+            setControlsVisible(false);
+        }, HIDE_DELAY);
+    }
+
+    /** Any interaction: show the controls and restart the countdown. */
     function wake() {
         if (!isOpen) return;
         setControlsVisible(true);
-        window.clearTimeout(hideTimer);
-        if (!isPlaying()) return;
-        hideTimer = window.setTimeout(function () {
-            if (!isOpen || seeking) return;
-            // Keep the bar up while a control is focused (keyboard use).
-            if (document.activeElement && document.activeElement.closest &&
-                document.activeElement.closest('.mxvp__bar')) return;
-            setControlsVisible(false);
-        }, 2800);
+        scheduleHide();
     }
 
     /** Restartable ripple/nudge animation on a centre skip button. */
@@ -582,7 +681,7 @@
     function showEndPlate(show) {
         modal.classList.toggle('is-ended', !!show);
         if (!show) return;
-        window.clearTimeout(hideTimer);
+        cancelHide();
         setControlsVisible(true);
     }
 
@@ -612,9 +711,16 @@
         var playing = isPlaying();
         refs.play.innerHTML = playing ? ICON.pause : ICON.play;
         refs.play.setAttribute('aria-label', playing ? 'Pause' : 'Play');
-        if (!playing && isOpen) {
-            window.clearTimeout(hideTimer);
-            setControlsVisible(true);
+        if (isOpen) {
+            if (!playing) {
+                // Paused, ended or not started: the controls stay.
+                cancelHide();
+                setControlsVisible(true);
+            } else if (!hideTimer && !modal.classList.contains('is-idle')) {
+                // Playback (re)started without a pointer event - autoplay, a
+                // YouTube state change, the end of a seek: start the countdown.
+                scheduleHide();
+            }
         }
         syncCenter();
     }
@@ -779,6 +885,8 @@
 
     function applyYtState(state) {
         ytPlayerState = state;
+        if (state === YT_PLAYING) ytWasPlaying = true;
+        else if (state !== YT_BUFFERING) ytWasPlaying = false;
 
         if (state === YT_PLAYING) {
             ytStarted = true;
@@ -932,6 +1040,7 @@
         ytStartWatchdog = 0;
         ytReady = false;
         ytStarted = false;
+        ytWasPlaying = false;
         ytPlayerState = -1;
         ytTime = 0;
         ytDuration = 0;
@@ -960,6 +1069,7 @@
         ytRequest = request;
         ytReady = false;
         ytStarted = false;
+        ytWasPlaying = false;
         ytPlayerState = -1;
         ytTime = 0;
         ytDuration = 0;
@@ -1249,7 +1359,8 @@
 
         isOpen = false;
         ytRequest = null;
-        window.clearTimeout(hideTimer);
+        cancelHide();
+        hoverControls = false;
         clearMedia();
         showSpinner(false);
         showError(false);
@@ -1293,6 +1404,8 @@
 
         if (isPlaying()) pauseMedia();
         else playMedia();
+        // The countdown starts here for files; a YouTube clip confirms the
+        // new state a moment later and syncPlayButton() starts it then.
         wake();
     }
 
@@ -1328,6 +1441,8 @@
         modal.classList.toggle('is-pseudo-fullscreen', !!on);
         syncFullscreenButton();
         syncCenter();
+        hoverControls = false;
+        wake();
     }
 
     function exitFullscreen() {
@@ -1384,7 +1499,10 @@
             return;
         }
 
+        keyboardNav = true;
+
         if (event.key === 'Tab') {
+            wake();
             var focusables = Array.prototype.filter.call(
                 modal.querySelectorAll('button, input, [href], [tabindex]:not([tabindex="-1"])'),
                 function (el) { return !el.hidden && el.offsetParent !== null; }

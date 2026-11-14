@@ -142,8 +142,9 @@ test('the centre cluster, auto-hide and time label match the brief', () => {
     assert.match(css, /\.mxvp\.is-idle \.mxvp__center \{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/, 'cluster leaves the way when the controls fade');
 
     // Controls fade by themselves and come back on any mouse/touch activity.
-    assert.match(js, /\}, 2800\);/, 'controls hide after a short idle period');
-    assert.match(js, /\['pointermove', 'pointerdown', 'touchstart', 'focusin'\]/, 'activity wakes the controls');
+    assert.match(js, /var HIDE_DELAY = 2800;/, 'controls hide after a short idle period');
+    assert.match(js, /\['pointerdown', 'touchstart', 'focusin'\]/, 'activity wakes the controls');
+    assert.match(js, /addEventListener\('pointermove', onMove/, 'real pointer movement wakes the controls');
 
     // Current time / total duration, seek bar and volume all share the bar.
     assert.match(js, /formatTime\(time\) \+ ' \/ ' \+ formatTime\(duration\)/);
@@ -171,7 +172,7 @@ test('the centre cluster is laid out like the YouTube player', () => {
 
     // Play/pause and the skips exist once, in the centre; the bar copies are hidden.
     assert.match(css, /\.mxvp \.mxvp__btn--dup \{\s*display:\s*none/);
-    assert.match(js, /touchRevealed/, 'first tap on a playing video only reveals the controls');
+    assert.match(js, /lastPointerType === 'touch'/, 'a tap on the picture only shows or hides the controls');
 
     // Play/pause is the biggest disc; the side buttons are smaller.
     const main = css.match(/\n\.mxvp \.mxvp__cc-main \{([^}]*)\}/)[1];
@@ -249,4 +250,30 @@ test('video cards and player dialogs do not render per-video metadata', () => {
     assert.doesNotMatch(js, /controls autoplay playsinline/);
     // No title/description panel next to the video.
     assert.doesNotMatch(js, /mxvp__(?:title|desc|meta|caption)/);
+});
+
+test('auto-hide always restarts while the clip plays', () => {
+    const js = read('assets/js/video-player.js');
+
+    // One timer, re-armed instead of abandoned while the controls are in use.
+    const schedule = js.match(/function scheduleHide\(\) \{([\s\S]*?)\n    \}\n/)[1];
+    assert.match(schedule, /if \(controlsBusy\(\)\) \{\s*scheduleHide\(\);/);
+
+    // Playback that starts without a pointer event (autoplay, a YouTube state
+    // change, the end of a seek) starts the countdown too.
+    const sync = js.match(/function syncPlayButton\(\) \{([\s\S]*?)\n    \}\n/)[1];
+    assert.match(sync, /else if \(!hideTimer && !modal\.classList\.contains\('is-idle'\)\) \{[\s\S]*?scheduleHide\(\);/);
+
+    // YouTube buffering mid-playback is not treated as "paused".
+    assert.match(js, /ytPlayerState === YT_BUFFERING && ytWasPlaying/);
+
+    // A clicked/tapped bar control must not pin the controls; only keyboard focus does.
+    const busy = js.match(/function controlsBusy\(\) \{([\s\S]*?)\n    \}\n/)[1];
+    assert.match(busy, /keyboardNav && document\.activeElement/);
+
+    // Phantom move events (same coordinates) never wake the controls.
+    assert.match(js, /if \(x === lastMoveX && y === lastMoveY\) return;/);
+
+    // Fullscreen follows the same cycle.
+    assert.match(js, /var onFullscreenChange = function \(\) \{\s*syncFullscreenButton\(\);[\s\S]*?wake\(\);/);
 });
