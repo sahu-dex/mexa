@@ -25,10 +25,10 @@ if ($statusFilter !== '') {
             <p>Public review submissions arrive as <b>pending</b>. Approve, feature on the homepage marquee, edit, or delete reviews.</p>
         </div>
         <div class="adm-actions">
-            <a class="adm-btn<?= $statusFilter === '' ? ' adm-btn-primary' : '' ?>" href="reviews.php">All</a>
-            <a class="adm-btn<?= $statusFilter === 'pending' ? ' adm-btn-primary' : '' ?>" href="reviews.php?status=pending">Pending</a>
-            <a class="adm-btn<?= $statusFilter === 'approved' ? ' adm-btn-primary' : '' ?>" href="reviews.php?status=approved">Approved</a>
-            <a class="adm-btn<?= $statusFilter === 'rejected' ? ' adm-btn-primary' : '' ?>" href="reviews.php?status=rejected">Rejected</a>
+            <a class="adm-btn<?= $statusFilter === '' ? ' adm-btn-primary' : '' ?>" href="reviews">All</a>
+            <a class="adm-btn<?= $statusFilter === 'pending' ? ' adm-btn-primary' : '' ?>" href="reviews?status=pending">Pending</a>
+            <a class="adm-btn<?= $statusFilter === 'approved' ? ' adm-btn-primary' : '' ?>" href="reviews?status=approved">Approved</a>
+            <a class="adm-btn<?= $statusFilter === 'rejected' ? ' adm-btn-primary' : '' ?>" href="reviews?status=rejected">Rejected</a>
             <button type="button" class="adm-btn adm-btn-primary" data-modal-open="rev-modal" data-title="Add Review">
                 <i class="fa-solid fa-plus"></i> Add Review
             </button>
@@ -63,7 +63,7 @@ if ($statusFilter !== '') {
                 <tr>
                     <td>
 <?php if ($r['status'] === 'approved'): ?>
-                        <a href="../review.php#review-<?= (int) $r['id'] ?>">#<?= (int) $r['id'] ?></a>
+                        <a href="../review#review-<?= (int) $r['id'] ?>">#<?= (int) $r['id'] ?></a>
 <?php else: ?>
                         #<?= (int) $r['id'] ?>
 <?php endif; ?>

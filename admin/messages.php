@@ -30,9 +30,9 @@ $rows = $stmt->fetchAll();
             <p>Contact inquiries, newsletter signups, and previously received messages.</p>
         </div>
         <div class="adm-actions">
-            <a class="adm-btn<?= $typeFilter === '' ? ' adm-btn-primary' : '' ?>" href="messages.php">All</a>
-            <a class="adm-btn<?= $typeFilter === 'contact' ? ' adm-btn-primary' : '' ?>" href="messages.php?type=contact">Contact</a>
-            <a class="adm-btn<?= $typeFilter === 'newsletter' ? ' adm-btn-primary' : '' ?>" href="messages.php?type=newsletter">Newsletter</a>
+            <a class="adm-btn<?= $typeFilter === '' ? ' adm-btn-primary' : '' ?>" href="messages">All</a>
+            <a class="adm-btn<?= $typeFilter === 'contact' ? ' adm-btn-primary' : '' ?>" href="messages?type=contact">Contact</a>
+            <a class="adm-btn<?= $typeFilter === 'newsletter' ? ' adm-btn-primary' : '' ?>" href="messages?type=newsletter">Newsletter</a>
         </div>
     </div>
 

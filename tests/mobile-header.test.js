@@ -208,13 +208,13 @@ test('service is still reachable on mobile through the drawer', () => {
     const markup = read('includes/header.php');
 
     // The desktop button stays in the markup, label and i18n intact.
-    assert.match(markup, /class="header-service-button"[^>]*href="service\.php"/);
+    assert.match(markup, /class="header-service-button"[^>]*href="service"/);
     assert.match(markup, /data-i18n="header\.ourServices"/);
 
     // Service is a drawer card, and the action routes to the services page.
     assert.match(markup, /'key' => 'service'[\s\S]{0,140}label' => 'Service'/);
     assert.match(markup, /foreach \(\$navItems as \$item\)/);
-    assert.match(markup, /class="mm-action-button"[\s\S]{0,200}href="service\.php"|href="service\.php" class="mm-action-button"/);
+    assert.match(markup, /class="mm-action-button"[\s\S]{0,200}href="service"|href="service" class="mm-action-button"/);
 });
 
 test('hiding the CTA leaves the brand and the hamburger untouched', () => {

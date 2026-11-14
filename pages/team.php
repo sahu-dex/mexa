@@ -124,7 +124,7 @@ include dirname(__DIR__) . '/includes/header.php';
                 <b><?= e(setting('team_join_title', 'Want to work with us?')) ?></b>
                 <p><?= e(setting('team_join_text', 'Send your portfolio — we hire editors and designers from time to time.')) ?></p>
             </div>
-            <a href="service.php">See our services</a>
+            <a href="service">See our services</a>
         </div>
     </section>
 </main>

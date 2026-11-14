@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function parkDrawer(drawer) {
         var shift = menuHeight(drawer) + drawerRestTop(drawer);
-        drawer.style.setProperty('--mm-closed-shift', 'translateY(-' + shift + 'px)');
+        drawer.style.setProperty('--mm-closed-shift', '-' + shift + 'px');
     }
 
     // Measure whenever the geometry that decides the height could have changed.
@@ -67,6 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.classList.add('mm-open');
+            // Bar and sheet are drawn as one joined panel until the slide-out ends.
+            document.body.classList.add('mm-joined');
             menu.classList.remove('pointer-events-none');
             requestAnimationFrame(() => {
                 backdrop.classList.remove('opacity-0');
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Hand the page back: the flag above already covers the slide,
                 // this covers the moment the sheet is finally invisible.
                 document.body.classList.remove('mm-open');
+                document.body.classList.remove('mm-joined');
                 // Matches the 350ms slide declared in mobile-menu-cards.css.
             }, 350);
         }
@@ -185,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.documentElement.style.overflow = '';
                 document.body.style.overflow = '';
                 document.body.classList.remove('mm-open');
+                document.body.classList.remove('mm-joined');
                 const toggle = document.getElementById('header-menu-toggle');
                 if (toggle) {
                     toggle.setAttribute('aria-expanded', 'false');

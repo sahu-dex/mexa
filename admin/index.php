@@ -1,6 +1,12 @@
 <?php
 declare(strict_types=1);
 
+// Started as `php -S host:port` without naming router.php: the built-in server
+// sends every unknown address here, so hand it to the router for clean URLs.
+if (PHP_SAPI === 'cli-server' && !defined('MEXA_ROUTER')) {
+    require dirname(__DIR__) . '/router.php';
+}
+
 $adminPage = 'dashboard';
 $adminTitle = 'Dashboard Overview';
 require_once dirname(__DIR__) . '/includes/admin_header.php';
@@ -51,7 +57,7 @@ $recentReviews = $pdo->query(
             <h2>Recent Client Reviews</h2>
             <p>Approve or feature client testimonials before they appear publicly.</p>
         </div>
-        <a class="adm-btn" href="reviews.php">Moderate Reviews</a>
+        <a class="adm-btn" href="reviews">Moderate Reviews</a>
     </div>
     <div class="adm-table-wrap">
         <table class="adm-table">

@@ -1,4 +1,4 @@
-Options -Indexes
+Options -Indexes -MultiViews
 
 <FilesMatch "^(\.env(\..*)?|\.git.*|\.htaccess|composer\.(json|lock)|package(-lock)?\.json|README\.md|.*\.sql|.*\.log)$">
     <IfModule mod_authz_core.c>
@@ -14,6 +14,39 @@ Options -Indexes
     RewriteEngine On
     RewriteRule ^(config|includes|database|storage|pages)(/|$) - [F,L]
     RewriteRule ^(index|service|work|review|team)\.html$ $1.php [R=301,L,QSA]
+
+    # -----------------------------------------------------------------------
+    # Clean URLs: /service instead of /service.php, /admin/login instead of
+    # /admin/login.php. Works from the domain root or from a sub-folder (the
+    # redirect targets are taken from the requested address itself).
+    # The api/ endpoints keep their .php names so POSTed forms are never
+    # redirected. router.php does the same job for `php -S`.
+    # -----------------------------------------------------------------------
+
+    # router.php is only for PHP's built-in server.
+    RewriteRule ^router\.php$ - [F,L]
+
+    # Old address -> clean address (browser requests only, not internal rewrites).
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{REQUEST_URI} !/api/
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*/)?index\.php[?\s]
+    RewriteRule ^ %1 [R=301,L]
+
+    RewriteCond %{REQUEST_METHOD} ^(GET|HEAD)$
+    RewriteCond %{REQUEST_URI} !/api/
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*)\.php[?\s]
+    RewriteRule ^ %1 [R=301,L]
+
+    # /service/ -> /service (real folders such as /admin/ keep their slash).
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*[^/?\s])/+[?\s]
+    RewriteRule ^ %1 [R=301,L]
+
+    # Clean address -> the PHP file behind it.
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^(.+)$ $1.php [L]
 </IfModule>
 
 <IfModule mod_headers.c>

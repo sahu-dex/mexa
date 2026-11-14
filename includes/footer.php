@@ -37,7 +37,7 @@ $accentHex = chr(35) . '1051DF';
             <div class="container mx-auto px-4 md:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-16">
                     <div>
-                        <a href="index.php" class="flex items-center gap-2 mb-6 group">
+                        <a href="./" class="flex items-center gap-2 mb-6 group">
                             <span class="footer-brand-word text-2xl font-extrabold tracking-tight transition" aria-label="<?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?>" title="<?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?>"><?= e(strtoupper(setting('site_name', 'Mexa Motion'))) ?></span>
                         </a>
                         <p class="text-sm text-slate-500 mb-6 leading-relaxed"><?= e($footerDesc) ?></p>
@@ -52,11 +52,11 @@ $accentHex = chr(35) . '1051DF';
                     <div>
                         <h4 class="text-secondary font-bold mb-6">Quick Links</h4>
                         <ul class="space-y-3">
-                            <li><a href="index.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Home</a></li>
-                            <li><a href="service.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Service</a></li>
-                            <li><a href="work.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Work</a></li>
-                            <li><a href="review.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Review</a></li>
-                            <li><a href="team.php" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Team</a></li>
+                            <li><a href="./" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Home</a></li>
+                            <li><a href="service" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Service</a></li>
+                            <li><a href="work" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Work</a></li>
+                            <li><a href="review" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Review</a></li>
+                            <li><a href="team" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> Team</a></li>
                         </ul>
                     </div>
 
@@ -64,7 +64,7 @@ $accentHex = chr(35) . '1051DF';
                         <h4 class="text-secondary font-bold mb-6">Services</h4>
                         <ul class="space-y-3">
 <?php foreach ($footerServices as $fSvc): ?>
-                            <li><a href="service.php<?= chr(35) ?>svc-<?= (int) $fSvc['id'] ?>" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> <?= e($fSvc['name']) ?></a></li>
+                            <li><a href="service<?= chr(35) ?>svc-<?= (int) $fSvc['id'] ?>" class="text-sm hover:text-primary transition-colors flex items-center gap-2"><i class="fa-solid fa-angle-right text-xs" style="color: <?= $accentHex ?>;"></i> <?= e($fSvc['name']) ?></a></li>
 <?php endforeach; ?>
                         </ul>
                     </div>
@@ -84,8 +84,8 @@ $accentHex = chr(35) . '1051DF';
                 <div class="border-t border-slate-200/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p class="text-sm text-slate-500"><?= e($footerCopy) ?></p>
                     <div class="flex gap-6 text-sm text-slate-500">
-                        <a href="privacy.php" class="hover:text-primary transition-colors">Privacy Policy</a>
-                        <a href="terms.php" class="hover:text-primary transition-colors">Terms of Service</a>
+                        <a href="privacy" class="hover:text-primary transition-colors">Privacy Policy</a>
+                        <a href="terms" class="hover:text-primary transition-colors">Terms of Service</a>
                     </div>
                 </div>
             </div>
@@ -99,7 +99,7 @@ $accentHex = chr(35) . '1051DF';
     </script>
     <script defer src="assets/js/vendor-aos.js"></script>
     <script defer src="assets/js/video-player.js?v=20261114-perf"></script>
-    <script defer src="assets/js/site-common.js?v=20261114-perf"></script>
+    <script defer src="assets/js/site-common.js?v=20261114-slide-fix"></script>
 <?php foreach ($pageScripts as $jsSrc): ?>
     <script defer src="<?= e($jsSrc) ?>"></script>
 <?php endforeach; ?>

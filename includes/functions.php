@@ -437,27 +437,76 @@ function admin_count(): int
     return (int) db()->query('SELECT COUNT(*) FROM `admins`')->fetchColumn();
 }
 
+/** Seconds an admin session may sit idle before it has to sign in again. */
+const MEXA_ADMIN_IDLE_SECONDS = 7200;
+
+function admin_session_fingerprint(): string
+{
+    return hash('sha256', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+}
+
+function admin_session_forget(): void
+{
+    unset($_SESSION['admin_id'], $_SESSION['admin_username'], $_SESSION['admin_email'], $_SESSION['admin_seen'], $_SESSION['admin_fp']);
+}
+
 function current_admin(): ?array
 {
+    static $cached = false;
+    if ($cached !== false) {
+        return $cached;
+    }
     mexa_start_session();
     $adminId = $_SESSION['admin_id'] ?? null;
     if (!is_int($adminId) && !ctype_digit((string) $adminId)) {
         return null;
     }
+
+    // Idle timeout, and the session must still belong to the browser it was
+    // issued to. Either failing signs the session out.
+    $seen = (int) ($_SESSION['admin_seen'] ?? 0);
+    $fingerprint = (string) ($_SESSION['admin_fp'] ?? '');
+    if ($seen > 0 && (time() - $seen) > MEXA_ADMIN_IDLE_SECONDS) {
+        admin_session_forget();
+        $_SESSION['admin_expired'] = 1;
+        return null;
+    }
+    if ($fingerprint !== '' && !hash_equals($fingerprint, admin_session_fingerprint())) {
+        admin_session_forget();
+        return null;
+    }
+
     $stmt = db()->prepare('SELECT `id`, `username`, `email`, `last_login_at`, `created_at` FROM `admins` WHERE `id` = :id LIMIT 1');
     $stmt->execute([':id' => (int) $adminId]);
     $row = $stmt->fetch();
-    return $row ?: null;
+    if (!$row) {
+        admin_session_forget();
+        return null;
+    }
+    $_SESSION['admin_seen'] = time();
+    return $cached = $row;
+}
+
+/** Admin pages must never be stored by the browser or a proxy. */
+function admin_no_cache_headers(): void
+{
+    if (PHP_SAPI === 'cli' || headers_sent()) {
+        return;
+    }
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('X-Robots-Tag: noindex, nofollow');
 }
 
 function require_admin(bool $asJson = false): array
 {
+    admin_no_cache_headers();
     $admin = current_admin();
     if ($admin === null) {
         if ($asJson) {
             json_response(['ok' => false, 'error' => 'Unauthorized. Please log in as admin.'], 401);
         }
-        redirect_to('login.php');
+        redirect_to('login');
     }
     return $admin;
 }
@@ -465,9 +514,15 @@ function require_admin(bool $asJson = false): array
 function admin_login_user(array $adminRow): void
 {
     mexa_start_session();
+    // New session id and a new CSRF token: nothing issued before the login
+    // stays valid after it.
     session_regenerate_id(true);
+    unset($_SESSION['admin_expired'], $_SESSION['csrf_token']);
     $_SESSION['admin_id'] = (int) $adminRow['id'];
     $_SESSION['admin_username'] = (string) $adminRow['username'];
+    $_SESSION['admin_email'] = (string) ($adminRow['email'] ?? '');
+    $_SESSION['admin_seen'] = time();
+    $_SESSION['admin_fp'] = admin_session_fingerprint();
     $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
 
     $stmt = db()->prepare('UPDATE `admins` SET `last_login_at` = NOW() WHERE `id` = :id');
@@ -1046,7 +1101,7 @@ function page_stylesheets(string $pageKey): array
     // the older file rendered the *previous* design (38px rows, #1940e6 pill)
     // and it looked like the new work had never been applied. Bump this token
     // whenever the sheet's appearance changes.
-    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-reference-menu';
+    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-header-joined2';
     // Mobile header geometry: solid, flush with the top, content below it.
     $stylesheets[] = 'assets/css/mobile-header-fixed.css?v=20261114-header-solid';
     // Scroll/tap/compositing costs. Rendering behaviour only — no visual change.
@@ -1054,5 +1109,8 @@ function page_stylesheets(string $pageKey): array
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
+    // Phone sizing pass (hero, buttons, section spacing). Every rule is inside
+    // a max-width query, so desktop is untouched. Must stay last.
+    $stylesheets[] = 'assets/css/mobile-responsive.css?v=20261114-phone-sizing';
     return $stylesheets;
 }

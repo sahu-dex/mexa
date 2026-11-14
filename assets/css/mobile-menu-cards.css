@@ -54,8 +54,12 @@
         overscroll-behavior: contain !important;
         /* Reference: a shallow ice-blue wash, brightest at the top. */
         background: linear-gradient(160deg, #eef7ff, #e1efff) !important;
+        /* The bar above is white. The first 26px of the sheet carry that white
+           down into the ice-blue wash, so bar and sheet read as one surface. */
+        background-image: linear-gradient(180deg, #ffffff 0, rgba(255, 255, 255, 0) 26px), linear-gradient(160deg, #eef7ff, #e1efff) !important;
         border: 0 !important;
-        border-top: 1px solid rgba(17, 82, 223, .14) !important;
+        /* No hairline between the bar and the sheet: they are joined. */
+        border-top: 0 !important;
         border-radius: 0 0 16px 16px !important;
         box-shadow: 0 24px 48px rgba(18, 57, 111, .18) !important;
         z-index: 1 !important;
@@ -103,8 +107,25 @@
      *
      * This also makes the open animation read correctly: the sheet emerges from
      * behind the solid bar instead of sliding across it. */
-    html body#html-body #header.hdr-bar-wrap {
+    html body #header#header.hdr-bar-wrap {
         z-index: 10060 !important;
+    }
+
+    /* While the menu is open the bar and the sheet are one panel: the bar drops
+       the divider line and the shadow that would otherwise be drawn across the
+       seam. Nothing inside the bar changes — logo, brand and toggle stay as
+       they are — and the line comes back the moment the menu has closed.
+       `mm-joined` is set by site-common.js for the whole open + slide-out. */
+    html body.mm-joined #header#header.hdr-bar-wrap {
+        border-bottom-color: transparent !important;
+        box-shadow: none !important;
+    }
+
+    /* The capsule outline inside the bar would draw a rounded box above the
+       sheet; while they are joined only its outline is hidden. */
+    html body.mm-joined #header#header.hdr-bar-wrap > .container {
+        border-color: transparent !important;
+        box-shadow: none !important;
     }
 
     /* The closed root must not intercept taps anywhere on the page. The hidden
