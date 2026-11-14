@@ -28,8 +28,10 @@ test('the drawer is a full-width light sheet of white cards with blue accents', 
     // Full width under the header, not a right-hand side sheet.
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*width:\s*100%\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-width:\s*none\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*66px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 66px\)\s*!important/);
+    // The sheet opens at the bottom edge of the mobile bar (54px, set in
+    // mobile-header-fixed.css), not at a height the header does not have.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*54px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 54px\)\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#e9f3fc\s*!important/);
 

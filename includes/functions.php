@@ -1040,6 +1040,8 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/video-player.css?v=20261114-cascade-fix';
     // Mobile navigation cards — loaded last so no theme sheet can repaint it.
     $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-cards';
+    // Mobile header geometry: solid, flush with the top, content below it.
+    $stylesheets[] = 'assets/css/mobile-header-fixed.css?v=20261114-header-top';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

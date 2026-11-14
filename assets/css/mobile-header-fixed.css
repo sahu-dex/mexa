@@ -1,0 +1,92 @@
+/*
+ * Mobile header: a solid, stationary bar that content scrolls under cleanly.
+ *
+ * The mobile header is position:fixed, but the sheets that style it disagreed
+ * about where it sits and whether it has a background:
+ *
+ *   reference-header.css   top:16px, background:transparent, height:54px
+ *   reference-color-theme  background: rgba(255,255,255,.7)
+ *   premium-light-blue     background: rgba(248,250,255,.82)
+ *   visual-refresh         background: rgba(255,255,255,.91)
+ *   mobile-menu.css        background: a dark navy gradient
+ *
+ * reference-header.css loads last, so the bar ended up *transparent and pushed
+ * 16px down* while the header spacer only reserved 66px from the top of the
+ * page. The result: the top 16px of the bar showed page content, the page
+ * started 12px above the header's real bottom edge, and any video card or image
+ * scrolling past showed through the translucent bar.
+ *
+ * This file is loaded last and pins the geometry: the bar is flush with the top
+ * of the viewport, fully opaque, and the spacer reserves exactly its height, so
+ * page content begins at the bar's bottom edge and never sits underneath it.
+ *
+ * Only the header bar itself, its spacer and the drawer offset are touched —
+ * the logo, service button, hamburger and desktop header are left alone.
+ */
+
+@media (max-width: 1023.98px) {
+    /* ------------------------------------------------------------ the bar */
+
+    html body #header.hdr-bar-wrap {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        /* reference-header.css shows this bar at 54px on phones. */
+        height: 54px !important;
+        min-height: 54px !important;
+        max-height: 54px !important;
+
+        /* Solid, not translucent: nothing may show through while scrolling. */
+        background: #ffffff !important;
+        border-bottom: 1px solid rgba(214, 228, 245, .92) !important;
+        box-shadow: 0 6px 18px rgba(19, 64, 140, .07) !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+
+        /* No movement of any kind while scrolling — it stays put. */
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* The bar is flush with the top now, so the 16px mask that reference-header
+       painted behind it has nothing left to cover. */
+    html body #header.hdr-bar-wrap::before {
+        display: none !important;
+        content: none !important;
+    }
+
+    /* The pill inside the bar is opaque as well. */
+    html body #header.hdr-bar-wrap > .container {
+        background: #ffffff !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* --------------------------------------------------------- the spacer */
+
+    /* Exactly the height of the bar: content starts at its bottom edge, never
+       underneath it. mobile-menu.css/visual-refresh disagreed (66px against a
+       bar that is 54px tall and 16px lower), which is what let the hero and the
+       video cards slide under the header. */
+    html body .header-spacer:not(.hidden) {
+        display: block !important;
+        height: 54px !important;
+        min-height: 54px !important;
+        max-height: 54px !important;
+        flex: 0 0 54px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* The desktop spacer keeps `hidden lg:block` and is not touched here. */
+
+    /* Anchor jumps must clear the fixed bar. */
+    html {
+        scroll-padding-top: 66px !important;
+    }
+
+    /* The menu sheet's own offset lives in mobile-menu-cards.css, which owns the
+       drawer; it follows this bar's height. */
+}
