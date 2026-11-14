@@ -1,16 +1,35 @@
 /*
- * Mobile navigation sheet.
+ * Mobile navigation sheet — layout taken from the supplied reference HTML.
  *
- * Full-width ice-blue panel that drops under the header and holds one white
- * card per page, plus the primary action at the bottom. Every card is the full
- * width, the label sits on the left and the chevron on the right, and the
- * current page's card is tinted blue with brand-blue text.
+ * The reference is a single-file build of the site whose mobile menu is the
+ * result of seventeen stacked stylesheets. Reading `assets/css/mobile-menu.css`
+ * in isolation is misleading: the light-blue theme layer and a typography layer
+ * override most of it, and both of those beat it because the theme uses layered
+ * `!important` rules. So every value below was read off the *resolved* cascade
+ * (media queries evaluated at 390px, `@layer` order and `!important` applied),
+ * not off any one file.
  *
- * Several theme sheets restyle this drawer (mobile-menu.css paints it dark
- * navy, reference-header.css turns it into a right-hand white sheet, and the
- * light-blue themes repaint the items), all of them with !important. This file
- * is loaded last and pins every property with an id-scoped selector so the
- * cascade cannot pull the panel back to any of those looks.
+ * What the reference actually draws:
+ *   - a full-bleed sheet flush under the 54px bar, bottom corners rounded,
+ *     faint light-blue gradient, thin hairline along the top edge;
+ *   - one row per page, 45px tall, 13px radius, translucent white over the
+ *     sheet, dark navy label, muted chevron on the right;
+ *   - the current page is thicker glass (not taller): tinted blue, brand-blue
+ *     label, and a slightly stronger chevron;
+ *   - a full-width brand-blue pill for the primary action;
+ *   - no backdrop tint, no blur anywhere — the page just dims out of the way;
+ *   - it slides down from under the bar in 350ms on a strong ease-out curve.
+ *
+ * Deliberately NOT copied from the reference, because the instruction is to
+ * take the menu only: its "Booking Now" CTA (this site's CTA is and stays
+ * "Our Services" -> service.php), its gradient navy header, and its own brand
+ * lockup inside the panel.
+ *
+ * Several theme sheets restyle this drawer (mobile-menu.css paints it dark navy,
+ * reference-header.css turns it into a right-hand white sheet, the light-blue
+ * themes repaint the items), all of them with !important. This file is loaded
+ * last and pins every property with an id-scoped selector so the cascade cannot
+ * pull the panel back to any of those looks.
  */
 
 @media (max-width: 1023.98px) {
@@ -18,11 +37,8 @@
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer {
         position: absolute !important;
-        /* Geometry measured off the reference: the panel starts at the bottom
-           edge of the 54px mobile bar (mobile-header-fixed.css), runs edge to
-           edge, and its bottom corners are rounded. The cards keep their own
-           inset, so the panel reads as a sheet attached to the bar, not as a
-           floating card. */
+        /* The sheet hangs off the bottom edge of the 54px bar
+           (mobile-header-fixed.css) and runs edge to edge. */
         top: 54px !important;
         left: 0 !important;
         right: 0 !important;
@@ -30,29 +46,32 @@
         max-width: none !important;
         height: auto !important;
         max-height: calc(100dvh - 54px) !important;
-        padding: 8px 14px 14px !important;
+        /* The list supplies the 13px top inset; the reference's footer row
+           supplies the 18px (or safe-area) space under the pill. */
+        padding: 0 0 max(18px, env(safe-area-inset-bottom)) !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         overscroll-behavior: contain !important;
-        background: #e9f4fd !important;
+        /* Reference: a shallow ice-blue wash, brightest at the top. */
+        background: linear-gradient(160deg, #eef7ff, #e1efff) !important;
         border: 0 !important;
-        border-top: 1px solid rgba(163, 199, 236, .45) !important;
-        border-radius: 0 0 20px 20px !important;
-        box-shadow: 0 18px 40px rgba(15, 51, 116, .14) !important;
+        border-top: 1px solid rgba(17, 82, 223, .14) !important;
+        border-radius: 0 0 16px 16px !important;
+        box-shadow: 0 24px 48px rgba(18, 57, 111, .18) !important;
         z-index: 1 !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
         /* Open: fully down, no offset. The closed offset is a measured value
            supplied by site-common.js through --mm-closed-shift. */
         transform: translateY(0) !important;
-        transition: transform 260ms cubic-bezier(.22, .61, .36, 1) !important;
+        transition: transform 350ms cubic-bezier(.32, .72, 0, 1) !important;
     }
 
-    /* The sheet drops down from under the header, it does not slide in from
-       the right — reference-header.css turned it into a side sheet.
+    /* The sheet drops down from under the bar, it does not slide in from the
+       right — reference-header.css turned it into a side sheet.
 
        No bare `-100%` here: that is the exact bug this replaced. A shift by
-       only the sheet's own height left its bottom edge 54px inside the header's
+       only the sheet's own height left its bottom edge inside the header's
        band, so the closed sheet showed through where the logo should be.
        site-common.js supplies the measured distance; this rule only has to be
        the no-JS fallback, and it clears the whole resting offset. */
@@ -63,13 +82,13 @@
            the same arithmetic in CSS for the case where the script has not run. */
         transform: translateY(var(--mm-closed-shift, calc(-100% - 54px))) !important;
         visibility: hidden !important;
-        transition: transform 260ms cubic-bezier(.22, .61, .36, 1), visibility 0s linear 260ms !important;
+        transition: transform 350ms cubic-bezier(.32, .72, 0, 1), visibility 0s linear 350ms !important;
     }
 
     /* Opening: visible immediately, then slide. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer:not(.-translate-y-full) {
         visibility: visible !important;
-        transition: transform 260ms cubic-bezier(.22, .61, .36, 1), visibility 0s !important;
+        transition: transform 350ms cubic-bezier(.32, .72, 0, 1), visibility 0s !important;
     }
 
     /* The bar sits above the menu root. They tied at z-index 10001 before, and
@@ -95,19 +114,21 @@
         pointer-events: auto !important;
     }
 
-    /* A light dark overlay over the page content (the reference look): the
-       page stays readable underneath, but it is clearly behind the menu. No
-       blur — a full-screen backdrop-filter is re-sampled every frame. */
+    /* The reference dims the page with a plain translucent layer and no blur —
+       a full-screen backdrop-filter is re-sampled every frame, and the reference
+       turned it off on purpose. The dim is slightly stronger than the previous
+       round so the sheet reads as the only lit surface. */
     html body #mobile-menu #mobile-menu-backdrop.mm-backdrop {
-        background: rgba(9, 30, 66, .32) !important;
+        background: rgba(7, 20, 54, .28) !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
     }
 
     /* The header keeps the brand and the menu toggle, so the sheet itself does
-       not repeat them — it starts straight with the page cards. The heading row
-       collapses to nothing but the close button stays in the DOM, reachable by
-       keyboard (Tab / Escape), so the menu can still be dismissed. */
+       not repeat them — it starts straight with the page rows, as the reference
+       does. The heading row collapses to nothing but the close button stays in
+       the DOM, reachable by keyboard (Tab / Escape), so the menu can still be
+       dismissed. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-heading {
         display: flex !important;
         align-items: center !important;
@@ -138,7 +159,7 @@
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .ref-menu-close:focus-visible {
         opacity: 1 !important;
         pointer-events: auto !important;
-        outline: 2px solid #1940e6 !important;
+        outline: 2px solid #1152df !important;
         outline-offset: 2px !important;
     }
 
@@ -148,12 +169,14 @@
         display: flex !important;
         flex-direction: column !important;
         flex: 0 0 auto !important;
-        /* Measured from the reference: 11.6 css px between cards, rounded. */
-        gap: 12px !important;
+        /* Reference: 11px between rows, 13px down from the panel's top edge and
+           14px side inset. The bottom inset lives on the panel, below the pill,
+           exactly as the reference's footer row does it. */
+        gap: 11px !important;
         width: 100% !important;
         min-height: 0 !important;
         margin: 0 !important;
-        padding: 0 !important;
+        padding: 13px 14px 10px !important;
         overflow: visible !important;
         background: transparent !important;
         border: 0 !important;
@@ -163,53 +186,62 @@
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        gap: 12px !important;
+        gap: 10px !important;
         position: relative !important;
         width: 100% !important;
-        /* Reference card: ~34px tall, soft 13px radius, 14px side inset. */
-        height: 34px !important;
-        min-height: 34px !important;
-        flex: 0 0 auto !important;
-        padding: 0 15px !important;
-        border: 1px solid rgba(205, 226, 246, .9) !important;
+        /* Reference row: 45px tall, 13px radius, 18px side padding. */
+        height: 45px !important;
+        min-height: 45px !important;
+        flex: 0 0 45px !important;
+        padding: 0 18px !important;
+        /* Reference row edge: a light steel-blue outline that stays visible on
+           the ice-blue sheet without reading as a hard border. */
+        border: 1px solid rgba(127, 174, 223, .32) !important;
         border-radius: 13px !important;
-        background: #ffffff !important;
-        color: #0e1a33 !important;
-        font-size: 17px !important;
+        /* Frosted white over the ice-blue sheet. */
+        background: rgba(255, 255, 255, .62) !important;
+        color: #07143d !important;
+        /* The resolved reference size is 15px, not the 17px the base sheet
+           asks for — the typography layer wins there. Keeping 15px preserves
+           the reference's row rhythm (45px rows, 11px gaps). */
+        font-size: 15px !important;
         font-weight: 700 !important;
-        line-height: 1 !important;
+        line-height: 1.25 !important;
+        letter-spacing: 0 !important;
         text-decoration: none !important;
-        box-shadow: 0 3px 10px rgba(24, 68, 140, .06) !important;
+        box-shadow: none !important;
         transition: background .18s ease, border-color .18s ease, transform .18s ease !important;
     }
 
-    /* The page you are on, as in the reference: a taller tinted card with more
-       breathing room and a softer radius, brand-blue label. Only presentation
-       changes — no content is added or removed. */
+    /* The page you are on, as in the reference: the same 45px row, but tinted
+       blue with a brand-blue label and a firmer edge. Only presentation
+       changes — no content is added or removed.
+
+       `border-color` has to be stated separately: reference-header.css paints
+       every current/hovered row with `border: 1px solid transparent`, and a
+       shorthand in this rule would have lost the colour to it. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item[aria-current="page"] {
-        height: 53px !important;
-        min-height: 53px !important;
-        padding: 0 17px !important;
-        border-radius: 16px !important;
-        background: #dcebfb !important;
-        border-color: #cddff6 !important;
-        color: #1230b4 !important;
-        font-size: 18px !important;
-        box-shadow: 0 6px 16px rgba(24, 68, 140, .07) !important;
+        background: #d8eaff !important;
+        border: 1px solid rgba(7, 63, 232, .32) !important;
+        border-color: rgba(7, 63, 232, .32) !important;
+        color: #073bd3 !important;
+        box-shadow: none !important;
     }
 
+    /* The reference's theme rule selects `:hover` together with `.is-active`, so
+       a hovered row is painted exactly like the current one. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:hover,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:focus-visible {
-        background: #f4f9ff !important;
-        border-color: #bcd5f2 !important;
-        color: #1633b1 !important;
+        background: #d8eaff !important;
+        border-color: rgba(7, 63, 232, .32) !important;
+        color: #073bd3 !important;
         outline: none !important;
     }
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active:hover,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active:focus-visible {
-        background: #dcebfb !important;
+        background: #d8eaff !important;
     }
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:active {
@@ -227,56 +259,63 @@
         text-overflow: ellipsis !important;
     }
 
+    /* Reference chevron: 14px, slate blue. The reference does not recolour it
+       per row — the theme layer paints every chevron the same slate. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-chev {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
         flex: 0 0 auto !important;
         margin-left: auto !important;
-        width: 16px !important;
-        height: 16px !important;
-        color: #47556d !important;
+        width: 14px !important;
+        height: 14px !important;
+        color: #315c99 !important;
         opacity: 1 !important;
     }
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-chev svg {
         display: block !important;
-        width: 16px !important;
-        height: 16px !important;
+        width: 14px !important;
+        height: 14px !important;
     }
 
     /* ------------------------------------------------------- primary action */
 
+    /* The reference keeps this in its own footer row: 10px under the last page
+       row (the list's bottom inset) plus 6px at the top of that footer row. The
+       panel's 18px/safe-area padding then sits below the pill. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 10px !important;
+        gap: 12px !important;
         width: 100% !important;
-        /* Reference: a pill ~40px tall, same blue as the site's brand. */
-        height: 40px !important;
-        min-height: 40px !important;
-        margin: 0 !important;
-        padding: 0 15px !important;
-        border: 0 !important;
+        /* Reference pill: 45px tall, fully round, brand blue. */
+        height: 45px !important;
+        min-height: 45px !important;
+        margin: 6px 0 0 !important;
+        padding: 0 14px !important;
+        border: 1px solid #0737df !important;
         border-radius: 999px !important;
-        background: #1940e6 !important;
+        background: #073ff1 !important;
         color: #ffffff !important;
-        font-size: 17px !important;
+        font-size: 16px !important;
         font-weight: 700 !important;
         line-height: 1 !important;
         text-decoration: none !important;
-        box-shadow: 0 10px 24px rgba(25, 64, 230, .28) !important;
+        box-shadow: 0 4px 12px rgba(7, 63, 210, .18) !important;
         transition: background .18s ease, box-shadow .18s ease, transform .18s ease !important;
     }
 
+    /* The reference lifts the pill's brightness on hover instead of shifting its
+       colour, and nudges it down 1px while pressed. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:hover,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:focus-visible {
-        background: #1435ce !important;
+        background: #0638dc !important;
         color: #ffffff !important;
-        box-shadow: 0 12px 28px rgba(25, 64, 230, .34) !important;
-        outline: 2px solid rgba(25, 64, 230, .35) !important;
-        outline-offset: 3px !important;
+        box-shadow: 0 6px 16px rgba(7, 63, 210, .23) !important;
+        outline: 2px solid rgba(191, 224, 255, .72) !important;
+        outline-offset: 2px !important;
     }
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:active {
@@ -298,39 +337,72 @@
         color: #ffffff !important;
     }
 
+    /* Reference icon size inside the pill. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-icon svg,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-arrow svg {
         display: block !important;
-        width: 18px !important;
-        height: 18px !important;
+        width: 19px !important;
+        height: 19px !important;
     }
 
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-arrow {
-        margin-left: 2px !important;
+        margin-left: 0 !important;
     }
 }
 
-/* Slightly tighter cards on very small phones so five of them plus the action
-   still fit without the panel running past the fold. */
-@media (max-width: 359.98px) {
-    /* Keep five cards plus the action inside a short viewport without changing
-       the reference proportions: the gaps and the active card shrink first. */
-    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav {
-        gap: 10px !important;
-    }
-    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item,
-    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
-        height: 32px !important;
-        min-height: 32px !important;
-        font-size: 14px !important;
-    }
-    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active,
-    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item[aria-current="page"] {
-        height: 46px !important;
-        min-height: 46px !important;
-    }
+/* The reference's own small-phone block: keep the rows at 45px and only tighten
+   the label inset and the pill's type, so nothing has to shrink below a
+   comfortable tap target. */
+@media (max-width: 359px) {
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item {
-        padding: 0 14px !important;
+        padding: 0 15px !important;
+        font-size: 16px !important;
+    }
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
+        gap: 9px !important;
+        font-size: 15px !important;
+    }
+}
+
+/*
+ * Font metrics for the sheet.
+ *
+ * The page's shared typography sheet (site-typography.css) sets a `nav a`
+ * font-size inside the `mx-typography` cascade layer with !important. A layered
+ * !important beats every unlayered one, so pinning a size in this file — however
+ * specific — cannot win. Stating it in the same named layer works because this
+ * file loads after it: within a layer the later !important wins. The reference
+ * reaches the same result the same way.
+ *
+ * Keep this last in the file: `@layer` order is fixed by first appearance, and
+ * mx-typography is the first layer the page declares.
+ */
+@layer mx-typography {
+    @media (max-width: 1023.98px) {
+        body #mobile-menu .mm-nav .mm-item {
+            font-family: 'Poppins', 'Noto Sans Bengali', system-ui, sans-serif !important;
+            font-size: 15px !important;
+            line-height: 1.25 !important;
+            letter-spacing: 0 !important;
+        }
+
+        /* This site's primary action lives inside <nav>, so the shared sheet's
+           `nav a` rule reaches it. The reference's pill sits outside the nav and
+           therefore kept its own 16px — same intent, expressed for our markup. */
+        body #mobile-menu .mm-nav .mm-action-button {
+            font-size: 16px !important;
+            line-height: 1 !important;
+        }
+    }
+
+    /* The reference's small-phone block. Its 16px row size is never what gets
+       painted — the layered rule above outranks it there too — so only the pill
+       actually keeps a smaller step. Its row padding is tightened further down
+       in this file, where that block is unlayered and can apply. */
+    @media (max-width: 359px) {
+        body #mobile-menu .mm-nav .mm-action-button {
+            font-size: 15px !important;
+        }
     }
 }
 

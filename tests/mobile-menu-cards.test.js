@@ -22,7 +22,7 @@ test('the card sheet is loaded last, so no theme sheet can repaint the drawer', 
     }
 });
 
-test('the drawer is a full-width light sheet of white cards with blue accents', () => {
+test('the drawer is the reference full-width frosted sheet with blue accents', () => {
     const css = read(SHEET);
 
     // Edge to edge under the header, as in the reference, not a side sheet.
@@ -33,24 +33,36 @@ test('the drawer is a full-width light sheet of white cards with blue accents', 
     // It starts at the 54px bar's bottom edge (mobile-header-fixed.css).
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*54px\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 54px\)\s*!important/);
-    // Sheet attached to the bar: rounded bottom corners only.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#e9f4fd\s*!important/);
+    // Sheet attached to the bar: rounded bottom corners only, and the panel
+    // itself is a shallow ice-blue wash (the reference's resolved gradient).
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 16px 16px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*linear-gradient\(160deg, #eef7ff, #e1efff\)\s*!important/);
+    // The rows carry the inset, not the panel.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*padding:\s*0 0 max\(18px, env\(safe-area-inset-bottom\)\)\s*!important/);
 
-    // White cards, dark label, grey chevron on the right.
-    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*background:\s*#ffffff\s*!important/);
-    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*color:\s*#0e1a33\s*!important/);
+    // Rows: 45px, 13px radius, frosted white over the sheet, dark navy label,
+    // muted chevron on the right. These are the reference's effective values.
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*height:\s*45px\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*border-radius:\s*13px\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*background:\s*rgba\(255, 255, 255, \.62\)\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*border:\s*1px solid rgba\(127, 174, 223, \.32\)\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*color:\s*#07143d\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*font-size:\s*15px\s*!important/);
     assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*justify-content:\s*space-between\s*!important/);
-    assert.match(css, /\.mm-nav \.mm-chev\s*\{[^}]*color:\s*#47556d\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-chev\s*\{[^}]*color:\s*#315c99\s*!important/);
+    assert.match(css, /\.mm-chev svg\s*\{[^}]*width:\s*14px\s*!important/);
 
-    // The current page is a taller tinted card with brand-blue text.
-    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?background:\s*#dcebfb\s*!important/);
-    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?color:\s*#1230b4\s*!important/);
-    assert.match(css, /\.mm-item\.is-active[\s\S]{0,200}?height:\s*53px\s*!important/);
+    // The current page is the SAME height row, tinted (the reference does not
+    // grow it), with brand-blue text and a firmer edge.
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?background:\s*#d8eaff\s*!important/);
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?color:\s*#073bd3\s*!important/);
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?border:\s*1px solid rgba\(7, 63, 232, \.32\)\s*!important/);
+    assert.doesNotMatch(css, /\.mm-item\.is-active[\s\S]{0,420}?height:\s*\d+px\s*!important/);
 
-    // The primary action is a full-width blue pill.
-    assert.match(css, /\.mm-action-button\s*\{[^}]*background:\s*#1940e6\s*!important/);
+    // The primary action is a full-width blue pill, 45px, brand blue.
+    assert.match(css, /\.mm-action-button\s*\{[^}]*background:\s*#073ff1\s*!important/);
     assert.match(css, /\.mm-action-button\s*\{[^}]*border-radius:\s*999px\s*!important/);
+    assert.match(css, /\.mm-action-button\s*\{[^}]*height:\s*45px\s*!important/);
     assert.match(css, /\.mm-action-button\s*\{[^}]*color:\s*#ffffff\s*!important/);
 });
 
@@ -181,30 +193,72 @@ test('the menu root does not swallow taps while it is closed', () => {
     assert.ok((js.match(/document\.body\.classList\.remove\('mm-open'\)/g) || []).length >= 2);
 });
 
-test('the panel is a rounded container with a light dark overlay', () => {
+test('the panel is a rounded container with the reference dim overlay', () => {
     const css = read(SHEET);
 
     // Sheet attached to the bar: full width, rounded bottom corners.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 16px 16px\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*0\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*0\s*!important/);
-    // The cards carry the inset, so the pills cannot run into the corner arc.
-    const pad = css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*padding:\s*8px 14px 14px\s*!important/);
-    assert.ok(pad, 'the panel keeps a small inset for the cards');
+    // The rows carry the 13/14/11 insets, so nothing runs into the corner arc.
+    const pad = css.match(/\.mm-nav\s*\{[^}]*padding:\s*13px 14px 10px\s*!important/);
+    assert.ok(pad, 'the list keeps the reference insets');
+    const gap = css.match(/\.mm-nav\s*\{[^}]*gap:\s*11px\s*!important/);
+    assert.ok(gap, 'the list keeps the reference row gap');
 
-    // The overlay is a light dark wash, with no blur (a full-screen
+    // The overlay is the reference's flat dim, with no blur (a full-screen
     // backdrop-filter is re-sampled every frame).
     const flat = css.replace(/\s+/g, ' ');
-    assert.match(flat, /mobile-menu-backdrop\.mm-backdrop\s*\{[^}]*background:\s*rgba\(9,\s*30,\s*66,\s*\.32\)\s*!important/);
+    assert.match(flat, /mobile-menu-backdrop\.mm-backdrop\s*\{[^}]*background:\s*rgba\(7,\s*20,\s*54,\s*\.28\)\s*!important/);
     assert.match(flat, /mobile-menu-backdrop\.mm-backdrop\s*\{[^}]*backdrop-filter:\s*none\s*!important/);
+    // And the panel itself is never blurred.
+    assert.match(flat, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*backdrop-filter:\s*none\s*!important/);
 });
 
-test('the open/close animation is a short transform transition', () => {
+test('the open/close animation matches the reference slide', () => {
     const css = read(SHEET);
 
-    // Transform-only (compositor-friendly), 260ms, an ease-out curve.
-    assert.match(css, /transition:\s*transform 260ms cubic-bezier\(\.22, \.61, \.36, 1\)\s*!important/);
+    // Transform-only (compositor-friendly): the reference's 350ms strong
+    // ease-out curve, cubic-bezier(.32, .72, 0, 1).
+    assert.match(css, /transition:\s*transform 350ms cubic-bezier\(\.32, \.72, 0, 1\)\s*!important/);
     assert.match(css, /\.mm-drawer\s*\{[^}]*transform:\s*translateY\(0\)\s*!important/);
     // Reduced motion switches it off rather than shortening it.
     assert.match(css, /prefers-reduced-motion: reduce[\s\S]{0,400}transition:\s*none\s*!important/);
+});
+
+test('the menu type survives the page-wide layered typography sheet', () => {
+    const css = read(SHEET);
+    const typography = read('assets/css/site-typography.css');
+
+    // site-typography.css owns `nav a` font-size in the mx-typography layer with
+    // !important. A layered !important outranks every unlayered one, so this
+    // sheet must state the menu's metrics in that same layer — not in a more
+    // specific unlayered selector, which would silently lose.
+    assert.match(typography, /@layer mx-typography/);
+    assert.match(typography, /body :is\(button, \[role='button'\][\s\S]{0,200}?nav a\)\s*\{[^}]*font-size:[^!]*!important/);
+
+    // The menu's own layered block comes after it in load order, so it wins.
+    const layered = css.match(/@layer mx-typography \{([\s\S]*?)\n\}/);
+    assert.ok(layered, 'the menu type must be pinned inside the mx-typography layer');
+    assert.match(layered[1], /\.mm-item\s*\{[^}]*font-size:\s*15px\s*!important/);
+    // The pill lives inside <nav> on this site, so it needs the same treatment.
+    assert.match(layered[1], /\.mm-action-button\s*\{[^}]*font-size:\s*16px\s*!important/);
+
+    // The small-phone step has to live in the layer too, or it would lose to
+    // the base 15px rule that does.
+    assert.match(layered[1], /max-width:\s*359px[\s\S]{0,200}?font-size:\s*15px\s*!important/);
+    // Everything the layer sets is guarded by a mobile query, so desktop keeps
+    // the shared typography sheet's values untouched.
+    const layeredRules = layered[1].match(/@media[^{]*/g) || [];
+    assert.ok(layeredRules.length > 0);
+    for (const q of layeredRules) assert.match(q, /max-width/);
+});
+
+test('the current row re-states its border colour', () => {
+    const css = read(SHEET);
+
+    // reference-header.css paints current/hovered rows `border: 1px solid
+    // transparent` with !important. A shorthand alone in the active rule loses
+    // the colour to it, so border-color has to be stated on its own too.
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,700}?border-color:\s*rgba\(7, 63, 232, \.32\)\s*!important/);
 });

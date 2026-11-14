@@ -61,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
             menu.style.top = '0px';
             menu.style.height = '100dvh';
             // Park the sheet above the bar, then slide it down from there. The
-            // resting offset under the bar is the sheet's own (top: 62px).
+            // resting offset under the bar is whatever CSS says it is — the
+            // drawer's own computed `top` — so the two can never drift apart.
             parkDrawer(drawer);
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
@@ -85,6 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Hand the page back: the flag above already covers the slide,
                 // this covers the moment the sheet is finally invisible.
                 document.body.classList.remove('mm-open');
+                // Matches the 350ms slide declared in mobile-menu-cards.css.
             }, 350);
         }
     };
