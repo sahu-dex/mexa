@@ -97,11 +97,11 @@ $accentHex = chr(35) . '1051DF';
         window.__MM_SHOWREEL_URL__ = <?= json_encode(setting_raw('showreel_video_url', ''), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
         window.__MM_TAGLINE__ = <?= json_encode(setting('brand_tagline', 'Video Editing Agency'), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;
     </script>
-    <script src="assets/js/vendor-aos.js"></script>
-    <script src="assets/js/video-player.js?v=20261114-yt-badge"></script>
-    <script src="assets/js/site-common.js?v=20261114-shared-player"></script>
+    <script defer src="assets/js/vendor-aos.js"></script>
+    <script defer src="assets/js/video-player.js?v=20261114-perf"></script>
+    <script defer src="assets/js/site-common.js?v=20261114-perf"></script>
 <?php foreach ($pageScripts as $jsSrc): ?>
-    <script src="<?= e($jsSrc) ?>"></script>
+    <script defer src="<?= e($jsSrc) ?>"></script>
 <?php endforeach; ?>
 </body>
 </html>

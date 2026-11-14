@@ -50,8 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mobileDrawer = document.getElementById('mobile-menu-drawer');
     if (mobileDrawer) {
-        mobileDrawer.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: false });
-        mobileDrawer.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: false });
+        // Passive: these only stop the event bubbling to the page. A non-passive
+        // touchmove/wheel listener forces the browser to wait for JavaScript
+        // before it can start scrolling — the main reason a sheet felt "stuck".
+        mobileDrawer.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
+        mobileDrawer.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: true });
     }
 
     document.addEventListener('keydown', (ev) => {
@@ -83,9 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // One coalesced resize pass for the whole file: resizing a window fires tens
+    // of events per drag, and this handler touches the DOM each time.
+    let menuResizeRaf = 0;
     window.addEventListener('resize', () => {
-        const menu = document.getElementById('mobile-menu');
-        if (menu) {
+        if (menuResizeRaf) return;
+        menuResizeRaf = requestAnimationFrame(() => {
+            menuResizeRaf = 0;
+            const menu = document.getElementById('mobile-menu');
+            if (!menu) return;
             menu.style.top = '0px';
             menu.style.height = '100dvh';
             if (window.innerWidth >= 1024 && !menu.classList.contains('pointer-events-none')) {
@@ -101,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggle.setAttribute('aria-label', 'Open menu');
                 }
             }
-        }
+        });
     }, { passive: true });
 
     const counters = document.querySelectorAll('.counter');
@@ -111,21 +120,28 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !hasCounted) {
                     hasCounted = true;
-                    counters.forEach(counter => {
-                        const target = +counter.getAttribute('data-target');
-                        const duration = 1600;
-                        const startTime = performance.now();
-                        function updateCount(now) {
-                            const elapsed = now - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            const ease = 1 - Math.pow(1 - progress, 3);
-                            const current = Math.floor(ease * target);
-                            counter.innerText = current;
-                            if (progress < 1) requestAnimationFrame(updateCount);
-                            else counter.innerText = target;
+                    // One rAF loop for all four counters instead of one each, and
+                    // textContent instead of innerText (innerText forces the browser
+                    // to lay out the element to measure the rendered text).
+                    const items = Array.from(counters).map(counter => ({
+                        el: counter,
+                        target: +counter.getAttribute('data-target') || 0,
+                        shown: -1
+                    }));
+                    const duration = 1600;
+                    const startTime = performance.now();
+                    function updateCount(now) {
+                        const progress = Math.min((now - startTime) / duration, 1);
+                        const ease = 1 - Math.pow(1 - progress, 3);
+                        for (const item of items) {
+                            const current = progress < 1 ? Math.floor(ease * item.target) : item.target;
+                            if (current === item.shown) continue;
+                            item.shown = current;
+                            item.el.textContent = current;
                         }
-                        requestAnimationFrame(updateCount);
-                    });
+                        if (progress < 1) requestAnimationFrame(updateCount);
+                    }
+                    requestAnimationFrame(updateCount);
                 }
             });
         }, { threshold: 0.2 });
@@ -352,20 +368,33 @@ window.showCustomMessage = function (text) {
     wrapEl.addEventListener('touchend', () => { touching = false; sync(); }, { passive: true });
     wrapEl.addEventListener('touchcancel', () => { touching = false; sync(); }, { passive: true });
 
-    let dragStartX = 0, dragStartScroll = 0;
-    track.addEventListener('mousedown', (e) => {
-        dragStartX = e.pageX; dragStartScroll = track.scrollLeft;
+    let dragStartX = 0, dragStartScroll = 0, dragRaf = 0, dragX = 0;
+    // Pointer events cover mouse, pen and touch in one path, and the move sample
+    // is coalesced into one write per frame: the old mousemove handler wrote
+    // scrollLeft (and read it back through sync()) on every single event, which
+    // is a forced layout per move. One read/write per frame instead.
+    track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;          // touch pans natively
+        dragStartX = e.clientX; dragStartScroll = track.scrollLeft;
         dragging = true; track.classList.add('is-dragging'); sync();
     });
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener('pointermove', (e) => {
         if (!dragging) return;
-        const dx = e.pageX - dragStartX;
-        if (Math.abs(dx) > 3) { track.scrollLeft = dragStartScroll - dx; sync(); }
-    });
-    window.addEventListener('mouseup', () => {
+        dragX = e.clientX;
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(() => {
+            dragRaf = 0;
+            const dx = dragX - dragStartX;
+            if (Math.abs(dx) > 3) { track.scrollLeft = dragStartScroll - dx; sync(); }
+        });
+    }, { passive: true });
+    const endDrag = () => {
         if (!dragging) return;
         dragging = false; track.classList.remove('is-dragging'); sync();
-    });
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    window.addEventListener('blur', endDrag);
     track.addEventListener('scroll', () => {
         if (dragging || Math.abs(track.scrollLeft - applied) > 2) sync();
     }, { passive: true });
@@ -451,10 +480,18 @@ window.showCustomMessage = function (text) {
         el.style.visibility = 'hidden';
         el.setAttribute('aria-hidden', 'true');
     }
+    // The error listener catches images that fail from now on, so a full sweep is
+    // only needed for ones that failed before it was attached. Two sweeps
+    // (DOMContentLoaded + load) each walked every image on the page; one cheap
+    // pass that skips already-resolved images is enough.
     function sweep() {
-        document.querySelectorAll('img').forEach(function (img) {
-            if (img.src.indexOf('data:') !== 0 && img.complete && img.naturalWidth === 0) hide(img);
-        });
+        var imgs = document.querySelectorAll('img');
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+            if (img.getAttribute('data-img-broken')) continue;
+            if (String(img.getAttribute('src') || '').indexOf('data:') === 0) continue;
+            if (img.complete && img.naturalWidth === 0) hide(img);
+        }
     }
     document.addEventListener('error', function (e) {
         if (e.target && e.target.tagName === 'IMG') {
@@ -462,7 +499,11 @@ window.showCustomMessage = function (text) {
             hide(e.target);
         }
     }, true);
-    document.addEventListener('DOMContentLoaded', sweep);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', sweep);
+    } else {
+        sweep();
+    }
     window.addEventListener('load', sweep);
 
     const hashSelector = 'a[href="' + String.fromCharCode(35) + '"]';

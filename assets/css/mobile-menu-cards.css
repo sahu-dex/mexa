@@ -275,4 +275,9 @@
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
         transition: none !important;
     }
+    /* No slide animation either: the sheet appears in place. */
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer.-translate-y-full {
+        transform: translateY(0) !important;
+        visibility: hidden !important;
+    }
 }

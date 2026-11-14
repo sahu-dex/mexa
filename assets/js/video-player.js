@@ -409,10 +409,10 @@
         }, { passive: true });
 
         ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
-            refs.stage.addEventListener(type, wake, { passive: true });
+            refs.stage.addEventListener(type, scheduleWake, { passive: true });
         });
 
-        modal.addEventListener('mousemove', wake, { passive: true });
+        modal.addEventListener('mousemove', scheduleWake, { passive: true });
 
         // YouTube posts its player events to this window.
         window.addEventListener('message', onYtMessage);
@@ -581,6 +581,21 @@
 
     function setControlsVisible(visible) {
         modal.classList.toggle('is-idle', !visible);
+    }
+
+    var wakeQueued = false;
+
+    function scheduleWake() {
+        if (!isOpen) return;
+        // classList.toggle, clearTimeout and setTimeout on every pointer event is
+        // three calls per event, and pointermove fires ~120x/s over the video.
+        // Coalesce a whole burst of movement into one wake per frame.
+        if (wakeQueued) return;
+        wakeQueued = true;
+        requestAnimationFrame(function () {
+            wakeQueued = false;
+            if (isOpen) wake();
+        });
     }
 
     function wake() {
@@ -1628,8 +1643,14 @@
     });
 
     // Warm the YouTube hosts as soon as a video card is hovered or touched.
+    // `pointerover` bubbles and fires for every element the pointer crosses, so
+    // this listener runs dozens of times per second while the cursor moves across
+    // the page. The hosts only need warming once, so bail on the one-shot flag
+    // before doing any closest() work: after the first pass this is a single
+    // boolean test per event.
     ['pointerover', 'touchstart', 'focusin'].forEach(function (type) {
         document.addEventListener(type, function (event) {
+            if (primed) return;
             if (!event.target || !event.target.closest) return;
             if (event.target.closest(CARD_SELECTOR)) primeYoutube();
         }, { passive: true });

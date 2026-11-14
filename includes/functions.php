@@ -1042,6 +1042,8 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-cards';
     // Mobile header geometry: solid, flush with the top, content below it.
     $stylesheets[] = 'assets/css/mobile-header-fixed.css?v=20261114-header-solid';
+    // Scroll/tap/compositing costs. Rendering behaviour only — no visual change.
+    $stylesheets[] = 'assets/css/performance.css?v=20261114-perf';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

@@ -38,6 +38,20 @@ $navItems = [
     <link rel="icon" type="image/png" href="<?= e($faviconPath) ?>">
     <title><?= e($metaTitle) ?></title>
     <meta name="description" content="<?= e($metaDesc) ?>">
+    <?php // Warm the two third-party hosts the galleries use before the first
+          // thumbnail is requested: without this every YouTube poster pays a DNS +
+          // TLS handshake on top of its download, which is what made the work
+          // grids appear to load slowly. video-player.js still primes from JS on
+          // the first hover, but that only helps for the second video; declaring
+          // the hint in the head means the connection is already opening while
+          // the gallery markup is still being parsed. ?>
+    <?php // No `crossorigin`: thumbnails are plain <img> requests and the player
+          // is an iframe, neither of which is a CORS fetch. A crossorigin
+          // preconnect opens a different connection pool and would not be reused. ?>
+    <link rel="preconnect" href="https://i.ytimg.com">
+    <link rel="dns-prefetch" href="https://i.ytimg.com">
+    <link rel="preconnect" href="https://www.youtube-nocookie.com">
+    <link rel="dns-prefetch" href="https://www.youtube-nocookie.com">
 <?php foreach ($stylesheets as $cssHref): ?>
     <link rel="stylesheet" href="<?= e($cssHref) ?>">
 <?php endforeach; ?>
