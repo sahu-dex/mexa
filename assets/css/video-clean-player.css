@@ -1,11 +1,182 @@
-/* Video galleries show only the thumbnail and play affordance. */
+/*
+ * Video galleries: thumbnail plus one play affordance.
+ *
+ * The play buttons used to be white, rounded *rectangles* (60x50, radius 14px)
+ * floating on top of the thumbnails, which read as loose white boxes. They are
+ * now round discs in the site's brand blue, so they match the card and the
+ * blue accent used everywhere else on the page.
+ *
+ * Every card gallery shares the same look:
+ *   Home "Our Work"      .pf-play (pf-card / pf-card-short)
+ *   Work page            .wk-rc-play, .wk-demo .ply, .wk-short-play
+ *   Service page         .sv2-play
+ *
+ * The stylesheets of the individual pages paint these white with !important, so
+ * the selectors here are scoped to `body …` and pinned, exactly like the video
+ * player's own controls.
+ */
 
-body .wk-rc {
-    display: block !important;
-    padding: 0 !important;
+/* ---------------------------------------------------------------- Home page */
+
+body .pf-card .pf-play,
+body .pf-card.pf-card-short .pf-play {
+    width: 54px;
+    height: 54px;
+    border-radius: 50% !important;          /* a circle, not a rounded box */
+    background: #1051df !important;
+    color: #fff !important;
+    box-shadow:
+        0 10px 24px rgba(16, 81, 223, .34),
+        0 0 0 4px rgba(255, 255, 255, .92) !important;
 }
 
-body .wk-rc .th {
-    display: block;
-    width: 100%;
+body .pf-card .pf-play svg {
+    width: 21px;
+    height: 21px;
+}
+
+/* The play triangle itself, wherever it is drawn as an inline SVG. */
+body .pf-card .pf-play svg path {
+    fill: #fff !important;
+}
+
+body .pf-card .pf-play i {
+    color: #fff !important;
+    font-size: 18px;
+}
+
+/* A short keeps the same round disc; only the card is taller. The page rules
+   address `.pf-card-short .pf-play` directly, so this needs the same strength. */
+html body .pf-card.pf-card-short .pf-play {
+    width: 52px;
+    height: 52px;
+    border-radius: 50% !important;
+    background: #1051df !important;
+}
+
+html body .pf-card.pf-card-short .pf-play svg {
+    width: 20px;
+    height: 20px;
+}
+
+html body .pf-card.pf-card-short .pf-play svg path {
+    fill: #fff !important;
+}
+
+body .pf-card:hover .pf-play,
+body .pf-card.pf-card-short:hover .pf-play {
+    transform: translate(-50%, -50%) scale(1.07);
+    background: #0a3fc0 !important;
+}
+
+/* ---------------------------------------------------------------- Work page */
+
+body .wk-rc-play i,
+body .wk-short-play,
+body .wk-demo .ply {
+    background: #1051df !important;
+    color: #fff !important;
+    border-radius: 50% !important;
+    box-shadow:
+        0 10px 24px rgba(16, 81, 223, .32),
+        0 0 0 4px rgba(255, 255, 255, .92) !important;
+}
+
+body .wk-rc-play i {
+    width: 46px;
+    height: 46px;
+    font-size: 14px;
+}
+
+body .wk-short .wk-short-play {
+    width: 44px;
+    height: 44px;
+    font-size: 13px;
+}
+
+/* The demo cards only reveal their play disc on hover, and it stays round. */
+body .wk-demo .ply {
+    width: 48px;
+    height: 48px;
+    opacity: 1;
+}
+
+body .wk-demo .ply i {
+    color: #fff !important;
+    font-size: 14px;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: auto;
+    height: auto;
+}
+
+body .wk-demo:hover .ply,
+body .wk-short:hover .wk-short-play {
+    background: #0a3fc0 !important;
+}
+
+/* ------------------------------------------------------------- Service page */
+
+body .sv2-video-btn .sv2-play,
+body .sv2-media .sv2-play,
+html body .sv2-hero-video .sv2-video-btn .sv2-play {
+    background: #1051df !important;
+    color: #fff !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow:
+        0 14px 34px rgba(16, 81, 223, .34),
+        0 0 0 4px rgba(255, 255, 255, .92) !important;
+}
+
+body .sv2-video-btn .sv2-play i,
+body .sv2-media .sv2-play i {
+    color: #fff !important;
+}
+
+body .sv2-video-btn:hover .sv2-play,
+body .sv2-media:hover .sv2-play {
+    background: #0a3fc0 !important;
+}
+
+/* ------------------------------------------------------------------ Mobile */
+
+@media (max-width: 640px) {
+    body .pf-card .pf-play,
+    body .pf-card.pf-card-short .pf-play {
+        width: 44px;
+        height: 44px;
+    }
+
+    body .pf-card .pf-play svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    body .wk-rc-play i {
+        width: 38px;
+        height: 38px;
+        font-size: 12px;
+    }
+
+    body .wk-short .wk-short-play {
+        width: 36px;
+        height: 36px;
+        font-size: 11px;
+    }
+
+    body .wk-demo .ply {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+/* A plain, quiet finish for people who ask their system for less transparency
+   and motion. */
+@media (prefers-reduced-motion: reduce) {
+    body .pf-card .pf-play,
+    body .wk-short-play,
+    body .wk-demo .ply {
+        transition: none !important;
+    }
 }
