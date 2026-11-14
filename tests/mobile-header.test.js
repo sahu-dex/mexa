@@ -128,13 +128,10 @@ test('the mobile drawer opens under the bar, and the sheet loads last', () => {
 
     // The drawer is owned by mobile-menu-cards.css; it has to follow this bar's
     // height, and this sheet must not reach into another sheet's component.
-    // The sheet hangs just under the 54px bar with a small gap, so it reads as a
-    // separate rounded panel rather than an extension of the header.
-    assert.match(cards, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*62px\s*!important/);
-    assert.match(cards, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 74px\)\s*!important/);
-    // It must clear the 54px bar when closed.
-    assert.match(cards, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*62px\s*!important/);
-    assert.ok(62 > 54, 'the resting offset must clear the header');
+    // The sheet starts at the bottom edge of the 54px bar, edge to edge, as in
+    // the reference.
+    assert.match(cards, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*54px\s*!important/);
+    assert.match(cards, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 54px\)\s*!important/);
     assert.doesNotMatch(sheet, /mm-drawer/, 'the drawer offset belongs to the drawer sheet');
 
     assert.match(styles, /mobile-header-fixed\.css\?v=\d{8}-/);

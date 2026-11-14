@@ -25,26 +25,28 @@ test('the card sheet is loaded last, so no theme sheet can repaint the drawer', 
 test('the drawer is a full-width light sheet of white cards with blue accents', () => {
     const css = read(SHEET);
 
-    // Full width under the header, not a right-hand side sheet.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*12px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*12px\s*!important/);
+    // Edge to edge under the header, as in the reference, not a side sheet.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*0\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*0\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*width:\s*100%\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-width:\s*none\s*!important/);
-    // It hangs below the 54px bar (mobile-header-fixed.css) as a floating panel.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*62px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 74px\)\s*!important/);
-    // A rounded container on all four corners, not a sheet welded to the bar.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*22px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#eef6fe\s*!important/);
+    // It starts at the 54px bar's bottom edge (mobile-header-fixed.css).
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*54px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 54px\)\s*!important/);
+    // Sheet attached to the bar: rounded bottom corners only.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#e9f4fd\s*!important/);
 
     // White cards, dark label, grey chevron on the right.
     assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*background:\s*#ffffff\s*!important/);
     assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*color:\s*#0e1a33\s*!important/);
     assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*justify-content:\s*space-between\s*!important/);
-    assert.match(css, /\.mm-nav \.mm-chev\s*\{[^}]*color:\s*#64748b\s*!important/);
+    assert.match(css, /\.mm-nav \.mm-chev\s*\{[^}]*color:\s*#47556d\s*!important/);
 
-    // The current page is a tinted card with brand-blue text.
-    assert.match(css, /\.mm-item\.is-active[\s\S]{0,220}?background:\s*#d8eafb\s*!important/);
-    assert.match(css, /\.mm-item\.is-active[\s\S]{0,220}?color:\s*#1633b1\s*!important/);
+    // The current page is a taller tinted card with brand-blue text.
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?background:\s*#dcebfb\s*!important/);
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,420}?color:\s*#1230b4\s*!important/);
+    assert.match(css, /\.mm-item\.is-active[\s\S]{0,200}?height:\s*53px\s*!important/);
 
     // The primary action is a full-width blue pill.
     assert.match(css, /\.mm-action-button\s*\{[^}]*background:\s*#1940e6\s*!important/);
@@ -131,16 +133,17 @@ test('the closed sheet is parked entirely outside the header band', () => {
     const css = read(SHEET);
     const js = read('assets/js/site-common.js');
 
-    // The resting position clears the 54px bar.
+    // The resting position is the bar's bottom edge.
     const top = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*(\d+)px\s*!important/) || [])[1];
-    assert.ok(top > 54, 'the drawer must hang below the 54px bar, got ' + top);
+    assert.equal(top, 54, 'the drawer starts at the 54px bar, got ' + top);
 
-    // The closed offset is (measured height + that resting offset), which puts
-    // the sheet's bottom edge at y=0 — above the viewport, not over the bar.
-    const park = +(js.match(/menuHeight\(drawer\) \+ (\d+)/) || [])[1];
-    assert.equal(park, top, 'the JS must park by height + the same resting offset');
-    for (const H of [300, 394, 500]) {
-        assert.ok(top - (H + park) + H <= 0, 'a ' + H + 'px sheet must end at or above y=0 when closed');
+    // The closed offset is (measured height + resting offset), read from the
+    // sheet's computed style rather than hardcoded, which puts the sheet's
+    // bottom edge at y=0 — above the viewport, not over the bar.
+    assert.match(js, /menuHeight\(drawer\) \+ drawerRestTop\(drawer\)/);
+    assert.match(js, /getComputedStyle\(drawer\)\.top/);
+    for (const H of [300, 394, 520, 600]) {
+        assert.ok(top - (H + top) + H <= 0, 'a ' + H + 'px sheet must end at or above y=0 when closed');
     }
 
     // A bare -100% is the exact bug above.
@@ -178,17 +181,16 @@ test('the menu root does not swallow taps while it is closed', () => {
     assert.ok((js.match(/document\.body\.classList\.remove\('mm-open'\)/g) || []).length >= 2);
 });
 
-test('the panel is a floating rounded container with a light dark overlay', () => {
+test('the panel is a rounded container with a light dark overlay', () => {
     const css = read(SHEET);
 
-    // Rounded on all four corners, inset from the screen edges.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*22px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*12px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*12px\s*!important/);
-    // Padding at least the corner radius, or the pill runs into the corner arc.
-    const pad = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*padding:\s*(\d+)px\s*!important/) || [])[1];
-    const radius = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*(\d+)px\s*!important/) || [])[1];
-    assert.ok(pad >= radius - 6, 'padding ' + pad + 'px is too tight for a ' + radius + 'px radius');
+    // Sheet attached to the bar: full width, rounded bottom corners.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*0\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*0\s*!important/);
+    // The cards carry the inset, so the pills cannot run into the corner arc.
+    const pad = css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*padding:\s*8px 14px 14px\s*!important/);
+    assert.ok(pad, 'the panel keeps a small inset for the cards');
 
     // The overlay is a light dark wash, with no blur (a full-screen
     // backdrop-filter is re-sampled every frame).

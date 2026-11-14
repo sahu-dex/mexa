@@ -21,13 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuHeight = drawer => Math.ceil(drawer.getBoundingClientRect().height) || 0;
 
     // How far above its resting place the closed sheet has to sit: its own
-    // height plus its resting offset under the bar (top: 62px). That puts the
-    // closed sheet's bottom edge at y=0, entirely above the viewport, so at no
-    // point does any part of it sit in the header's band. Measured height is
-    // written as a custom property; the open position stays a plain 0, which is
-    // what the CSS transition interpolates between.
+    // height plus its resting offset under the bar. That puts the closed sheet's
+    // bottom edge at y=0, entirely above the viewport, so at no point does any
+    // part of it sit in the header's band. The resting offset is read from the
+    // sheet itself rather than hardcoded, so the CSS keeps ownership of it.
+    // Measured height is written as a custom property; the open position stays a
+    // plain 0, which is what the CSS transition interpolates between.
+    function drawerRestTop(drawer) {
+        var top = parseFloat(window.getComputedStyle(drawer).top);
+        return isFinite(top) && top >= 0 ? top : 54;
+    }
     function parkDrawer(drawer) {
-        var shift = menuHeight(drawer) + 62;
+        var shift = menuHeight(drawer) + drawerRestTop(drawer);
         drawer.style.setProperty('--mm-closed-shift', 'translateY(-' + shift + 'px)');
     }
 
