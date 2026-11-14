@@ -7,11 +7,13 @@
  * close control, and owns the only set of listeners, so duplicate × buttons
  * or duplicated handlers can never appear again.
  *
- * YouTube clips run through the YouTube IFrame Player API with controls=0
- * and modestbranding, so the player shows no YouTube logo, channel name,
- * title, share/watch-later buttons, settings or "More videos" screen — our
- * own control bar drives playback instead. Every other provider (Vimeo,
- * Facebook, custom iframes) keeps using a plain iframe.
+ * YouTube clips run in a plain iframe with every piece of YouTube chrome
+ * switched off (controls=0, modestbranding, rel=0, showinfo=0) and are driven
+ * over postMessage (enablejsapi=1), so no third-party script — and therefore
+ * no ad blocker or WebView — can stop them from working. Our own control bar
+ * drives playback; if a frame never answers, the clip is rebuilt with
+ * YouTube's own controls so it always stays watchable. Every other provider
+ * (Vimeo, Facebook, custom iframes) keeps using a plain iframe.
  *
  * Public API:
  *   MexaVideoPlayer.open({ src, embed, type, poster, title, vertical, kind })
@@ -33,14 +35,11 @@
     var BACKDROP_ATTR = 'data-mxvp-backdrop';
     var SEEK_MAX = 1000;
     var SKIP_SECONDS = 10;
-    var YT_API_SRC = 'https://www.youtube.com/iframe_api';
-    // The IFrame API is the only path that keeps YouTube's own chrome off the
-    // player, but it is a third-party script: ad blockers, in-app browsers and
-    // flaky networks can block it or swallow its callback. Each of these timers
-    // is the point where we give up on the API and switch the same clip to the
-    // standard embed, so a video never sits behind a dead poster.
-    var YT_API_TIMEOUT = 3000;
-    var YT_READY_TIMEOUT = 4500;
+    // YouTube clips are driven by postMessage (enablejsapi=1), which needs no
+    // third-party script. These timers are where we stop trusting that bridge
+    // and hand the clip over to YouTube's own controls instead of showing a
+    // video the viewer cannot start, pause or seek.
+    var YT_HANDSHAKE_TIMEOUT = 4000;
     var YT_START_TIMEOUT = 4000;
 
     // YouTube player states.
@@ -104,11 +103,16 @@
     var built = false;
 
     // YouTube specifics.
-    var ytPlayer = null;
+    var ytFrame = null;
     var ytTick = 0;
     var ytStarted = false;
-    var ytApiPromise = null;
-    var ytReady = false;
+    var ytReady = false;        // the frame answered a postMessage
+    var ytNativeUi = false;     // this browser never answered: use YouTube's UI
+    var ytPlayerState = -1;
+    var ytTime = 0;
+    var ytDuration = 0;
+    var ytVolume = 100;
+    var ytMuted = false;
     var ytWatchdog = 0;
     var ytStartWatchdog = 0;
     var ytRequest = null;
@@ -346,6 +350,9 @@
 
         modal.addEventListener('mousemove', wake, { passive: true });
 
+        // YouTube posts its player events to this window.
+        window.addEventListener('message', onYtMessage);
+
         document.addEventListener('keydown', onKeydown);
         document.addEventListener('fullscreenchange', syncFullscreenButton);
         document.addEventListener('webkitfullscreenchange', syncFullscreenButton);
@@ -358,7 +365,7 @@
     }
 
     function youtubeReady() {
-        return mode === 'youtube' && ytPlayer && typeof ytPlayer.getPlayerState === 'function';
+        return mode === 'youtube' && !!ytFrame && ytReady;
     }
 
     function hasTransport() {
@@ -366,49 +373,31 @@
     }
 
     function ytState() {
-        if (!youtubeReady()) return -1;
-        try {
-            return ytPlayer.getPlayerState();
-        } catch (err) {
-            return -1;
-        }
+        return mode === 'youtube' ? ytPlayerState : -1;
     }
 
     function isPlaying() {
-        if (youtubeReady()) return ytState() === YT_PLAYING;
+        if (mode === 'youtube') return ytPlayerState === YT_PLAYING;
         var video = currentVideo();
         return !!video && !video.paused && !video.ended;
     }
 
     function getTime() {
-        if (youtubeReady()) {
-            try {
-                return ytPlayer.getCurrentTime() || 0;
-            } catch (err) {
-                return 0;
-            }
-        }
+        if (mode === 'youtube') return ytTime;
         var video = currentVideo();
         return video ? video.currentTime || 0 : 0;
     }
 
     function getDuration() {
-        if (youtubeReady()) {
-            try {
-                return ytPlayer.getDuration() || 0;
-            } catch (err) {
-                return 0;
-            }
-        }
+        if (mode === 'youtube') return ytDuration;
         var video = currentVideo();
         return video && isFinite(video.duration) ? video.duration : 0;
     }
 
     function seekToTime(seconds) {
-        if (youtubeReady()) {
-            try {
-                ytPlayer.seekTo(seconds, true);
-            } catch (err) {}
+        if (mode === 'youtube') {
+            ytTime = seconds;
+            ytSend('seekTo', [seconds, true]);
             return;
         }
         var video = currentVideo();
@@ -416,13 +405,8 @@
     }
 
     function playMedia() {
-        if (youtubeReady()) {
-            try {
-                ytPlayer.playVideo();
-            } catch (err) {
-                if (ytReady) degradeYoutube('play command failed');
-                return;
-            }
+        if (mode === 'youtube') {
+            ytSend('playVideo');
             watchYtStart();
             return;
         }
@@ -434,10 +418,8 @@
     }
 
     function pauseMedia() {
-        if (youtubeReady()) {
-            try {
-                ytPlayer.pauseVideo();
-            } catch (err) {}
+        if (mode === 'youtube') {
+            ytSend('pauseVideo');
             return;
         }
         var video = currentVideo();
@@ -445,40 +427,24 @@
     }
 
     function getVolume() {
-        if (youtubeReady()) {
-            try {
-                return (ytPlayer.getVolume ? ytPlayer.getVolume() : 100) / 100;
-            } catch (err) {
-                return 1;
-            }
-        }
+        if (mode === 'youtube') return ytMuted ? 0 : ytVolume / 100;
         var video = currentVideo();
         return video ? video.volume : 1;
     }
 
     function isMuted() {
-        if (youtubeReady()) {
-            try {
-                return !!(ytPlayer.isMuted && ytPlayer.isMuted());
-            } catch (err) {
-                return false;
-            }
-        }
+        if (mode === 'youtube') return ytMuted || ytVolume === 0;
         var video = currentVideo();
         return !video || video.muted || video.volume === 0;
     }
 
     function applyVolume(value) {
         var volume = Math.max(0, Math.min(1, isFinite(value) ? value : 1));
-        if (youtubeReady()) {
-            try {
-                if (ytPlayer.setVolume) ytPlayer.setVolume(Math.round(volume * 100));
-                if (volume === 0) {
-                    if (ytPlayer.mute) ytPlayer.mute();
-                } else if (ytPlayer.isMuted && ytPlayer.isMuted() && ytPlayer.unMute) {
-                    ytPlayer.unMute();
-                }
-            } catch (err) {}
+        if (mode === 'youtube') {
+            ytVolume = Math.round(volume * 100);
+            ytMuted = volume === 0;
+            ytSend('setVolume', [ytVolume]);
+            ytSend(volume === 0 ? 'mute' : 'unMute');
         } else {
             var video = currentVideo();
             if (video) {
@@ -491,17 +457,18 @@
     }
 
     function applyMuteToggle() {
-        if (youtubeReady()) {
-            try {
-                if (isMuted()) {
-                    if (ytPlayer.unMute) ytPlayer.unMute();
-                    if ((ytPlayer.getVolume ? ytPlayer.getVolume() : 0) === 0 && ytPlayer.setVolume) {
-                        ytPlayer.setVolume(Math.round((rememberVolume || 1) * 100));
-                    }
-                } else if (ytPlayer.mute) {
-                    ytPlayer.mute();
+        if (mode === 'youtube') {
+            var muted = isMuted();
+            ytMuted = !muted;
+            if (muted) {
+                if (ytVolume === 0) {
+                    ytVolume = Math.round((rememberVolume || 1) * 100);
+                    ytSend('setVolume', [ytVolume]);
                 }
-            } catch (err) {}
+                ytSend('unMute');
+            } else {
+                ytSend('mute');
+            }
         } else {
             var video = currentVideo();
             if (video) {
@@ -659,87 +626,92 @@
 
     /* -------------------------------------------------------------- YouTube */
 
-    function loadYoutubeApi() {
-        if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
-        if (ytApiPromise) return ytApiPromise;
+    /*
+     * YouTube clips play in a plain iframe — no `iframe_api` script, so no ad
+     * blocker, WebView or network policy can stop them from being controllable.
+     *
+     * `controls=0` removes every piece of YouTube chrome (logo, channel name,
+     * title, share/watch-later/settings buttons, related rail); `allowfullscreen`
+     * is set for our own fullscreen. The frame is driven with postMessage
+     * (`enablejsapi=1`): we send `{"event":"command","func":…}` and YouTube
+     * pushes `onReady` / `onStateChange` / `infoDelivery` back, which is how the
+     * bar knows the position, duration and whether the clip ended.
+     *
+     * If a browser never answers the bridge, `degradeYoutube()` rebuilds the
+     * same clip with YouTube's own controls, so it is always watchable.
+     */
 
-        var attempt = new Promise(function (resolve, reject) {
-            var settled = false;
-            var previous = window.onYouTubeIframeAPIReady;
-
-            window.onYouTubeIframeAPIReady = function () {
-                if (typeof previous === 'function') {
-                    try { previous(); } catch (err) {}
-                }
-                if (settled) return;
-                settled = true;
-                resolve(window.YT);
-            };
-
-            var script = document.createElement('script');
-            script.src = YT_API_SRC;
-            script.async = true;
-            script.onerror = function () {
-                if (settled) return;
-                settled = true;
-                reject(new Error('YouTube API could not be loaded'));
-            };
-            (document.head || document.documentElement || document.body).appendChild(script);
-
-            window.setTimeout(function () {
-                if (settled) return;
-                if (window.YT && window.YT.Player) {
-                    settled = true;
-                    resolve(window.YT);
-                    return;
-                }
-                settled = true;
-                reject(new Error('YouTube API timed out'));
-            }, YT_API_TIMEOUT);
-        });
-
-        ytApiPromise = attempt.catch(function (err) {
-            // Allow a later open to try again instead of caching the failure.
-            ytApiPromise = null;
-            throw err;
-        });
-
-        return ytApiPromise;
-    }
-
-    function stopYtTick() {
-        window.clearInterval(ytTick);
-        ytTick = 0;
-    }
-
-    function startYtTick() {
-        if (ytTick) return;
-        ytTick = window.setInterval(function () {
-            if (!isOpen || mode !== 'youtube') {
-                stopYtTick();
-                return;
-            }
-            syncProgress();
-        }, 250);
-    }
-
-    function destroyYoutube() {
-        stopYtTick();
-        window.clearTimeout(ytWatchdog);
-        window.clearTimeout(ytStartWatchdog);
-        ytWatchdog = 0;
-        ytStartWatchdog = 0;
-        ytReady = false;
-        ytStarted = false;
-        if (ytPlayer) {
-            try { if (ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (err) {}
-            try { if (ytPlayer.destroy) ytPlayer.destroy(); } catch (err) {}
+    function youtubeOrigin() {
+        var origin = '';
+        try {
+            origin = String(window.location.origin || '');
+        } catch (err) {
+            origin = '';
         }
-        ytPlayer = null;
+        return /^https?:\/\//i.test(origin) ? origin : '';
     }
 
-    function onYoutubeState(event) {
-        var state = event && typeof event.data === 'number' ? event.data : -1;
+    function youtubeFrameUrl(videoId, nativeUi) {
+        var params = [
+            'autoplay=1',
+            'cc_load_policy=0',
+            'controls=' + (nativeUi ? '1' : '0'),
+            'disablekb=1',
+            'enablejsapi=1',
+            'fs=' + (nativeUi ? '1' : '0'),
+            'iv_load_policy=3',
+            'modestbranding=1',
+            'playsinline=1',
+            'rel=0',
+            'showinfo=0'
+        ];
+        var origin = youtubeOrigin();
+        if (origin) params.push('origin=' + encodeURIComponent(origin));
+        // The no-cookie host is the same player and answers the same messages;
+        // it is also the host that keeps working when a blocker targets
+        // www.youtube.com.
+        return 'https://www.youtube-nocookie.com/embed/' + videoId + '?' + params.join('&');
+    }
+
+    function ytPost(payload) {
+        if (!ytFrame || !ytFrame.contentWindow) return;
+        try {
+            ytFrame.contentWindow.postMessage(JSON.stringify(payload), '*');
+        } catch (err) {}
+    }
+
+    /** Ask the frame for player events (required before it posts any). */
+    function ytListen() {
+        ytPost({ event: 'listening', id: 'mxvp-yt', channel: 'widget' });
+    }
+
+    function ytSend(func, args) {
+        ytPost({ event: 'command', func: func, args: args || [] });
+    }
+
+    function ytOriginAllowed(origin) {
+        return !origin || /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com)$/i.test(origin);
+    }
+
+    /** Merge the position/duration/volume payload YouTube streams back at us. */
+    function mergeYtInfo(info) {
+        if (!info || typeof info !== 'object') return;
+
+        if (typeof info.currentTime === 'number' && isFinite(info.currentTime)) ytTime = info.currentTime;
+        if (typeof info.duration === 'number' && info.duration > 0) ytDuration = info.duration;
+        if (typeof info.muted === 'boolean') ytMuted = info.muted;
+        if (typeof info.volume === 'number') ytVolume = info.volume;
+
+        if (typeof info.playerState === 'number') {
+            applyYtState(info.playerState);
+        } else {
+            syncVolume();
+            syncProgress();
+        }
+    }
+
+    function applyYtState(state) {
+        ytPlayerState = state;
 
         if (state === YT_PLAYING) {
             ytStarted = true;
@@ -760,177 +732,208 @@
             if (ytStarted) showEndPlate(true);
         }
 
+        syncVolume();
         syncPlayButton();
         syncProgress();
     }
 
-    /**
-     * The API needs a real http(s) origin; "null" (file://, some sandboxes)
-     * makes YouTube reject the player outright, so only send a valid one.
-     */
-    function youtubeOrigin() {
-        var origin = '';
+    function onYtMessage(event) {
+        if (!isOpen || mode !== 'youtube' || !ytFrame) return;
+
+        var frameWindow = null;
         try {
-            origin = String(window.location.origin || '');
+            frameWindow = ytFrame.contentWindow;
         } catch (err) {
-            origin = '';
+            frameWindow = null;
         }
-        return /^https?:\/\//i.test(origin) ? origin : '';
-    }
+        if (!frameWindow || event.source !== frameWindow) return;
+        if (!ytOriginAllowed(event.origin)) return;
 
-    /**
-     * Play a YouTube video with the IFrame Player API and controls disabled so
-     * YouTube shows no logo, title, channel, share buttons or "More videos"
-     * screen. Our own control bar drives the player instead.
-     */
-    function mountYoutube(request) {
-        var token = ++requestToken;
-        ytRequest = request;
-        ytReady = false;
-        window.clearTimeout(ytWatchdog);
-        window.clearTimeout(ytStartWatchdog);
-        var host = document.createElement('div');
-        host.className = 'mxvp__yt';
-        refs.media.appendChild(host);
-        mediaEl = host;
-        showSpinner(true);
-        syncCenter();
-
-        loadYoutubeApi().then(function (YT) {
-            if (token !== requestToken || !isOpen || mode !== 'youtube') return;
-
-            // If the player object never becomes ready the iframe was blocked
-            // or never loaded, so fall back instead of showing a dead poster.
-            window.clearTimeout(ytWatchdog);
-            ytWatchdog = window.setTimeout(function () {
-                if (token !== requestToken || !isOpen) return;
-                if (ytReady) return;
-                degradeYoutube('player never became ready');
-            }, YT_READY_TIMEOUT);
-
+        var data = event.data;
+        if (typeof data === 'string') {
+            if (data.charAt(0) !== '{') return;
             try {
-                ytPlayer = new YT.Player(host, {
-                    videoId: request.videoId,
-                    playerVars: {
-                        autoplay: 1,
-                        cc_load_policy: 0,
-                        color: 'white',
-                        controls: 0,
-                        disablekb: 1,
-                        enablejsapi: 1,
-                        fs: 0,
-                        iv_load_policy: 3,
-                        modestbranding: 1,
-                        origin: youtubeOrigin(),
-                        playsinline: 1,
-                        rel: 0,
-                        showinfo: 0
-                    },
-                    events: {
-                        onReady: function (event) {
-                            if (token !== requestToken || !isOpen) return;
-                            ytReady = true;
-                            window.clearTimeout(ytWatchdog);
-                            showSpinner(false);
-                            try {
-                                if (event.target.setVolume) {
-                                    event.target.setVolume(Math.round(Math.max(0, Math.min(1, rememberVolume)) * 100));
-                                }
-                            } catch (err) {}
-                            try { event.target.playVideo(); } catch (err) {}
-                            syncVolume();
-                            syncPlayButton();
-                            syncProgress();
-                            startYtTick();
-                            // Some mobile browsers refuse autoplay; offer the big
-                            // play button instead of an apparently frozen picture.
-                            window.setTimeout(function () {
-                                if (token !== requestToken || !isOpen) return;
-                                var state = ytState();
-                                if (state === YT_PLAYING || state === YT_BUFFERING || isEnded()) return;
-                                refs.center.hidden = false;
-                                refs.center.innerHTML = ICON.play;
-                                setControlsVisible(true);
-                            }, 1500);
-                        },
-                        onStateChange: function (event) {
-                            if (token !== requestToken || !isOpen) return;
-                            onYoutubeState(event);
-                        },
-                        onError: function () {
-                            if (token !== requestToken || !isOpen) return;
-                            // Errors 2/5/100/101/150 mean the API player could
-                            // not load this clip; the plain embed often still
-                            // can (and can at least tell the viewer why not).
-                            degradeYoutube('player error');
-                        }
-                    }
-                });
+                data = JSON.parse(data);
             } catch (err) {
-                degradeYoutube('player could not be created');
+                return;
             }
-        }).catch(function () {
-            if (token !== requestToken || !isOpen) return;
-            degradeYoutube('api script could not be loaded');
-        });
+        }
+        if (!data || typeof data !== 'object' || !data.event) return;
+
+        if (!ytReady) {
+            // The first well-formed message proves the bridge works: keep the
+            // clean controls instead of degrading.
+            ytReady = true;
+            window.clearTimeout(ytWatchdog);
+            ytWatchdog = 0;
+            showSpinner(false);
+            syncPlayButton();
+            syncProgress();
+            // A browser that blocks autoplay needs a visible way in.
+            window.setTimeout(function () {
+                if (!isOpen || mode !== 'youtube') return;
+                if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING || isEnded()) return;
+                refs.center.hidden = false;
+                refs.center.innerHTML = ICON.play;
+                setControlsVisible(true);
+            }, 1500);
+        }
+
+        var info = data.info;
+
+        if (data.event === 'onError') {
+            degradeYoutube('player error ' + (typeof info === 'number' ? info : ''));
+            return;
+        }
+
+        if (data.event === 'onReady') {
+            ytListen();
+            showSpinner(false);
+            syncVolume();
+            syncPlayButton();
+            syncProgress();
+            startYtTick();
+            return;
+        }
+
+        if (data.event === 'onStateChange') {
+            var state = typeof info === 'number'
+                ? info
+                : (info && typeof info.playerState === 'number' ? info.playerState : null);
+            if (state !== null) applyYtState(state);
+            return;
+        }
+
+        if (data.event === 'infoDelivery' || data.event === 'initialDelivery' || data.event === 'apiInfoDelivery') {
+            mergeYtInfo(info);
+        }
     }
 
-    /** If the API is unavailable, fall back to a normal YouTube embed so the clip still plays. */
-    /**
-     * Give up on the IFrame API for this clip and use the standard embed.
-     * The video still plays; keeping the site usable matters more than hiding
-     * YouTube's own controls in a browser that refuses the API.
-     */
-    function degradeYoutube(reason) {
-        if (!isOpen || mode !== 'youtube' || !ytRequest) return;
-        if (modal.classList.contains('is-embed')) return;
+    function stopYtTick() {
+        window.clearInterval(ytTick);
+        ytTick = 0;
+    }
+
+    function startYtTick() {
+        if (ytTick) return;
+        ytTick = window.setInterval(function () {
+            if (!isOpen || mode !== 'youtube') {
+                stopYtTick();
+                return;
+            }
+            syncProgress();
+        }, 250);
+    }
+
+    function resetYoutube() {
+        stopYtTick();
         window.clearTimeout(ytWatchdog);
         window.clearTimeout(ytStartWatchdog);
-        if (window.console && console.warn) {
-            console.warn('[mexa video] YouTube IFrame API unavailable (' + reason + '); falling back to the standard embed.');
-        }
-        var request = ytRequest;
-        // Leave the player's own event callback before replacing it.
-        window.setTimeout(function () {
-            if (!isOpen || mode !== 'youtube') return;
-            fallbackYoutubeFrame(request);
-        }, 0);
+        ytWatchdog = 0;
+        ytStartWatchdog = 0;
+        ytReady = false;
+        ytStarted = false;
+        ytPlayerState = -1;
+        ytTime = 0;
+        ytDuration = 0;
+        ytFrame = null;
+        ytRequest = null;
     }
 
-    /** After an explicit play command, make sure the API actually started. */
+    /** After an explicit play command, make sure the frame actually started. */
     function watchYtStart() {
         if (!ytReady) return;
         window.clearTimeout(ytStartWatchdog);
         ytStartWatchdog = window.setTimeout(function () {
             if (!isOpen || mode !== 'youtube' || ytStarted) return;
-            if (modal.classList.contains('is-embed')) return;
-            var state = ytState();
-            if (state === YT_PLAYING || state === YT_BUFFERING ||
-                state === YT_PAUSED || state === YT_ENDED) return;
+            if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING ||
+                ytPlayerState === YT_PAUSED || ytPlayerState === YT_ENDED) return;
             degradeYoutube('playback did not start');
         }, YT_START_TIMEOUT);
     }
 
-    function fallbackYoutubeFrame(request) {
-        if (!isOpen || mode !== 'youtube' || !request.videoId) return;
+    /**
+     * Clean YouTube playback: an iframe with every piece of YouTube chrome
+     * switched off, controlled through postMessage.
+     */
+    function mountYoutube(request) {
+        var token = ++requestToken;
+        ytRequest = request;
+        ytReady = false;
+        ytStarted = false;
+        ytPlayerState = -1;
+        ytTime = 0;
+        ytDuration = 0;
+        ytVolume = Math.round(Math.max(0, Math.min(1, rememberVolume)) * 100);
+        ytMuted = false;
+        window.clearTimeout(ytWatchdog);
+        window.clearTimeout(ytStartWatchdog);
 
-        destroyYoutube();
-        refs.media.innerHTML = '';
-        modal.classList.add('is-embed');
+        showSpinner(true);
+        syncCenter();
 
+        var nativeUi = ytNativeUi;
         var frame = document.createElement('iframe');
         frame.className = 'mxvp__frame';
+        frame.id = 'mxvp-yt';
         frame.title = request.title;
         frame.setAttribute('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen');
         frame.setAttribute('allowfullscreen', '');
         frame.setAttribute('frameborder', '0');
-        frame.addEventListener('load', function () { showSpinner(false); });
+        frame.addEventListener('load', function () {
+            if (token !== requestToken || !isOpen) return;
+            ytListen();
+            if (nativeUi) {
+                showSpinner(false);
+                return;
+            }
+            ytSend('setVolume', [ytVolume]);
+            ytSend('playVideo');
+        });
+
+        frame.src = youtubeFrameUrl(request.videoId, nativeUi);
         mediaEl = frame;
+        ytFrame = frame;
         refs.media.appendChild(frame);
-        frame.src = 'https://www.youtube-nocookie.com/embed/' + request.videoId +
-            '?autoplay=1&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&playsinline=1&cc_load_policy=0';
-        showSpinner(false);
-        syncPlayButton();
+
+        if (nativeUi) {
+            modal.classList.add('is-embed');
+            showSpinner(false);
+            return;
+        }
+
+        // No answer means our commands never reach the frame: hand the clip to
+        // YouTube's own controls rather than showing a video nobody can start.
+        ytWatchdog = window.setTimeout(function () {
+            if (token !== requestToken || !isOpen || mode !== 'youtube') return;
+            if (ytReady) return;
+            degradeYoutube('no answer from the frame');
+        }, YT_HANDSHAKE_TIMEOUT);
+    }
+
+    /**
+     * Rebuild the current clip with YouTube's own controls. Used when the frame
+     * cannot be scripted (blocked messaging, exotic WebView, player error).
+     * The choice is remembered for the rest of the page so later clips open
+     * straight into the working mode.
+     */
+    function degradeYoutube(reason) {
+        if (!isOpen || mode !== 'youtube' || !ytRequest || ytNativeUi) return;
+
+        window.clearTimeout(ytWatchdog);
+        window.clearTimeout(ytStartWatchdog);
+        ytNativeUi = true;
+
+        if (window.console && console.warn) {
+            console.warn('[mexa video] YouTube frame could not be controlled (' + reason + '); using the standard embed.');
+        }
+
+        var request = ytRequest;
+        window.setTimeout(function () {
+            if (!isOpen || mode !== 'youtube' || ytRequest !== request) return;
+            clearMedia();
+            mountYoutube(request);
+        }, 0);
     }
 
     /* -------------------------------------------------------------- mounting */
@@ -1025,7 +1028,7 @@
         // Invalidate any in-flight YouTube API work.
         requestToken++;
         stopYtTick();
-        destroyYoutube();
+        resetYoutube();
 
         if (!refs.media) {
             mediaEl = null;
@@ -1101,8 +1104,16 @@
             }
         } catch (err) {
             // Never leave the viewer with an empty player and no explanation.
-            if (mode === 'youtube' && request.videoId) fallbackYoutubeFrame(request);
-            else showError(true);
+            if (mode === 'youtube' && request.videoId) {
+                ytNativeUi = true;
+                try {
+                    mountYoutube(request);
+                } catch (err2) {
+                    showError(true);
+                }
+            } else {
+                showError(true);
+            }
         }
 
         try {

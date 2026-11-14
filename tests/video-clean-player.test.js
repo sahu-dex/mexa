@@ -39,58 +39,58 @@ test('the player renders exactly one close button with no generated × glyph', (
     assert.doesNotMatch(css, /mxvp__close\s*::?(?:before|after)/);
 });
 
-test('YouTube clips play through a clean, chrome-free IFrame API player', () => {
+test('YouTube clips play through a chrome-free frame driven by postMessage', () => {
     const js = read('assets/js/video-player.js');
 
-    assert.match(js, /youtube\.com\/iframe_api/, 'loads the YouTube IFrame Player API');
     assert.match(js, /mode: 'youtube'/, 'YouTube gets its own playback mode');
-    assert.match(js, /new YT\.Player\(/, 'creates a YouTube API player');
+    assert.match(js, /function youtubeFrameUrl\(/, 'builds the embed URL itself');
+    assert.match(js, /youtube(?:-nocookie)?\.com\/embed\//, 'embeds the clip directly');
+    // No third-party script anymore: an ad blocker can no longer break the
+    // player, which is exactly what used to fall back to YouTube chrome.
+    assert.doesNotMatch(js, /youtube\.com\/iframe_api/, 'no dependency on the blockable iframe_api script');
+    assert.doesNotMatch(js, /new YT\.Player\(/);
 
+    // Every piece of YouTube chrome is switched off in the URL ...
     [
-        ['controls', '0'],
-        ['modestbranding', '1'],
-        ['rel', '0'],
-        ['showinfo', '0'],
-        ['iv_load_policy', '3'],
-        ['disablekb', '1'],
-        ['fs', '0'],
-        ['autoplay', '1'],
-        ['playsinline', '1']
-    ].forEach(([key, value]) => {
-        assert.match(
-            js,
-            new RegExp(key + '\\s*:\\s*' + value + '\\b'),
-            'YouTube player var missing: ' + key + '=' + value
-        );
+        "'controls=' + (nativeUi ? '1' : '0')",
+        'modestbranding=1',
+        'rel=0',
+        'showinfo=0',
+        'iv_load_policy=3',
+        'disablekb=1',
+        "'fs=' + (nativeUi ? '1' : '0')",
+        'autoplay=1',
+        'playsinline=1',
+        'enablejsapi=1'
+    ].forEach((needle) => {
+        assert.ok(js.includes(needle), 'YouTube parameter missing: ' + needle);
     });
+
+    // ... and our bar drives it over postMessage.
+    assert.match(js, /event: 'command', func: func/, 'sends YouTube command messages');
+    assert.match(js, /event: 'listening'/, 'asks the frame for player events');
+    ['playVideo', 'pauseVideo', 'seekTo', 'setVolume', 'mute', 'unMute'].forEach((func) => {
+        assert.ok(js.includes("'" + func + "'"), 'command missing: ' + func);
+    });
+    assert.match(js, /addEventListener\('message', onYtMessage\)/, 'listens for the frame');
+    assert.match(js, /onStateChange/, 'reads player state');
+    assert.match(js, /infoDelivery/, 'reads position and duration');
 
     // The end screen ("More videos") is hidden behind our own replay plate.
     assert.match(js, /showEndPlate\(/);
     assert.match(read('assets/css/video-player.css'), /\.mxvp\.is-ended \.mxvp__media/);
 });
 
-test('YouTube falls back to a normal embed when the API cannot load', () => {
-    const js = read('assets/js/video-player.js');
-    assert.match(js, /loadYoutubeApi\(\)/);
-    assert.match(js, /\.catch\(function \(\) \{/);
-    assert.match(js, /fallbackYoutubeFrame\(/);
-    assert.match(js, /youtube-nocookie\.com\/embed\//);
-});
-
-test('a dead YouTube API never leaves the viewer with only a poster', () => {
+test('a YouTube frame that cannot be scripted still plays with YouTube controls', () => {
     const js = read('assets/js/video-player.js');
 
-    // Every API failure mode routes through one degradation helper ...
     assert.match(js, /function degradeYoutube\(reason\)/, 'degradation helper exists');
-    assert.match(js, /degradeYoutube\('player never became ready'\)/, 'player never ready -> standard embed');
-    assert.match(js, /degradeYoutube\('player error'\)/, 'API error -> standard embed');
-    assert.match(js, /degradeYoutube\('api script could not be loaded'\)/, 'script failure -> standard embed');
-    assert.match(js, /degradeYoutube\('playback did not start'\)/, 'rejected play command -> standard embed');
-
-    // ... and the waits are short enough that nobody stares at a spinner.
-    const api = js.match(/var YT_API_TIMEOUT = (\d+);/);
-    assert.ok(api && Number(api[1]) <= 4000, 'API load timeout is at most 4s');
-    assert.match(js, /var YT_READY_TIMEOUT = \d+;/, 'ready watchdog exists');
+    assert.match(js, /var YT_HANDSHAKE_TIMEOUT = \d+;/, 'handshake watchdog exists');
+    assert.match(js, /degradeYoutube\('no answer from the frame'\)/, 'silent frame -> native controls');
+    assert.match(js, /degradeYoutube\('player error '/, 'player error -> native controls');
+    assert.match(js, /degradeYoutube\('playback did not start'\)/, 'rejected play -> native controls');
+    assert.match(js, /ytNativeUi = true;/, 'the working mode is remembered');
+    assert.match(js, /is-embed/, 'our bar is hidden when YouTube draws its own');
 
     // A throw anywhere in the mount path must not leave an empty player.
     assert.match(js, /catch \(err\) \{\s*\/\/ Never leave the viewer with an empty player/);
