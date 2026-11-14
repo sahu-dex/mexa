@@ -3,6 +3,44 @@ document.addEventListener('DOMContentLoaded', () => {
         AOS.init({ duration: 800, once: true, offset: 50, throttleDelay: 100, debounceDelay: 50, disableMutationObserver: true });
     }
 
+    /*
+     * The drawer slides out from under the header and back into it.
+     *
+     * It is hidden by translating it by exactly its own height, not by `-100%`
+     * of itself: with `top` set to the bar's bottom edge, a `-100%` shift makes
+     * the element's *own box* overlap the header band, and because the menu root
+     * ties the header's z-index and comes later in the DOM, the closed sheet was
+     * painting over the header — its bottom 54px (the blue action button) showed
+     * up where the logo should be. Shifting by (height + resting offset) instead
+     * puts the closed box entirely above the viewport, so it cannot cover
+     * anything, and the transition only ever moves it to and from that offset.
+     *
+     * The height is measured in JS because the sheet is `height: auto`: its real
+     * height depends on how many page cards exist and on the text size.
+     */
+    const menuHeight = drawer => Math.ceil(drawer.getBoundingClientRect().height) || 0;
+
+    // How far above its resting place the closed sheet has to sit: its own
+    // height plus its resting offset under the bar (top: 62px). That puts the
+    // closed sheet's bottom edge at y=0, entirely above the viewport, so at no
+    // point does any part of it sit in the header's band. Measured height is
+    // written as a custom property; the open position stays a plain 0, which is
+    // what the CSS transition interpolates between.
+    function parkDrawer(drawer) {
+        var shift = menuHeight(drawer) + 62;
+        drawer.style.setProperty('--mm-closed-shift', 'translateY(-' + shift + 'px)');
+    }
+
+    // Measure whenever the geometry that decides the height could have changed.
+    function syncDrawerHeight() {
+        const drawer = document.getElementById('mobile-menu-drawer');
+        if (drawer) parkDrawer(drawer);
+    }
+    syncDrawerHeight();
+    window.addEventListener('resize', syncDrawerHeight, { passive: true });
+    window.addEventListener('orientationchange', syncDrawerHeight, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncDrawerHeight);
+
     window.toggleMobileMenu = function () {
         const menu = document.getElementById('mobile-menu');
         const backdrop = document.getElementById('mobile-menu-backdrop');
@@ -17,8 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isClosed) {
             menu.style.top = '0px';
             menu.style.height = '100dvh';
-            const hdr = document.getElementById('header');
-            if (hdr) drawer.style.top = Math.round(hdr.getBoundingClientRect().bottom) + 'px';
+            // Park the sheet above the bar, then slide it down from there. The
+            // resting offset under the bar is the sheet's own (top: 62px).
+            parkDrawer(drawer);
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.classList.add('mm-open');
@@ -28,12 +67,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 drawer.classList.remove('-translate-y-full');
             });
         } else {
+            // Same measured distance on the way out, so the sheet cannot creep
+            // back over the header while it animates.
+            parkDrawer(drawer);
             backdrop.classList.add('opacity-0');
             drawer.classList.add('-translate-y-full');
             document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
             document.body.classList.remove('mm-open');
-            setTimeout(() => { menu.classList.add('pointer-events-none'); }, 350);
+            setTimeout(() => {
+                menu.classList.add('pointer-events-none');
+                // Hand the page back: the flag above already covers the slide,
+                // this covers the moment the sheet is finally invisible.
+                document.body.classList.remove('mm-open');
+            }, 350);
         }
     };
 
@@ -63,6 +110,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
     });
 
+    // The "Our Services" action is not a `.mobile-nav-item`, so it does not run
+    // the handler below. Close on it as well — otherwise tapping it while
+    // already on the service page navigates to the same URL and the open menu
+    // is still sitting there afterwards.
+    document.querySelectorAll('.mm-action-button').forEach(action => {
+        action.addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
+        });
+    });
+
+    // Tapping a menu card closes the menu. The card is still a normal link, so
+    // the page navigates — the close only has to run first so the menu never
+    // stays open across the navigation, and so a same-page (hash) jump is
+    // visible rather than hidden behind the sheet.
     document.querySelectorAll('.mobile-nav-item').forEach(link => {
         link.addEventListener('click', (e) => {
             document.querySelectorAll('.mm-item, .mobile-nav-item').forEach(l => {
@@ -71,17 +133,29 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             link.classList.add('is-active');
             link.setAttribute('aria-current', 'page');
+
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu && !menu.classList.contains('pointer-events-none');
+
             const href = link.getAttribute('href');
             const hashChar = String.fromCharCode(35);
-            if (!href || !href.startsWith(hashChar)) return;
+            const isHashJump = href && href.startsWith(hashChar);
+
+            if (!isHashJump) {
+                // A real navigation: close now, let the browser follow the link.
+                if (isOpen) window.toggleMobileMenu();
+                return;
+            }
+
             e.preventDefault();
+            if (isOpen) window.toggleMobileMenu();
             const targetEl = document.querySelector(href);
             if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Wait for the sheet to clear before scrolling, so the jump does
+                // not happen behind the closing panel.
                 setTimeout(() => {
-                    const menu = document.getElementById('mobile-menu');
-                    if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
-                }, 350);
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 260);
             }
         });
     });

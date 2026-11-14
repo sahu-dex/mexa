@@ -19,39 +19,84 @@
     html body #mobile-menu #mobile-menu-drawer.mm-drawer {
         position: absolute !important;
         /* The mobile bar is 54px tall and flush with the top of the viewport
-           (mobile-header-fixed.css). The sheet starts at its bottom edge and is
-           never taller than the space that is left. */
-        top: 54px !important;
-        left: 0 !important;
-        right: 0 !important;
-        width: 100% !important;
+           (mobile-header-fixed.css). The sheet hangs from its bottom edge with a
+           small gap, and is never taller than the space that is left. */
+        top: 62px !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
         max-width: none !important;
         height: auto !important;
-        max-height: calc(100dvh - 54px) !important;
-        padding: 14px !important;
+        max-height: calc(100dvh - 74px) !important;
+        padding: 16px !important;
         overflow-y: auto !important;
         overflow-x: hidden !important;
         overscroll-behavior: contain !important;
-        background: #e9f3fc !important;
-        border: 0 !important;
-        border-top: 1px solid rgba(163, 199, 236, .55) !important;
-        border-radius: 0 0 20px 20px !important;
-        box-shadow: 0 20px 44px rgba(15, 51, 116, .18) !important;
+        background: #eef6fe !important;
+        border: 1px solid rgba(163, 199, 236, .6) !important;
+        border-radius: 22px !important;
+        box-shadow: 0 18px 40px rgba(15, 51, 116, .16) !important;
         z-index: 1 !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
+        /* Open: fully down, no offset. The closed offset is a measured value
+           supplied by site-common.js through --mm-closed-shift. */
         transform: translateY(0) !important;
-        transition: transform 340ms cubic-bezier(.32, .72, 0, 1) !important;
+        transition: transform 260ms cubic-bezier(.22, .61, .36, 1) !important;
     }
 
     /* The sheet drops down from under the header, it does not slide in from
-       the right — reference-header.css turned it into a side sheet. */
+       the right — reference-header.css turned it into a side sheet.
+
+       No bare `-100%` here: that is the exact bug this replaced. A shift by
+       only the sheet's own height left its bottom edge 54px inside the header's
+       band, so the closed sheet showed through where the logo should be.
+       site-common.js supplies the measured distance; this rule only has to be
+       the no-JS fallback, and it clears the whole resting offset. */
     html body #mobile-menu #mobile-menu-drawer.mm-drawer.-translate-y-full {
-        transform: translateY(-100%) !important;
+        /* `--mm-closed-shift` is (measured height + 62px), written by
+           site-common.js, which puts the sheet's bottom edge exactly at y=0 —
+           fully above the viewport and clear of the 54px bar. The fallback does
+           the same arithmetic in CSS for the case where the script has not run. */
+        transform: translateY(var(--mm-closed-shift, calc(-100% - 62px))) !important;
+        visibility: hidden !important;
+        transition: transform 260ms cubic-bezier(.22, .61, .36, 1), visibility 0s linear 260ms !important;
     }
 
+    /* Opening: visible immediately, then slide. */
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer:not(.-translate-y-full) {
+        visibility: visible !important;
+        transition: transform 260ms cubic-bezier(.22, .61, .36, 1), visibility 0s !important;
+    }
+
+    /* The bar sits above the menu root. They tied at z-index 10001 before, and
+       the menu comes later in the DOM, so the overlay painted over the header
+       and dragged the bar into the dimmed layer. This also makes the open
+       animation read correctly: the sheet emerges from behind the solid bar
+       instead of sliding across it. */
+    html body #header.hdr-bar-wrap {
+        z-index: 10050 !important;
+    }
+
+    /* The closed root must not intercept taps anywhere on the page. The hidden
+       sheet is parked above the bar, but the root is fixed inset:0, so without
+       this every tap on the header — logo, service button, hamburger — would hit
+       the empty menu layer first. The open state is driven by `mm-open` on the
+       body (set by site-common.js), which also overrides the Tailwind
+       `pointer-events-none` utility. */
+    html body #mobile-menu.mm-root.pointer-events-none {
+        pointer-events: none !important;
+    }
+
+    html body.mm-open #mobile-menu.mm-root {
+        pointer-events: auto !important;
+    }
+
+    /* A light dark overlay over the page content (the reference look): the
+       page stays readable underneath, but it is clearly behind the menu. No
+       blur — a full-screen backdrop-filter is re-sampled every frame. */
     html body #mobile-menu #mobile-menu-backdrop.mm-backdrop {
-        background: transparent !important;
+        background: rgba(9, 30, 66, .32) !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
     }
@@ -117,8 +162,8 @@
         gap: 12px !important;
         position: relative !important;
         width: 100% !important;
-        height: clamp(46px, 5.1vw, 54px) !important;
-        min-height: 46px !important;
+        height: clamp(50px, 5.6vw, 58px) !important;
+        min-height: 50px !important;
         flex: 0 0 auto !important;
         padding: 0 clamp(15px, 1.7vw, 20px) !important;
         border: 1px solid rgba(205, 226, 246, .95) !important;
@@ -196,9 +241,9 @@
         justify-content: center !important;
         gap: 10px !important;
         width: 100% !important;
-        height: clamp(46px, 5.1vw, 54px) !important;
-        min-height: 46px !important;
-        margin: clamp(3px, .5vw, 6px) 0 0 !important;
+        height: clamp(50px, 5.6vw, 58px) !important;
+        min-height: 50px !important;
+        margin: clamp(6px, .9vw, 10px) 0 0 !important;
         padding: 0 clamp(15px, 1.7vw, 20px) !important;
         border: 0 !important;
         border-radius: 999px !important;
@@ -256,13 +301,16 @@
    still fit without the panel running past the fold. */
 @media (max-width: 359.98px) {
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav {
-        gap: 8px !important;
+        gap: 7px !important;
     }
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item,
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
-        height: 45px !important;
-        min-height: 45px !important;
+        height: 48px !important;
+        min-height: 48px !important;
         font-size: 15px !important;
+    }
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
+        margin-top: 3px !important;
     }
     html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item {
         padding: 0 14px !important;

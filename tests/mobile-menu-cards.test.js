@@ -26,14 +26,15 @@ test('the drawer is a full-width light sheet of white cards with blue accents', 
     const css = read(SHEET);
 
     // Full width under the header, not a right-hand side sheet.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*width:\s*100%\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*12px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*12px\s*!important/);
     assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-width:\s*none\s*!important/);
-    // The sheet opens at the bottom edge of the mobile bar (54px, set in
-    // mobile-header-fixed.css), not at a height the header does not have.
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*54px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 54px\)\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*0 0 20px 20px\s*!important/);
-    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#e9f3fc\s*!important/);
+    // It hangs below the 54px bar (mobile-header-fixed.css) as a floating panel.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*62px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*max-height:\s*calc\(100dvh - 74px\)\s*!important/);
+    // A rounded container on all four corners, not a sheet welded to the bar.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*22px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background:\s*#eef6fe\s*!important/);
 
     // White cards, dark label, grey chevron on the right.
     assert.match(css, /\.mm-nav \.mm-item\s*\{[^}]*background:\s*#ffffff\s*!important/);
@@ -55,7 +56,14 @@ test('the sheet slides down from under the header instead of in from the right',
     const css = read(SHEET);
 
     assert.match(css, /\.mm-drawer\s*\{[^}]*transform:\s*translateY\(0\)\s*!important/);
-    assert.match(css, /\.mm-drawer\.-translate-y-full\s*\{\s*transform:\s*translateY\(-100%\)\s*!important/);
+    // Closed: shifted by its measured height, kept in a custom property so the
+    // JS never has to fight an !important rule.
+    assert.match(css, /\.mm-drawer\.-translate-y-full\s*\{[^}]*transform:\s*translateY\(var\(--mm-closed-shift/);
+    // A bare -100% is the bug: it leaves the sheet's bottom edge inside the
+    // header's band, where the menu root paints over the header.
+    assert.doesNotMatch(css, /transform:\s*translateY\(-100%\)\s*!important/);
+    // textContent-safe: a visibility switch so a parked sheet cannot be focused.
+    assert.match(css, /\.mm-drawer\.-translate-y-full\s*\{[^}]*visibility:\s*hidden\s*!important/);
     // reference-header.css slides it in from the right and must not win.
     assert.doesNotMatch(css, /translateX\(100%\)/);
 });
@@ -109,4 +117,92 @@ test('the services action goes to the services page and reuses the shared label'
     // The retired booking pipeline must not come back through the drawer.
     assert.doesNotMatch(header, /book\.php|Booking Now|submit-booking/);
     assert.doesNotMatch(js, /Booking Now/);
+});
+
+// ---------------------------------------------------------------------------
+// The drawer must hang below the bar as its own panel, and must never paint
+// over the header in any state. Before this, the closed sheet was translated by
+// `-100%` of its own height from `top:54px`, which left its bottom 54px inside
+// the header's band — and the menu root tied the header's z-index and came later
+// in the DOM, so the closed sheet (its blue action button) covered the logo.
+// ---------------------------------------------------------------------------
+
+test('the closed sheet is parked entirely outside the header band', () => {
+    const css = read(SHEET);
+    const js = read('assets/js/site-common.js');
+
+    // The resting position clears the 54px bar.
+    const top = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*top:\s*(\d+)px\s*!important/) || [])[1];
+    assert.ok(top > 54, 'the drawer must hang below the 54px bar, got ' + top);
+
+    // The closed offset is (measured height + that resting offset), which puts
+    // the sheet's bottom edge at y=0 — above the viewport, not over the bar.
+    const park = +(js.match(/menuHeight\(drawer\) \+ (\d+)/) || [])[1];
+    assert.equal(park, top, 'the JS must park by height + the same resting offset');
+    for (const H of [300, 394, 500]) {
+        assert.ok(top - (H + park) + H <= 0, 'a ' + H + 'px sheet must end at or above y=0 when closed');
+    }
+
+    // A bare -100% is the exact bug above.
+    assert.doesNotMatch(css, /transform:\s*translateY\(-100%\)\s*!important/);
+});
+
+test('nothing in the menu can paint over the header', () => {
+    const css = read(SHEET);
+    const header = read('assets/css/mobile-header-fixed.css');
+
+    // The bar outranks the menu root (they used to tie at 10001).
+    const barZ = +(css.match(/#header\.hdr-bar-wrap\s*\{\s*z-index:\s*(\d+)\s*!important/) || [])[1];
+    assert.ok(barZ > 10001, 'the bar must outrank the menu root, got ' + barZ);
+
+    // The closed sheet is parked entirely above the viewport, so there is
+    // nothing to clip — and a full-screen clip-path would promote a compositing
+    // layer for the life of the menu, which this project is actively removing.
+    assert.doesNotMatch(css, /clip-path/);
+
+    // The header itself is still the opaque fixed bar from the earlier fix.
+    assert.match(header, /#header\.hdr-bar-wrap\s*\{[^}]*position:\s*fixed\s*!important/);
+    assert.match(header, /#header\.hdr-bar-wrap\s*\{[^}]*top:\s*0\s*!important/);
+});
+
+test('the menu root does not swallow taps while it is closed', () => {
+    const css = read(SHEET);
+    const js = read('assets/js/site-common.js');
+
+    // The root is fixed inset:0. Without this it sits over the header and eats
+    // every tap meant for the logo, the service button or the hamburger.
+    assert.match(css, /\.mm-root\.pointer-events-none\s*\{\s*pointer-events:\s*none\s*!important/);
+    assert.match(css, /body\.mm-open #mobile-menu\.mm-root\s*\{\s*pointer-events:\s*auto\s*!important/);
+    assert.match(js, /document\.body\.classList\.add\('mm-open'\)/);
+    // And it is cleared both when the close starts and when it finishes.
+    assert.ok((js.match(/document\.body\.classList\.remove\('mm-open'\)/g) || []).length >= 2);
+});
+
+test('the panel is a floating rounded container with a light dark overlay', () => {
+    const css = read(SHEET);
+
+    // Rounded on all four corners, inset from the screen edges.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*22px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*left:\s*12px\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*right:\s*12px\s*!important/);
+    // Padding at least the corner radius, or the pill runs into the corner arc.
+    const pad = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*padding:\s*(\d+)px\s*!important/) || [])[1];
+    const radius = +(css.match(/#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-radius:\s*(\d+)px\s*!important/) || [])[1];
+    assert.ok(pad >= radius - 6, 'padding ' + pad + 'px is too tight for a ' + radius + 'px radius');
+
+    // The overlay is a light dark wash, with no blur (a full-screen
+    // backdrop-filter is re-sampled every frame).
+    const flat = css.replace(/\s+/g, ' ');
+    assert.match(flat, /mobile-menu-backdrop\.mm-backdrop\s*\{[^}]*background:\s*rgba\(9,\s*30,\s*66,\s*\.32\)\s*!important/);
+    assert.match(flat, /mobile-menu-backdrop\.mm-backdrop\s*\{[^}]*backdrop-filter:\s*none\s*!important/);
+});
+
+test('the open/close animation is a short transform transition', () => {
+    const css = read(SHEET);
+
+    // Transform-only (compositor-friendly), 260ms, an ease-out curve.
+    assert.match(css, /transition:\s*transform 260ms cubic-bezier\(\.22, \.61, \.36, 1\)\s*!important/);
+    assert.match(css, /\.mm-drawer\s*\{[^}]*transform:\s*translateY\(0\)\s*!important/);
+    // Reduced motion switches it off rather than shortening it.
+    assert.match(css, /prefers-reduced-motion: reduce[\s\S]{0,400}transition:\s*none\s*!important/);
 });
