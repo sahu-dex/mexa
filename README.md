@@ -153,7 +153,18 @@ Open **Admin → Videos & Shorts**. The same `work_items` table powers the publi
 6. Set **Status** to `Published` so the card appears on the website immediately; keep it as `Draft` to hide it. **Edit** and delete actions are available per row, and deleting an item also removes its uploaded video and thumbnail files.
 7. Use the **All / Videos / Shorts** filter tabs to manage each content type quickly. Changes are public on the next page load — no code edits or cache rebuild required.
 
-On the homepage, clicking a card with a playable source opens the preview modal. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
+On the homepage, clicking a card with a playable source opens the shared video player. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
+
+### Shared Video Player (Home, Service & Work)
+
+Every video on the site — Home *Our Work*, Work page videos and Shorts, Service page videos, and the showreel — is played by one reusable component:
+
+- `assets/js/video-player.js` builds a **single** player modal (`#mexa-video-player`) on first use and exposes `MexaVideoPlayer.open()`, `.openFrom(element)`, `.close()` and `.isOpen()`. It is initialised once per page, so a page can never end up with two modals, two close buttons or duplicated listeners.
+- `assets/css/video-player.css` holds all player styling. The close control is one real `<button>` with an inline SVG icon — no `&times;` text and no `::before`/`::after` glyph, so the old double-cross could not return.
+- Controls: play/pause, **−10s**, **+10s**, seekable progress bar, mute + volume slider, fullscreen, and keyboard shortcuts (`Space`/`K` play-pause, `←`/`→` ±10s, `↑`/`↓` volume, `M` mute, `F` fullscreen, `Esc` close).
+- Only the video and the controls are shown: no title, description or extra text, and the aspect ratio is preserved on desktop and mobile.
+- Cards opt in through data attributes the player already understands: `data-mm-video-url`, `data-mm-video-embed-url`, `data-mm-video-type`, `data-mm-video-poster`, `data-mm-video-title`, `data-mm-vertical="1"` (9:16), or the Home gallery pair `data-mm-media` + `data-mm-src` / `data-mm-embed` / `data-mm-kind`.
+- Closing (X, `Esc` or backdrop) pauses the video, mutes it, releases the source and the scroll lock. Opening another clip stops the previous one first.
 
 ---
 

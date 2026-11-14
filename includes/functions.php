@@ -874,7 +874,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/mm-hero-character.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/home-hero.css',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/mm-services-cta.css',
@@ -889,7 +888,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'work' => [
@@ -902,7 +900,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/wk-layout-fix.css',
         ],
@@ -916,7 +913,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/rvx-layout-v2.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'team' => [
@@ -928,7 +924,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-page-hero.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
         ],
         'privacy' => [
@@ -938,7 +933,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -949,7 +943,6 @@ function page_stylesheets(string $pageKey): array
             'assets/css/site-header-lockup.css',
             'assets/css/mobile-menu.css',
             'assets/css/site-typography.css',
-            'assets/css/video-preview.css?v=20261112-work-preview2',
             'assets/css/mm-subscribe-fix.css',
             'assets/css/legal-page.css?v=20261112-plain',
         ],
@@ -972,8 +965,10 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261113-team-wide';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
-    $stylesheets[] = 'assets/css/video-close-button.css?v=20261113';
-    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261113';
+    // Gallery-only presentation fixes for the Work/Home video cards.
+    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery';
+    // One shared video player for every video on the site.
+    $stylesheets[] = 'assets/css/video-player.css?v=20261114-shared-player';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

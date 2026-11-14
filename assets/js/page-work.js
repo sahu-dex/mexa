@@ -70,7 +70,10 @@
         var title = esc(item.title || 'Video preview');
         var rawUrl = item.url || item.file_path || '';
         var videoUrl = item.kind === 'image' ? (fallback || '') : (rawUrl || item.video_url || fallback || '');
-        var playerAttrs = videoUrl ? ' data-mm-video-url="' + esc(videoUrl) + '" data-mm-video-type="' + esc(item.embed_type || '') + '" data-mm-video-embed-url="' + esc(item.embed_url || '') + '" data-mm-video-provider="' + esc(item.embed_provider || item.platform || '') + '" data-mm-video-poster="' + esc(thumb) + '" data-mm-video-title="' + title + '"' : '';
+        // Image cards with a playable fallback open as video; without one they
+        // open as a still preview — exactly like before the shared player.
+        var playerKind = item.kind === 'image' && !videoUrl ? 'image' : 'video';
+        var playerAttrs = videoUrl ? ' data-mm-video-url="' + esc(videoUrl) + '" data-mm-kind="' + esc(playerKind) + '" data-mm-video-type="' + esc(item.embed_type || '') + '" data-mm-video-embed-url="' + esc(item.embed_url || '') + '" data-mm-video-provider="' + esc(item.embed_provider || item.platform || '') + '" data-mm-video-poster="' + esc(thumb) + '" data-mm-video-title="' + title + '"' : '';
         if (section === 'recent') {
             return '<button type="button" class="wk-rc" data-section="recent" data-index="' + index + '" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
                 '<span class="th">' + posterMarkup(item, index, (item.title || 'Video') + ' thumbnail') + '<span class="wk-rc-play"><i class="fa-solid fa-play"></i></span></span>' +
@@ -81,7 +84,7 @@
                 '<span class="shot">' + posterMarkup(item, index, (item.title || 'Video') + ' thumbnail') + '</span>' +
                 '<span class="ply"><i class="fa-solid fa-play"></i></span></button>';
         }
-        return '<button type="button" class="wk-short" data-section="short" data-index="' + index + '" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
+        return '<button type="button" class="wk-short" data-section="short" data-index="' + index + '" data-mm-vertical="1" data-preview-src="' + esc(fallback || '') + '"' + playerAttrs + ' aria-label="Play ' + title + '">' +
             posterMarkup(item, index, (item.title || 'Short') + ' thumbnail') +
             '<i class="wk-short-play fa-solid fa-play" aria-hidden="true"></i></button>';
     }
@@ -109,77 +112,6 @@
             return card(item, i, 'short', true, previewUrl(item, i, 3));
         }).join('') : '<div class="wk-empty"><b>No Shorts have been published yet.</b></div>';
     }
-
-    var modal = $('wk-modal');
-    var player = $('wk-modal-player');
-    var lastFocused = null;
-    function openItem(item, fallbackUrl, vertical) {
-        if (!item || !modal || !player) return;
-        var url = item.url || item.file_path || '';
-        var html = '';
-        if (item.embed_type === 'iframe' && item.embed_url) {
-            html = '<iframe src="' + esc(item.embed_url + (item.embed_url.indexOf('?') === -1 ? '?' : '&') + 'autoplay=1&rel=0') + '" title="' + esc(item.title || 'Video') + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        } else if (item.embed_type === 'link') {
-            html = '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">Open video on ' + esc(item.embed_provider || 'the video host') + '</a>';
-        } else if (item.kind === 'image' && fallbackUrl) {
-            html = '<video src="' + esc(fallbackUrl) + '" poster="' + esc(thumbOf(item)) + '" controls autoplay playsinline preload="metadata"></video>';
-        } else if (item.kind === 'image') {
-            html = '<img src="' + esc(url) + '" alt="' + esc(item.title) + '" loading="lazy" decoding="async">';
-        } else if (isFb(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=false&autoplay=true" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        } else if (ytId(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://www.youtube.com/embed/' + ytId(url) + '?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>';
-        } else if (vimeoId(url)) {
-            html = '<iframe title="' + esc(item.title || 'Video') + '" src="https://player.vimeo.com/video/' + vimeoId(url) + '?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-        } else {
-            html = '<video src="' + esc(url || fallbackUrl) + '" poster="' + esc(thumbOf(item)) + '" controls autoplay playsinline preload="metadata"></video>';
-        }
-        lastFocused = document.activeElement;
-        player.innerHTML = html;
-        modal.classList.toggle('is-vertical', !!vertical);
-        modal.hidden = false;
-        document.body.style.overflow = 'hidden';
-        modal.querySelector('button[data-wk-close]').focus();
-    }
-    function closeModal() {
-        if (!modal || !player) return;
-        modal.hidden = true;
-        player.innerHTML = '';
-        document.body.style.overflow = '';
-        if (lastFocused && lastFocused.focus) lastFocused.focus({ preventScroll: true });
-        lastFocused = null;
-    }
-    document.addEventListener('error', function (e) {
-        var image = e.target;
-        if (image && image.tagName === 'IMG' && image.dataset && image.dataset.fallback) {
-            var fallback = image.dataset.fallback;
-            delete image.dataset.fallback;
-            image.src = fallback;
-        }
-    }, true);
-    document.addEventListener('click', function (e) {
-        if (e.target.closest('[data-wk-close]')) { closeModal(); return; }
-        var cardEl = e.target.closest('.wk-rc, .wk-demo, .wk-short');
-        if (!cardEl) return;
-        var section = cardEl.getAttribute('data-section');
-        var index = Number(cardEl.getAttribute('data-index'));
-        var pool = section === 'recent' ? getRecentSix() : section === 'demo' ? ordered(state.demos) : ordered(state.shorts);
-        var item = pool[index];
-        if (!item && cardEl.getAttribute('data-mm-video-url')) {
-            var description = cardEl.querySelector('.info p');
-            item = {
-                url: cardEl.getAttribute('data-mm-video-url'),
-                embed_type: cardEl.getAttribute('data-mm-video-type') || '',
-                embed_url: cardEl.getAttribute('data-mm-video-embed-url') || '',
-                embed_provider: cardEl.getAttribute('data-mm-video-provider') || '',
-                thumbnail_url: cardEl.getAttribute('data-mm-video-poster') || '',
-                title: cardEl.getAttribute('data-mm-video-title') || '',
-                description: description ? description.textContent : ''
-            };
-        }
-        openItem(item, cardEl.getAttribute('data-preview-src') || '', section === 'short');
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && modal && !modal.hidden) closeModal(); });
 
     function boot() {
         renderRecent();

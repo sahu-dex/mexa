@@ -98,13 +98,6 @@ include dirname(__DIR__) . '/includes/header.php';
 </section>
 <?php endif; ?>
 
-<div id="sv2-video" class="sv2-modal" hidden>
-    <div class="sv2-modal-box" role="dialog" aria-modal="true" aria-label="Service video">
-        <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close video"><i class="fa-solid fa-xmark"></i></button>
-        <div class="sv2-stage" id="sv2-video-stage"></div>
-    </div>
-</div>
-
 <div id="sv2-image" class="sv2-modal" hidden>
     <div class="sv2-modal-box is-image" role="dialog" aria-modal="true" aria-label="Service image preview">
         <button type="button" class="sv2-modal-x" data-sv2-close aria-label="Close image"><i class="fa-solid fa-xmark"></i></button>

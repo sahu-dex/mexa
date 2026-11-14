@@ -72,11 +72,4 @@ include dirname(__DIR__) . '/includes/header.php';
             </div>
         </section>
 
-        <div class="wk-modal" id="wk-modal" hidden>
-            <div class="wk-modal-bd" data-wk-close="1"></div>
-            <div class="wk-modal-box" role="dialog" aria-modal="true" aria-label="Video preview">
-                <button class="wk-modal-x" data-wk-close="1" aria-label="Close">&times;</button>
-                <div id="wk-modal-player"></div>
-            </div>
-        </div>
 <?php include dirname(__DIR__) . '/includes/footer.php'; ?>
