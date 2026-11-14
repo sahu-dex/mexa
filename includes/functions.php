@@ -1035,7 +1035,7 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     // Gallery-only presentation fixes for the Work/Home video cards.
-    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-round-play';
+    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery-restore';
     // One shared video player for every video on the site.
     $stylesheets[] = 'assets/css/video-player.css?v=20261114-cascade-fix';
     if ($pageKey === 'home') {
