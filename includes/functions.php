@@ -565,6 +565,75 @@ function work_youtube_id(string $url): string
 }
 
 /**
+ * Describe where a work item's video comes from.
+ *
+ * This is the one source of truth for the two admin flows: a file uploaded
+ * through the admin panel (stored under uploads/videos) and a provider link
+ * (YouTube, Facebook, Vimeo, or any embeddable URL). It returns the platform
+ * badge, how the shared player should open the item, and the URL it frames.
+ *
+ * @return array{platform:string,embed_type:string,embed_provider:string,embed_url:string}
+ */
+function video_source_meta(string $url, string $kind = 'video'): array
+{
+    $url = trim($url);
+    $isImage = $kind === 'image';
+
+    $local = [
+        'platform' => $isImage ? 'image' : 'upload',
+        'embed_type' => $isImage ? 'image' : 'video',
+        'embed_provider' => $isImage ? 'image' : 'local',
+        'embed_url' => '',
+    ];
+
+    if ($url === '') {
+        return $local;
+    }
+
+    $youtubeId = work_youtube_id($url);
+    if ($youtubeId !== '') {
+        return [
+            'platform' => 'youtube',
+            'embed_type' => 'iframe',
+            'embed_provider' => 'youtube',
+            'embed_url' => 'https://www.youtube-nocookie.com/embed/' . $youtubeId,
+        ];
+    }
+
+    if (preg_match('~vimeo\.com/(?:video/)?(\d+)~i', $url, $m)) {
+        return [
+            'platform' => 'vimeo',
+            'embed_type' => 'iframe',
+            'embed_provider' => 'vimeo',
+            'embed_url' => 'https://player.vimeo.com/video/' . $m[1],
+        ];
+    }
+
+    if (preg_match('~facebook\.com|fb\.watch|fb\.me~i', $url)) {
+        return [
+            'platform' => 'facebook',
+            'embed_type' => 'iframe',
+            'embed_provider' => 'facebook',
+            'embed_url' => 'https://www.facebook.com/plugins/video.php?href=' . rawurlencode($url) . '&show_text=false&autoplay=true',
+        ];
+    }
+
+    if (preg_match('~^https?://~i', $url)) {
+        $host = (string) (parse_url($url, PHP_URL_HOST) ?: '');
+        return [
+            'platform' => $host !== '' ? $host : 'link',
+            'embed_type' => 'iframe',
+            'embed_provider' => $host !== '' ? $host : 'iframe',
+            'embed_url' => $url,
+        ];
+    }
+
+    // A stored file (uploads/videos/…): the file itself is the source, so it
+    // plays in the native <video> element with range requests.
+    return $local;
+}
+
+/**
  * Resolve the best available thumbnail for a work item.
  *
  * Uploaded thumbnails win, then image items use their own file, and YouTube
@@ -968,7 +1037,7 @@ function page_stylesheets(string $pageKey): array
     // Gallery-only presentation fixes for the Work/Home video cards.
     $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery';
     // One shared video player for every video on the site.
-    $stylesheets[] = 'assets/css/video-player.css?v=20261114-instant';
+    $stylesheets[] = 'assets/css/video-player.css?v=20261114-video-systems';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

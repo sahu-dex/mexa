@@ -67,6 +67,7 @@
         '<div class="mxvp__dialog" role="dialog" aria-modal="true" aria-label="Video player">' +
             '<div class="mxvp__stage" data-mxvp-stage>' +
                 '<div class="mxvp__media" data-mxvp-media></div>' +
+                '<div class="mxvp__sink" data-mxvp-sink aria-hidden="true"></div>' +
                 '<button type="button" class="mxvp__center" data-mxvp-center aria-label="Play video">' + ICON.play + '</button>' +
                 '<div class="mxvp__spinner" data-mxvp-spinner aria-hidden="true" hidden></div>' +
                 '<p class="mxvp__error" data-mxvp-error role="status" hidden>This video could not be played.</p>' +
@@ -161,6 +162,8 @@
             return 'https://player.vimeo.com/video/' + vm + '?autoplay=1';
         }
         if (isFacebook(url)) {
+            // Already a plugin URL (stored by the admin panel): just autoplay it.
+            if (/facebook\.com\/plugins\/video\.php/i.test(url)) return withParam(url, 'autoplay', 'true');
             return 'https://www.facebook.com/plugins/video.php?href=' + encodeURIComponent(url) + '&show_text=false&autoplay=true';
         }
         return withParam(url, 'autoplay', '1');
@@ -282,6 +285,7 @@
         refs.dialog = modal.querySelector('.mxvp__dialog');
         refs.stage = modal.querySelector('[data-mxvp-stage]');
         refs.media = modal.querySelector('[data-mxvp-media]');
+        refs.sink = modal.querySelector('[data-mxvp-sink]');
         refs.center = modal.querySelector('[data-mxvp-center]');
         refs.spinner = modal.querySelector('[data-mxvp-spinner]');
         refs.error = modal.querySelector('[data-mxvp-error]');
@@ -341,11 +345,16 @@
         refs.seek.addEventListener('pointercancel', function () { seeking = false; });
 
         // Clicking the picture toggles playback; a double click goes fullscreen.
-        refs.media.addEventListener('click', function () {
-            if (hasTransport()) togglePlay();
-        });
-        refs.media.addEventListener('dblclick', function () {
-            if (hasTransport()) toggleFullscreen();
+        // The sink sits above the media so this also works over a YouTube frame,
+        // which would otherwise swallow the click.
+        [refs.media, refs.sink].forEach(function (layer) {
+            if (!layer) return;
+            layer.addEventListener('click', function () {
+                if (hasTransport()) togglePlay();
+            });
+            layer.addEventListener('dblclick', function () {
+                if (hasTransport()) toggleFullscreen();
+            });
         });
 
         ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
@@ -1020,7 +1029,7 @@
     function mountVideo(request) {
         var video = document.createElement('video');
         video.className = 'mxvp__video';
-        video.preload = 'metadata';
+        video.preload = 'auto';
         video.playsInline = true;
         video.setAttribute('playsinline', '');
         video.setAttribute('webkit-playsinline', '');

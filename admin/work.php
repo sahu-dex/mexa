@@ -84,6 +84,14 @@ $maxVideoMb = (int) round(MAX_VIDEO_BYTES / 1048576);
             : '../' . $thumb;
     }
     $rowJson = htmlspecialchars(json_encode($w, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES, 'UTF-8');
+    $mediaUrl = trim((string) ($w['file_path'] ?? ''));
+    if ($mediaUrl === '') {
+        $mediaUrl = trim((string) ($w['embed_url'] ?? ''));
+    }
+    $previewHref = $mediaUrl;
+    if ($previewHref !== '' && !preg_match('~^(https?:|/|data:)~i', $previewHref)) {
+        $previewHref = '../' . $previewHref;
+    }
 ?>
                 <tr data-work-type="<?= e($wType) ?>">
                     <td>
@@ -109,6 +117,11 @@ $maxVideoMb = (int) round(MAX_VIDEO_BYTES / 1048576);
                         </span>
                     </td>
                     <td class="adm-actions">
+                        <?php if ($previewHref !== ''): ?>
+                        <a class="adm-btn adm-btn-sm" href="<?= e($previewHref) ?>" target="_blank" rel="noopener" title="Open the media in a new tab">
+                            <i class="fa-solid fa-play"></i>
+                        </a>
+                        <?php endif; ?>
                         <button type="button" class="adm-btn adm-btn-sm" data-modal-open="work-modal" data-title="Edit <?= $wType === 'short' ? 'Short' : 'Video' ?>" data-row="<?= $rowJson ?>">
                             <i class="fa-solid fa-pen"></i> Edit
                         </button>
@@ -192,20 +205,20 @@ $maxVideoMb = (int) round(MAX_VIDEO_BYTES / 1048576);
 
             <div class="adm-grid-2">
                 <div class="adm-field">
-                    <label>Video URL or existing path</label>
-                    <input class="adm-input" type="text" name="file_path" placeholder="uploads/videos/… or https://youtube.com/watch?v=…">
-                    <small class="adm-hint">Paste a YouTube/Vimeo/Facebook link, or upload a file below.</small>
+                    <label>Video link — YouTube, Facebook, Vimeo or any embed URL</label>
+                    <input class="adm-input" type="text" name="file_path" placeholder="https://www.youtube.com/watch?v=… or https://fb.watch/…">
+                    <small class="adm-hint">The platform is detected automatically (YouTube and other links play in the clean player). Leave empty when you upload a file.</small>
                 </div>
                 <div class="adm-field">
-                    <label>Upload video (MP4, WebM, MOV · max <?= $maxVideoMb ?> MB)</label>
+                    <label>… or upload a video file (MP4, WebM, MOV · max <?= $maxVideoMb ?> MB)</label>
                     <input class="adm-input" type="file" name="media_file" accept="video/mp4,video/webm,video/quicktime">
-                    <small class="adm-hint">Uploading replaces the current media file.</small>
+                    <small class="adm-hint">Stored in uploads/videos and served from your own site. An upload wins over a link; uploading replaces the current file.</small>
                 </div>
             </div>
 
             <div class="adm-grid-2">
                 <div class="adm-field">
-                    <label>Thumbnail URL or existing path</label>
+                    <label>Thumbnail link or existing path</label>
                     <input class="adm-input" type="text" name="thumbnail_path" placeholder="uploads/images/… or https://…">
                     <small class="adm-hint">16:9 for Videos, 9:16 for Shorts.</small>
                 </div>

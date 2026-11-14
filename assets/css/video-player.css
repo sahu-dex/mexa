@@ -121,6 +121,18 @@
     z-index: 40;
 }
 
+/* Shorts keep their 9:16 box when fullscreen: the player is as wide as the
+   picture, so nothing is stretched and no black bars are baked inside it. */
+.mxvp.is-vertical .mxvp__stage:fullscreen,
+.mxvp.is-vertical .mxvp__stage:-webkit-full-screen,
+.mxvp.is-vertical.is-pseudo-fullscreen .mxvp__stage {
+    width: min(100vw, calc(100vh * 9 / 16));
+    height: 100vh;
+    max-height: none;
+    margin-inline: auto;
+    aspect-ratio: 9 / 16;
+}
+
 /* ------------------------------------------------------------------ media */
 
 .mxvp__media {
@@ -151,6 +163,25 @@
 .mxvp.is-youtube.is-ended .mxvp__media {
     opacity: 0;
     pointer-events: none;
+}
+
+/* Click/tap layer above the picture: YouTube frames swallow their own clicks,
+   so the sink keeps "click the video to pause" working for every provider. */
+.mxvp__sink {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mxvp.is-idle .mxvp__sink {
+    cursor: none;
+}
+
+.mxvp.is-embed .mxvp__sink,
+.mxvp.is-image .mxvp__sink {
+    display: none;
 }
 
 .mxvp__media > video,
