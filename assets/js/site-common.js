@@ -3,6 +3,49 @@ document.addEventListener('DOMContentLoaded', () => {
         AOS.init({ duration: 800, once: true, offset: 50, throttleDelay: 100, debounceDelay: 50, disableMutationObserver: true });
     }
 
+    /*
+     * The drawer slides out from under the header and back into it.
+     *
+     * It is hidden by translating it by exactly its own height, not by `-100%`
+     * of itself: with `top` set to the bar's bottom edge, a `-100%` shift makes
+     * the element's *own box* overlap the header band, and because the menu root
+     * ties the header's z-index and comes later in the DOM, the closed sheet was
+     * painting over the header — its bottom 54px (the blue action button) showed
+     * up where the logo should be. Shifting by (height + resting offset) instead
+     * puts the closed box entirely above the viewport, so it cannot cover
+     * anything, and the transition only ever moves it to and from that offset.
+     *
+     * The height is measured in JS because the sheet is `height: auto`: its real
+     * height depends on how many page cards exist and on the text size.
+     */
+    const menuHeight = drawer => Math.ceil(drawer.getBoundingClientRect().height) || 0;
+
+    // How far above its resting place the closed sheet has to sit: its own
+    // height plus its resting offset under the bar. That puts the closed sheet's
+    // bottom edge at y=0, entirely above the viewport, so at no point does any
+    // part of it sit in the header's band. The resting offset is read from the
+    // sheet itself rather than hardcoded, so the CSS keeps ownership of it.
+    // Measured height is written as a custom property; the open position stays a
+    // plain 0, which is what the CSS transition interpolates between.
+    function drawerRestTop(drawer) {
+        var top = parseFloat(window.getComputedStyle(drawer).top);
+        return isFinite(top) && top >= 0 ? top : 54;
+    }
+    function parkDrawer(drawer) {
+        var shift = menuHeight(drawer) + drawerRestTop(drawer);
+        drawer.style.setProperty('--mm-closed-shift', 'translateY(-' + shift + 'px)');
+    }
+
+    // Measure whenever the geometry that decides the height could have changed.
+    function syncDrawerHeight() {
+        const drawer = document.getElementById('mobile-menu-drawer');
+        if (drawer) parkDrawer(drawer);
+    }
+    syncDrawerHeight();
+    window.addEventListener('resize', syncDrawerHeight, { passive: true });
+    window.addEventListener('orientationchange', syncDrawerHeight, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncDrawerHeight);
+
     window.toggleMobileMenu = function () {
         const menu = document.getElementById('mobile-menu');
         const backdrop = document.getElementById('mobile-menu-backdrop');
@@ -17,8 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isClosed) {
             menu.style.top = '0px';
             menu.style.height = '100dvh';
-            const hdr = document.getElementById('header');
-            if (hdr) drawer.style.top = Math.round(hdr.getBoundingClientRect().bottom) + 'px';
+            // Park the sheet above the bar, then slide it down from there. The
+            // resting offset under the bar is whatever CSS says it is — the
+            // drawer's own computed `top` — so the two can never drift apart.
+            parkDrawer(drawer);
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.classList.add('mm-open');
@@ -28,12 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 drawer.classList.remove('-translate-y-full');
             });
         } else {
+            // Same measured distance on the way out, so the sheet cannot creep
+            // back over the header while it animates.
+            parkDrawer(drawer);
             backdrop.classList.add('opacity-0');
             drawer.classList.add('-translate-y-full');
             document.documentElement.style.overflow = '';
             document.body.style.overflow = '';
             document.body.classList.remove('mm-open');
-            setTimeout(() => { menu.classList.add('pointer-events-none'); }, 350);
+            setTimeout(() => {
+                menu.classList.add('pointer-events-none');
+                // Hand the page back: the flag above already covers the slide,
+                // this covers the moment the sheet is finally invisible.
+                document.body.classList.remove('mm-open');
+                // Matches the 350ms slide declared in mobile-menu-cards.css.
+            }, 350);
         }
     };
 
@@ -50,8 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mobileDrawer = document.getElementById('mobile-menu-drawer');
     if (mobileDrawer) {
-        mobileDrawer.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: false });
-        mobileDrawer.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: false });
+        // Passive: these only stop the event bubbling to the page. A non-passive
+        // touchmove/wheel listener forces the browser to wait for JavaScript
+        // before it can start scrolling — the main reason a sheet felt "stuck".
+        mobileDrawer.addEventListener('touchmove', (e) => { e.stopPropagation(); }, { passive: true });
+        mobileDrawer.addEventListener('wheel', (e) => { e.stopPropagation(); }, { passive: true });
     }
 
     document.addEventListener('keydown', (ev) => {
@@ -60,6 +117,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
     });
 
+    // The "Our Services" action is not a `.mobile-nav-item`, so it does not run
+    // the handler below. Close on it as well — otherwise tapping it while
+    // already on the service page navigates to the same URL and the open menu
+    // is still sitting there afterwards.
+    document.querySelectorAll('.mm-action-button').forEach(action => {
+        action.addEventListener('click', () => {
+            const menu = document.getElementById('mobile-menu');
+            if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
+        });
+    });
+
+    // Tapping a menu card closes the menu. The card is still a normal link, so
+    // the page navigates — the close only has to run first so the menu never
+    // stays open across the navigation, and so a same-page (hash) jump is
+    // visible rather than hidden behind the sheet.
     document.querySelectorAll('.mobile-nav-item').forEach(link => {
         link.addEventListener('click', (e) => {
             document.querySelectorAll('.mm-item, .mobile-nav-item').forEach(l => {
@@ -68,24 +140,42 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             link.classList.add('is-active');
             link.setAttribute('aria-current', 'page');
+
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = menu && !menu.classList.contains('pointer-events-none');
+
             const href = link.getAttribute('href');
             const hashChar = String.fromCharCode(35);
-            if (!href || !href.startsWith(hashChar)) return;
+            const isHashJump = href && href.startsWith(hashChar);
+
+            if (!isHashJump) {
+                // A real navigation: close now, let the browser follow the link.
+                if (isOpen) window.toggleMobileMenu();
+                return;
+            }
+
             e.preventDefault();
+            if (isOpen) window.toggleMobileMenu();
             const targetEl = document.querySelector(href);
             if (targetEl) {
-                targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Wait for the sheet to clear before scrolling, so the jump does
+                // not happen behind the closing panel.
                 setTimeout(() => {
-                    const menu = document.getElementById('mobile-menu');
-                    if (menu && !menu.classList.contains('pointer-events-none')) window.toggleMobileMenu();
-                }, 350);
+                    targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 260);
             }
         });
     });
 
+    // One coalesced resize pass for the whole file: resizing a window fires tens
+    // of events per drag, and this handler touches the DOM each time.
+    let menuResizeRaf = 0;
     window.addEventListener('resize', () => {
-        const menu = document.getElementById('mobile-menu');
-        if (menu) {
+        if (menuResizeRaf) return;
+        menuResizeRaf = requestAnimationFrame(() => {
+            menuResizeRaf = 0;
+            const menu = document.getElementById('mobile-menu');
+            if (!menu) return;
             menu.style.top = '0px';
             menu.style.height = '100dvh';
             if (window.innerWidth >= 1024 && !menu.classList.contains('pointer-events-none')) {
@@ -101,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     toggle.setAttribute('aria-label', 'Open menu');
                 }
             }
-        }
+        });
     }, { passive: true });
 
     const counters = document.querySelectorAll('.counter');
@@ -111,21 +201,28 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !hasCounted) {
                     hasCounted = true;
-                    counters.forEach(counter => {
-                        const target = +counter.getAttribute('data-target');
-                        const duration = 1600;
-                        const startTime = performance.now();
-                        function updateCount(now) {
-                            const elapsed = now - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            const ease = 1 - Math.pow(1 - progress, 3);
-                            const current = Math.floor(ease * target);
-                            counter.innerText = current;
-                            if (progress < 1) requestAnimationFrame(updateCount);
-                            else counter.innerText = target;
+                    // One rAF loop for all four counters instead of one each, and
+                    // textContent instead of innerText (innerText forces the browser
+                    // to lay out the element to measure the rendered text).
+                    const items = Array.from(counters).map(counter => ({
+                        el: counter,
+                        target: +counter.getAttribute('data-target') || 0,
+                        shown: -1
+                    }));
+                    const duration = 1600;
+                    const startTime = performance.now();
+                    function updateCount(now) {
+                        const progress = Math.min((now - startTime) / duration, 1);
+                        const ease = 1 - Math.pow(1 - progress, 3);
+                        for (const item of items) {
+                            const current = progress < 1 ? Math.floor(ease * item.target) : item.target;
+                            if (current === item.shown) continue;
+                            item.shown = current;
+                            item.el.textContent = current;
                         }
-                        requestAnimationFrame(updateCount);
-                    });
+                        if (progress < 1) requestAnimationFrame(updateCount);
+                    }
+                    requestAnimationFrame(updateCount);
                 }
             });
         }, { threshold: 0.2 });
@@ -352,20 +449,33 @@ window.showCustomMessage = function (text) {
     wrapEl.addEventListener('touchend', () => { touching = false; sync(); }, { passive: true });
     wrapEl.addEventListener('touchcancel', () => { touching = false; sync(); }, { passive: true });
 
-    let dragStartX = 0, dragStartScroll = 0;
-    track.addEventListener('mousedown', (e) => {
-        dragStartX = e.pageX; dragStartScroll = track.scrollLeft;
+    let dragStartX = 0, dragStartScroll = 0, dragRaf = 0, dragX = 0;
+    // Pointer events cover mouse, pen and touch in one path, and the move sample
+    // is coalesced into one write per frame: the old mousemove handler wrote
+    // scrollLeft (and read it back through sync()) on every single event, which
+    // is a forced layout per move. One read/write per frame instead.
+    track.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') return;          // touch pans natively
+        dragStartX = e.clientX; dragStartScroll = track.scrollLeft;
         dragging = true; track.classList.add('is-dragging'); sync();
     });
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener('pointermove', (e) => {
         if (!dragging) return;
-        const dx = e.pageX - dragStartX;
-        if (Math.abs(dx) > 3) { track.scrollLeft = dragStartScroll - dx; sync(); }
-    });
-    window.addEventListener('mouseup', () => {
+        dragX = e.clientX;
+        if (dragRaf) return;
+        dragRaf = requestAnimationFrame(() => {
+            dragRaf = 0;
+            const dx = dragX - dragStartX;
+            if (Math.abs(dx) > 3) { track.scrollLeft = dragStartScroll - dx; sync(); }
+        });
+    }, { passive: true });
+    const endDrag = () => {
         if (!dragging) return;
         dragging = false; track.classList.remove('is-dragging'); sync();
-    });
+    };
+    window.addEventListener('pointerup', endDrag);
+    window.addEventListener('pointercancel', endDrag);
+    window.addEventListener('blur', endDrag);
     track.addEventListener('scroll', () => {
         if (dragging || Math.abs(track.scrollLeft - applied) > 2) sync();
     }, { passive: true });
@@ -451,10 +561,18 @@ window.showCustomMessage = function (text) {
         el.style.visibility = 'hidden';
         el.setAttribute('aria-hidden', 'true');
     }
+    // The error listener catches images that fail from now on, so a full sweep is
+    // only needed for ones that failed before it was attached. Two sweeps
+    // (DOMContentLoaded + load) each walked every image on the page; one cheap
+    // pass that skips already-resolved images is enough.
     function sweep() {
-        document.querySelectorAll('img').forEach(function (img) {
-            if (img.src.indexOf('data:') !== 0 && img.complete && img.naturalWidth === 0) hide(img);
-        });
+        var imgs = document.querySelectorAll('img');
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+            if (img.getAttribute('data-img-broken')) continue;
+            if (String(img.getAttribute('src') || '').indexOf('data:') === 0) continue;
+            if (img.complete && img.naturalWidth === 0) hide(img);
+        }
     }
     document.addEventListener('error', function (e) {
         if (e.target && e.target.tagName === 'IMG') {
@@ -462,7 +580,11 @@ window.showCustomMessage = function (text) {
             hide(e.target);
         }
     }, true);
-    document.addEventListener('DOMContentLoaded', sweep);
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', sweep);
+    } else {
+        sweep();
+    }
     window.addEventListener('load', sweep);
 
     const hashSelector = 'a[href="' + String.fromCharCode(35) + '"]';

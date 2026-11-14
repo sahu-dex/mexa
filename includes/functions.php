@@ -1035,9 +1035,22 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     // Gallery-only presentation fixes for the Work/Home video cards.
-    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery';
+    $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery-restore';
     // One shared video player for every video on the site.
-    $stylesheets[] = 'assets/css/video-player.css?v=20261114-cluster-design';
+    $stylesheets[] = 'assets/css/video-player.css?v=20261114-cascade-fix';
+    // Mobile navigation cards — loaded last so no theme sheet can repaint it.
+    //
+    // The version token is a real cache-buster, not a label: a phone that has
+    // already fetched this stylesheet keeps its copy until the URL changes.
+    // Round 10 shipped 45px rows and a #073ff1 pill; a device that held on to
+    // the older file rendered the *previous* design (38px rows, #1940e6 pill)
+    // and it looked like the new work had never been applied. Bump this token
+    // whenever the sheet's appearance changes.
+    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-reference-menu';
+    // Mobile header geometry: solid, flush with the top, content below it.
+    $stylesheets[] = 'assets/css/mobile-header-fixed.css?v=20261114-header-solid';
+    // Scroll/tap/compositing costs. Rendering behaviour only — no visual change.
+    $stylesheets[] = 'assets/css/performance.css?v=20261114-perf';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

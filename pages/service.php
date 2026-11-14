@@ -31,7 +31,7 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if ($showOverview && ($overviewVideo !== '' || $overviewPoster !== '')): ?>
             <div class="sv2-hero-video" id="sv2-hero-video" aria-label="Our services showreel">
 <?php if ($overviewPoster !== ''): ?>
-                <img src="<?= e($overviewPoster) ?>" alt="Our services showreel" loading="lazy" decoding="async">
+                <img src="<?= e($overviewPoster) ?>" alt="Our services showreel" loading="lazy" decoding="async" width="640" height="360">
 <?php endif; ?>
 <?php if ($overviewVideo !== ''): ?>
                 <span class="sv2-veil"></span>
@@ -61,14 +61,14 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if ($svc['file_path'] !== ''): ?>
                     <button type="button" data-sv2-video="<?= e($svc['file_path']) ?>" data-mm-video-url="<?= e($svc['file_path']) ?>" data-mm-video-poster="<?= e($svc['thumbnail_path']) ?>" data-mm-video-title="<?= e($svc['name']) ?> demo" aria-label="Play <?= e($svc['name']) ?> demo">
 <?php if ($svc['thumbnail_path'] !== ''): ?>
-                        <img src="<?= e($svc['thumbnail_path']) ?>" alt="<?= e($svc['name']) ?> demo thumbnail" loading="lazy" decoding="async">
+                        <img src="<?= e($svc['thumbnail_path']) ?>" alt="<?= e($svc['name']) ?> demo thumbnail" loading="lazy" decoding="async" width="640" height="360">
 <?php endif; ?>
                         <span class="sv2-veil"></span>
                         <span class="sv2-play"><i class="fa-solid fa-play"></i></span>
                     </button>
 <?php elseif ($svc['thumbnail_path'] !== ''): ?>
                     <button type="button" data-sv2-image="<?= e($svc['thumbnail_path']) ?>" data-sv2-alt="<?= e($svc['name']) ?>">
-                        <img src="<?= e($svc['thumbnail_path']) ?>" alt="<?= e($svc['name']) ?>" loading="lazy" decoding="async">
+                        <img src="<?= e($svc['thumbnail_path']) ?>" alt="<?= e($svc['name']) ?>" loading="lazy" decoding="async" width="640" height="360">
                         <span class="sv2-zoom"><i class="fa-solid fa-image"></i> View image</span>
                     </button>
 <?php else: ?>

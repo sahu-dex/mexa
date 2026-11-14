@@ -76,3 +76,164 @@ test('shorts keep their 9:16 box in fullscreen on every device', () => {
     assert.match(css, /width: min\(100vw, calc\(100vh \* 9 \/ 16\)\)/, 'fullscreen is as wide as the picture, never stretched');
     assert.match(css, /object-fit: contain/, 'video keeps its aspect ratio');
 });
+
+test('YouTube clips get the same clean controls as uploaded files', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // One bar, one set of controls: the YouTube mode only swaps the transport.
+    const template = js.slice(js.indexOf('var TEMPLATE ='), js.indexOf('var refs = {}'));
+    const barCount = (template.match(/data-mxvp-bar/g) || []).length;
+    assert.equal(barCount, 1, 'exactly one control bar for every provider');
+
+    // The picture stays bare for YouTube too: nothing in the middle to cover
+    // the clip, and the same double tap applies.
+    assert.doesNotMatch(template, /mxvp__center|mxvp__cc/, 'no centre controls in either mode');
+    assert.match(js, /function handleStageTap\(event, source\)/);
+    assert.match(js, /if \(mode === 'youtube'\) return ytPlayerState === YT_PLAYING;/);
+
+    // YouTube branding, title, channel and the related rail stay switched off.
+    // Official embed parameters only — no undocumented tricks.
+    ['controls=' , 'modestbranding=1', 'rel=0', 'showinfo=0', 'iv_load_policy=3', 'disablekb=1', 'fs=']
+        .forEach((needle) => assert.ok(js.includes(needle), 'embed parameter missing: ' + needle));
+
+    // Mute and level are separate, so the bar never shows "0 volume" for a mute.
+    assert.match(js, /if \(mode === 'youtube'\) return ytVolume \/ 100;/);
+    assert.match(js, /if \(!draggingVolume \|\| !volumePointerDown\) refs\.volume\.value = String\(volume\);/);
+    assert.match(js, /The slider shows the real level; only the icon says "muted"/);
+});
+
+test('the site-wide form styling cannot turn the player controls white', () => {
+    const css = read('assets/css/video-player.css');
+    const site = read('assets/css/premium-design-system.css');
+
+    // The culprit, with its real specificity (0,3,2): one element + two classes
+    // from :is(...) plus the attribute selectors, all !important.
+    const culprit = site.match(/body :is\(input:not\(\[type=radio\]\).*?\{[^}]*\}/s);
+    assert.ok(culprit, 'the theme rule that paints inputs white still exists');
+    assert.match(culprit[0], /background:#fff!important/);
+    assert.match(culprit[0], /border-radius:12px!important/);
+
+    // The player must out-specify it: body + .mxvp + .mxvp__stage +
+    // .mxvp__bar + the control class + [type=range] = (0,5,1), and everything
+    // is pinned. A single-class selector would lose, which is exactly the bug
+    // that kept the white pills alive.
+    const SCOPE = 'body \\.mxvp \\.mxvp__stage \\.mxvp__bar ';
+    ['seek', 'volume'].forEach((name) => {
+        const rule = css.match(new RegExp(SCOPE + '\\.mxvp__' + name + '\\[type="range"\\][^}]*\\}'));
+        assert.ok(rule, 'the ' + name + ' reset uses the full ancestor chain plus [type=range]');
+        assert.match(rule[0], /background:\s*transparent !important/);
+        assert.match(rule[0], /border-radius:\s*999px !important/);
+        assert.match(rule[0], /box-shadow:\s*none !important/);
+    });
+
+    // No slider rule is allowed to fall back to a weak single-class selector,
+    // because that would silently lose the cascade again.
+    assert.doesNotMatch(css, /^\.mxvp__(?:seek|volume)(?:\[|\s|,|:)/m, 'no unscoped slider rules');
+
+    // Buttons are not form fields at all.
+    assert.match(css, /body \.mxvp \.mxvp__stage \.mxvp__btn \{[\s\S]{0,400}?background: transparent !important/);
+    assert.match(css, /body \.mxvp \.mxvp__stage \.mxvp__btn \{[\s\S]{0,400}?border-radius: 50% !important/);
+
+    // And nothing else may paint inside the bar.
+    assert.match(css, /body \.mxvp \.mxvp__stage \.mxvp__bar > :not\(\.mxvp__scrub\):not\(\.mxvp__row\) \{\s*display: none !important;/);
+});
+
+test('the timeline is a dark track with a coloured played part and handle', () => {
+    const css = read('assets/css/video-player.css');
+
+    const track = css.match(/\.mxvp__seek::-webkit-slider-runnable-track \{([^}]*)\}/)[1];
+    assert.match(track, /height:\s*4px/);
+    assert.match(track, /border-radius:\s*999px/, 'rounded corners');
+    assert.match(track, /var\(--mxvp-accent\) 0 var\(--mxvp-played\)/, 'played part uses the accent');
+    assert.match(track, /rgba\(255, 255, 255, \.28\)/, 'unplayed part is dim grey, not white');
+
+    const thumb = css.match(/\.mxvp__seek::-webkit-slider-thumb \{([^}]*)\}/)[1];
+    assert.match(thumb, /background:\s*var\(--mxvp-accent\) !important/, 'the handle matches the played colour');
+
+    // YouTube and Shorts get YouTube red; an uploaded video keeps its blue.
+    // The mode selectors outrank the blue default, so red really wins.
+    assert.match(css, /body \.mxvp\.is-youtube \.mxvp__stage \.mxvp__bar \.mxvp__seek,\s*\nbody \.mxvp\.is-vertical \.mxvp__stage \.mxvp__bar \.mxvp__seek \{\s*--mxvp-accent:\s*#ff0033;/);
+    assert.match(css, /--mxvp-accent:\s*#2f7cf6;/);
+
+    // The handle thickens under the pointer, like YouTube's.
+    assert.match(css, /\.mxvp__seek:hover::-webkit-slider-runnable-track[^{]*\{[^}]*height:\s*5px/);
+});
+
+test('the fullscreen control stays inside a 9:16 Short on every screen', () => {
+    const css = read('assets/css/video-player.css');
+
+    // The bar is laid out from the player's own width, not the viewport's.
+    assert.match(css, /container-type:\s*inline-size/);
+    assert.match(css, /container-name:\s*mxvp-stage/);
+    assert.match(css, /@container mxvp-stage \(max-width: 430px\)/);
+    assert.match(css, /@container mxvp-stage \(max-width: 340px\)/);
+    assert.match(css, /@container mxvp-stage \(max-width: 310px\)/);
+
+    // Fullscreen is pinned to the right of the row and can never be pushed out.
+    assert.match(css, /body \.mxvp \.mxvp__stage \.mxvp__btn--fs \{\s*margin-inline-start:\s*auto !important;/);
+    assert.match(css, /\.mxvp__row \{[^}]*flex-wrap:\s*nowrap/);
+    // The volume slider gives way before anything leaves the player.
+    assert.match(css, /body \.mxvp \.mxvp__stage \.mxvp__bar \.mxvp__volume \{[^}]*min-width:\s*26px/);
+
+    // 9:16 is untouched, in and out of fullscreen.
+    assert.match(css, /\.mxvp\.is-vertical \.mxvp__stage \{[^}]*aspect-ratio:\s*9 \/ 16/);
+    assert.match(
+        css,
+        /\.mxvp\.is-vertical \.mxvp__stage:fullscreen,[^}]*aspect-ratio:\s*9 \/ 16/,
+        'fullscreen keeps the vertical box'
+    );
+});
+
+test('a Short is never handed to the native fullscreen player', () => {
+    const js = read('assets/js/video-player.js');
+
+    assert.match(js, /function isVertical\(\)/);
+    assert.match(js, /if \(!isVertical\(\) && currentVideo\(\) && currentVideo\(\)\.webkitEnterFullscreen\)/,
+        'the 9:16 path stays on our own fullscreen');
+});
+
+test('the volume slider cannot freeze after an interrupted drag', () => {
+    const js = read('assets/js/video-player.js');
+
+    // A pointer released outside the player never fires pointerup on the
+    // slider. Before this guard the "dragging" flag stayed true, so the slider
+    // ignored every later volume report and looked broken.
+    assert.match(js, /\['pointerup', 'pointercancel'\]\.forEach/,
+        'releases are also caught outside the slider');
+    assert.match(js, /document\.addEventListener\(type, function \(\) \{[\s\S]{0,120}volumePointerDown = false;/, 'document-level release clears the flags');
+    assert.match(js, /if \(!draggingVolume \|\| !volumePointerDown\) refs\.volume\.value = String\(volume\);/,
+        'the slider is only held while a pointer is really down');
+});
+
+test('YouTube\'s own grey play badge never appears in the middle of the picture', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // Why it used to appear: the frame was revealed as soon as the postMessage
+    // bridge answered, which happens while the clip is still cued — and YouTube
+    // paints a round grey play badge on a clip that is not running. Nothing
+    // inside a cross-origin frame can be styled, so the frame is only revealed
+    // once playback has actually begun.
+    assert.match(js, /function revealYtFrame\(\)/, 'the reveal has one place');
+    const reveal = js.match(/function revealYtFrame\(\) \{([\s\S]*?)\n    \}/)[1];
+    assert.match(reveal, /ytPlayerState === YT_PLAYING \|\| ytPlayerState === YT_BUFFERING/,
+        'the picture only shows for a running clip');
+    assert.match(reveal, /classList\.add\('is-yt-live'\)/, 'the reveal is sticky, so a pause never blanks the picture');
+    assert.doesNotMatch(reveal, /classList\.remove', 'is-yt-live'/, 'the picture is never taken away again');
+    assert.match(reveal, /if \(ytNativeUi\)/, 'the native-controls fallback still shows its frame');
+
+    // The reveal runs on every player state change, not on the first message.
+    const stateFn = js.match(/function applyYtState\(state\) \{([\s\S]*?)\n    \}/)[1];
+    assert.match(stateFn, /revealYtFrame\(\);/, 'state changes re-evaluate the reveal');
+    assert.doesNotMatch(
+        js.match(/if \(!ytReady\) \{([\s\S]*?)\n        \}/)[1],
+        /classList\.add\('is-yt-live'\)/,
+        'answering the bridge must not reveal the frame by itself'
+    );
+
+    // Hidden by default, shown when live, back to the poster at the end.
+    assert.match(css, /\.mxvp\.is-youtube \.mxvp__media \{[^}]*opacity:\s*0/);
+    assert.match(css, /\.mxvp\.is-youtube\.is-yt-live \.mxvp__media/);
+    assert.match(js, /modal\.classList\.remove\('is-yt-live'\);[\s\S]{0,120}showEndPlate\(true\)/);
+});

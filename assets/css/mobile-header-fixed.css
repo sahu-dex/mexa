@@ -1,0 +1,133 @@
+/*
+ * Mobile header: a solid, stationary bar that content scrolls under cleanly.
+ *
+ * The mobile header is position:fixed, but the sheets that style it disagreed
+ * about where it sits, how tall it is and whether it is opaque:
+ *
+ *   reference-header.css   top:16px, background:transparent, height:54px
+ *   reference-color-theme  background: rgba(255,255,255,.7)
+ *   premium-light-blue     background: rgba(248,250,255,.82)
+ *   visual-refresh         background: rgba(255,255,255,.91)
+ *   mobile-menu.css        background: a dark navy gradient
+ *
+ * reference-header.css loads last, so the bar ended up *transparent and pushed
+ * 16px down*, while the spacer reserved its space from the top of the page.
+ * Three symptoms came out of that one mismatch: an empty strip with page
+ * content showing through the top of the bar, page content sliding under the
+ * bar's real bottom edge, and video cards and images showing through the
+ * translucent surface as they scrolled past.
+ *
+ * There was a second, separate scroll problem: body{background-attachment:
+ * fixed} (reference-color-theme.css) repaints a full-screen gradient on every
+ * scrolled pixel. On a phone that makes the whole page — the fixed header
+ * included — shimmer and jitter while scrolling, and iOS Safari, which ignores
+ * fixed attachments, swaps to a different background as you scroll.
+ *
+ * This file is loaded last and pins the geometry: the bar is flush with the top
+ * of the viewport, fully opaque, and the spacer reserves exactly its height.
+ *
+ * On phones the bar holds the brand and the menu toggle only: the services CTA
+ * is hidden here at these widths (it lives inside the hamburger drawer instead),
+ * because a second button in a 54px bar read as a stray menu item outside the
+ * menu. Desktop keeps it untouched.
+ *
+ * Only the bar, its spacer, the page background's scroll behaviour and that one
+ * mobile-only visibility are touched — the logo, the brand block, the hamburger
+ * and the desktop header are left exactly as they are.
+ */
+
+/* ---------------------------------------------------------------- the page */
+/* A scrolling background on phones: no per-frame repaint of a viewport-sized
+   gradient (which made the fixed header shimmer while the page moved), and no
+   background swap on iOS Safari. Desktop keeps its fixed attachment. */
+@media (max-width: 1023.98px) {
+    html body {
+        background-attachment: scroll !important;
+    }
+}
+
+@media (max-width: 1023.98px) {
+    /* ------------------------------------------------------------ the bar */
+
+    html body #header.hdr-bar-wrap {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        /* reference-header.css shows this bar at 54px on phones. */
+        height: 54px !important;
+        min-height: 54px !important;
+        max-height: 54px !important;
+
+        /* Solid, not translucent: nothing may show through while scrolling. */
+        background: #ffffff !important;
+        border-bottom: 1px solid rgba(214, 228, 245, .92) !important;
+        box-shadow: 0 6px 18px rgba(19, 64, 140, .07) !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+
+        /* No movement of any kind while scrolling — it stays put. */
+        transform: none !important;
+        transition: none !important;
+
+        /* Above every page section and card, below the mobile menu. */
+        z-index: 10001 !important;
+    }
+
+    /* The bar is flush with the top now, so the 16px mask that reference-header
+       painted behind it has nothing left to cover. */
+    html body #header.hdr-bar-wrap::before {
+        display: none !important;
+        content: none !important;
+    }
+
+    /* The rounded pill inside the bar keeps its design, but matches the bar it
+       sits in: no seam of a different colour along its edges. */
+    html body #header.hdr-bar-wrap > .container {
+        background: #ffffff !important;
+        border-color: rgba(214, 228, 245, .92) !important;
+        box-shadow: none !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* --------------------------------------------------------- the spacer */
+
+    /* Exactly the height of the bar: content starts at its bottom edge, never
+       underneath it. The sheets disagreed here too — 66px and 76px were both
+       reserved against a bar that is 54px tall and, before this fix, sat 16px
+       lower than the top of the page. */
+    html body .header-spacer:not(.hidden) {
+        display: block !important;
+        height: 54px !important;
+        min-height: 54px !important;
+        max-height: 54px !important;
+        flex: 0 0 54px !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* The desktop spacer keeps `hidden lg:block` and is not touched here. */
+
+    /* ------------------------------------------------- the services button */
+
+    /* Below 1024px the header is the brand plus the menu toggle, nothing else.
+       The services CTA used to sit between them (a compact "Service" pill at
+       this width) and looked like a stray menu item outside the menu. Service
+       is already the second card inside the hamburger drawer, so the header
+       keeps no duplicate of it. The button itself is left in the markup and
+       only hidden at these widths, which keeps the desktop bar, its shared
+       label and the i18n hook exactly as they are. */
+    html body #header .header-service-button {
+        display: none !important;
+    }
+
+    /* Anchor jumps must clear the fixed bar. */
+    html {
+        scroll-padding-top: 66px !important;
+    }
+
+    /* The menu sheet's own offset lives in mobile-menu-cards.css, which owns the
+       drawer; it follows this bar's height (54px). */
+}

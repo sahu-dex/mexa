@@ -1,0 +1,91 @@
+/*
+ * Performance layer: smoother scrolling, instant taps, cheaper compositing.
+ *
+ * Rendering and interaction behaviour only — no colour, size, spacing, layout or
+ * content is defined here. Every block names the file and the problem it
+ * neutralises, and the properties it touches are ones the design does not rely
+ * on. Loaded last so the few overrides it does need actually apply.
+ */
+
+/* -------------------------------------------------------------- tap latency */
+
+/* The tap flash ("blue box") on every link and button costs a repaint per tap
+   and makes a click feel slower than it is. home-ui-fixes.css set this for a few
+   elements; make it global. Visual result: nothing at rest. */
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* -------------------------------------------------------------- compositing */
+
+/* The full-screen scrim behind the video modal is a blur over whatever is
+   underneath it, recomputed on every frame it is visible — and it is already a
+   78%-opaque dark fill, so the blur cannot be seen. `.showreel-backdrop` is the
+   legacy twin of the shared player's backdrop. */
+body .mxvp__backdrop,
+body .showreel-backdrop {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+
+/* A filter on an element forces it onto its own layer and re-rasters it on every
+   change. `transition: all` (tailwind-home.css:123) made every hover animate
+   `filter: grayscale(...)` frame by frame; the transitions are narrowed below so
+   only the properties that actually change are animated. A permanent
+   `will-change` would pin a compositor layer per logo for the life of the page
+   with nothing to show for it, so the logos keep the default. */
+body .client-logo {
+    will-change: auto;
+}
+
+/* ------------------------------------------------------------ scroll physics */
+
+/* One scroll container: a flick inside the review strip must not drag the page
+   with it (chained scrolling is what makes the page feel like it "sticks").
+   The mobile drawer declares the same for itself in its own sheet. */
+body .reviews-container {
+    overscroll-behavior: contain;
+    /* Native momentum, no behaviour override: the strip is panned by JS, so a
+       CSS smooth-scroll on top of it fights the rAF loop. */
+    scroll-behavior: auto;
+    touch-action: pan-x pan-y;
+}
+
+/* Dragging a video card must not start a native image drag: that is a
+   main-thread round trip per card, and it steals the swipe on touch. */
+body .pf-card img,
+body .wk-rc img,
+body .wk-demo img,
+body .wk-short img,
+body .sv2-card img {
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+/* ------------------------------------------------------------------ motion */
+
+/* Honour the OS "reduce motion" setting. This is a real win on low-end phones
+   and an accessibility requirement; premium-design-system.css already does the
+   same for the card hover states. (The drawer's own transitions are pinned in
+   mobile-menu-cards.css, which owns that component.) */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ---------------------------------------------------------------------------
+   Targeted transitions instead of `transition: all`.
+
+   `transition: all` makes the browser watch *every* property of the element,
+   so touching one attribute re-runs matching for the whole list — and on these
+   elements it re-armed the paint-heavy `filter`. Naming only the properties that
+   actually change has exactly the same visual result: colour, duration, easing
+   and timing are unchanged.
+   --------------------------------------------------------------------------- */
+
+/* Hover changes filter, opacity *and* transform (tailwind-home.css:125). */
+.client-logo { transition-property: filter, opacity, transform; transition-duration: 0.3s; transition-timing-function: ease; }
+
+/* States change colour, background and border-bottom-color (tailwind-home.css:727-734). */
+body #portfolio .pf-tab { transition-property: color, background-color, border-bottom-color; transition-duration: .28s; transition-timing-function: ease; }

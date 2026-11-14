@@ -28,7 +28,11 @@
     function thumbOf(item) {
         if (item.thumbnail_url || item.thumbnail_path) return item.thumbnail_url || item.thumbnail_path;
         var id = ytId(item.url || item.file_path);
-        return id ? 'https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg' : '';
+        // The cards render at ~370px wide (about 740px on a 2x display), so the
+        // 480x360 YouTube poster is already more than the slot needs. It weighs
+        // roughly a quarter of maxresdefault (1280x720): six cards used to pull
+        // ~700 KB of thumbnails, now ~170 KB. Same picture, same crop.
+        return id ? 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg' : '';
     }
     function posterFallback(item, index) {
         var colors = [['082b69','1669e8'],['071f54','518eff'],['073d83','08a4d5'],['111b56','5968ff'],['073653','08a4b9'],['1b2863','687bff']];

@@ -34,7 +34,7 @@ include dirname(__DIR__) . '/includes/header.php';
 ?>
                 <button type="button" class="wk-rc" data-section="recent" data-index="<?= $idx ?>" data-mm-video-url="<?= e($item['file_path']) ?>" data-mm-video-type="<?= e($item['embed_type']) ?>" data-mm-video-embed-url="<?= e($item['embed_url']) ?>" data-mm-video-provider="<?= e($item['embed_provider']) ?>" data-mm-video-poster="<?= e($thumb) ?>" data-mm-video-title="<?= e($item['title']) ?>" aria-label="Play <?= e($item['title']) ?>">
                     <span class="th">
-                        <img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async">
+                        <img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async" width="640" height="360">
                         <span class="wk-rc-play"><i class="fa-solid fa-play"></i></span>
                     </span>
                 </button>
@@ -50,7 +50,7 @@ include dirname(__DIR__) . '/includes/header.php';
     $thumb = $item['thumbnail_path'] !== '' ? $item['thumbnail_path'] : $item['file_path'];
 ?>
                 <button type="button" class="wk-demo" data-section="demo" data-index="<?= $idx ?>" data-mm-video-url="<?= e($item['file_path']) ?>" data-mm-video-poster="<?= e($thumb) ?>" data-mm-video-title="<?= e($item['title']) ?>" aria-label="Play <?= e($item['title']) ?>">
-                    <span class="shot"><img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async"></span>
+                    <span class="shot"><img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async" width="640" height="360"></span>
                     <span class="ply"><i class="fa-solid fa-play"></i></span>
                 </button>
 <?php endforeach; ?>
@@ -65,7 +65,7 @@ include dirname(__DIR__) . '/includes/header.php';
     $thumb = $item['thumbnail_path'] !== '' ? $item['thumbnail_path'] : $item['file_path'];
 ?>
                 <button type="button" class="wk-short" data-section="short" data-index="<?= $idx ?>" data-mm-video-url="<?= e($item['file_path']) ?>" data-mm-video-poster="<?= e($thumb) ?>" data-mm-video-title="<?= e($item['title']) ?>" aria-label="Play <?= e($item['title']) ?>">
-                    <img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async">
+                    <img src="<?= e($thumb) ?>" alt="<?= e($item['title']) ?> thumbnail" loading="lazy" decoding="async" width="405" height="720">
                     <i class="wk-short-play fa-solid fa-play" aria-hidden="true"></i>
                 </button>
 <?php endforeach; ?>

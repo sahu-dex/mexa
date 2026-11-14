@@ -22,4 +22,42 @@ Options -Indexes
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
+# ---------------------------------------------------------------------------
+# Static asset caching and compression.
+#
+# The PHP pages shipped no cache policy at all, so every page view re-downloaded
+# the full ~600 KB of CSS and ~180 KB of JS, and text assets were served
+# uncompressed. Two things had to be handled carefully:
+#
+#   * Most stylesheets have no ?v= token, so they cannot be called immutable.
+#     A long-lived immutable response on such a URL would keep serving stale CSS
+#     after a deploy for up to a year. They get a moderate lifetime and rely on
+#     ETag revalidation instead.
+#   * The files that *do* carry a ?v= buster change URL whenever they change, so
+#     those can be cached for as long as the browser will keep them.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript
+    AddOutputFilterByType DEFLATE application/javascript application/json
+    AddOutputFilterByType DEFLATE image/svg+xml application/xml
+</IfModule>
+
+<IfModule mod_setenvif.c>
+    # Only a real cache-buster earns the long lifetime.
+    SetEnvIf Query_String "(^|&)v=[^&]+" MEXA_VERSIONED_ASSET
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|json|woff2?|ttf|webp|avif|svg|png|jpe?g|gif|ico)$">
+        # Default: cache, but revalidate cheaply (a 304 costs no body bytes).
+        Header set Cache-Control "public, max-age=604800"
+        # Cache-busted URL: the content behind it can never change.
+        Header set Cache-Control "public, max-age=31536000, immutable" env=MEXA_VERSIONED_ASSET
+    </FilesMatch>
+
+    # HTML is generated: it must be revalidated so content edits appear at once.
+    Header set Cache-Control "no-cache, must-revalidate" "expr=%{CONTENT_TYPE} =~ m#^text/html#"
+</IfModule>
+
 DirectoryIndex index.php
