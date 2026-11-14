@@ -74,11 +74,26 @@ test('the mask that reference-header painted behind a 16px-offset bar is gone', 
 test('nothing here applies to the desktop header', () => {
     const sheet = css();
 
-    // Every rule sits inside the mobile breakpoint; the desktop bar is 82px
-    // with a 98px spacer and must stay exactly that.
-    const blocks = sheet.split('@media (max-width: 1023.98px)');
-    assert.equal(blocks.length, 2);
-    assert.equal(blocks[0].replace(/\/\*[\s\S]*?\*\//g, '').trim(), '', 'no rules may live outside the mobile breakpoint');
+    // Every rule sits inside a mobile breakpoint (there are two: the page
+    // background and the bar); the desktop bar is 82px with a 98px spacer and
+    // must stay exactly that.
+    assert.doesNotMatch(sheet, /min-width/);
+    const openers = sheet.match(/@media \(max-width: 1023\.98px\)/g) || [];
+    assert.ok(openers.length >= 2, 'the rules must be inside mobile breakpoints');
+    // Walk the sheet by brace depth: every declaration must sit at depth >= 2,
+    // i.e. inside both a media query and a rule.
+    const src = sheet.replace(/\/\*[\s\S]*?\*\//g, '');
+    let depth = 0;
+    let buffer = '';
+    for (const ch of src) {
+        if (ch === '{') { depth++; buffer = ''; continue; }
+        if (ch === '}') { depth--; buffer = ''; continue; }
+        buffer += ch;
+        if (depth === 1 && ch === ';') {
+            assert.fail('a declaration sits outside any media query: ' + buffer.trim().slice(0, 60));
+        }
+    }
+    assert.equal(depth, 0, 'unbalanced braces');
     // And no desktop sizes are re-declared anywhere. (The mobile breakpoint's
     // own "1023.98px" is excluded so it is not mistaken for a 98px height.)
     const withoutBreakpoints = sheet.replace(/max-width:\s*1023\.98px/g, '');
@@ -122,6 +137,24 @@ test('the mobile drawer opens under the bar, and the sheet loads last', () => {
     ]) {
         assert.ok(styles.indexOf(earlier) < order, earlier + ' must load before ' + SHEET);
     }
+});
+
+test('the page background scrolls on mobile, so the bar cannot shimmer', () => {
+    const sheet = css();
+
+    // reference-color-theme.css sets body{background-attachment:fixed}. On a
+    // phone that repaints a viewport-sized gradient on every scrolled pixel,
+    // which made the fixed header shimmer/jitter and (on iOS Safari) swapped the
+    // background as you scroll. Desktop keeps the fixed attachment.
+    const rule = sheet.match(/html body\s*\{[^}]*\}/);
+    assert.ok(rule, 'the mobile page background must be pinned here');
+    assert.match(rule[0], /background-attachment:\s*scroll\s*!important/);
+
+    // Mobile only: a desktop-scoped rewrite of this would change desktop.
+    const blocks = sheet.split('@media (max-width: 1023.98px)');
+    assert.ok(blocks.length >= 2);
+    assert.doesNotMatch(sheet, /background-attachment:[^;]*!important(?![\s\S]*max-width)/);
+    assert.match(sheet, /@media \(max-width: 1023\.98px\)\s*\{\s*html body \{/);
 });
 
 test('the scrolled state cannot repaint or move the bar', () => {

@@ -2,7 +2,7 @@
  * Mobile header: a solid, stationary bar that content scrolls under cleanly.
  *
  * The mobile header is position:fixed, but the sheets that style it disagreed
- * about where it sits and whether it has a background:
+ * about where it sits, how tall it is and whether it is opaque:
  *
  *   reference-header.css   top:16px, background:transparent, height:54px
  *   reference-color-theme  background: rgba(255,255,255,.7)
@@ -11,18 +11,34 @@
  *   mobile-menu.css        background: a dark navy gradient
  *
  * reference-header.css loads last, so the bar ended up *transparent and pushed
- * 16px down* while the header spacer only reserved 66px from the top of the
- * page. The result: the top 16px of the bar showed page content, the page
- * started 12px above the header's real bottom edge, and any video card or image
- * scrolling past showed through the translucent bar.
+ * 16px down*, while the spacer reserved its space from the top of the page.
+ * Three symptoms came out of that one mismatch: an empty strip with page
+ * content showing through the top of the bar, page content sliding under the
+ * bar's real bottom edge, and video cards and images showing through the
+ * translucent surface as they scrolled past.
+ *
+ * There was a second, separate scroll problem: body{background-attachment:
+ * fixed} (reference-color-theme.css) repaints a full-screen gradient on every
+ * scrolled pixel. On a phone that makes the whole page — the fixed header
+ * included — shimmer and jitter while scrolling, and iOS Safari, which ignores
+ * fixed attachments, swaps to a different background as you scroll.
  *
  * This file is loaded last and pins the geometry: the bar is flush with the top
- * of the viewport, fully opaque, and the spacer reserves exactly its height, so
- * page content begins at the bar's bottom edge and never sits underneath it.
- *
- * Only the header bar itself, its spacer and the drawer offset are touched —
- * the logo, service button, hamburger and desktop header are left alone.
+ * of the viewport, fully opaque, and the spacer reserves exactly its height.
+ * Only the bar itself, its spacer and the page background's scroll behaviour
+ * are touched — the logo, service button, hamburger and desktop header are left
+ * exactly as they are.
  */
+
+/* ---------------------------------------------------------------- the page */
+/* A scrolling background on phones: no per-frame repaint of a viewport-sized
+   gradient (which made the fixed header shimmer while the page moved), and no
+   background swap on iOS Safari. Desktop keeps its fixed attachment. */
+@media (max-width: 1023.98px) {
+    html body {
+        background-attachment: scroll !important;
+    }
+}
 
 @media (max-width: 1023.98px) {
     /* ------------------------------------------------------------ the bar */
@@ -47,6 +63,9 @@
         /* No movement of any kind while scrolling — it stays put. */
         transform: none !important;
         transition: none !important;
+
+        /* Above every page section and card, below the mobile menu. */
+        z-index: 10001 !important;
     }
 
     /* The bar is flush with the top now, so the 16px mask that reference-header
@@ -56,9 +75,12 @@
         content: none !important;
     }
 
-    /* The pill inside the bar is opaque as well. */
+    /* The rounded pill inside the bar keeps its design, but matches the bar it
+       sits in: no seam of a different colour along its edges. */
     html body #header.hdr-bar-wrap > .container {
         background: #ffffff !important;
+        border-color: rgba(214, 228, 245, .92) !important;
+        box-shadow: none !important;
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
     }
@@ -66,9 +88,9 @@
     /* --------------------------------------------------------- the spacer */
 
     /* Exactly the height of the bar: content starts at its bottom edge, never
-       underneath it. mobile-menu.css/visual-refresh disagreed (66px against a
-       bar that is 54px tall and 16px lower), which is what let the hero and the
-       video cards slide under the header. */
+       underneath it. The sheets disagreed here too — 66px and 76px were both
+       reserved against a bar that is 54px tall and, before this fix, sat 16px
+       lower than the top of the page. */
     html body .header-spacer:not(.hidden) {
         display: block !important;
         height: 54px !important;
@@ -88,5 +110,5 @@
     }
 
     /* The menu sheet's own offset lives in mobile-menu-cards.css, which owns the
-       drawer; it follows this bar's height. */
+       drawer; it follows this bar's height (54px). */
 }
