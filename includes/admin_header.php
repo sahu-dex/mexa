@@ -42,29 +42,29 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
 
         <nav class="adm-nav" aria-label="Admin navigation">
             <div class="adm-nav-sec">Overview</div>
-            <a class="adm-link<?= $adminPage === 'dashboard' ? ' is-active' : '' ?>" href="index.php">
+            <a class="adm-link<?= $adminPage === 'dashboard' ? ' is-active' : '' ?>" href="./">
                 <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
             </a>
 
             <div class="adm-nav-sec">Catalog &amp; Studio</div>
-            <a class="adm-link<?= $adminPage === 'services' ? ' is-active' : '' ?>" href="services.php">
+            <a class="adm-link<?= $adminPage === 'services' ? ' is-active' : '' ?>" href="services">
                 <i class="fa-solid fa-layer-group"></i><span>Services</span>
             </a>
-            <a class="adm-link<?= $adminPage === 'work' ? ' is-active' : '' ?>" href="work.php">
+            <a class="adm-link<?= $adminPage === 'work' ? ' is-active' : '' ?>" href="work">
                 <i class="fa-solid fa-photo-film"></i><span>Work / Portfolio</span>
             </a>
-            <a class="adm-link<?= $adminPage === 'team' ? ' is-active' : '' ?>" href="team.php">
+            <a class="adm-link<?= $adminPage === 'team' ? ' is-active' : '' ?>" href="team">
                 <i class="fa-solid fa-users"></i><span>Team Members</span>
             </a>
 
             <div class="adm-nav-sec">Client Activity</div>
-            <a class="adm-link<?= $adminPage === 'reviews' ? ' is-active' : '' ?>" href="reviews.php">
+            <a class="adm-link<?= $adminPage === 'reviews' ? ' is-active' : '' ?>" href="reviews">
                 <i class="fa-solid fa-star"></i><span>Reviews</span>
 <?php if ($pendingReviewsCount > 0): ?>
                 <span class="adm-pill-cnt"><?= $pendingReviewsCount ?></span>
 <?php endif; ?>
             </a>
-            <a class="adm-link<?= $adminPage === 'messages' ? ' is-active' : '' ?>" href="messages.php">
+            <a class="adm-link<?= $adminPage === 'messages' ? ' is-active' : '' ?>" href="messages">
                 <i class="fa-solid fa-inbox"></i><span>Messages</span>
 <?php if ($pendingMessagesCount > 0): ?>
                 <span class="adm-pill-cnt"><?= $pendingMessagesCount ?></span>
@@ -72,7 +72,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
             </a>
 
             <div class="adm-nav-sec">Configuration</div>
-            <a class="adm-link<?= $adminPage === 'settings' ? ' is-active' : '' ?>" href="settings.php">
+            <a class="adm-link<?= $adminPage === 'settings' ? ' is-active' : '' ?>" href="settings">
                 <i class="fa-solid fa-sliders"></i><span>Site &amp; Page Settings</span>
             </a>
         </nav>
@@ -85,7 +85,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
                     <span><?= e($currentAdmin['email'] ?? '') ?></span>
                 </div>
             </div>
-            <form method="post" action="logout.php" style="margin:0">
+            <form method="post" action="logout" style="margin:0">
                 <?= csrf_field() ?>
                 <button type="submit" class="adm-btn adm-btn-danger" style="width:100%">
                     <i class="fa-solid fa-right-from-bracket"></i> Sign Out
@@ -98,7 +98,7 @@ $pendingMessagesCount = (int) $pdo->query("SELECT COUNT(*) FROM `messages` WHERE
         <header class="adm-top">
             <h1><?= e($adminTitle) ?></h1>
             <div class="adm-top-actions">
-                <a class="adm-btn" href="../index.php" target="_blank" rel="noopener">
+                <a class="adm-btn" href="../" target="_blank" rel="noopener">
                     <i class="fa-solid fa-arrow-up-right-from-square"></i> View Live Website
                 </a>
             </div>

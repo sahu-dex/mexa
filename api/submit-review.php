@@ -36,6 +36,10 @@ if (mb_strlen($body) < 15 || mb_strlen($body) > 900) {
     json_response(['ok' => false, 'error' => 'Review text must be between 15 and 900 characters.'], 422);
 }
 
+if (mexa_word_count($body) > MEXA_REVIEW_MAX_WORDS) {
+    json_response(['ok' => false, 'error' => 'Please keep your review within ' . MEXA_REVIEW_MAX_WORDS . ' words.'], 422);
+}
+
 if (empty($_FILES['photo']) || !is_array($_FILES['photo']) ||
     (int) ($_FILES['photo']['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) {
     json_response(['ok' => false, 'error' => 'Please upload a photo with your review.'], 422);

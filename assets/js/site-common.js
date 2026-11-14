@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function parkDrawer(drawer) {
         var shift = menuHeight(drawer) + drawerRestTop(drawer);
-        drawer.style.setProperty('--mm-closed-shift', 'translateY(-' + shift + 'px)');
+        drawer.style.setProperty('--mm-closed-shift', '-' + shift + 'px');
     }
 
     // Measure whenever the geometry that decides the height could have changed.
@@ -67,6 +67,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
             document.body.classList.add('mm-open');
+            // Bar and sheet are drawn as one joined panel until the slide-out ends.
+            document.body.classList.add('mm-joined');
             menu.classList.remove('pointer-events-none');
             requestAnimationFrame(() => {
                 backdrop.classList.remove('opacity-0');
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Hand the page back: the flag above already covers the slide,
                 // this covers the moment the sheet is finally invisible.
                 document.body.classList.remove('mm-open');
+                document.body.classList.remove('mm-joined');
                 // Matches the 350ms slide declared in mobile-menu-cards.css.
             }, 350);
         }
@@ -185,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.documentElement.style.overflow = '';
                 document.body.style.overflow = '';
                 document.body.classList.remove('mm-open');
+                document.body.classList.remove('mm-joined');
                 const toggle = document.getElementById('header-menu-toggle');
                 if (toggle) {
                     toggle.setAttribute('aria-expanded', 'false');
@@ -456,6 +460,11 @@ window.showCustomMessage = function (text) {
     // is a forced layout per move. One read/write per frame instead.
     track.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'touch') return;          // touch pans natively
+        // A review whose text overflows scrolls inside its own card. A press on
+        // that text box (its scrollbar included) must not start a row drag, or
+        // the scrollbar could never be grabbed.
+        const quote = e.target.closest ? e.target.closest('.rv-quote.is-scrollable') : null;
+        if (quote) return;
         dragStartX = e.clientX; dragStartScroll = track.scrollLeft;
         dragging = true; track.classList.add('is-dragging'); sync();
     });
@@ -487,6 +496,23 @@ window.showCustomMessage = function (text) {
         }, { rootMargin: '120px 0px', threshold: 0 }).observe(section);
     } else { inView = true; start(); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+
+    // Mark the reviews that actually overflow, so only those behave as scroll
+    // boxes; short ones stay plain text and can still be used to drag the row.
+    const markScrollable = () => {
+        track.querySelectorAll('.rv-quote').forEach(q => {
+            q.classList.toggle('is-scrollable', q.scrollHeight > q.clientHeight + 1);
+        });
+    };
+    markScrollable();
+    window.addEventListener('load', markScrollable);
+    window.addEventListener('resize', markScrollable, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(markScrollable);
+
+    // Mouse wheel is left entirely to the browser (no wheel listener, so
+    // nothing can block scrolling): over an overflowing review it scrolls that
+    // review's text, a sideways wheel / Shift+wheel moves the row, and a plain
+    // vertical wheel anywhere else scrolls the page.
 
     track.setAttribute('tabindex', '0');
     track.addEventListener('keydown', (e) => {

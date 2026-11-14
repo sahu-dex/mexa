@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'service';
 $pageTitle = 'Service | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = services_intro_text() ?: 'Professional video editing services.';
-$pageScripts = ['assets/js/store.js', 'assets/js/page-service.js'];
+$pageScripts = ['assets/js/store.js', 'assets/js/page-service.js?v=20261114-no-deliverables', 'assets/js/service-ticket.js?v=20261114'];
 
 $catalog = get_services_catalog(true);
 $services = $catalog['services'];
@@ -20,6 +20,15 @@ $overviewVideo = setting_raw('overview_video_file_path', '');
 $overviewPoster = setting_raw('overview_poster_file_path', '');
 $showOverview = setting_raw('show_overview', '1') !== '0';
 $showServices = setting_raw('show_services', '1') !== '0';
+
+// Same contact settings the home page uses (Admin → Settings → Contact).
+$waDigits = preg_replace('/[^\d]/', '', setting_raw('whatsapp_number', '')) ?? '';
+$waHref = $waDigits !== '' ? 'https://wa.me/' . $waDigits : '';
+$tgHref = trim(setting_raw('telegram_url', ''));
+if ($tgHref !== '' && !preg_match('#^https?://#i', $tgHref)) {
+    $tgHref = 'https://t.me/' . ltrim($tgHref, '@/');
+}
+$contactImg = setting('hero_image_file_path', 'assets/images/hero-character.webp');
 
 include dirname(__DIR__) . '/includes/header.php';
 ?>
@@ -87,9 +96,6 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php endforeach; ?>
                     </ul>
 <?php endif; ?>
-<?php if ($svc['deliverables'] !== ''): ?>
-                    <p class="sv2-deliv"><b>Deliverables</b><?= e(str_replace(["\r\n", "\n"], ' · ', $svc['deliverables'])) ?></p>
-<?php endif; ?>
                 </div>
             </article>
 <?php endforeach; ?>
@@ -97,6 +103,62 @@ include dirname(__DIR__) . '/includes/header.php';
     </div>
 </section>
 <?php endif; ?>
+
+<section class="svc-contact" id="contact" aria-labelledby="svc-contact-title">
+    <div class="container mx-auto px-4 md:px-8">
+        <div class="svc-panel">
+            <div class="svc-panel-head">
+                <div class="svc-contact-photo">
+                    <img src="<?= e($contactImg) ?>" alt="<?= e(setting('site_name', 'Mexa Motion')) ?> support" width="72" height="72" loading="lazy" decoding="async" draggable="false">
+                    <span class="svc-contact-online" aria-hidden="true"></span>
+                </div>
+                <div class="svc-head-copy">
+                    <span class="svc-contact-kicker">Contact</span>
+                    <h2 class="svc-contact-title" id="svc-contact-title">Talk to us directly</h2>
+                    <p class="svc-contact-text">Have a project or a question about a service? Message us and we will reply as soon as we can.</p>
+                </div>
+                <div class="svc-contact-actions">
+                    <a class="svc-contact-btn is-wa" href="<?= e($waHref !== '' ? $waHref : '#ticket-form') ?>"<?= $waHref !== '' ? ' target="_blank" rel="noopener"' : '' ?>>
+                        <i class="fa-brands fa-whatsapp" aria-hidden="true"></i><span>WP Message Me</span>
+                    </a>
+                    <a class="svc-contact-btn is-tg" href="<?= e($tgHref !== '' ? $tgHref : '#ticket-form') ?>"<?= $tgHref !== '' ? ' target="_blank" rel="noopener"' : '' ?>>
+                        <i class="fa-brands fa-telegram" aria-hidden="true"></i><span>TG Message Me</span>
+                    </a>
+                </div>
+            </div>
+
+            <form class="svc-ticket" id="ticket-form" method="post" action="api/submit-ticket.php" novalidate>
+                <?= csrf_field() ?>
+                <?= honeypot_field() ?>
+                <div class="svc-ticket-top">
+                    <h3 class="svc-ticket-title">Submit a ticket</h3>
+                    <p class="svc-ticket-text">Tell us what you need. We will get back to you on WhatsApp.</p>
+                </div>
+
+                <div class="svc-row">
+                    <div class="svc-field">
+                        <label for="tk-name">Name</label>
+                        <input class="svc-input" type="text" id="tk-name" name="name" maxlength="120" autocomplete="name" placeholder="Your name" required>
+                    </div>
+                    <div class="svc-field">
+                        <label for="tk-whatsapp">WhatsApp Number</label>
+                        <input class="svc-input" type="tel" id="tk-whatsapp" name="whatsapp" maxlength="24" inputmode="tel" autocomplete="tel" placeholder="+8801XXXXXXXXX" required>
+                    </div>
+                </div>
+                <div class="svc-field">
+                    <label for="tk-message">Message / Details</label>
+                    <textarea class="svc-input svc-textarea" id="tk-message" name="message" maxlength="2000" rows="4" placeholder="Describe your project or problem in detail" required></textarea>
+                </div>
+
+                <p class="svc-ticket-msg" id="tk-msg" role="status" aria-live="polite" hidden></p>
+                <div class="svc-ticket-foot">
+                    <span class="svc-ticket-note"><i class="fa-solid fa-lock" aria-hidden="true"></i>Your number is only used to reply to this ticket.</span>
+                    <button type="submit" class="svc-ticket-submit" id="tk-submit"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i><span>Submit Ticket</span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
 
 <div id="sv2-image" class="sv2-modal" hidden>
     <div class="sv2-modal-box is-image" role="dialog" aria-modal="true" aria-label="Service image preview">

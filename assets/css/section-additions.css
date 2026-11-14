@@ -1,0 +1,335 @@
+/*
+ * Additions that apply at every width:
+ *   1. long review text scrolls inside its card instead of stretching it;
+ *   2. the "Seen More" row under the home services and work sections;
+ *   3. the contact card + ticket form at the bottom of the service page.
+ * Colours, radii and shadows are the ones the rest of the site already uses.
+ */
+
+/* ------------------------------------------------- 1. review card scrolling */
+
+/* The row only scrolls sideways, but it was `overscroll-behavior: contain` on
+   both axes. On the vertical axis that stops the wheel and a vertical swipe
+   from being handed on to the page, so with the pointer or a finger on a review
+   card the page would not scroll at all. Contain the sideways axis only. */
+html body .reviews-container {
+    overscroll-behavior-x: contain !important;
+    overscroll-behavior-y: auto !important;
+}
+
+/* The card keeps a fixed, compact shape; a review of up to 100 words scrolls
+   inside it with the wheel, a finger, or by dragging the thin scrollbar. */
+html body #reviews .reviews-container .review-card {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+html body #reviews .reviews-container .review-card .rv-quote {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: 176px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 6px !important;
+    /* Vertical swipes scroll the text; horizontal ones still move the row. */
+    touch-action: pan-x pan-y !important;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(17, 82, 223, .35) transparent;
+    cursor: auto;
+}
+
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar { width: 5px; }
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar-thumb { background: rgba(17, 82, 223, .32); border-radius: 9px; }
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar-track { background: transparent; }
+
+/* While the row is being dragged everything inside it is inert (existing
+   behaviour) — except a review's own text box, so its scrollbar keeps working. */
+html body #reviews .reviews-container.is-dragging .rv-quote.is-scrollable { pointer-events: auto !important; }
+
+/* ------------------------------------------------------- 2. Seen More rows */
+
+html body .rs-foot.sec-more {
+    margin-top: 26px !important;
+}
+
+/* ---------------------------------------- 3. service page: contact + ticket */
+
+/* One compact panel: a slim blue contact strip (photo, text, WhatsApp and
+   Telegram buttons) joined to the ticket form underneath it. */
+
+.svc-contact { padding: 30px 0 60px; }
+
+.svc-panel {
+    max-width: 920px;
+    margin: 0 auto;
+    background: #fff;
+    border: 1px solid #e3ecfb;
+    border-radius: 22px;
+    box-shadow: 0 16px 38px rgba(13, 54, 140, .09);
+    overflow: hidden;
+}
+
+.svc-panel-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 12px 14px;
+    padding: 18px;
+    color: #fff;
+    background:
+        radial-gradient(120% 160% at 100% 0%, rgba(120, 190, 255, .35), transparent 55%),
+        linear-gradient(120deg, #0a43d8 0%, #1152df 50%, #1f7bff 100%);
+}
+
+.svc-contact-photo {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, .3);
+}
+
+.svc-contact-photo img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
+
+.svc-contact-online {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid #fff;
+}
+
+.svc-head-copy { min-width: 0; }
+
+.svc-contact-kicker {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: #cfe6ff;
+}
+
+.svc-contact-actions {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+html body .svc-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-weight: 600 !important;
+    min-width: 0;
+    white-space: nowrap;
+    text-decoration: none !important;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+html body .svc-contact-btn i { font-size: 16px; }
+
+html body .svc-contact-btn.is-wa {
+    background: #fff;
+    color: #0a2f7a !important;
+    box-shadow: 0 8px 18px rgba(4, 28, 92, .22);
+}
+
+html body .svc-contact-btn.is-wa i { color: #1fae54; }
+
+html body .svc-contact-btn.is-tg {
+    background: rgba(255, 255, 255, .14);
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, .5);
+}
+
+html body .svc-contact-btn:hover { transform: translateY(-1px); }
+html body .svc-contact-btn.is-tg:hover { background: rgba(255, 255, 255, .24); }
+html body .svc-contact-btn:focus-visible { outline: 3px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
+
+/* ticket form */
+.svc-ticket { padding: 18px; }
+
+.svc-row { display: grid; grid-template-columns: 1fr; gap: 0 14px; }
+
+.svc-field { margin-top: 12px; min-width: 0; }
+
+html body .svc-field label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600 !important;
+    color: #22355c !important;
+}
+
+html body .svc-input {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    font-family: inherit !important;
+    color: #0b1f4d !important;
+    background: #f7faff !important;
+    border: 1px solid #cfdcf2 !important;
+    border-radius: 12px !important;
+    outline: none;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+html body .svc-input::placeholder { color: #93a3bf; }
+
+html body .svc-textarea { min-height: 104px; resize: vertical; }
+
+html body .svc-input:focus {
+    background: #fff !important;
+    border-color: #1152df !important;
+    box-shadow: 0 0 0 3px rgba(17, 82, 223, .15);
+}
+
+html body .svc-input.is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .12);
+}
+
+html body .svc-ticket-msg {
+    margin: 12px 0 0 !important;
+    padding: 10px 13px;
+    border-radius: 12px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+html body .svc-ticket-msg.is-ok { background: #ecfdf3; border: 1px solid #b7ebca; color: #11633a !important; }
+html body .svc-ticket-msg.is-err { background: #fff1f1; border: 1px solid #f6c5c5; color: #a61b1b !important; }
+
+.svc-ticket-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.svc-ticket-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #6b7c99;
+}
+
+.svc-ticket-note i { font-size: 11px; color: #1152df; }
+
+html body .svc-ticket-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 44px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600 !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #0a43d8, #1e6bff);
+    box-shadow: 0 8px 18px rgba(17, 82, 223, .26);
+    transition: filter .15s ease, transform .15s ease;
+}
+
+html body .svc-ticket-submit:hover { filter: brightness(1.06); }
+html body .svc-ticket-submit:active { transform: translateY(1px); }
+html body .svc-ticket-submit:focus-visible { outline: 3px solid rgba(17, 82, 223, .35); outline-offset: 2px; }
+html body .svc-ticket-submit[disabled] { opacity: .65; cursor: progress; }
+
+@media (min-width: 720px) {
+    .svc-contact { padding: 40px 0 76px; }
+    .svc-panel-head {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 18px;
+        padding: 20px 26px;
+    }
+    .svc-contact-photo { width: 64px; height: 64px; }
+    .svc-contact-actions { grid-column: auto; grid-template-columns: auto auto; }
+    .svc-ticket { padding: 22px 26px 26px; }
+    .svc-row { grid-template-columns: 1fr 1fr; }
+    .svc-ticket-foot { flex-direction: row; align-items: center; justify-content: space-between; }
+    html body .svc-ticket-submit { width: auto; min-width: 190px; }
+}
+
+/* Between tablet and small laptop the two buttons sit under the text. */
+@media (min-width: 720px) and (max-width: 899.98px) {
+    .svc-contact-actions { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 359.98px) {
+    .svc-panel-head, .svc-ticket { padding: 16px 14px; }
+    html body .svc-contact-btn { min-width: 0; padding: 0 6px; gap: 5px; }
+    html body .svc-contact-btn i { font-size: 14px; }
+}
+
+/* The site pins heading/paragraph/control sizes in the typography layer with
+   !important, so this panel's sizes have to be stated in that layer too. */
+@layer mx-typography {
+    html body #contact.svc-contact .svc-contact-title {
+        margin: 2px 0 0 !important;
+        font-size: 19px !important;
+        font-weight: 700 !important;
+        line-height: 1.25 !important;
+        letter-spacing: -.01em !important;
+        color: #fff !important;
+    }
+    html body #contact.svc-contact .svc-contact-text {
+        margin: 3px 0 0 !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        color: rgba(255, 255, 255, .88) !important;
+    }
+    html body #contact.svc-contact .svc-ticket-title {
+        margin: 0 !important;
+        font-size: 17px !important;
+        font-weight: 700 !important;
+        line-height: 1.3 !important;
+        color: #0a2858 !important;
+    }
+    html body #contact.svc-contact .svc-ticket-text {
+        margin: 2px 0 0 !important;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        color: #5b6b86 !important;
+    }
+    html body #contact.svc-contact .svc-field label { font-size: 12.5px !important; line-height: 1.3 !important; }
+    html body #contact.svc-contact .svc-input { font-size: 14.5px !important; line-height: 1.4 !important; }
+    html body #contact.svc-contact .svc-contact-btn,
+    html body #contact.svc-contact .svc-ticket-submit { font-size: 13.5px !important; line-height: 1 !important; }
+    html body #contact.svc-contact .svc-ticket-msg { font-size: 13.5px !important; line-height: 1.5 !important; }
+
+    @media (min-width: 720px) {
+        html body #contact.svc-contact .svc-contact-title { font-size: 21px !important; }
+        html body #contact.svc-contact .svc-contact-text { font-size: 13.5px !important; }
+        html body #contact.svc-contact .svc-ticket-title { font-size: 18px !important; }
+    }
+
+    @media (max-width: 359.98px) {
+        html body #contact.svc-contact .svc-contact-btn { font-size: 12px !important; }
+    }
+}

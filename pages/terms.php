@@ -167,7 +167,7 @@ include dirname(__DIR__) . '/includes/header.php';
 
                     <hr>
                     <p class="legal-back">
-                        <a href="index.php">Back to home</a> &nbsp;·&nbsp; <a href="privacy.php">Privacy Policy</a>
+                        <a href="./">Back to home</a> &nbsp;·&nbsp; <a href="privacy">Privacy Policy</a>
                     </p>
                 </article>
             </div>

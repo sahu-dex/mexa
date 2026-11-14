@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'review';
 $pageTitle = 'Review | ' . setting('site_name', 'Mexa Motion');
 $pageDescription = setting('review_hero_desc', 'Honest feedback from creators, shops and brands we edit for.');
-$pageScripts = ['assets/js/page-review.js?v=20261112-required-photo'];
+$pageScripts = ['assets/js/page-review.js?v=20261114-word-limit'];
 
 $revBundle = get_reviews_bundle(false);
 $initialReviews = array_slice($revBundle['items'], 0, 20);
@@ -152,7 +152,7 @@ include dirname(__DIR__) . '/includes/header.php';
                         <div class="rvx-field">
                             <label for="rvx-body">Your review <span aria-hidden="true">*</span></label>
                             <textarea class="rvx-textarea" id="rvx-body" name="body" maxlength="900" required></textarea>
-                            <span class="rvx-counter" id="rvx-body-count">0 / 900</span>
+                            <span class="rvx-counter" id="rvx-body-count">0 / 100 words</span>
                         </div>
 
                         <span class="rvx-err" id="rvx-err" role="alert" aria-live="polite" hidden></span>

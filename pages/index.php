@@ -65,8 +65,8 @@ include dirname(__DIR__) . '/includes/header.php';
                         <div class="ref-hero-subtitle"><span id="ref-hero-typed" data-initial="<?= e($heroLine2) ?>"><?= e($heroLine2) ?></span></div>
                         <p class="ref-hero-description"><?= $heroDescHtml ?></p>
                         <div class="ref-hero-actions">
-                            <a href="service.php" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
-                            <a href="index.php#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> Our Work</a>
+                            <a href="service" class="ref-hero-primary"><?= e(setting('hero_btn_primary_text', 'Our Services')) ?> <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                            <a href="./#portfolio" class="ref-hero-secondary"><i class="fa-solid fa-play" aria-hidden="true"></i> Our Work</a>
                         </div>
                     </div>
                     <div class="ref-hero-visual" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
@@ -124,6 +124,10 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
 <?php endforeach; ?>
                 </div>
+
+                <div class="rs-foot sec-more">
+                    <a href="service" class="seen-more-link" aria-label="See all services">Seen More <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
         </section>
 <?php endif; ?>
@@ -157,7 +161,7 @@ include dirname(__DIR__) . '/includes/header.php';
     $vEmbed = trim((string) ($vItem['embed_url'] ?? ''));
     $vType = trim((string) ($vItem['embed_type'] ?? ''));
     $vPreview = work_item_previewable($vItem);
-    $vHref = $vPreview && $vSrc !== '' ? $vSrc : 'work.php';
+    $vHref = $vPreview && $vSrc !== '' ? $vSrc : 'work';
 ?><a href="<?= e($vHref) ?>"<?= $vPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($vKind) ?>" data-mm-src="<?= e($vSrc) ?>" data-mm-embed="<?= e($vEmbed) ?>" data-mm-type="<?= e($vType) ?>" data-mm-poster="<?= e($vThumb) ?>" data-mm-title="<?= e($vItem['title']) ?>" class="pf-card pf-card-video" data-aos="fade-up" data-aos-delay="<?= 100 + ($vi * 50) ?>" aria-label="<?= e(($vPreview ? 'Play ' : 'View ') . $vItem['title']) ?>">
 <?php if ($vThumb !== ''): ?>
                         <img src="<?= e($vThumb) ?>" alt="<?= e($vItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="600" height="340">
@@ -180,7 +184,7 @@ include dirname(__DIR__) . '/includes/header.php';
     $sEmbed = trim((string) ($sItem['embed_url'] ?? ''));
     $sType = trim((string) ($sItem['embed_type'] ?? ''));
     $sPreview = work_item_previewable($sItem);
-    $sHref = $sPreview && $sSrc !== '' ? $sSrc : 'work.php';
+    $sHref = $sPreview && $sSrc !== '' ? $sSrc : 'work';
 ?><a href="<?= e($sHref) ?>"<?= $sPreview ? ' data-mm-media="1"' : '' ?> data-mm-kind="<?= e($sKind) ?>" data-mm-src="<?= e($sSrc) ?>" data-mm-embed="<?= e($sEmbed) ?>" data-mm-type="<?= e($sType) ?>" data-mm-poster="<?= e($sThumb) ?>" data-mm-title="<?= e($sItem['title']) ?>" data-mm-vertical="1" class="pf-card pf-card-short" aria-label="<?= e(($sPreview ? 'Play ' : 'View ') . $sItem['title']) ?>">
 <?php if ($sThumb !== ''): ?>
                         <img src="<?= e($sThumb) ?>" alt="<?= e($sItem['title']) ?> thumbnail" class="pf-thumb" loading="lazy" decoding="async" width="400" height="711">
@@ -193,6 +197,10 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (empty($homeShorts)): ?>
                     <p class="pf-empty">Shorts will appear here as soon as they are published from the Admin Panel.</p>
 <?php endif; ?>
+                </div>
+
+                <div class="rs-foot sec-more">
+                    <a href="work" class="seen-more-link" aria-label="See more of our work">Seen More <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </section>
@@ -260,7 +268,7 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
 
                     <div class="rs-foot">
-                        <a href="review.php" class="seen-more-link">Seen More <i class="fa-solid fa-arrow-right"></i></a>
+                        <a href="review" class="seen-more-link">Seen More <i class="fa-solid fa-arrow-right"></i></a>
                     </div>
 <?php $rvNote = setting_raw('home_reviews_note', 'Sample testimonials shown for layout preview — replace with verified client feedback before launch.'); if ($rvNote !== ''): ?>
                     <p class="rv-note"><?= e($rvNote) ?></p>
@@ -358,7 +366,7 @@ include dirname(__DIR__) . '/includes/header.php';
         </section>
 
         <div class="abt-services-cta">
-            <a href="service.php" class="hero-btn glass-btn-primary abt-services-btn" aria-label="Go to Our Services">
+            <a href="service" class="hero-btn glass-btn-primary abt-services-btn" aria-label="Go to Our Services">
                 Our Services <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
             </a>
         </div>

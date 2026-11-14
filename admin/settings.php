@@ -308,7 +308,7 @@ $s = settings();
                 <p>Uses bcrypt/Argon2 `password_hash()` and regenerates your session ID.</p>
             </div>
         </div>
-        <form method="post" action="settings.php" autocomplete="off">
+        <form method="post" action="settings" autocomplete="off">
             <?= csrf_field() ?>
             <input type="hidden" name="form_kind" value="change_password">
             <div class="adm-field">

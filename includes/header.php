@@ -22,11 +22,11 @@ $brandPartA = $brandWords[0] ?? 'MEXA';
 $brandPartB = $brandWords[1] ?? '';
 
 $navItems = [
-    ['key' => 'home', 'href' => 'index.php', 'i18n' => 'nav.home', 'label' => 'Home'],
-    ['key' => 'service', 'href' => 'service.php', 'i18n' => 'nav.service', 'label' => 'Service'],
-    ['key' => 'work', 'href' => 'work.php', 'i18n' => 'nav.work', 'label' => 'Work'],
-    ['key' => 'review', 'href' => 'review.php', 'i18n' => 'nav.review', 'label' => 'Review'],
-    ['key' => 'team', 'href' => 'team.php', 'i18n' => 'nav.headerTeam', 'label' => 'Team'],
+    ['key' => 'home', 'href' => './', 'i18n' => 'nav.home', 'label' => 'Home'],
+    ['key' => 'service', 'href' => 'service', 'i18n' => 'nav.service', 'label' => 'Service'],
+    ['key' => 'work', 'href' => 'work', 'i18n' => 'nav.work', 'label' => 'Work'],
+    ['key' => 'review', 'href' => 'review', 'i18n' => 'nav.review', 'label' => 'Review'],
+    ['key' => 'team', 'href' => 'team', 'i18n' => 'nav.headerTeam', 'label' => 'Team'],
 ];
 ?>
 <!DOCTYPE html>
@@ -63,7 +63,7 @@ $navItems = [
     <div class="w-full max-w-full overflow-x-hidden relative flex flex-col min-h-screen z-10">
         <header id="header" class="hdr-bar-wrap flex items-center bg-white">
             <div class="container mx-auto px-4 md:px-8 flex justify-between items-center w-full h-full gap-4">
-                <a href="index.php" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>" class="mm-brand-link flex items-center gap-2 group flex-shrink-0">
+                <a href="./" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>" class="mm-brand-link flex items-center gap-2 group flex-shrink-0">
                     <span class="brand-logo-badge">
                         <svg class="brand-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 100" role="img" aria-labelledby="title042 desc042">
                             <title id="title042">Mexa Motion M Mark 042</title>
@@ -88,7 +88,7 @@ $navItems = [
 <?php endforeach; ?>
                 </nav>
 
-                <a class="header-service-button" href="service.php" aria-label="Our Services"><span class="header-service-button-full" data-i18n="header.ourServices">Our Services</span><span class="header-service-button-short" data-i18n="nav.service">Service</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
+                <a class="header-service-button" href="service" aria-label="Our Services"><span class="header-service-button-full" data-i18n="header.ourServices">Our Services</span><span class="header-service-button-short" data-i18n="nav.service">Service</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a>
 
                 <button type="button" id="header-menu-toggle" onclick="toggleMobileMenu()" aria-controls="mobile-menu-drawer" aria-expanded="false" aria-label="Open menu" class="hdr-burger lg:hidden flex flex-col items-end justify-center gap-[6px] flex-shrink-0">
                     <span class="hdr-bar"></span>
@@ -104,7 +104,7 @@ $navItems = [
             <div id="mobile-menu-backdrop" class="mm-backdrop absolute inset-0 opacity-0 transition-opacity duration-300"></div>
             <div id="mobile-menu-drawer" class="mm-drawer absolute top-0 left-0 right-0 bg-white flex flex-col transform -translate-y-full transition-transform duration-[350ms] ease-[cubic-bezier(0.32,0.72,0,1)] overscroll-contain">
                 <div class="mm-heading">
-                    <a href="index.php" class="mm-heading-brand" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>">
+                    <a href="./" class="mm-heading-brand" aria-label="<?= e($siteName . ' — ' . $brandTagline) ?>">
                         <span class="mm-heading-mark" aria-hidden="true"><svg viewBox="0 0 120 100"><path d="M 17 89 L 25 11 L 47 11 L 64 43 L 91 11 L 112 11 L 104 89 L 81 89 L 85 51 L 62 78 L 41 50 L 37 89 Z" fill="#1152df"/><path d="M 2 31 H 18 M 0 47 H 16 M 3 63 H 18" fill="none" stroke="#49B8FF" stroke-width="4" stroke-linecap="round"/></svg></span>
                         <span class="mm-heading-name"><?= e($siteName) ?></span>
                     </a>
@@ -114,7 +114,7 @@ $navItems = [
 <?php foreach ($navItems as $item): $active = ($pageKey === $item['key']); ?>
                     <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="mobile-nav-item mm-item<?= $active ? ' is-active' : '' ?>"><span class="mm-label" data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span><span class="mm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
 <?php endforeach; ?>
-                    <a href="service.php" class="mm-action-button">
+                    <a href="service" class="mm-action-button">
                         <span class="mm-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 20.5 4l2 6.5L5 16z"/><path d="M7.5 17.5V21h4"/><path d="m9 8 4 3M14 6.8l4 3"/></svg></span>
                         <span class="mm-action-label" data-i18n="header.ourServices">Our Services</span>
                         <span class="mm-action-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></svg></span>

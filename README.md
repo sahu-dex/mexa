@@ -24,6 +24,7 @@ mexa/
 ├── uploads/
 │   ├── images/             Validated uploaded images (PHP execution disabled via .htaccess)
 │   └── videos/             Validated uploaded videos (PHP execution disabled via .htaccess)
+├── router.php              Clean-URL router for `php -S` (Apache uses .htaccess)
 ├── index.php               Homepage entry point
 ├── service.php             Services entry point
 ├── work.php                Portfolio entry point
@@ -32,7 +33,7 @@ mexa/
 ├── book.php                Retired endpoint (HTTP 410)
 ├── .env.example            Configuration template with placeholders
 ├── .gitignore              Excludes .env, runtime uploads, and logs from Git
-└── .htaccess               Apache security rules, directory index lock & 301 .html -> .php redirects
+└── .htaccess               Apache security rules, directory index lock & clean-URL routing & 301 redirects from old .php/.html addresses
 ```
 
 ---
@@ -223,3 +224,32 @@ rewrite ^/(index|service|work|review|team)\.html$ /$1.php permanent;
    - All database queries use `PDO` prepared statements (`ATTR_EMULATE_PREPARES => false`).
    - Dynamic HTML attributes and text output pass through `htmlspecialchars(..., ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8')`.
    - Public forms (`review.php`, newsletter, contact) and admin login enforce CSRF tokens, hidden honeypot fields, and IP-hashed rate limiting (`storage/ratelimits/`).
+
+---
+
+## 9. Clean URLs
+
+Pages are served without the `.php` extension, and old addresses redirect (301) to the new ones.
+
+| Address | Serves |
+| --- | --- |
+| `/` | `index.php` |
+| `/service`, `/work`, `/review`, `/team`, `/privacy`, `/terms` | the matching `*.php` page |
+| `/admin` | sign-in page, or the dashboard when already signed in |
+| `/admin/services`, `/admin/work`, … | the matching admin module |
+| `/api/*.php` | unchanged (form and JSON endpoints) |
+
+* **Apache / cPanel:** handled by `.htaccess` (needs `mod_rewrite`, which the file already relied on).
+* **PHP built-in server:** `.htaccess` is ignored there, so start it with the router:
+
+  ```bash
+  php -S 0.0.0.0:8000 router.php
+  ```
+
+  `router.php` also refuses `.env`, `config/`, `includes/`, `database/` and similar paths, which the built-in server would otherwise serve as plain files.
+
+## 10. Admin Sessions
+
+* Sign-in is rate limited (5 attempts per 15 minutes) and CSRF protected.
+* A session ends after 2 hours without activity (`MEXA_ADMIN_IDLE_SECONDS` in `includes/functions.php`) and is tied to the browser it was created in.
+* Signing out requires the Sign Out button (a POST with the CSRF token); admin pages are sent with `Cache-Control: no-store`.

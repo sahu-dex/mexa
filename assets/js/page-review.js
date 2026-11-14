@@ -1,6 +1,9 @@
 (function () {
     'use strict';
     function el(id) { return document.getElementById(id); }
+    // Same limit the server enforces (MEXA_REVIEW_MAX_WORDS).
+    var MAX_WORDS = 100;
+    function wordCount(text) { var m = String(text || '').trim().match(/\S+/g); return m ? m.length : 0; }
     function esc(v) {
         return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
@@ -158,7 +161,7 @@
 
     if (el('rvx-body')) {
         el('rvx-body').addEventListener('input', function () {
-            if (el('rvx-body-count')) el('rvx-body-count').textContent = this.value.length + ' / 900';
+            if (el('rvx-body-count')) el('rvx-body-count').textContent = wordCount(this.value) + ' / ' + MAX_WORDS + ' words';
         });
     }
 
@@ -250,6 +253,7 @@
             if (!roleVal || Array.from(roleVal).length > 60) return showError('Please enter your title (up to 60 characters).');
             if (!rvState.photoFile || !photoInput.files || !photoInput.files.length) return showError(rvState.photoError || 'Please upload a photo with your review.');
             if (Array.from(bodyVal).length < 15 || Array.from(bodyVal).length > 900) return showError('Please write a review between 15 and 900 characters.');
+            if (wordCount(bodyVal) > MAX_WORDS) return showError('Please keep your review within ' + MAX_WORDS + ' words.');
 
             var fd = new FormData();
             fd.append('name', nameVal);
@@ -281,7 +285,7 @@
                 rvState.photoError = '';
                 rvPhotoResetUI();
                 rvPaintStars(0);
-                if (el('rvx-body-count')) el('rvx-body-count').textContent = '0 / 900';
+                if (el('rvx-body-count')) el('rvx-body-count').textContent = '0 / ' + MAX_WORDS + ' words';
                 btn.disabled = false;
 
                 if (el('rvx-modal-name')) el('rvx-modal-name').textContent = nameVal.split(' ')[0] || 'there';

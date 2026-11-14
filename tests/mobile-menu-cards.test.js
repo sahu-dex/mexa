@@ -124,7 +124,7 @@ test('the services action goes to the services page and reuses the shared label'
     // It is the services CTA, matching the header button.
     const at = header.indexOf('class="mm-action-button"');
     const action = header.slice(header.lastIndexOf('<a ', at), header.indexOf('</a>', at));
-    assert.match(action, /href="service\.php"/);
+    assert.match(action, /href="service"/);
     assert.match(action, /data-i18n="header\.ourServices"/);
     assert.match(js, /'header\.ourServices': 'Our Services'/);
 
@@ -295,4 +295,25 @@ test('the menu stylesheet URL changes whenever its appearance does', () => {
     assert.ok(m, 'the sheet must be requested with a version token');
     assert.match(m[1], /^\d{8}-[a-z0-9-]+$/, 'token should be YYYYMMDD-slug, got ' + m[1]);
     assert.doesNotMatch(m[1], /20261112|^20261114-cards$/, 'this token predates the current design');
+});
+
+test('the sheet is joined to the bar: no seam, and the bar is never dimmed', () => {
+    const css = read(SHEET);
+    const js = read('assets/js/site-common.js');
+    const markup = read('includes/header.php');
+
+    // The bar rule must not depend on an id the <body> does not have — that
+    // made it dead code, so the overlay dimmed the header.
+    assert.doesNotMatch(markup, /<body[^>]*id=/);
+    assert.doesNotMatch(css, /body#/);
+    // Specific enough to beat mobile-header-fixed.css, which loads later.
+    assert.match(css, /html body #header#header\.hdr-bar-wrap\s*\{\s*z-index:\s*10060\s*!important/);
+
+    // No hairline on the sheet, white carried down from the bar.
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*border-top:\s*0\s*!important/);
+    assert.match(css, /#mobile-menu-drawer\.mm-drawer\s*\{[^}]*background-image:\s*linear-gradient\(180deg, #ffffff 0/);
+    // The bar drops its divider only while the menu is open.
+    assert.match(css, /body\.mm-joined #header#header\.hdr-bar-wrap\s*\{[^}]*border-bottom-color:\s*transparent\s*!important[^}]*box-shadow:\s*none\s*!important/);
+    assert.match(js, /classList\.add\('mm-joined'\)/);
+    assert.match(js, /classList\.remove\('mm-joined'\)/);
 });

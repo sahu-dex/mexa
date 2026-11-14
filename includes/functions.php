@@ -437,27 +437,76 @@ function admin_count(): int
     return (int) db()->query('SELECT COUNT(*) FROM `admins`')->fetchColumn();
 }
 
+/** Seconds an admin session may sit idle before it has to sign in again. */
+const MEXA_ADMIN_IDLE_SECONDS = 7200;
+
+function admin_session_fingerprint(): string
+{
+    return hash('sha256', (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''));
+}
+
+function admin_session_forget(): void
+{
+    unset($_SESSION['admin_id'], $_SESSION['admin_username'], $_SESSION['admin_email'], $_SESSION['admin_seen'], $_SESSION['admin_fp']);
+}
+
 function current_admin(): ?array
 {
+    static $cached = false;
+    if ($cached !== false) {
+        return $cached;
+    }
     mexa_start_session();
     $adminId = $_SESSION['admin_id'] ?? null;
     if (!is_int($adminId) && !ctype_digit((string) $adminId)) {
         return null;
     }
+
+    // Idle timeout, and the session must still belong to the browser it was
+    // issued to. Either failing signs the session out.
+    $seen = (int) ($_SESSION['admin_seen'] ?? 0);
+    $fingerprint = (string) ($_SESSION['admin_fp'] ?? '');
+    if ($seen > 0 && (time() - $seen) > MEXA_ADMIN_IDLE_SECONDS) {
+        admin_session_forget();
+        $_SESSION['admin_expired'] = 1;
+        return null;
+    }
+    if ($fingerprint !== '' && !hash_equals($fingerprint, admin_session_fingerprint())) {
+        admin_session_forget();
+        return null;
+    }
+
     $stmt = db()->prepare('SELECT `id`, `username`, `email`, `last_login_at`, `created_at` FROM `admins` WHERE `id` = :id LIMIT 1');
     $stmt->execute([':id' => (int) $adminId]);
     $row = $stmt->fetch();
-    return $row ?: null;
+    if (!$row) {
+        admin_session_forget();
+        return null;
+    }
+    $_SESSION['admin_seen'] = time();
+    return $cached = $row;
+}
+
+/** Admin pages must never be stored by the browser or a proxy. */
+function admin_no_cache_headers(): void
+{
+    if (PHP_SAPI === 'cli' || headers_sent()) {
+        return;
+    }
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+    header('Pragma: no-cache');
+    header('X-Robots-Tag: noindex, nofollow');
 }
 
 function require_admin(bool $asJson = false): array
 {
+    admin_no_cache_headers();
     $admin = current_admin();
     if ($admin === null) {
         if ($asJson) {
             json_response(['ok' => false, 'error' => 'Unauthorized. Please log in as admin.'], 401);
         }
-        redirect_to('login.php');
+        redirect_to('login');
     }
     return $admin;
 }
@@ -465,9 +514,15 @@ function require_admin(bool $asJson = false): array
 function admin_login_user(array $adminRow): void
 {
     mexa_start_session();
+    // New session id and a new CSRF token: nothing issued before the login
+    // stays valid after it.
     session_regenerate_id(true);
+    unset($_SESSION['admin_expired'], $_SESSION['csrf_token']);
     $_SESSION['admin_id'] = (int) $adminRow['id'];
     $_SESSION['admin_username'] = (string) $adminRow['username'];
+    $_SESSION['admin_email'] = (string) ($adminRow['email'] ?? '');
+    $_SESSION['admin_seen'] = time();
+    $_SESSION['admin_fp'] = admin_session_fingerprint();
     $_SESSION['_csrf_token'] = bin2hex(random_bytes(32));
 
     $stmt = db()->prepare('UPDATE `admins` SET `last_login_at` = NOW() WHERE `id` = :id');
@@ -749,6 +804,26 @@ function get_work_bundle(?string $kind = null, ?string $category = null, ?string
     ];
 }
 
+/** Longest review the site shows or accepts, in words. */
+const MEXA_REVIEW_MAX_WORDS = 100;
+
+function mexa_word_count(string $text): int
+{
+    $words = preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+    return is_array($words) ? count($words) : 0;
+}
+
+// Cuts at display time, so reviews stored before the limit existed keep their
+// full text in the database and only the public cards are shortened.
+function limit_words(string $text, int $max = MEXA_REVIEW_MAX_WORDS): string
+{
+    $words = preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+    if (!is_array($words) || count($words) <= $max) {
+        return trim($text);
+    }
+    return rtrim(implode(' ', array_slice($words, 0, $max)), " \t,;:-") . '…';
+}
+
 function get_reviews_bundle(bool $excludeFeaturedOnly = false): array
 {
     $sql = 'SELECT * FROM `reviews` WHERE `status` = :status';
@@ -779,7 +854,7 @@ function get_reviews_bundle(bool $excludeFeaturedOnly = false): array
             'name' => (string) $r['name'],
             'role' => (string) ($r['role'] ?? ''),
             'rating' => $rating,
-            'body' => (string) $r['body'],
+            'body' => limit_words((string) $r['body']),
             'file_path' => $fp,
             'photo_url' => $fp,
             'is_featured' => (int) $r['is_featured'],
@@ -806,12 +881,16 @@ function get_featured_reviews(): array
     $stmt = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status AND `is_featured` = 1 ORDER BY `id` ASC');
     $stmt->execute([':status' => 'approved']);
     $rows = $stmt->fetchAll();
-    if (!empty($rows)) {
-        return $rows;
+    if (empty($rows)) {
+        $fallback = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status ORDER BY `created_at` DESC LIMIT 10');
+        $fallback->execute([':status' => 'approved']);
+        $rows = $fallback->fetchAll();
     }
-    $fallback = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status ORDER BY `created_at` DESC LIMIT 10');
-    $fallback->execute([':status' => 'approved']);
-    return $fallback->fetchAll();
+    foreach ($rows as &$row) {
+        $row['body'] = limit_words((string) ($row['body'] ?? ''));
+    }
+    unset($row);
+    return $rows;
 }
 
 // Limit legacy profiles at display time without changing the stored admin content.
@@ -1046,7 +1125,7 @@ function page_stylesheets(string $pageKey): array
     // the older file rendered the *previous* design (38px rows, #1940e6 pill)
     // and it looked like the new work had never been applied. Bump this token
     // whenever the sheet's appearance changes.
-    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-reference-menu';
+    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-header-joined2';
     // Mobile header geometry: solid, flush with the top, content below it.
     $stylesheets[] = 'assets/css/mobile-header-fixed.css?v=20261114-header-solid';
     // Scroll/tap/compositing costs. Rendering behaviour only — no visual change.
@@ -1054,5 +1133,11 @@ function page_stylesheets(string $pageKey): array
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
+    // Review-card scrolling, the extra "Seen More" rows and the service page's
+    // contact + ticket section.
+    $stylesheets[] = 'assets/css/section-additions.css?v=20261114-panel';
+    // Phone sizing pass (hero, buttons, section spacing). Every rule is inside
+    // a max-width query, so desktop is untouched. Must stay last.
+    $stylesheets[] = 'assets/css/mobile-responsive.css?v=20261114-reviews';
     return $stylesheets;
 }

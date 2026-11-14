@@ -1,0 +1,213 @@
+/*
+ * Phone sizing pass.
+ *
+ * Every rule here sits inside a max-width query, so nothing in this file can
+ * reach the desktop layout. It is loaded last and only resizes what was still
+ * desktop-sized on a phone: the home hero (48px headline, 58px buttons, a
+ * 420px character) and the 80px top/bottom padding on every home section.
+ */
+
+@media (max-width: 767.98px) {
+    /* ------------------------------------------------------------ home hero */
+
+    html body #home.ref-hero {
+        /* No forced full-screen height: the hero is as tall as its content. */
+        min-height: 0 !important;
+        align-items: flex-start !important;
+        padding-top: 22px !important;
+        padding-bottom: 36px !important;
+    }
+
+    html body #home .ref-hero-eyebrow {
+        display: inline-flex !important;
+        width: auto !important;
+        max-width: 100% !important;
+        justify-self: start !important;
+        padding: 6px 12px !important;
+        margin-bottom: 14px !important;
+        font-size: 10.5px !important;
+    }
+
+    html body #home .ref-hero-title {
+        font-size: clamp(28px, 8.4vw, 36px) !important;
+        line-height: 1.12 !important;
+        margin-bottom: 6px !important;
+    }
+
+    html body #home .ref-hero-subtitle {
+        min-height: 0 !important;
+        height: auto !important;
+        margin-bottom: 14px !important;
+        font-size: clamp(15px, 4.5vw, 18px) !important;
+        line-height: 1.35 !important;
+    }
+
+    html body #home #ref-hero-typed {
+        font-size: inherit !important;
+        line-height: inherit !important;
+    }
+
+    html body #home .ref-hero-description {
+        margin-bottom: 14px !important;
+        font-size: 14.5px !important;
+        line-height: 1.6 !important;
+    }
+
+    html body #home .ref-hero-description strong {
+        font-size: inherit !important;
+    }
+
+    html body #home .ref-hero-visual {
+        margin-bottom: 18px !important;
+    }
+
+    /* The character is a supporting image on a phone, not a full-screen one. */
+    html body #home .ref-hero-character img {
+        width: min(62vw, 250px) !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+
+    /* Two equal buttons on one row instead of two oversized stacked ones. */
+    html body #home .ref-hero-actions {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 10px !important;
+        width: 100% !important;
+    }
+
+    html body #home .ref-hero-actions a {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        min-height: 44px !important;
+        height: 44px !important;
+        padding: 0 12px !important;
+        gap: 7px !important;
+        font-size: 14px !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+    }
+
+    html body #home .ref-hero-actions a i {
+        font-size: 12px !important;
+    }
+
+    html body #home .ref-hero-secondary i.fa-play {
+        font-size: 9px !important;
+        padding: 3px !important;
+    }
+
+    /* ------------------------------------------------------ section rhythm */
+
+    /* 80px above and below every section stacked into 160px empty bands
+       between them. 44px keeps the sections distinct without the dead space. */
+    html body section.py-20 {
+        padding-top: 44px !important;
+        padding-bottom: 44px !important;
+    }
+
+    html body section.pb-16.pt-8 {
+        padding-top: 8px !important;
+        padding-bottom: 20px !important;
+    }
+
+    /* ----------------------------------------------------------- overflow */
+
+    /* Long words, e-mail addresses and URLs wrap instead of widening the page. */
+    html body :is(main, section, footer) :is(p, li, a, h1, h2, h3, h4, span) {
+        overflow-wrap: anywhere;
+    }
+
+    html body :is(img, video, iframe, table, pre) {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 359.98px) {
+    html body #home .ref-hero-actions a {
+        padding: 0 8px !important;
+        font-size: 13px !important;
+    }
+}
+
+/* The hero paragraph's size is set in the mx-typography cascade layer with
+   !important, and a layered !important outranks any unlayered one. It has to be
+   answered in the same layer; this file loads later, so it wins there. */
+@layer mx-typography {
+    @media (max-width: 767.98px) {
+        body #home .ref-hero-description {
+            font-size: 14.5px !important;
+            line-height: 1.6 !important;
+        }
+    }
+}
+
+/* ---------------------------------------------------------- review cards */
+
+/* 288×405px cards with 32px padding filled the whole phone screen one at a
+   time. Compact cards let the next one peek in, so the row reads as a row. */
+@media (max-width: 767.98px) {
+    html body #reviews .reviews-container {
+        gap: 12px !important;
+        padding-bottom: 22px !important;
+    }
+
+    html body #reviews .reviews-container .review-card {
+        width: min(70vw, 248px) !important;
+        min-height: 0 !important;
+        padding: 16px !important;
+        border-radius: 20px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-card-top {
+        margin-bottom: 10px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-story {
+        font-size: 9.5px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-stars {
+        font-size: 11px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-quote {
+        min-height: 0 !important;
+        max-height: 126px !important;
+        margin: 0 0 12px !important;
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-person {
+        margin-top: auto !important;
+        padding-top: 10px !important;
+        gap: 10px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-avatar {
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+    }
+}
+
+/* The quote's size is also pinned in the typography layer (`p` inside a
+   section), so the 13px has to be stated there to take effect. */
+@layer mx-typography {
+    @media (max-width: 767.98px) {
+        body #reviews .reviews-container .review-card .rv-quote {
+            font-size: 13px !important;
+            line-height: 1.55 !important;
+        }
+        body #reviews .reviews-container .review-card .rv-person h5 {
+            font-size: 13px !important;
+            line-height: 1.3 !important;
+        }
+        body #reviews .reviews-container .review-card .rv-person p {
+            font-size: 11.5px !important;
+            line-height: 1.35 !important;
+        }
+    }
+}

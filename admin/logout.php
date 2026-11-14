@@ -2,27 +2,17 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/includes/functions.php';
+send_security_headers();
+admin_no_cache_headers();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    require_csrf(false);
+// Signing out changes state, so it only happens on a POST carrying the session's
+// CSRF token. A plain link (or an <img> on another site) cannot sign anyone out.
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    header('Location: ./');
+    exit;
 }
+require_csrf(false);
 
-start_secure_session();
-$_SESSION = [];
-
-if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(
-        session_name(),
-        '',
-        time() - 42000,
-        $params['path'],
-        $params['domain'],
-        (bool) $params['secure'],
-        (bool) $params['httponly']
-    );
-}
-
-session_destroy();
-header('Location: login.php');
+admin_logout_user();
+header('Location: login?out=1');
 exit;
