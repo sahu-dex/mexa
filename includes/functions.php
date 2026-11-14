@@ -1031,7 +1031,7 @@ function page_stylesheets(string $pageKey): array
     // light-blue palette wins over page-specific theme files.
     $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
     // Shared reference-inspired colour and font grade; leaves page structure intact.
-    $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261114-members-dark';
+    $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261114-team-original';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     // Gallery-only presentation fixes for the Work/Home video cards.
