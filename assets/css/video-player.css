@@ -248,48 +248,71 @@
     outline-offset: 3px;
 }
 
-/* --------------------------------------------------------- centre play cue */
+/* ----------------------------------------------------- centre control cluster */
 
+/* -10s · play/pause · +10s, sitting in the middle of the picture exactly like
+   the YouTube app. It follows the rest of the controls: visible while the
+   controls are up, gone when they fade away. */
 .mxvp__center {
     position: absolute;
     top: 50%;
     left: 50%;
     z-index: 15;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0;
+    border: 0;
+    background: none;
+    transform: translate(-50%, -50%);
+    transition: opacity .2s ease;
+}
+
+.mxvp__cc {
     display: grid;
     place-items: center;
-    width: 68px;
-    height: 68px;
+    width: 54px;
+    height: 54px;
     padding: 0;
     border: 0;
     border-radius: 50%;
     background: rgba(9, 18, 33, .58);
     color: #fff;
     cursor: pointer;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, .42), inset 0 0 0 1px rgba(255, 255, 255, .24);
-    transition: background .18s ease, transform .18s ease, opacity .2s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .42), inset 0 0 0 1px rgba(255, 255, 255, .24);
+    transition: background .18s ease, transform .18s ease;
 }
 
-.mxvp__center svg {
+.mxvp__cc svg {
     display: block;
-    width: 28px;
-    height: 28px;
-    margin-left: 3px;
+    width: 24px;
+    height: 24px;
     pointer-events: none;
 }
 
-.mxvp__center:hover {
-    background: rgba(16, 81, 223, .9);
-    transform: translate(-50%, -50%) scale(1.06);
+.mxvp__cc-main {
+    width: 68px;
+    height: 68px;
 }
 
-.mxvp__center:focus-visible {
+.mxvp__cc-main svg {
+    width: 28px;
+    height: 28px;
+}
+
+.mxvp__cc:hover {
+    background: rgba(16, 81, 223, .9);
+    transform: scale(1.06);
+}
+
+.mxvp__cc:focus-visible {
     outline: 2px solid #8fbcff;
     outline-offset: 3px;
 }
 
 .mxvp.is-idle .mxvp__center {
     opacity: 0;
+    pointer-events: none;
 }
 
 /* ------------------------------------------------------------- control bar */
@@ -346,7 +369,7 @@
 .mxvp__seek::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #2f7cf6 0 var(--mxvp-played), rgba(255, 255, 255, .34) var(--mxvp-played) 100%);
+    background: linear-gradient(90deg, #2f7cf6 0 var(--mxvp-played), rgba(255, 255, 255, .22) var(--mxvp-played) 100%);
 }
 
 .mxvp__seek::-webkit-slider-thumb {
@@ -372,7 +395,7 @@
 .mxvp__seek::-moz-range-track {
     height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .34);
+    background: rgba(255, 255, 255, .22);
 }
 
 .mxvp__seek::-moz-range-progress {
@@ -461,7 +484,7 @@
 .mxvp__volume::-webkit-slider-runnable-track {
     height: 4px;
     border-radius: 999px;
-    background: linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .34) var(--mxvp-volume) 100%);
+    background: linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .22) var(--mxvp-volume) 100%);
 }
 
 .mxvp__volume::-webkit-slider-thumb {
@@ -478,7 +501,7 @@
 .mxvp__volume::-moz-range-track {
     height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .34);
+    background: rgba(255, 255, 255, .22);
 }
 
 .mxvp__volume::-moz-range-progress {
@@ -610,14 +633,28 @@ body.mxvp-open {
         font-size: 11px;
     }
 
-    .mxvp__center {
+    .mxvp__cc {
+        width: 46px;
+        height: 46px;
+    }
+
+    .mxvp__cc svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .mxvp__cc-main {
         width: 58px;
         height: 58px;
     }
 
-    .mxvp__center svg {
+    .mxvp__cc-main svg {
         width: 24px;
         height: 24px;
+    }
+
+    .mxvp__center {
+        gap: 10px;
     }
 }
 
@@ -632,9 +669,14 @@ body.mxvp-open {
         padding-top: 18px;
     }
 
-    .mxvp__center {
+    .mxvp__cc-main {
         width: 52px;
         height: 52px;
+    }
+
+    .mxvp__cc {
+        width: 42px;
+        height: 42px;
     }
 }
 

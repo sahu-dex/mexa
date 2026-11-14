@@ -1037,7 +1037,7 @@ function page_stylesheets(string $pageKey): array
     // Gallery-only presentation fixes for the Work/Home video cards.
     $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery';
     // One shared video player for every video on the site.
-    $stylesheets[] = 'assets/css/video-player.css?v=20261114-video-systems';
+    $stylesheets[] = 'assets/css/video-player.css?v=20261114-centre-cluster';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

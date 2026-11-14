@@ -68,7 +68,11 @@
             '<div class="mxvp__stage" data-mxvp-stage>' +
                 '<div class="mxvp__media" data-mxvp-media></div>' +
                 '<div class="mxvp__sink" data-mxvp-sink aria-hidden="true"></div>' +
-                '<button type="button" class="mxvp__center" data-mxvp-center aria-label="Play video">' + ICON.play + '</button>' +
+                '<div class="mxvp__center" data-mxvp-center-group>' +
+                    '<button type="button" class="mxvp__cc" data-mxvp-center-back aria-label="Rewind 10 seconds">' + ICON.back + '</button>' +
+                    '<button type="button" class="mxvp__cc mxvp__cc-main" data-mxvp-center aria-label="Play video">' + ICON.play + '</button>' +
+                    '<button type="button" class="mxvp__cc" data-mxvp-center-forward aria-label="Forward 10 seconds">' + ICON.forward + '</button>' +
+                '</div>' +
                 '<div class="mxvp__spinner" data-mxvp-spinner aria-hidden="true" hidden></div>' +
                 '<p class="mxvp__error" data-mxvp-error role="status" hidden>This video could not be played.</p>' +
                 '<button type="button" class="mxvp__close" ' + CLOSE_ATTR + '="1" aria-label="Close video">' + ICON.close + '</button>' +
@@ -286,7 +290,8 @@
         refs.stage = modal.querySelector('[data-mxvp-stage]');
         refs.media = modal.querySelector('[data-mxvp-media]');
         refs.sink = modal.querySelector('[data-mxvp-sink]');
-        refs.center = modal.querySelector('[data-mxvp-center]');
+        refs.center = modal.querySelector('[data-mxvp-center-group]');
+        refs.centerPlay = modal.querySelector('[data-mxvp-center]');
         refs.spinner = modal.querySelector('[data-mxvp-spinner]');
         refs.error = modal.querySelector('[data-mxvp-error]');
         refs.bar = modal.querySelector('[data-mxvp-bar]');
@@ -315,7 +320,9 @@
         });
 
         refs.play.addEventListener('click', togglePlay);
-        refs.center.addEventListener('click', togglePlay);
+        refs.centerPlay.addEventListener('click', togglePlay);
+        modal.querySelector('[data-mxvp-center-back]').addEventListener('click', function () { skip(-SKIP_SECONDS); });
+        modal.querySelector('[data-mxvp-center-forward]').addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.back.addEventListener('click', function () { skip(-SKIP_SECONDS); });
         refs.forward.addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.mute.addEventListener('click', toggleMute);
@@ -553,35 +560,26 @@
     }
 
     function syncCenter() {
-        if (mode !== 'video' && mode !== 'youtube') {
-            refs.center.hidden = true;
-            return;
-        }
-        if (mode === 'youtube' && !youtubeReady()) {
+        if (!refs.center) return;
+
+        var allowed = (mode === 'video' || mode === 'youtube') &&
+            !(modal && modal.classList.contains('is-embed')) &&
+            !(modal && modal.classList.contains('is-image'));
+        if (!allowed || (mode === 'youtube' && !youtubeReady()) || (mode === 'video' && !currentVideo())) {
             refs.center.hidden = true;
             return;
         }
 
-        var show;
-        if (isEnded()) {
-            show = true;
-        } else if (mode === 'youtube') {
-            var state = ytState();
-            show = state === YT_PAUSED || state === YT_ENDED || state === YT_CUED;
-        } else {
-            var video = currentVideo();
-            if (!video) {
-                refs.center.hidden = true;
-                return;
-            }
-            // Wait for the first frame so a normal autoplay start has no flash.
-            show = (video.paused || video.ended) && (video.readyState >= 1 || video.currentTime > 0 || video.ended);
-        }
+        var ended = isEnded();
+        var playing = isPlaying();
 
-        refs.center.hidden = !show;
-        refs.center.innerHTML = isEnded() ? ICON.replay : ICON.play;
-        if (show) setControlsVisible(true);
+        refs.center.hidden = false;
+        if (refs.centerPlay) {
+            refs.centerPlay.innerHTML = ended ? ICON.replay : (playing ? ICON.pause : ICON.play);
+            refs.centerPlay.setAttribute('aria-label', ended ? 'Replay video' : (playing ? 'Pause video' : 'Play video'));
+        }
     }
+
 
     function syncPlayButton() {
         var playing = isPlaying();
@@ -819,8 +817,7 @@
                 if (!isOpen || mode !== 'youtube') return;
                 if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING || isEnded()) return;
                 ytAutoplayBlocked = true;
-                refs.center.hidden = false;
-                refs.center.innerHTML = ICON.play;
+                syncCenter();
                 setControlsVisible(true);
             }, 1500);
         }

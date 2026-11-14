@@ -127,6 +127,33 @@ test('playback is tuned for speed, resilience and every device', () => {
     assert.match(css, /\.mxvp\.is-pseudo-fullscreen \.mxvp__close/, 'close stays reachable in that mode');
 });
 
+test('the centre cluster, auto-hide and time label match the brief', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // -10s | play/pause | +10s in the middle of the picture.
+    assert.match(js, /data-mxvp-center-back/);
+    assert.match(js, /data-mxvp-center-forward/);
+    assert.match(js, /data-mxvp-center-group/);
+    assert.match(js, /ICON\.back/, 'rewind icon');
+    assert.match(js, /ICON\.forward/, 'forward icon');
+    assert.match(js, /refs\.centerPlay\.innerHTML = ended \? ICON\.replay : \(playing \? ICON\.pause : ICON\.play\)/);
+    assert.match(css, /\.mxvp__cc-main \{/, 'big centre button');
+    assert.match(css, /\.mxvp\.is-idle \.mxvp__center \{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/, 'cluster leaves the way when the controls fade');
+
+    // Controls fade by themselves and come back on any mouse/touch activity.
+    assert.match(js, /\}, 2800\);/, 'controls hide after a short idle period');
+    assert.match(js, /\['pointermove', 'pointerdown', 'touchstart', 'focusin'\]/, 'activity wakes the controls');
+
+    // Current time / total duration, seek bar and volume all share the bar.
+    assert.match(js, /formatTime\(time\) \+ ' \/ ' \+ formatTime\(duration\)/);
+    assert.match(css, /\.mxvp__seek/);
+    assert.match(css, /\.mxvp__volume/);
+
+    // The unplayed part of the tracks is dim, not a white bar.
+    assert.doesNotMatch(css, /rgba\(255, 255, 255, \.34\)/);
+});
+
 test('the close button sits on the very top-right corner of the player', () => {
     const css = read('assets/css/video-player.css');
     const close = css.match(/\n\.mxvp__close \{([^}]*)\}/);
