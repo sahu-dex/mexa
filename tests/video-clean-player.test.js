@@ -77,6 +77,25 @@ test('YouTube falls back to a normal embed when the API cannot load', () => {
     assert.match(js, /youtube-nocookie\.com\/embed\//);
 });
 
+test('a dead YouTube API never leaves the viewer with only a poster', () => {
+    const js = read('assets/js/video-player.js');
+
+    // Every API failure mode routes through one degradation helper ...
+    assert.match(js, /function degradeYoutube\(reason\)/, 'degradation helper exists');
+    assert.match(js, /degradeYoutube\('player never became ready'\)/, 'player never ready -> standard embed');
+    assert.match(js, /degradeYoutube\('player error'\)/, 'API error -> standard embed');
+    assert.match(js, /degradeYoutube\('api script could not be loaded'\)/, 'script failure -> standard embed');
+    assert.match(js, /degradeYoutube\('playback did not start'\)/, 'rejected play command -> standard embed');
+
+    // ... and the waits are short enough that nobody stares at a spinner.
+    const api = js.match(/var YT_API_TIMEOUT = (\d+);/);
+    assert.ok(api && Number(api[1]) <= 4000, 'API load timeout is at most 4s');
+    assert.match(js, /var YT_READY_TIMEOUT = \d+;/, 'ready watchdog exists');
+
+    // A throw anywhere in the mount path must not leave an empty player.
+    assert.match(js, /catch \(err\) \{\s*\/\/ Never leave the viewer with an empty player/);
+});
+
 test('the close button sits on the very top-right corner of the player', () => {
     const css = read('assets/css/video-player.css');
     const close = css.match(/\n\.mxvp__close \{([^}]*)\}/);

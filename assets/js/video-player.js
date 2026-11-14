@@ -34,7 +34,14 @@
     var SEEK_MAX = 1000;
     var SKIP_SECONDS = 10;
     var YT_API_SRC = 'https://www.youtube.com/iframe_api';
-    var YT_API_TIMEOUT = 7000;
+    // The IFrame API is the only path that keeps YouTube's own chrome off the
+    // player, but it is a third-party script: ad blockers, in-app browsers and
+    // flaky networks can block it or swallow its callback. Each of these timers
+    // is the point where we give up on the API and switch the same clip to the
+    // standard embed, so a video never sits behind a dead poster.
+    var YT_API_TIMEOUT = 3000;
+    var YT_READY_TIMEOUT = 4500;
+    var YT_START_TIMEOUT = 4000;
 
     // YouTube player states.
     var YT_ENDED = 0;
@@ -101,6 +108,10 @@
     var ytTick = 0;
     var ytStarted = false;
     var ytApiPromise = null;
+    var ytReady = false;
+    var ytWatchdog = 0;
+    var ytStartWatchdog = 0;
+    var ytRequest = null;
     var requestToken = 0;
 
     /* ---------------------------------------------------------------- media */
@@ -408,7 +419,11 @@
         if (youtubeReady()) {
             try {
                 ytPlayer.playVideo();
-            } catch (err) {}
+            } catch (err) {
+                if (ytReady) degradeYoutube('play command failed');
+                return;
+            }
+            watchYtStart();
             return;
         }
         var video = currentVideo();
@@ -669,7 +684,7 @@
                 settled = true;
                 reject(new Error('YouTube API could not be loaded'));
             };
-            document.head.appendChild(script);
+            (document.head || document.documentElement || document.body).appendChild(script);
 
             window.setTimeout(function () {
                 if (settled) return;
@@ -710,6 +725,11 @@
 
     function destroyYoutube() {
         stopYtTick();
+        window.clearTimeout(ytWatchdog);
+        window.clearTimeout(ytStartWatchdog);
+        ytWatchdog = 0;
+        ytStartWatchdog = 0;
+        ytReady = false;
         ytStarted = false;
         if (ytPlayer) {
             try { if (ytPlayer.stopVideo) ytPlayer.stopVideo(); } catch (err) {}
@@ -745,12 +765,30 @@
     }
 
     /**
+     * The API needs a real http(s) origin; "null" (file://, some sandboxes)
+     * makes YouTube reject the player outright, so only send a valid one.
+     */
+    function youtubeOrigin() {
+        var origin = '';
+        try {
+            origin = String(window.location.origin || '');
+        } catch (err) {
+            origin = '';
+        }
+        return /^https?:\/\//i.test(origin) ? origin : '';
+    }
+
+    /**
      * Play a YouTube video with the IFrame Player API and controls disabled so
      * YouTube shows no logo, title, channel, share buttons or "More videos"
      * screen. Our own control bar drives the player instead.
      */
     function mountYoutube(request) {
         var token = ++requestToken;
+        ytRequest = request;
+        ytReady = false;
+        window.clearTimeout(ytWatchdog);
+        window.clearTimeout(ytStartWatchdog);
         var host = document.createElement('div');
         host.className = 'mxvp__yt';
         refs.media.appendChild(host);
@@ -760,6 +798,15 @@
 
         loadYoutubeApi().then(function (YT) {
             if (token !== requestToken || !isOpen || mode !== 'youtube') return;
+
+            // If the player object never becomes ready the iframe was blocked
+            // or never loaded, so fall back instead of showing a dead poster.
+            window.clearTimeout(ytWatchdog);
+            ytWatchdog = window.setTimeout(function () {
+                if (token !== requestToken || !isOpen) return;
+                if (ytReady) return;
+                degradeYoutube('player never became ready');
+            }, YT_READY_TIMEOUT);
 
             try {
                 ytPlayer = new YT.Player(host, {
@@ -774,7 +821,7 @@
                         fs: 0,
                         iv_load_policy: 3,
                         modestbranding: 1,
-                        origin: window.location.origin,
+                        origin: youtubeOrigin(),
                         playsinline: 1,
                         rel: 0,
                         showinfo: 0
@@ -782,6 +829,8 @@
                     events: {
                         onReady: function (event) {
                             if (token !== requestToken || !isOpen) return;
+                            ytReady = true;
+                            window.clearTimeout(ytWatchdog);
                             showSpinner(false);
                             try {
                                 if (event.target.setVolume) {
@@ -810,23 +859,58 @@
                         },
                         onError: function () {
                             if (token !== requestToken || !isOpen) return;
-                            stopYtTick();
-                            showError(true);
-                            showSpinner(false);
-                            syncPlayButton();
+                            // Errors 2/5/100/101/150 mean the API player could
+                            // not load this clip; the plain embed often still
+                            // can (and can at least tell the viewer why not).
+                            degradeYoutube('player error');
                         }
                     }
                 });
             } catch (err) {
-                fallbackYoutubeFrame(request);
+                degradeYoutube('player could not be created');
             }
         }).catch(function () {
             if (token !== requestToken || !isOpen) return;
-            fallbackYoutubeFrame(request);
+            degradeYoutube('api script could not be loaded');
         });
     }
 
     /** If the API is unavailable, fall back to a normal YouTube embed so the clip still plays. */
+    /**
+     * Give up on the IFrame API for this clip and use the standard embed.
+     * The video still plays; keeping the site usable matters more than hiding
+     * YouTube's own controls in a browser that refuses the API.
+     */
+    function degradeYoutube(reason) {
+        if (!isOpen || mode !== 'youtube' || !ytRequest) return;
+        if (modal.classList.contains('is-embed')) return;
+        window.clearTimeout(ytWatchdog);
+        window.clearTimeout(ytStartWatchdog);
+        if (window.console && console.warn) {
+            console.warn('[mexa video] YouTube IFrame API unavailable (' + reason + '); falling back to the standard embed.');
+        }
+        var request = ytRequest;
+        // Leave the player's own event callback before replacing it.
+        window.setTimeout(function () {
+            if (!isOpen || mode !== 'youtube') return;
+            fallbackYoutubeFrame(request);
+        }, 0);
+    }
+
+    /** After an explicit play command, make sure the API actually started. */
+    function watchYtStart() {
+        if (!ytReady) return;
+        window.clearTimeout(ytStartWatchdog);
+        ytStartWatchdog = window.setTimeout(function () {
+            if (!isOpen || mode !== 'youtube' || ytStarted) return;
+            if (modal.classList.contains('is-embed')) return;
+            var state = ytState();
+            if (state === YT_PLAYING || state === YT_BUFFERING ||
+                state === YT_PAUSED || state === YT_ENDED) return;
+            degradeYoutube('playback did not start');
+        }, YT_START_TIMEOUT);
+    }
+
     function fallbackYoutubeFrame(request) {
         if (!isOpen || mode !== 'youtube' || !request.videoId) return;
 
@@ -1005,14 +1089,20 @@
         lockScroll(true);
         setControlsVisible(true);
 
-        if (mode === 'video') {
-            mountVideo(request);
-        } else if (mode === 'youtube') {
-            mountYoutube(request);
-        } else if (mode === 'embed') {
-            mountEmbed(request);
-        } else {
-            mountImage(request);
+        try {
+            if (mode === 'video') {
+                mountVideo(request);
+            } else if (mode === 'youtube') {
+                mountYoutube(request);
+            } else if (mode === 'embed') {
+                mountEmbed(request);
+            } else {
+                mountImage(request);
+            }
+        } catch (err) {
+            // Never leave the viewer with an empty player and no explanation.
+            if (mode === 'youtube' && request.videoId) fallbackYoutubeFrame(request);
+            else showError(true);
         }
 
         try {
@@ -1034,6 +1124,7 @@
         if (!isOpen) return;
 
         isOpen = false;
+        ytRequest = null;
         window.clearTimeout(hideTimer);
         clearMedia();
         showSpinner(false);
