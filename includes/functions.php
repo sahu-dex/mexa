@@ -1135,7 +1135,7 @@ function page_stylesheets(string $pageKey): array
     }
     // Review-card scrolling, the extra "Seen More" rows and the service page's
     // contact + ticket section.
-    $stylesheets[] = 'assets/css/section-additions.css?v=20261114';
+    $stylesheets[] = 'assets/css/section-additions.css?v=20261114-panel';
     // Phone sizing pass (hero, buttons, section spacing). Every rule is inside
     // a max-width query, so desktop is untouched. Must stay last.
     $stylesheets[] = 'assets/css/mobile-responsive.css?v=20261114-reviews';
