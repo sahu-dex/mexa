@@ -100,6 +100,27 @@
     right: 14px;
 }
 
+/* iOS Safari has no Element.requestFullscreen, so the same picture is produced
+   with CSS: the stage simply becomes the viewport. */
+.mxvp.is-pseudo-fullscreen .mxvp__stage {
+    --mxvp-radius: 0px;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+    z-index: 3;
+}
+
+.mxvp.is-pseudo-fullscreen .mxvp__close {
+    top: 14px;
+    right: 14px;
+    z-index: 40;
+}
+
 /* ------------------------------------------------------------------ media */
 
 .mxvp__media {
@@ -112,9 +133,22 @@
     transition: opacity .18s ease;
 }
 
+/* A YouTube frame paints its own black box while the player boots. Keep it
+   invisible behind the poster until the frame actually answers, then fade the
+   picture in — no black flash, no half-drawn player. */
+.mxvp.is-youtube .mxvp__media {
+    opacity: 0;
+}
+
+.mxvp.is-youtube.is-yt-live .mxvp__media,
+.mxvp.is-youtube.is-embed .mxvp__media {
+    opacity: 1;
+}
+
 /* After a YouTube clip ends, hide the iframe so YouTube's "More videos"
    screen never appears; the poster and our replay button take over. */
-.mxvp.is-ended .mxvp__media {
+.mxvp.is-ended .mxvp__media,
+.mxvp.is-youtube.is-ended .mxvp__media {
     opacity: 0;
     pointer-events: none;
 }

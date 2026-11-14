@@ -108,6 +108,10 @@
     var ytStarted = false;
     var ytReady = false;        // the frame answered a postMessage
     var ytNativeUi = false;     // this browser never answered: use YouTube's UI
+    var ytRetry = 0;            // one clean re-mount before giving up
+    var ytAutoplayBlocked = false;  // remember: this browser wants muted autoplay
+    var ytAutoMuted = false;    // we muted on purpose so the clip starts by itself
+    var primed = false;         // connection warm-up for YouTube
     var ytPlayerState = -1;
     var ytTime = 0;
     var ytDuration = 0;
@@ -407,6 +411,14 @@
     function playMedia() {
         if (mode === 'youtube') {
             ytSend('playVideo');
+            if (ytAutoMuted) {
+                // The tap that started playback also allows sound again.
+                ytAutoMuted = false;
+                ytMuted = false;
+                ytSend('setVolume', [ytVolume || 100]);
+                ytSend('unMute');
+                syncVolume();
+            }
             watchYtStart();
             return;
         }
@@ -459,6 +471,7 @@
     function applyMuteToggle() {
         if (mode === 'youtube') {
             var muted = isMuted();
+            ytAutoMuted = false;
             ytMuted = !muted;
             if (muted) {
                 if (ytVolume === 0) {
@@ -582,7 +595,7 @@
     }
 
     function syncFullscreenButton() {
-        var active = !!(document.fullscreenElement || document.webkitFullscreenElement);
+        var active = isFullscreen();
         if (refs.fullscreen) {
             refs.fullscreen.innerHTML = active ? ICON.exitFullscreen : ICON.fullscreen;
             refs.fullscreen.setAttribute('aria-label', active ? 'Exit fullscreen' : 'Fullscreen');
@@ -651,7 +664,7 @@
         return /^https?:\/\//i.test(origin) ? origin : '';
     }
 
-    function youtubeFrameUrl(videoId, nativeUi) {
+    function youtubeFrameUrl(videoId, nativeUi, muted) {
         var params = [
             'autoplay=1',
             'cc_load_policy=0',
@@ -665,12 +678,32 @@
             'rel=0',
             'showinfo=0'
         ];
+        if (muted) params.push('mute=1');
         var origin = youtubeOrigin();
         if (origin) params.push('origin=' + encodeURIComponent(origin));
         // The no-cookie host is the same player and answers the same messages;
         // it is also the host that keeps working when a blocker targets
         // www.youtube.com.
         return 'https://www.youtube-nocookie.com/embed/' + videoId + '?' + params.join('&');
+    }
+
+    /**
+     * Warm up the YouTube hosts before the first click so the player boots
+     * immediately instead of paying DNS + TLS at the moment of the request.
+     */
+    function primeYoutube() {
+        if (primed || !document.head) return;
+        primed = true;
+        ['https://www.youtube-nocookie.com', 'https://www.youtube.com', 'https://i.ytimg.com'].forEach(function (href) {
+            var preconnect = document.createElement('link');
+            preconnect.rel = 'preconnect';
+            preconnect.href = href;
+            document.head.appendChild(preconnect);
+            var dns = document.createElement('link');
+            dns.rel = 'dns-prefetch';
+            dns.href = href;
+            document.head.appendChild(dns);
+        });
     }
 
     function ytPost(payload) {
@@ -766,13 +799,17 @@
             ytReady = true;
             window.clearTimeout(ytWatchdog);
             ytWatchdog = 0;
+            // Reveal the picture only now, so the poster covers the moment
+            // where YouTube would otherwise paint a black box.
+            modal.classList.add('is-yt-live');
             showSpinner(false);
             syncPlayButton();
             syncProgress();
-            // A browser that blocks autoplay needs a visible way in.
+            // A browser that blocks audible autoplay needs a visible way in.
             window.setTimeout(function () {
                 if (!isOpen || mode !== 'youtube') return;
                 if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING || isEnded()) return;
+                ytAutoplayBlocked = true;
                 refs.center.hidden = false;
                 refs.center.innerHTML = ICON.play;
                 setControlsVisible(true);
@@ -782,7 +819,14 @@
         var info = data.info;
 
         if (data.event === 'onError') {
-            degradeYoutube('player error ' + (typeof info === 'number' ? info : ''));
+            var code = typeof info === 'number' ? info : 0;
+            // 2/5/153 are transient or configuration hiccups: one clean retry
+            // fixes them far more often than YouTube's own UI does.
+            if ((code === 2 || code === 5 || code === 153) && ytRetry < 1) {
+                retryYoutube('player error ' + code);
+                return;
+            }
+            degradeYoutube('player error ' + code);
             return;
         }
 
@@ -807,6 +851,28 @@
         if (data.event === 'infoDelivery' || data.event === 'initialDelivery' || data.event === 'apiInfoDelivery') {
             mergeYtInfo(info);
         }
+    }
+
+    /** One clean re-mount of the same clip before falling back. */
+    function retryYoutube(reason) {
+        ytRetry += 1;
+        if (ytRetry > 1) {
+            degradeYoutube(reason);
+            return;
+        }
+        var request = ytRequest;
+        if (!request) {
+            degradeYoutube(reason);
+            return;
+        }
+        if (window.console && console.warn) {
+            console.warn('[mexa video] retrying the YouTube frame (' + reason + ').');
+        }
+        window.setTimeout(function () {
+            if (!isOpen || mode !== 'youtube' || ytRequest !== request) return;
+            clearMedia();
+            mountYoutube(request);
+        }, 0);
     }
 
     function stopYtTick() {
@@ -865,11 +931,16 @@
         ytTime = 0;
         ytDuration = 0;
         ytVolume = Math.round(Math.max(0, Math.min(1, rememberVolume)) * 100);
-        ytMuted = false;
+        // Some browsers only autoplay muted. Once that happened, start the next
+        // clip muted as well so it plays instantly; a real tap restores sound.
+        ytAutoMuted = ytAutoplayBlocked;
+        ytMuted = ytAutoMuted;
         window.clearTimeout(ytWatchdog);
         window.clearTimeout(ytStartWatchdog);
 
+        modal.classList.remove('is-yt-live');
         showSpinner(true);
+        syncVolume();
         syncCenter();
 
         var nativeUi = ytNativeUi;
@@ -888,10 +959,18 @@
                 return;
             }
             ytSend('setVolume', [ytVolume]);
+            if (ytAutoMuted) ytSend('mute');
             ytSend('playVideo');
+            // The player sometimes subscribes a moment after `load`, so repeat
+            // the handshake instead of waiting for the watchdog to fire.
+            window.setTimeout(function () {
+                if (token !== requestToken || !isOpen) return;
+                ytListen();
+                ytSend('playVideo');
+            }, 400);
         });
 
-        frame.src = youtubeFrameUrl(request.videoId, nativeUi);
+        frame.src = youtubeFrameUrl(request.videoId, nativeUi, ytAutoMuted);
         mediaEl = frame;
         ytFrame = frame;
         refs.media.appendChild(frame);
@@ -1075,7 +1154,8 @@
         modal.classList.toggle('is-embed', mode === 'embed');
         modal.classList.toggle('is-youtube', mode === 'youtube');
         modal.classList.toggle('is-image', mode === 'image');
-        modal.classList.remove('is-fullscreen', 'is-idle', 'is-ended');
+        modal.classList.remove('is-fullscreen', 'is-pseudo-fullscreen', 'is-idle', 'is-ended', 'is-yt-live');
+        if (mode === 'youtube') ytRetry = 0;
         refs.dialog.setAttribute('aria-label', request.title + ' — video player');
         refs.stage.style.backgroundImage = request.poster ? cssUrl(request.poster) : '';
 
@@ -1141,16 +1221,11 @@
         showSpinner(false);
         showError(false);
 
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            var exit = document.exitFullscreen || document.webkitExitFullscreen;
-            if (exit) {
-                try { exit.call(document); } catch (err) {}
-            }
-        }
+        exitFullscreen();
 
         modal.hidden = true;
         modal.setAttribute('aria-hidden', 'true');
-        modal.classList.remove('is-vertical', 'is-embed', 'is-youtube', 'is-image', 'is-fullscreen', 'is-idle', 'is-ended');
+        modal.classList.remove('is-vertical', 'is-embed', 'is-youtube', 'is-image', 'is-fullscreen', 'is-pseudo-fullscreen', 'is-idle', 'is-ended', 'is-yt-live');
         refs.stage.style.backgroundImage = '';
 
         refs.seek.value = '0';
@@ -1206,24 +1281,65 @@
         applyMuteToggle();
     }
 
-    function toggleFullscreen() {
-        var active = document.fullscreenElement || document.webkitFullscreenElement;
-        if (active) {
+    function isFullscreen() {
+        return !!(document.fullscreenElement || document.webkitFullscreenElement ||
+            (modal && modal.classList.contains('is-pseudo-fullscreen')));
+    }
+
+    /**
+     * Phones without the Fullscreen API (iOS Safari) still get a real
+     * fullscreen picture: the stage expands to the viewport with CSS.
+     */
+    function pseudoFullscreen(on) {
+        if (!modal) return;
+        modal.classList.toggle('is-pseudo-fullscreen', !!on);
+        syncFullscreenButton();
+        syncCenter();
+    }
+
+    function exitFullscreen() {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
             var exit = document.exitFullscreen || document.webkitExitFullscreen;
             if (exit) {
-                var leaving = exit.call(document);
-                if (leaving && typeof leaving.catch === 'function') leaving.catch(function () {});
+                try {
+                    var leaving = exit.call(document);
+                    if (leaving && typeof leaving.catch === 'function') leaving.catch(function () {});
+                } catch (err) {}
             }
+        }
+        if (modal && modal.classList.contains('is-pseudo-fullscreen')) pseudoFullscreen(false);
+    }
+
+    function toggleFullscreen() {
+        if (isFullscreen()) {
+            exitFullscreen();
             return;
         }
+
         var stage = refs.stage;
         var request = stage.requestFullscreen || stage.webkitRequestFullscreen || stage.msRequestFullscreen;
         if (request) {
-            var entering = request.call(stage);
-            if (entering && typeof entering.catch === 'function') entering.catch(function () {});
-        } else if (currentVideo() && currentVideo().webkitEnterFullscreen) {
-            currentVideo().webkitEnterFullscreen();
+            try {
+                var entering = request.call(stage);
+                if (entering && typeof entering.catch === 'function') {
+                    entering.catch(function () { if (isOpen) pseudoFullscreen(true); });
+                }
+                // Browsers that silently ignore the request (iPhone Safari)
+                // fall through to the CSS fullscreen instead of doing nothing.
+                window.setTimeout(function () {
+                    if (!isOpen) return;
+                    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+                    if (modal.classList.contains('is-pseudo-fullscreen')) return;
+                    pseudoFullscreen(true);
+                }, 500);
+                return;
+            } catch (err) {}
         }
+        if (currentVideo() && currentVideo().webkitEnterFullscreen) {
+            currentVideo().webkitEnterFullscreen();
+            return;
+        }
+        pseudoFullscreen(true);
     }
 
     function onKeydown(event) {
@@ -1317,6 +1433,10 @@
         var card = event.target.closest(CARD_SELECTOR);
         if (!card) return;
 
+        // Hovering or touching a card warms up the YouTube connection so the
+        // first frame arrives as soon as the player opens.
+        primeYoutube();
+
         // Respect new-tab / download gestures on real links.
         if (card.tagName === 'A' && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return;
 
@@ -1335,6 +1455,19 @@
         event.preventDefault();
         openFrom(card);
     });
+
+    // Warm the YouTube hosts as soon as a video card is hovered or touched.
+    ['pointerover', 'touchstart', 'focusin'].forEach(function (type) {
+        document.addEventListener(type, function (event) {
+            if (!event.target || !event.target.closest) return;
+            if (event.target.closest(CARD_SELECTOR)) primeYoutube();
+        }, { passive: true });
+    });
+
+    primeYoutube();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', primeYoutube);
+    }
 
     window.MexaVideoPlayer = {
         isReady: true,

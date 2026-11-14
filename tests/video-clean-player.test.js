@@ -96,6 +96,37 @@ test('a YouTube frame that cannot be scripted still plays with YouTube controls'
     assert.match(js, /catch \(err\) \{\s*\/\/ Never leave the viewer with an empty player/);
 });
 
+test('playback is tuned for speed, resilience and every device', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // Connections are warmed before the click, so the first frame is quick.
+    assert.match(js, /function primeYoutube\(\)/, 'YouTube preconnect helper exists');
+    assert.match(js, /rel = 'preconnect'/, 'preconnects the YouTube hosts');
+    assert.match(js, /'pointerover', 'touchstart', 'focusin'/, 'warms up on hover/tap intent');
+
+    // The poster covers the boot moment instead of a black frame.
+    assert.match(css, /\.mxvp\.is-youtube \.mxvp__media \{[^}]*opacity:\s*0/, 'frame hidden until it answers');
+    assert.match(css, /\.mxvp\.is-youtube\.is-yt-live \.mxvp__media/, 'frame fades in when it answers');
+    assert.match(js, /classList\.add\('is-yt-live'\)/);
+    assert.match(css, /\.mxvp\.is-youtube\.is-embed \.mxvp__media/, 'always visible in the native-controls mode');
+
+    // One clean retry before handing the clip to YouTube's own controls.
+    assert.match(js, /function retryYoutube\(reason\)/, 'retry helper exists');
+    assert.match(js, /ytRetry < 1/, 'retries exactly once');
+
+    // Muted autoplay is remembered, so a blocked browser still starts instantly.
+    assert.match(js, /var ytAutoplayBlocked = false;/);
+    assert.match(js, /if \(muted\) params\.push\('mute=1'\)/, 'muted autoplay parameter');
+    assert.match(js, /if \(ytAutoMuted\) ytSend\('mute'\)/, 'mutes the frame when it has to');
+    assert.match(js, /if \(ytAutoMuted\) \{/, 'a real tap restores sound');
+
+    // Fullscreen works where the Fullscreen API does not exist (iPhone).
+    assert.match(js, /function pseudoFullscreen\(on\)/, 'CSS fullscreen fallback');
+    assert.match(css, /\.mxvp\.is-pseudo-fullscreen \.mxvp__stage/, 'stage fills the viewport');
+    assert.match(css, /\.mxvp\.is-pseudo-fullscreen \.mxvp__close/, 'close stays reachable in that mode');
+});
+
 test('the close button sits on the very top-right corner of the player', () => {
     const css = read('assets/css/video-player.css');
     const close = css.match(/\n\.mxvp__close \{([^}]*)\}/);
