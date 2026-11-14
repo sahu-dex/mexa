@@ -102,3 +102,85 @@ test('YouTube clips get the same clean controls as uploaded files', () => {
     assert.match(js, /if \(!draggingVolume\) refs\.volume\.value = String\(volume\);/);
     assert.match(js, /The slider shows the real level; only the icon says "muted"/);
 });
+
+test('the site-wide form styling cannot turn the player controls white', () => {
+    const css = read('assets/css/video-player.css');
+    const site = read('assets/css/premium-design-system.css');
+
+    // The culprit: every non-checkbox input is painted white with !important.
+    assert.match(site, /body :is\(input:not\(\[type=radio\]\)[^{]*\{background:#fff!important/, 'site rule still exists');
+
+    // The player therefore resets its two sliders with higher specificity and
+    // pinned properties, so no white pill can appear in the control bar.
+    ['seek', 'volume'].forEach((name) => {
+        const rule = css.match(new RegExp('body \\.mxvp \\.mxvp__' + name + ' \\{([^}]*)\\}'));
+        assert.ok(rule, name + ' is reset under body .mxvp');
+        assert.match(rule[1], /appearance:\s*none !important/, name + ' drops the native look');
+        assert.match(rule[1], /background:\s*transparent !important/, name + ' is not white');
+        assert.match(rule[1], /border:\s*0 !important/, name + ' has no field border');
+        assert.match(rule[1], /border-radius:\s*999px !important/, name + ' keeps its own radius');
+        assert.match(rule[1], /box-shadow:\s*none !important/, name + ' has no field shadow');
+    });
+
+    // Buttons are real buttons, never form fields.
+    const btn = css.match(/body \.mxvp \.mxvp__btn \{([^}]*)\}/)[1];
+    assert.match(btn, /background:\s*transparent !important/);
+    assert.match(btn, /border-radius:\s*50% !important/);
+    assert.match(btn, /padding:\s*0 !important/);
+    assert.match(btn, /box-shadow:\s*none !important/);
+    // There is no leftover pill-shaped element in the bar at all.
+    assert.doesNotMatch(css, /\.mxvp__bar[\s\S]{0,200}border-radius:\s*999px;\s*background:\s*#fff/);
+});
+
+test('the timeline is a dark track with a coloured played part and handle', () => {
+    const css = read('assets/css/video-player.css');
+
+    const track = css.match(/\.mxvp__seek::-webkit-slider-runnable-track \{([^}]*)\}/)[1];
+    assert.match(track, /height:\s*4px/);
+    assert.match(track, /border-radius:\s*999px/, 'rounded corners');
+    assert.match(track, /var\(--mxvp-accent\) 0 var\(--mxvp-played\)/, 'played part uses the accent');
+    assert.match(track, /rgba\(255, 255, 255, \.28\)/, 'unplayed part is dim grey, not white');
+
+    const thumb = css.match(/\.mxvp__seek::-webkit-slider-thumb \{([^}]*)\}/)[1];
+    assert.match(thumb, /background:\s*var\(--mxvp-accent\) !important/, 'the handle matches the played colour');
+
+    // YouTube and Shorts get YouTube red; an uploaded video keeps its blue.
+    assert.match(css, /body \.mxvp\.is-youtube \.mxvp__seek,\s*\nbody \.mxvp\.is-vertical \.mxvp__seek \{\s*--mxvp-accent:\s*#ff0033;/);
+    assert.match(css, /--mxvp-accent:\s*#2f7cf6;/);
+
+    // The handle thickens under the pointer, like YouTube's.
+    assert.match(css, /\.mxvp__seek:hover::-webkit-slider-runnable-track[^{]*\{[^}]*height:\s*5px/);
+});
+
+test('the fullscreen control stays inside a 9:16 Short on every screen', () => {
+    const css = read('assets/css/video-player.css');
+
+    // The bar is laid out from the player's own width, not the viewport's.
+    assert.match(css, /container-type:\s*inline-size/);
+    assert.match(css, /container-name:\s*mxvp-stage/);
+    assert.match(css, /@container mxvp-stage \(max-width: 430px\)/);
+    assert.match(css, /@container mxvp-stage \(max-width: 340px\)/);
+    assert.match(css, /@container mxvp-stage \(max-width: 310px\)/);
+
+    // Fullscreen is pinned to the right of the row and can never be pushed out.
+    assert.match(css, /body \.mxvp \.mxvp__btn--fs \{\s*margin-inline-start:\s*auto !important;/);
+    assert.match(css, /\.mxvp__row \{[^}]*flex-wrap:\s*nowrap/);
+    // The volume slider gives way before anything leaves the player.
+    assert.match(css, /body \.mxvp \.mxvp__volume \{[^}]*min-width:\s*26px/);
+
+    // 9:16 is untouched, in and out of fullscreen.
+    assert.match(css, /\.mxvp\.is-vertical \.mxvp__stage \{[^}]*aspect-ratio:\s*9 \/ 16/);
+    assert.match(
+        css,
+        /\.mxvp\.is-vertical \.mxvp__stage:fullscreen,[^}]*aspect-ratio:\s*9 \/ 16/,
+        'fullscreen keeps the vertical box'
+    );
+});
+
+test('a Short is never handed to the native fullscreen player', () => {
+    const js = read('assets/js/video-player.js');
+
+    assert.match(js, /function isVertical\(\)/);
+    assert.match(js, /if \(!isVertical\(\) && currentVideo\(\) && currentVideo\(\)\.webkitEnterFullscreen\)/,
+        'the 9:16 path stays on our own fullscreen');
+});

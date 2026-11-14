@@ -31,7 +31,11 @@
  *   • a double tap / double click on the picture plays or pauses, and a short
  *     badge confirms it before fading away;
  *   • every control lives in the bottom bar: play/pause, -10s, +10s, volume,
- *     progress, current/total time and fullscreen at the far right.
+ *     progress, current/total time and fullscreen at the far right;
+ *   • the timeline turns YouTube red for YouTube clips and Shorts, and keeps
+ *     its blue for uploaded videos;
+ *   • the bar is laid out from the player's width (CSS container queries), so
+ *     a 9:16 Short never pushes the fullscreen control out of its box.
  */
 (function () {
     'use strict';
@@ -1393,6 +1397,11 @@
         applyMuteToggle();
     }
 
+    /** True for a 9:16 Short rather than a regular 16:9 video. */
+    function isVertical() {
+        return !!modal && modal.classList.contains('is-vertical');
+    }
+
     function isFullscreen() {
         return !!(document.fullscreenElement || document.webkitFullscreenElement ||
             (modal && modal.classList.contains('is-pseudo-fullscreen')));
@@ -1446,7 +1455,10 @@
                 return;
             } catch (err) {}
         }
-        if (currentVideo() && currentVideo().webkitEnterFullscreen) {
+        // Desktop Safari: only uploaded files have this path, and only a real
+        // 16:9 video element should use it. A Short keeps its 9:16 box through
+        // the CSS fullscreen below, so the picture is never stretched.
+        if (!isVertical() && currentVideo() && currentVideo().webkitEnterFullscreen) {
             currentVideo().webkitEnterFullscreen();
             return;
         }

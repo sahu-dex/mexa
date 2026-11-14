@@ -13,6 +13,18 @@
  * short-lived double-tap confirmation badge (.mxvp__hint). All controls —
  * play/pause, ±10s, volume, progress, times, fullscreen — sit in .mxvp__bar at
  * the bottom.
+ *
+ * The bar owns its own look completely. Every rule that styles a form control
+ * is scoped to `body .mxvp …` and pins its properties with !important, because
+ * the site's premium-design-system.css paints every non-checkbox input white
+ * (`body :is(input…) { background:#fff!important; border-radius:12px!important }`),
+ * which used to turn the two range sliders into white pills in the bar.
+ *
+ * The timeline is a dark grey track with a coloured played section and a
+ * matching handle: YouTube red (#FF0033) for YouTube clips and vertical Shorts,
+ * the existing blue for uploaded 16:9 videos. The bar is sized from the
+ * player's own width (container queries on .mxvp__stage), so a narrow 9:16
+ * Short keeps its fullscreen button inside the picture on every device.
  */
 
 .mxvp[hidden],
@@ -55,6 +67,10 @@
 .mxvp__stage {
     --mxvp-radius: 16px;
     position: relative;
+    /* The control bar adapts to the player's width, not the screen's, so a
+       narrow 9:16 Short never overflows its own container. */
+    container-type: inline-size;
+    container-name: mxvp-stage;
     width: min(100%, 1180px, calc((100dvh - 96px) * 16 / 9));
     max-height: calc(100dvh - 40px);
     aspect-ratio: 16 / 9;
@@ -311,7 +327,7 @@
     bottom: 0;
     left: 0;
     z-index: 20;
-    padding: 28px 12px 10px;
+    padding: 32px 12px 12px;
     border-radius: 0 0 var(--mxvp-radius) var(--mxvp-radius);
     background: linear-gradient(to top, rgba(4, 10, 20, .94), rgba(4, 10, 20, .58) 52%, rgba(4, 10, 20, 0));
     transition: opacity .2s ease, transform .2s ease;
@@ -323,6 +339,12 @@
     transform: translateY(6px);
 }
 
+/* Nothing in the bar is allowed to escape the player: if a control needs more
+   room than the picture has, it wraps instead of sliding out of the box. */
+.mxvp__row {
+    flex-wrap: nowrap;
+}
+
 .mxvp.is-embed .mxvp__bar,
 .mxvp.is-image .mxvp__bar {
     display: none;
@@ -331,73 +353,128 @@
 .mxvp__scrub {
     display: flex;
     align-items: center;
-    height: 16px;
+    height: 14px;
+    padding: 0 2px;
 }
 
-/* Progress bar ------------------------------------------------------------ */
+/* ------------------------------------------------------------ progress bar */
 
-.mxvp__seek {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 16px;
-    margin: 0;
-    background: transparent;
+/*
+ * Dark grey track, rounded ends, a coloured played section and a matching seek
+ * handle. The whole element is the "hit" thickness, so the bar can be grabbed
+ * anywhere along its length and the video can be scrubbed.
+ *
+ * The colour follows the source, as asked for: YouTube clips and vertical
+ * Shorts get YouTube's bright red (#FF0033), while an uploaded 16:9 video keeps
+ * the blue timeline it already had.
+ *
+ * The site-wide form styling in premium-design-system.css paints every
+ * non-checkbox input white through `body :is(input…)` with !important, which
+ * is what used to turn these two sliders into white pills. Scoping the reset
+ * to `body .mxvp` (higher specificity) and pinning every property with
+ * !important keeps the player independent of that global rule.
+ */
+body .mxvp .mxvp__seek {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: block !important;
+    width: 100% !important;
+    height: 14px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: transparent !important;
     cursor: pointer;
     --mxvp-played: 0%;
+    --mxvp-accent: #2f7cf6;
 }
 
-.mxvp__seek:focus-visible {
-    outline: 2px solid #8fbcff;
-    outline-offset: 2px;
+/* YouTube and Shorts: YouTube's own red, on the same dark grey track. */
+body .mxvp.is-youtube .mxvp__seek,
+body .mxvp.is-vertical .mxvp__seek {
+    --mxvp-accent: #ff0033;
+}
+
+body .mxvp .mxvp__seek:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+body .mxvp .mxvp__seek:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .85) !important;
+    outline-offset: 4px;
     border-radius: 999px;
 }
 
-.mxvp__seek::-webkit-slider-runnable-track {
+/* WebKit / Blink ---------------------------------------------------------- */
+
+body .mxvp .mxvp__seek::-webkit-slider-runnable-track {
     height: 4px;
+    border: 0;
     border-radius: 999px;
-    background: linear-gradient(90deg, #2f7cf6 0 var(--mxvp-played), rgba(255, 255, 255, .22) var(--mxvp-played) 100%);
+    background:
+        linear-gradient(90deg, var(--mxvp-accent) 0 var(--mxvp-played), rgba(255, 255, 255, .28) var(--mxvp-played) 100%) !important;
+    transition: height .12s ease;
 }
 
-.mxvp__seek::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 13px;
-    height: 13px;
-    margin-top: -4.5px;
+body .mxvp .mxvp__seek::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 12px;
+    height: 12px;
+    margin-top: -4px;
     border: 0;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(47, 124, 246, .35);
-    opacity: 0;
-    transition: opacity .15s ease;
-}
-
-.mxvp__scrub:hover .mxvp__seek::-webkit-slider-thumb,
-.mxvp__seek:focus-visible::-webkit-slider-thumb,
-.mxvp__seek:active::-webkit-slider-thumb {
+    background: var(--mxvp-accent) !important;
+    box-shadow: none;
     opacity: 1;
+    transform: scale(.9);
+    transition: transform .12s ease;
 }
 
-.mxvp__seek::-moz-range-track {
+/* Under the pointer the bar thickens and the handle grows a little, exactly
+   like YouTube's timeline. */
+body .mxvp .mxvp__seek:hover::-webkit-slider-runnable-track,
+body .mxvp .mxvp__seek:focus-visible::-webkit-slider-runnable-track,
+body .mxvp .mxvp__seek:active::-webkit-slider-runnable-track {
+    height: 5px;
+}
+
+body .mxvp .mxvp__seek:hover::-webkit-slider-thumb,
+body .mxvp .mxvp__seek:focus-visible::-webkit-slider-thumb,
+body .mxvp .mxvp__seek:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+
+body .mxvp .mxvp__seek:hover::-webkit-slider-thumb {
+    margin-top: -3.5px;
+}
+
+/* Firefox ----------------------------------------------------------------- */
+
+body .mxvp .mxvp__seek::-moz-range-track {
+    height: 4px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .26) !important;
+}
+
+body .mxvp .mxvp__seek::-moz-range-progress {
     height: 4px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .22);
+    background: var(--mxvp-accent) !important;
 }
 
-.mxvp__seek::-moz-range-progress {
-    height: 4px;
-    border-radius: 999px;
-    background: #2f7cf6;
-}
-
-.mxvp__seek::-moz-range-thumb {
-    width: 13px;
-    height: 13px;
+body .mxvp .mxvp__seek::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
     border: 0;
     border-radius: 50%;
-    background: #fff;
-    box-shadow: 0 0 0 3px rgba(47, 124, 246, .35);
+    background: var(--mxvp-accent) !important;
+    box-shadow: none;
 }
 
 /* Buttons row ------------------------------------------------------------- */
@@ -406,108 +483,143 @@
     display: flex;
     align-items: center;
     gap: 2px;
-    margin-top: 2px;
+    min-width: 0;
+    margin-top: 0;
     color: #fff;
 }
 
-.mxvp__btn {
-    display: grid;
+/* Real buttons, never a form field: the site's global input/button styling
+   must not reach inside the player. */
+body .mxvp .mxvp__btn {
+    display: grid !important;
     place-items: center;
     flex: 0 0 auto;
     width: 36px;
     height: 36px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: transparent;
-    color: #fff;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    font: inherit;
+    line-height: 1;
     cursor: pointer;
-    transition: background .16s ease, color .16s ease;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    transition: background .16s ease, transform .16s ease;
 }
 
-.mxvp__btn svg {
+body .mxvp .mxvp__btn svg {
     display: block;
     width: 21px;
     height: 21px;
     pointer-events: none;
 }
 
-.mxvp__btn:hover {
-    background: rgba(255, 255, 255, .16);
+body .mxvp .mxvp__btn:hover {
+    background: rgba(255, 255, 255, .16) !important;
 }
 
-.mxvp__btn:focus-visible {
-    outline: 2px solid #8fbcff;
+body .mxvp .mxvp__btn:active {
+    transform: scale(.94);
+}
+
+body .mxvp .mxvp__btn:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, .85) !important;
     outline-offset: 2px;
+    border-radius: 50%;
 }
 
-.mxvp__btn--fs {
-    margin-left: auto;
+/* Fullscreen is the last control of the row and is pushed to the far right.
+   margin-inline-start (not margin-left) keeps that true in right-to-left too. */
+body .mxvp .mxvp__btn--fs {
+    margin-inline-start: auto !important;
+    margin-right: 0;
 }
 
 .mxvp__vol {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
+    flex: 0 1 auto;
+    min-width: 0;
 }
 
-.mxvp__volume {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 64px;
-    height: 16px;
-    margin: 0 4px 0 0;
-    background: transparent;
+/* Volume slider: a slim white line with a small white knob. It stays quiet
+   until the pointer is over the control, exactly like YouTube's. */
+body .mxvp .mxvp__volume {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    display: block !important;
+    flex: 0 1 auto;
+    width: 62px;
+    min-width: 38px;
+    max-width: 62px;
+    height: 14px !important;
+    margin: 0 2px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: transparent !important;
     cursor: pointer;
     --mxvp-volume: 100%;
 }
 
-.mxvp__volume:focus-visible {
-    outline: 2px solid #8fbcff;
-    outline-offset: 2px;
-    border-radius: 999px;
+body .mxvp .mxvp__volume:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.mxvp__volume::-webkit-slider-runnable-track {
-    height: 4px;
+body .mxvp .mxvp__volume::-webkit-slider-runnable-track {
+    height: 3px;
+    border: 0;
     border-radius: 999px;
-    background: linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .22) var(--mxvp-volume) 100%);
+    background:
+        linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .3) var(--mxvp-volume) 100%) !important;
 }
 
-.mxvp__volume::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
+body .mxvp .mxvp__volume::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none !important;
     width: 11px;
     height: 11px;
-    margin-top: -3.5px;
+    margin-top: -4px;
     border: 0;
     border-radius: 50%;
-    background: #fff;
+    background: #fff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .45);
 }
 
-.mxvp__volume::-moz-range-track {
-    height: 4px;
+body .mxvp .mxvp__volume::-moz-range-track {
+    height: 3px;
+    border: 0;
     border-radius: 999px;
-    background: rgba(255, 255, 255, .22);
+    background: rgba(255, 255, 255, .3) !important;
 }
 
-.mxvp__volume::-moz-range-progress {
-    height: 4px;
+body .mxvp .mxvp__volume::-moz-range-progress {
+    height: 3px;
     border-radius: 999px;
-    background: #fff;
+    background: #fff !important;
 }
 
-.mxvp__volume::-moz-range-thumb {
+body .mxvp .mxvp__volume::-moz-range-thumb {
     width: 11px;
     height: 11px;
     border: 0;
     border-radius: 50%;
-    background: #fff;
+    background: #fff !important;
 }
 
 .mxvp__time {
-    margin-left: 8px;
-    color: rgba(255, 255, 255, .88);
+    flex: 0 0 auto;
+    margin-left: 10px;
+    margin-right: 4px;
+    color: rgba(255, 255, 255, .92);
     font: 500 12px/1 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
     font-variant-numeric: tabular-nums;
     letter-spacing: .01em;
@@ -598,26 +710,7 @@ body.mxvp-open {
     }
 
     .mxvp__bar {
-        padding: 24px 8px 8px;
-    }
-
-    .mxvp__btn {
-        width: 34px;
-        height: 34px;
-    }
-
-    .mxvp__btn svg {
-        width: 19px;
-        height: 19px;
-    }
-
-    .mxvp__volume {
-        width: 52px;
-    }
-
-    .mxvp__time {
-        margin-left: 6px;
-        font-size: 11px;
+        padding: 26px 8px 8px;
     }
 
     .mxvp__hint {
@@ -632,46 +725,134 @@ body.mxvp-open {
     }
 }
 
-/* Very small phones: keep every control — including the current/total time —
-   by tightening the row instead of dropping anything. */
-@media (max-width: 380px) {
+/* Very small phones are handled by the container queries below, so the sizing
+   follows the player's own width instead of the screen's. */
+
+@media (max-height: 480px) {
     .mxvp__bar {
-        padding: 22px 6px 6px;
+        padding-top: 18px;
+    }
+}
+
+/* ----------------------------------------------------------- Shorts (9:16) */
+
+/*
+ * A vertical Short is much narrower than a 16:9 video on the same screen, so
+ * the bar is laid out from the player's own width (container query) rather
+ * than from the viewport. That is what keeps the volume slider, the time
+ * label and the fullscreen button inside the picture on phones, tablets and
+ * desktops alike.
+ */
+@container mxvp-stage (max-width: 430px) {
+    .mxvp__bar {
+        padding: 26px 8px 8px;
     }
 
     .mxvp__row {
         gap: 0;
     }
 
-    .mxvp__btn {
+    body .mxvp .mxvp__btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    body .mxvp .mxvp__btn svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    body .mxvp .mxvp__volume {
+        width: 46px;
+        min-width: 30px;
+    }
+
+    .mxvp__time {
+        margin-left: 6px;
+        font-size: 11px;
+    }
+}
+
+/* Even narrower (small phones, or a phone in landscape showing a Short) the
+   slider simply gets shorter instead of pushing anything out of the player:
+   the mute button, the volume slider, the timeline, both times and fullscreen
+   all stay inside the picture. */
+@container mxvp-stage (max-width: 340px) {
+    .mxvp__bar {
+        padding: 22px 6px 6px;
+    }
+
+    body .mxvp .mxvp__btn {
         width: 30px;
         height: 30px;
     }
 
-    .mxvp__btn svg {
+    body .mxvp .mxvp__btn svg {
         width: 18px;
         height: 18px;
     }
 
-    .mxvp__vol {
-        gap: 0;
+    body .mxvp .mxvp__volume {
+        width: 34px;
+        min-width: 26px;
     }
 
-    .mxvp__volume {
-        width: 40px;
-        margin-right: 2px;
+    .mxvp__vol {
+        gap: 2px;
     }
 
     .mxvp__time {
         margin-left: 4px;
+        margin-right: 2px;
         font-size: 10.5px;
     }
 }
 
-@media (max-height: 480px) {
+/* The narrowest phones (320px) still get every control; only the padding and
+   the slider get tighter so the fullscreen button stays inside the picture. */
+@container mxvp-stage (max-width: 310px) {
     .mxvp__bar {
-        padding-top: 18px;
+        padding: 20px 4px 4px;
     }
+
+    body .mxvp .mxvp__btn {
+        width: 27px;
+        height: 27px;
+    }
+
+    body .mxvp .mxvp__btn svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    body .mxvp .mxvp__volume {
+        width: 26px;
+        min-width: 22px;
+    }
+
+    .mxvp__vol {
+        gap: 0;
+        margin-inline: 1px;
+    }
+
+    .mxvp__time {
+        margin-left: 3px;
+        margin-right: 0;
+        font-size: 10px;
+    }
+}
+
+/* Vertical Shorts keep their 9:16 picture; the bar simply sits at the bottom
+   of that box with equal padding on both sides, so the fullscreen control is
+   always inside the player and never clipped by the corner radius. */
+.mxvp.is-vertical .mxvp__bar {
+    right: 0;
+    left: 0;
+    padding-inline: max(8px, env(safe-area-inset-left));
+}
+
+.mxvp.is-vertical .mxvp__scrub {
+    padding-inline: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {

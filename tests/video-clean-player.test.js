@@ -202,7 +202,11 @@ test('the bottom bar keeps every control, fullscreen last on the right', () => {
         bar.indexOf('data-mxvp-fullscreen') > bar.indexOf('data-mxvp-time'),
         'fullscreen sits at the end of the bar'
     );
-    assert.match(css, /\.mxvp__btn--fs \{\s*margin-left:\s*auto;/, 'fullscreen is pinned to the right');
+    assert.match(
+        css,
+        /body \.mxvp \.mxvp__btn--fs \{\s*margin-inline-start:\s*auto !important;/,
+        'fullscreen is pinned to the right'
+    );
     assert.match(js, /SKIP_SECONDS = 10/);
     assert.match(js, /skip\(-SKIP_SECONDS\)/);
     assert.match(js, /skip\(SKIP_SECONDS\)/);
