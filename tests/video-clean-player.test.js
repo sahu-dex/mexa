@@ -105,10 +105,13 @@ test('playback is tuned for speed, resilience and every device', () => {
     assert.match(js, /rel = 'preconnect'/, 'preconnects the YouTube hosts');
     assert.match(js, /'pointerover', 'touchstart', 'focusin'/, 'warms up on hover/tap intent');
 
-    // The poster covers the boot moment instead of a black frame.
-    assert.match(css, /\.mxvp\.is-youtube \.mxvp__media \{[^}]*opacity:\s*0/, 'frame hidden until it answers');
-    assert.match(css, /\.mxvp\.is-youtube\.is-yt-live \.mxvp__media/, 'frame fades in when it answers');
-    assert.match(js, /classList\.add\('is-yt-live'\)/);
+    // The frame stays hidden behind the poster until the clip is really
+    // playing, so YouTube's own grey play badge never reaches the screen.
+    assert.match(css, /\.mxvp\.is-youtube \.mxvp__media \{[^}]*opacity:\s*0/, 'frame hidden until playback');
+    assert.match(css, /\.mxvp\.is-youtube\.is-yt-live \.mxvp__media/, 'frame shown once playback starts');
+    assert.match(js, /function revealYtFrame\(\)/, 'the reveal is gated on playback');
+    assert.match(js, /if \(ytPlayerState === YT_PLAYING \|\| ytPlayerState === YT_BUFFERING\) \{\s*modal\.classList\.add\('is-yt-live'\);/,
+        'a running clip reveals the frame, once, and it stays revealed');
     assert.match(css, /\.mxvp\.is-youtube\.is-embed \.mxvp__media/, 'always visible in the native-controls mode');
 
     // One clean retry before handing the clip to YouTube's own controls.

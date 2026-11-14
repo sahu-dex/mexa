@@ -869,6 +869,32 @@
         }
     }
 
+    /**
+     * Reveal the YouTube picture once the clip has actually started, and keep it
+     * visible afterwards.
+     *
+     * `controls=0` removes YouTube's control bar, but YouTube still paints its
+     * own round grey play badge over a clip that has never run. Nothing inside
+     * a cross-origin frame can be styled, so before the first playback the frame
+     * is kept invisible behind the poster — that is what removes the badge from
+     * the middle of the picture. After that the frame stays visible (pausing a
+     * clip to a black screen would be worse than the badge), exactly like the
+     * real YouTube player.
+     */
+    function revealYtFrame() {
+        if (!isOpen || mode !== 'youtube') return;
+        if (ytNativeUi) {
+            // The native-controls fallback has to show the frame: its UI is the
+            // only way to control the clip then.
+            modal.classList.add('is-yt-live');
+            return;
+        }
+        // Sticky: a state change only ever turns the picture on, never off.
+        if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING) {
+            modal.classList.add('is-yt-live');
+        }
+    }
+
     function applyYtState(state) {
         ytPlayerState = state;
 
@@ -888,9 +914,12 @@
         } else if (state === YT_ENDED) {
             showSpinner(false);
             stopYtTick();
+            // The end screen ("More videos") must never be shown.
+            modal.classList.remove('is-yt-live');
             if (ytStarted) showEndPlate(true);
         }
 
+        revealYtFrame();
         syncVolume();
         syncPlayButton();
         syncProgress();
@@ -925,9 +954,11 @@
             ytReady = true;
             window.clearTimeout(ytWatchdog);
             ytWatchdog = 0;
-            // Reveal the picture only now, so the poster covers the moment
-            // where YouTube would otherwise paint a black box.
-            modal.classList.add('is-yt-live');
+            // The bridge answered — but that alone must not reveal the frame:
+            // YouTube draws its own grey play badge on an unstarted clip, which
+            // is the overlay that showed up in the middle of the picture.
+            // revealYtFrame() waits for real playback instead.
+            revealYtFrame();
             showSpinner(false);
             syncPlayButton();
             syncProgress();

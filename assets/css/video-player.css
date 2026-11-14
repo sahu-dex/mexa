@@ -173,9 +173,16 @@
     transition: opacity .18s ease;
 }
 
-/* A YouTube frame paints its own black box while the player boots. Keep it
-   invisible behind the poster until the frame actually answers, then fade the
-   picture in — no black flash, no half-drawn player. */
+/*
+ * A YouTube frame is only revealed when the clip is genuinely playing.
+ *
+ * `controls=0` removes YouTube's control bar, but the frame still paints its
+ * own grey play badge on a clip that is not running — the round overlay that
+ * used to appear in the middle of the picture right after opening a video.
+ * Nothing inside a cross-origin frame can be styled, so the frame stays
+ * invisible (behind our poster, which carries the spinner) until playback has
+ * actually started, and the badge therefore never reaches the screen.
+ */
 .mxvp.is-youtube .mxvp__media {
     opacity: 0;
 }

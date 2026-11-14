@@ -205,3 +205,35 @@ test('the volume slider cannot freeze after an interrupted drag', () => {
     assert.match(js, /if \(!draggingVolume \|\| !volumePointerDown\) refs\.volume\.value = String\(volume\);/,
         'the slider is only held while a pointer is really down');
 });
+
+test('YouTube\'s own grey play badge never appears in the middle of the picture', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // Why it used to appear: the frame was revealed as soon as the postMessage
+    // bridge answered, which happens while the clip is still cued — and YouTube
+    // paints a round grey play badge on a clip that is not running. Nothing
+    // inside a cross-origin frame can be styled, so the frame is only revealed
+    // once playback has actually begun.
+    assert.match(js, /function revealYtFrame\(\)/, 'the reveal has one place');
+    const reveal = js.match(/function revealYtFrame\(\) \{([\s\S]*?)\n    \}/)[1];
+    assert.match(reveal, /ytPlayerState === YT_PLAYING \|\| ytPlayerState === YT_BUFFERING/,
+        'the picture only shows for a running clip');
+    assert.match(reveal, /classList\.add\('is-yt-live'\)/, 'the reveal is sticky, so a pause never blanks the picture');
+    assert.doesNotMatch(reveal, /classList\.remove', 'is-yt-live'/, 'the picture is never taken away again');
+    assert.match(reveal, /if \(ytNativeUi\)/, 'the native-controls fallback still shows its frame');
+
+    // The reveal runs on every player state change, not on the first message.
+    const stateFn = js.match(/function applyYtState\(state\) \{([\s\S]*?)\n    \}/)[1];
+    assert.match(stateFn, /revealYtFrame\(\);/, 'state changes re-evaluate the reveal');
+    assert.doesNotMatch(
+        js.match(/if \(!ytReady\) \{([\s\S]*?)\n        \}/)[1],
+        /classList\.add\('is-yt-live'\)/,
+        'answering the bridge must not reveal the frame by itself'
+    );
+
+    // Hidden by default, shown when live, back to the poster at the end.
+    assert.match(css, /\.mxvp\.is-youtube \.mxvp__media \{[^}]*opacity:\s*0/);
+    assert.match(css, /\.mxvp\.is-youtube\.is-yt-live \.mxvp__media/);
+    assert.match(js, /modal\.classList\.remove\('is-yt-live'\);[\s\S]{0,120}showEndPlate\(true\)/);
+});
