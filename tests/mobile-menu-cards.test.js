@@ -262,3 +262,37 @@ test('the current row re-states its border colour', () => {
     // the colour to it, so border-color has to be stated on its own too.
     assert.match(css, /\.mm-item\.is-active[\s\S]{0,700}?border-color:\s*rgba\(7, 63, 232, \.32\)\s*!important/);
 });
+
+test('the bar outranks not just the menu root but the sheet that re-states it', () => {
+    const cards = read(SHEET);
+    const barSheet = read('assets/css/mobile-header-fixed.css');
+
+    // mobile-header-fixed.css loads *after* this sheet and re-states the bar at
+    // z-index 10001 with the same !important. Equal specificity + equal
+    // importance is decided by load order, so whatever this sheet says only
+    // wins while it is numerically higher. Rounds 8-10 shipped 10050 and 10001
+    // — i.e. a tie with the menu root — which let the open menu's overlay tint
+    // the header band.
+    const ours = +(cards.match(/#header\.hdr-bar-wrap\s*\{\s*z-index:\s*(\d+)\s*!important/) || [])[1];
+    const theirs = +(barSheet.match(/#header\.hdr-bar-wrap\s*\{[^}]*z-index:\s*(\d+)\s*!important/) || [])[1];
+    const root = +(read('assets/css/reference-header.css').match(/#mobile-menu\.mm-root\s*\{\s*z-index:\s*(\d+)\s*!important/) || [])[1];
+
+    assert.ok(ours > 0, 'the bar rule must exist in the menu sheet');
+    assert.ok(ours > (theirs || 0), 'the bar must outrank mobile-header-fixed.css (' + ours + ' vs ' + theirs + ')');
+    assert.ok(ours > (root || 0) + 1, 'the bar must sit clear of the menu root, not tie it (' + ours + ' vs ' + root + ')');
+    // The overlay must never be able to reach the bar.
+    assert.ok(theirs <= root, 'sanity: this is the conflict being guarded against');
+});
+
+test('the menu stylesheet URL changes whenever its appearance does', () => {
+    const styles = read('includes/functions.php');
+
+    // A stale copy in a phone's cache is invisible in the source but obvious on
+    // screen: round 10 measured exactly the pre-round-10 pill colour on a real
+    // device. The token has to be a dated, non-generic value so it can be
+    // bumped deliberately, and it must not be left at a historic one.
+    const m = styles.match(/mobile-menu-cards\.css\?v=([\w.-]+)/);
+    assert.ok(m, 'the sheet must be requested with a version token');
+    assert.match(m[1], /^\d{8}-[a-z0-9-]+$/, 'token should be YYYYMMDD-slug, got ' + m[1]);
+    assert.doesNotMatch(m[1], /20261112|^20261114-cards$/, 'this token predates the current design');
+});

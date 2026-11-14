@@ -91,13 +91,20 @@
         transition: transform 350ms cubic-bezier(.32, .72, 0, 1), visibility 0s !important;
     }
 
-    /* The bar sits above the menu root. They tied at z-index 10001 before, and
-       the menu comes later in the DOM, so the overlay painted over the header
-       and dragged the bar into the dimmed layer. This also makes the open
-       animation read correctly: the sheet emerges from behind the solid bar
-       instead of sliding across it. */
-    html body #header.hdr-bar-wrap {
-        z-index: 10050 !important;
+    /* The bar sits above the menu root.
+     *
+     * Two rules of equal specificity and equal importance are decided by load
+     * order, and mobile-header-fixed.css — which re-states the whole bar at
+     * z-index 10001 — is loaded *after* this file. So this value has to be high
+     * enough to win on its own merit, not merely on being more specific. At
+     * 10001 the bar tied the menu root (reference-header.css:125) and the open
+     * menu's overlay tinted the header band along with the page. Well clear of
+     * both now, and above every page section.
+     *
+     * This also makes the open animation read correctly: the sheet emerges from
+     * behind the solid bar instead of sliding across it. */
+    html body#html-body #header.hdr-bar-wrap {
+        z-index: 10060 !important;
     }
 
     /* The closed root must not intercept taps anywhere on the page. The hidden
