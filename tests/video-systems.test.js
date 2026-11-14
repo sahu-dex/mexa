@@ -76,3 +76,29 @@ test('shorts keep their 9:16 box in fullscreen on every device', () => {
     assert.match(css, /width: min\(100vw, calc\(100vh \* 9 \/ 16\)\)/, 'fullscreen is as wide as the picture, never stretched');
     assert.match(css, /object-fit: contain/, 'video keeps its aspect ratio');
 });
+
+test('YouTube clips get the same clean controls as uploaded files', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    // One bar, one set of controls: the YouTube mode only swaps the transport.
+    const template = js.slice(js.indexOf('var TEMPLATE ='), js.indexOf('var refs = {}'));
+    const barCount = (template.match(/data-mxvp-bar/g) || []).length;
+    assert.equal(barCount, 1, 'exactly one control bar for every provider');
+
+    // The picture stays bare for YouTube too: nothing in the middle to cover
+    // the clip, and the same double tap applies.
+    assert.doesNotMatch(template, /mxvp__center|mxvp__cc/, 'no centre controls in either mode');
+    assert.match(js, /function handleStageTap\(event, source\)/);
+    assert.match(js, /if \(mode === 'youtube'\) return ytPlayerState === YT_PLAYING;/);
+
+    // YouTube branding, title, channel and the related rail stay switched off.
+    // Official embed parameters only — no undocumented tricks.
+    ['controls=' , 'modestbranding=1', 'rel=0', 'showinfo=0', 'iv_load_policy=3', 'disablekb=1', 'fs=']
+        .forEach((needle) => assert.ok(js.includes(needle), 'embed parameter missing: ' + needle));
+
+    // Mute and level are separate, so the bar never shows "0 volume" for a mute.
+    assert.match(js, /if \(mode === 'youtube'\) return ytVolume \/ 100;/);
+    assert.match(js, /if \(!draggingVolume\) refs\.volume\.value = String\(volume\);/);
+    assert.match(js, /The slider shows the real level; only the icon says "muted"/);
+});

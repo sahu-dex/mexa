@@ -8,6 +8,11 @@
  * never injects a "×" through ::before/::after, so the old double-cross
  * problem cannot come back. No title, description or caption is rendered:
  * only the video and the player controls.
+ *
+ * The picture itself is bare: the only thing ever drawn in its middle is the
+ * short-lived double-tap confirmation badge (.mxvp__hint). All controls —
+ * play/pause, ±10s, volume, progress, times, fullscreen — sit in .mxvp__bar at
+ * the bottom.
  */
 
 .mxvp[hidden],
@@ -158,8 +163,8 @@
 }
 
 /* After a YouTube clip ends, hide the iframe so YouTube's "More videos"
-   screen never appears; the poster and our replay button take over. */
-.mxvp.is-ended .mxvp__media,
+   screen never appears; the poster and our replay button take over.
+   Uploaded files keep their last frame — the bar's replay button is enough. */
 .mxvp.is-youtube.is-ended .mxvp__media {
     opacity: 0;
     pointer-events: none;
@@ -248,91 +253,54 @@
     outline-offset: 3px;
 }
 
-/* ----------------------------------------------------- centre control cluster */
+/* ------------------------------------------------- double-tap confirmation */
 
-/* -10s · play/pause · +10s, dead centre of the picture.
-   YouTube-style: soft translucent black discs, no outline ring, one clear
-   hierarchy (the play/pause disc is the biggest), generous even spacing and a
-   gentle scale-in when the controls come back. */
-.mxvp__center {
+/*
+ * There is no control cluster in the middle of the picture. The middle stays
+ * empty on purpose; the only thing that can appear there is this soft badge,
+ * which fades in for a moment after a double tap to confirm play/pause and
+ * fades straight back out. It is not interactive (pointer-events: none), so it
+ * can never get in the way of the video or of the next tap.
+ */
+.mxvp__hint {
     position: absolute;
     top: 50%;
     left: 50%;
     z-index: 15;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: clamp(18px, 3vw, 34px);
-    padding: 0;
-    border: 0;
-    background: none;
-    transform: translate(-50%, -50%);
-    transition: opacity .24s ease;
-}
-
-.mxvp__cc {
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(8, 8, 8, .45);
+    gap: 10px;
+    padding: 12px 18px 12px 14px;
+    border-radius: 999px;
+    background: rgba(8, 8, 8, .58);
     color: #fff;
-    cursor: pointer;
+    font: 600 13px/1 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    letter-spacing: .01em;
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .28);
-    transform: scale(1);
-    transition:
-        background .18s ease,
-        transform .26s cubic-bezier(.22, .9, .3, 1),
-        opacity .24s ease;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -50%) scale(.86);
+    transition: opacity .18s ease, transform .22s cubic-bezier(.22, .9, .3, 1);
 }
 
-.mxvp__cc svg {
+.mxvp__hint.is-visible {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.mxvp__hint svg {
     display: block;
-    width: 26px;
-    height: 26px;
-    pointer-events: none;
+    width: 20px;
+    height: 20px;
 }
 
-.mxvp__cc-main {
-    width: 78px;
-    height: 78px;
-    background: rgba(8, 8, 8, .55);
-}
-
-.mxvp__cc-main svg {
-    width: 34px;
-    height: 34px;
-}
-
-.mxvp__cc:hover {
-    background: rgba(8, 8, 8, .78);
-    transform: scale(1.07);
-}
-
-.mxvp__cc:active {
-    transform: scale(.95);
-    transition-duration: .08s;
-}
-
-.mxvp__cc:focus-visible {
-    outline: 2px solid #8fbcff;
-    outline-offset: 4px;
-}
-
-/* Fade + shrink together, so the cluster melts into the picture. */
-.mxvp.is-idle .mxvp__center {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.mxvp.is-idle .mxvp__cc {
-    transform: scale(.82);
-    opacity: 0;
+/* A YouTube clip that fell back to YouTube's own bar keeps its own badge out
+   of the way, exactly like the centre cluster used to. */
+.mxvp.is-embed .mxvp__hint,
+.mxvp.is-image .mxvp__hint {
+    display: none;
 }
 
 /* ------------------------------------------------------------- control bar */
@@ -356,8 +324,7 @@
 }
 
 .mxvp.is-embed .mxvp__bar,
-.mxvp.is-image .mxvp__bar,
-.mxvp.is-embed .mxvp__center {
+.mxvp.is-image .mxvp__bar {
     display: none;
 }
 
@@ -653,34 +620,51 @@ body.mxvp-open {
         font-size: 11px;
     }
 
-    .mxvp__cc {
-        width: 44px;
-        height: 44px;
+    .mxvp__hint {
+        gap: 8px;
+        padding: 10px 15px 10px 12px;
+        font-size: 12px;
     }
 
-    .mxvp__cc svg {
-        width: 22px;
-        height: 22px;
-    }
-
-    .mxvp__cc-main {
-        width: 64px;
-        height: 64px;
-    }
-
-    .mxvp__cc-main svg {
-        width: 28px;
-        height: 28px;
-    }
-
-    .mxvp__center {
-        gap: 16px;
+    .mxvp__hint svg {
+        width: 18px;
+        height: 18px;
     }
 }
 
+/* Very small phones: keep every control — including the current/total time —
+   by tightening the row instead of dropping anything. */
 @media (max-width: 380px) {
+    .mxvp__bar {
+        padding: 22px 6px 6px;
+    }
+
+    .mxvp__row {
+        gap: 0;
+    }
+
+    .mxvp__btn {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mxvp__btn svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .mxvp__vol {
+        gap: 0;
+    }
+
+    .mxvp__volume {
+        width: 40px;
+        margin-right: 2px;
+    }
+
     .mxvp__time {
-        display: none;
+        margin-left: 4px;
+        font-size: 10.5px;
     }
 }
 
@@ -688,27 +672,13 @@ body.mxvp-open {
     .mxvp__bar {
         padding-top: 18px;
     }
-
-    .mxvp__cc-main {
-        width: 56px;
-        height: 56px;
-    }
-
-    .mxvp__cc {
-        width: 40px;
-        height: 40px;
-    }
-
-    .mxvp__center {
-        gap: 14px;
-    }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .mxvp__stage,
     .mxvp__bar,
     .mxvp__close,
-    .mxvp__center {
+    .mxvp__hint {
         transition: none !important;
         animation: none !important;
     }

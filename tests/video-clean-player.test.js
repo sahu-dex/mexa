@@ -78,7 +78,7 @@ test('YouTube clips play through a chrome-free frame driven by postMessage', () 
 
     // The end screen ("More videos") is hidden behind our own replay plate.
     assert.match(js, /showEndPlate\(/);
-    assert.match(read('assets/css/video-player.css'), /\.mxvp\.is-ended \.mxvp__media/);
+    assert.match(read('assets/css/video-player.css'), /\.mxvp\.is-youtube\.is-ended \.mxvp__media/);
 });
 
 test('a YouTube frame that cannot be scripted still plays with YouTube controls', () => {
@@ -127,19 +127,90 @@ test('playback is tuned for speed, resilience and every device', () => {
     assert.match(css, /\.mxvp\.is-pseudo-fullscreen \.mxvp__close/, 'close stays reachable in that mode');
 });
 
-test('the centre cluster, auto-hide and time label match the brief', () => {
+test('the middle of the picture carries no permanent control', () => {
     const js = read('assets/js/video-player.js');
     const css = read('assets/css/video-player.css');
 
-    // -10s | play/pause | +10s in the middle of the picture.
-    assert.match(js, /data-mxvp-center-back/);
-    assert.match(js, /data-mxvp-center-forward/);
-    assert.match(js, /data-mxvp-center-group/);
-    assert.match(js, /ICON\.back/, 'rewind icon');
-    assert.match(js, /ICON\.forward/, 'forward icon');
-    assert.match(js, /refs\.centerPlay\.innerHTML = ended \? ICON\.replay : \(playing \? ICON\.pause : ICON\.play\)/);
-    assert.match(css, /\.mxvp__cc-main \{/, 'big centre button');
-    assert.match(css, /\.mxvp\.is-idle \.mxvp__center \{[^}]*opacity:\s*0[^}]*pointer-events:\s*none/, 'cluster leaves the way when the controls fade');
+    // The old -10s | play/pause | +10s cluster is gone for good.
+    ['data-mxvp-center', 'mxvp__center', 'mxvp__cc'].forEach((needle) => {
+        assert.equal(js.includes(needle), false, 'no centre control markup: ' + needle);
+        assert.equal(css.includes(needle), false, 'no centre control styles: ' + needle);
+    });
+    // A finished clip leaves the middle empty too: replay is the bar's button.
+    assert.match(js, /refs\.play\.innerHTML = ended \? ICON\.replay : \(playing \? ICON\.pause : ICON\.play\)/);
+    const template = js.slice(js.indexOf('var TEMPLATE ='), js.indexOf('var refs = {}'));
+    assert.doesNotMatch(template, /ICON\.replay/, 'no replay disc in the middle');
+
+    // The only thing that may appear there is the short-lived tap badge.
+    assert.match(js, /data-mxvp-hint/, 'tap confirmation badge exists');
+    const hint = css.match(/\n\.mxvp__hint \{([^}]*)\}/)[1];
+    assert.match(hint, /opacity:\s*0/, 'invisible until a double tap');
+    assert.match(hint, /pointer-events:\s*none/, 'never intercepts the video');
+    assert.match(css, /\.mxvp__hint\.is-visible \{[^}]*opacity:\s*1/, 'shown just for the confirmation');
+    assert.match(js, /HINT_TIME = \d+;/, 'and then removed again');
+});
+
+test('a double tap on the picture plays or pauses', () => {
+    const js = read('assets/js/video-player.js');
+
+    assert.match(js, /var TAP_WINDOW = \d+;/, 'double-tap window');
+    assert.match(js, /function handleStageTap\(event, source\)/, 'tap handler');
+    assert.match(js, /function doubleTapPlayback\(\)/, 'double tap drives playback');
+    assert.match(js, /function togglePlay\(\)/, 'through the shared play/pause path');
+
+    // Both input styles are counted: a mouse double click and a touch double tap.
+    assert.match(js, /handleStageTap\(event, 'pointer'\)/);
+    assert.match(js, /handleStageTap\(event, 'touch'\)/);
+    assert.match(js, /addEventListener\('touchstart'/, 'phones get a real double tap');
+
+    // A single tap only reveals the controls — it must not toggle playback.
+    assert.match(js, /A single tap never changes playback/);
+    // The synthetic click that follows a touch is not a second tap.
+    assert.match(js, /now - lastTouchAt < 900/);
+
+    // Bar buttons and sliders keep their own behaviour.
+    assert.match(js, /function isTapSurface\(target\)/);
+    assert.match(js, /closest\('button, a, input, select, textarea/);
+
+    // Double click no longer hijacks fullscreen: that lives in the bar.
+    assert.doesNotMatch(js, /addEventListener\('dblclick'/, 'no hidden double-click fullscreen');
+});
+
+test('the bottom bar keeps every control, fullscreen last on the right', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
+
+    const template = js.slice(js.indexOf('var TEMPLATE ='), js.indexOf('var refs = {}'));
+    const bar = template.slice(template.indexOf('data-mxvp-bar'));
+
+    // Play/pause, -10s, +10s, volume, progress, current/total time, fullscreen.
+    [
+        'data-mxvp-seek',
+        'data-mxvp-play',
+        'data-mxvp-back',
+        'data-mxvp-forward',
+        'data-mxvp-mute',
+        'data-mxvp-volume',
+        'data-mxvp-time',
+        'data-mxvp-fullscreen'
+    ].forEach((hook) => {
+        assert.ok(bar.includes(hook), 'control missing from the bar: ' + hook);
+    });
+
+    // Fullscreen is the last control in the row and is pushed to the right.
+    assert.ok(
+        bar.indexOf('data-mxvp-fullscreen') > bar.indexOf('data-mxvp-time'),
+        'fullscreen sits at the end of the bar'
+    );
+    assert.match(css, /\.mxvp__btn--fs \{\s*margin-left:\s*auto;/, 'fullscreen is pinned to the right');
+    assert.match(js, /SKIP_SECONDS = 10/);
+    assert.match(js, /skip\(-SKIP_SECONDS\)/);
+    assert.match(js, /skip\(SKIP_SECONDS\)/);
+});
+
+test('auto-hide, time label and tracks still behave', () => {
+    const js = read('assets/js/video-player.js');
+    const css = read('assets/css/video-player.css');
 
     // Controls fade by themselves and come back on any mouse/touch activity.
     assert.match(js, /\}, 2800\);/, 'controls hide after a short idle period');
@@ -152,38 +223,6 @@ test('the centre cluster, auto-hide and time label match the brief', () => {
 
     // The unplayed part of the tracks is dim, not a white bar.
     assert.doesNotMatch(css, /rgba\(255, 255, 255, \.34\)/);
-});
-
-test('the centre cluster is laid out like the YouTube player', () => {
-    const css = read('assets/css/video-player.css');
-    const js = read('assets/js/video-player.js');
-
-    // One row, dead centre, equal spacing on both sides.
-    const centre = css.match(/\n\.mxvp__center \{([^}]*)\}/)[1];
-    assert.match(centre, /display:\s*flex/);
-    assert.match(centre, /align-items:\s*center/);
-    assert.match(centre, /justify-content:\s*center/);
-    assert.match(centre, /top:\s*50%/);
-    assert.match(centre, /left:\s*50%/);
-    assert.match(centre, /translate\(-50%,\s*-50%\)/);
-    assert.match(centre, /gap:\s*clamp\(/, 'even, responsive spacing');
-
-    // Play/pause is the biggest disc; the side buttons are smaller.
-    const main = css.match(/\n\.mxvp__cc-main \{([^}]*)\}/)[1];
-    const side = css.match(/\n\.mxvp__cc \{([^}]*)\}/)[1];
-    assert.match(main, /width:\s*78px/);
-    assert.match(side, /width:\s*52px/);
-
-    // Modern look: translucent disc, no hard outline ring.
-    assert.doesNotMatch(side, /inset 0 0 0 1px/);
-    assert.match(side, /background:\s*rgba\(8, 8, 8, \.45\)/);
-    assert.match(side, /backdrop-filter:\s*blur\(8px\)/);
-
-    // Hide after a while, then scale/fade back in on any activity.
-    assert.match(css, /\.mxvp\.is-idle \.mxvp__cc \{[^}]*transform:\s*scale\(\.82\)/);
-    assert.match(side, /cubic-bezier/, 'smooth spring-like motion');
-    assert.match(js, /data-mxvp-center-back/);
-    assert.match(js, /data-mxvp-center-forward/);
 });
 
 test('the close button sits on the very top-right corner of the player', () => {

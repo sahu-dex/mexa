@@ -24,6 +24,14 @@
  * Markup is created from scratch (inline SVG icons only). No pseudo-element
  * "×", no Font Awesome fallback icon, no <video controls> — so exactly one
  * close button and one set of controls exist per player.
+ *
+ * Control layout (the same for uploaded files and YouTube clips):
+ *   • the middle of the picture is empty — no play/pause disc, no skip
+ *     buttons, nothing permanently parked over the video;
+ *   • a double tap / double click on the picture plays or pauses, and a short
+ *     badge confirms it before fading away;
+ *   • every control lives in the bottom bar: play/pause, -10s, +10s, volume,
+ *     progress, current/total time and fullscreen at the far right.
  */
 (function () {
     'use strict';
@@ -41,6 +49,10 @@
     // video the viewer cannot start, pause or seek.
     var YT_HANDSHAKE_TIMEOUT = 4000;
     var YT_START_TIMEOUT = 4000;
+    // A second tap on the picture within this window is a double tap.
+    var TAP_WINDOW = 300;
+    // How long the tap confirmation (play/pause/replay badge) stays up.
+    var HINT_TIME = 650;
 
     // YouTube player states.
     var YT_ENDED = 0;
@@ -67,12 +79,11 @@
         '<div class="mxvp__dialog" role="dialog" aria-modal="true" aria-label="Video player">' +
             '<div class="mxvp__stage" data-mxvp-stage>' +
                 '<div class="mxvp__media" data-mxvp-media></div>' +
+                // The middle of the picture is deliberately empty: no play/pause
+                // disc, no skip buttons. A short-lived badge is the only thing
+                // that ever appears there, and only to confirm a double tap.
                 '<div class="mxvp__sink" data-mxvp-sink aria-hidden="true"></div>' +
-                '<div class="mxvp__center" data-mxvp-center-group>' +
-                    '<button type="button" class="mxvp__cc" data-mxvp-center-back aria-label="Rewind 10 seconds">' + ICON.back + '</button>' +
-                    '<button type="button" class="mxvp__cc mxvp__cc-main" data-mxvp-center aria-label="Play video">' + ICON.play + '</button>' +
-                    '<button type="button" class="mxvp__cc" data-mxvp-center-forward aria-label="Forward 10 seconds">' + ICON.forward + '</button>' +
-                '</div>' +
+                '<div class="mxvp__hint" data-mxvp-hint aria-hidden="true"></div>' +
                 '<div class="mxvp__spinner" data-mxvp-spinner aria-hidden="true" hidden></div>' +
                 '<p class="mxvp__error" data-mxvp-error role="status" hidden>This video could not be played.</p>' +
                 '<button type="button" class="mxvp__close" ' + CLOSE_ATTR + '="1" aria-label="Close video">' + ICON.close + '</button>' +
@@ -126,6 +137,12 @@
     var ytStartWatchdog = 0;
     var ytRequest = null;
     var requestToken = 0;
+
+    // Double-tap bookkeeping (per pointer type).
+    var lastTapAt = 0;
+    var lastTouchAt = 0;
+    var hintTimer = 0;
+    var draggingVolume = false;
 
     /* ---------------------------------------------------------------- media */
 
@@ -290,8 +307,7 @@
         refs.stage = modal.querySelector('[data-mxvp-stage]');
         refs.media = modal.querySelector('[data-mxvp-media]');
         refs.sink = modal.querySelector('[data-mxvp-sink]');
-        refs.center = modal.querySelector('[data-mxvp-center-group]');
-        refs.centerPlay = modal.querySelector('[data-mxvp-center]');
+        refs.hint = modal.querySelector('[data-mxvp-hint]');
         refs.spinner = modal.querySelector('[data-mxvp-spinner]');
         refs.error = modal.querySelector('[data-mxvp-error]');
         refs.bar = modal.querySelector('[data-mxvp-bar]');
@@ -320,13 +336,15 @@
         });
 
         refs.play.addEventListener('click', togglePlay);
-        refs.centerPlay.addEventListener('click', togglePlay);
-        modal.querySelector('[data-mxvp-center-back]').addEventListener('click', function () { skip(-SKIP_SECONDS); });
-        modal.querySelector('[data-mxvp-center-forward]').addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.back.addEventListener('click', function () { skip(-SKIP_SECONDS); });
         refs.forward.addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.mute.addEventListener('click', toggleMute);
+        refs.volume.addEventListener('pointerdown', function () { draggingVolume = true; });
+        ['pointerup', 'pointercancel', 'change', 'blur'].forEach(function (type) {
+            refs.volume.addEventListener(type, function () { draggingVolume = false; });
+        });
         refs.volume.addEventListener('input', function () {
+            draggingVolume = true;
             setVolume(parseFloat(refs.volume.value));
             wake();
         });
@@ -351,18 +369,23 @@
         refs.seek.addEventListener('pointerup', commitSeek);
         refs.seek.addEventListener('pointercancel', function () { seeking = false; });
 
-        // Clicking the picture toggles playback; a double click goes fullscreen.
+        // The picture is a plain surface: a single tap/click shows the bottom
+        // bar and a double tap/click plays or pauses. Nothing is ever parked in
+        // the middle of the video.
         // The sink sits above the media so this also works over a YouTube frame,
         // which would otherwise swallow the click.
         [refs.media, refs.sink].forEach(function (layer) {
             if (!layer) return;
-            layer.addEventListener('click', function () {
-                if (hasTransport()) togglePlay();
-            });
-            layer.addEventListener('dblclick', function () {
-                if (hasTransport()) toggleFullscreen();
+            layer.addEventListener('click', function (event) {
+                handleStageTap(event, 'pointer');
             });
         });
+
+        // Touch is handled from the same surface: `touchstart` never fires a
+        // double click on a phone, so the tap count is ours to keep.
+        refs.stage.addEventListener('touchstart', function (event) {
+            handleStageTap(event, 'touch');
+        }, { passive: true });
 
         ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
             refs.stage.addEventListener(type, wake, { passive: true });
@@ -454,8 +477,13 @@
         if (video) video.pause();
     }
 
+    /**
+     * Both providers expose level and mute separately, so the bar follows them
+     * separately too: muting must never look like a volume of zero, otherwise
+     * moving the slider afterwards is not obvious.
+     */
     function getVolume() {
-        if (mode === 'youtube') return ytMuted ? 0 : ytVolume / 100;
+        if (mode === 'youtube') return ytVolume / 100;
         var video = currentVideo();
         return video ? video.volume : 1;
     }
@@ -559,46 +587,108 @@
         setControlsVisible(true);
     }
 
-    function syncCenter() {
-        if (!refs.center) return;
+    /* ------------------------------------------------------ double tap / click */
 
-        var allowed = (mode === 'video' || mode === 'youtube') &&
-            !(modal && modal.classList.contains('is-embed')) &&
-            !(modal && modal.classList.contains('is-image'));
-        if (!allowed || (mode === 'youtube' && !youtubeReady()) || (mode === 'video' && !currentVideo())) {
-            refs.center.hidden = true;
+    /**
+     * The picture itself is the only tap target. A double tap plays or pauses;
+     * a single tap just brings the bottom bar back. No control ever sits in the
+     * middle of the video, so the badge below appears only for a moment as
+     * confirmation of the action and then leaves again.
+     */
+    function isTapSurface(target) {
+        if (!target || !target.closest) return false;
+        // Buttons, the seek/volume sliders and links keep their own behaviour.
+        if (target.closest('button, a, input, select, textarea, [role="button"]')) return false;
+        return !!target.closest('.mxvp__stage');
+    }
+
+    function showHint(icon, label) {
+        if (!refs.hint) return;
+        window.clearTimeout(hintTimer);
+        refs.hint.innerHTML = icon + '<span>' + label + '</span>';
+        refs.hint.classList.add('is-visible');
+        hintTimer = window.setTimeout(function () {
+            if (refs.hint) refs.hint.classList.remove('is-visible');
+        }, HINT_TIME);
+    }
+
+    function clearHint() {
+        window.clearTimeout(hintTimer);
+        if (refs.hint) refs.hint.classList.remove('is-visible');
+    }
+
+    /** Play/pause with a short confirmation badge in the middle of the picture. */
+    function doubleTapPlayback() {
+        if (!hasTransport()) return;
+        // The new state is the opposite of the old one, and it is known before
+        // either provider has reported back, so the badge is always accurate.
+        var nowPlaying = !isPlaying();
+        clearHint();
+        togglePlay();
+        // The badge states what is true now: same icon as the bar's play/pause
+        // button, so the two can never tell different stories.
+        showHint(nowPlaying ? ICON.pause : ICON.play, nowPlaying ? 'Playing' : 'Paused');
+        wake();
+    }
+
+    /**
+     * @param {Event}  event
+     * @param {string} source 'touch' for a real touch, 'pointer' for a mouse.
+     */
+    function handleStageTap(event, source) {
+        if (mode === 'image') return;
+        if (!isTapSurface(event.target)) return;
+
+        var now = Date.now();
+        // A touch generates a click a moment later; the touch itself was the
+        // tap, so the synthetic click must not count as a second one.
+        if (source === 'pointer') {
+            if (now - lastTouchAt < 900) return;
+        } else {
+            lastTouchAt = now;
+        }
+
+        if (lastTapAt && (now - lastTapAt) <= TAP_WINDOW) {
+            // Reset, so a third rapid tap starts a new pair instead of pausing
+            // and then immediately resuming again.
+            lastTapAt = 0;
+            doubleTapPlayback();
             return;
         }
 
-        var ended = isEnded();
-        var playing = isPlaying();
-
-        refs.center.hidden = false;
-        if (refs.centerPlay) {
-            refs.centerPlay.innerHTML = ended ? ICON.replay : (playing ? ICON.pause : ICON.play);
-            refs.centerPlay.setAttribute('aria-label', ended ? 'Replay video' : (playing ? 'Pause video' : 'Play video'));
-        }
+        lastTapAt = now;
+        // A single tap never changes playback: it only reveals the controls.
+        wake();
     }
 
+    function resetTapState() {
+        lastTapAt = 0;
+        lastTouchAt = 0;
+        clearHint();
+    }
 
     function syncPlayButton() {
         var playing = isPlaying();
-        refs.play.innerHTML = playing ? ICON.pause : ICON.play;
-        refs.play.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+        // Once a clip has finished, the bar's play button turns into a replay
+        // button: the middle of the picture stays empty as always.
+        var ended = isEnded() && !playing;
+        refs.play.innerHTML = ended ? ICON.replay : (playing ? ICON.pause : ICON.play);
+        refs.play.setAttribute('aria-label', ended ? 'Replay' : (playing ? 'Pause' : 'Play'));
         if (!playing && isOpen) {
             window.clearTimeout(hideTimer);
             setControlsVisible(true);
         }
-        syncCenter();
     }
 
     function syncVolume() {
         var muted = isMuted();
-        var volume = getVolume();
+        var volume = Math.max(0, Math.min(1, getVolume()));
         refs.mute.innerHTML = muted ? ICON.muted : ICON.volume;
         refs.mute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
-        refs.volume.value = muted ? 0 : volume;
-        refs.volume.style.setProperty('--mxvp-volume', (muted ? 0 : volume) * 100 + '%');
+        // The slider shows the real level; only the icon says "muted".
+        // While it is being dragged it stays under the user's finger.
+        if (!draggingVolume) refs.volume.value = String(volume);
+        refs.volume.style.setProperty('--mxvp-volume', volume * 100 + '%');
     }
 
     function syncFullscreenButton() {
@@ -685,6 +775,9 @@
             'rel=0',
             'showinfo=0'
         ];
+        // `nativeUi` (the frame never answered the postMessage bridge) is the
+        // only case where YouTube's own bar and branding come back, because a
+        // video nobody can control is worse than a branded one.
         if (muted) params.push('mute=1');
         var origin = youtubeOrigin();
         if (origin) params.push('origin=' + encodeURIComponent(origin));
@@ -739,8 +832,13 @@
 
         if (typeof info.currentTime === 'number' && isFinite(info.currentTime)) ytTime = info.currentTime;
         if (typeof info.duration === 'number' && info.duration > 0) ytDuration = info.duration;
-        if (typeof info.muted === 'boolean') ytMuted = info.muted;
-        if (typeof info.volume === 'number') ytVolume = info.volume;
+        // YouTube reports level and mute independently; adopt both so the
+        // slider and the speaker icon never disagree with what is audible.
+        if (typeof info.volume === 'number' && isFinite(info.volume)) ytVolume = Math.max(0, Math.min(100, info.volume));
+        if (typeof info.muted === 'boolean') {
+            if (info.muted && ytVolume > 0) rememberVolume = ytVolume / 100;
+            ytMuted = info.muted;
+        }
 
         if (typeof info.playerState === 'number') {
             applyYtState(info.playerState);
@@ -817,7 +915,8 @@
                 if (!isOpen || mode !== 'youtube') return;
                 if (ytPlayerState === YT_PLAYING || ytPlayerState === YT_BUFFERING || isEnded()) return;
                 ytAutoplayBlocked = true;
-                syncCenter();
+                // The bar carries the play button, so bring it back instead of
+                // parking a play control in the middle of the picture.
                 setControlsVisible(true);
             }, 1500);
         }
@@ -947,7 +1046,6 @@
         modal.classList.remove('is-yt-live');
         showSpinner(true);
         syncVolume();
-        syncCenter();
 
         var nativeUi = ytNativeUi;
         var frame = document.createElement('iframe');
@@ -1049,7 +1147,14 @@
         });
         video.addEventListener('play', syncPlayButton);
         video.addEventListener('pause', syncPlayButton);
-        video.addEventListener('ended', syncPlayButton);
+        video.addEventListener('ended', function () {
+            if (video !== currentVideo()) return;
+            // Keep the last frame, bring the bar back and turn its play button
+            // into a replay button — no end plate in the middle of the picture.
+            showEndPlate(true);
+            syncPlayButton();
+            wake();
+        });
         video.addEventListener('waiting', function () { showSpinner(true); });
         video.addEventListener('canplay', function () { showSpinner(false); });
         video.addEventListener('volumechange', syncVolume);
@@ -1168,7 +1273,7 @@
         refs.seek.value = '0';
         paintProgress(0);
         refs.time.textContent = '0:00 / 0:00';
-        refs.center.hidden = true;
+        resetTapState();
         showError(false);
         showSpinner(mode !== 'image');
 
@@ -1237,6 +1342,7 @@
         refs.seek.value = '0';
         paintProgress(0);
         refs.time.textContent = '0:00 / 0:00';
+        resetTapState();
 
         lockScroll(false);
         syncFullscreenButton();
@@ -1300,7 +1406,6 @@
         if (!modal) return;
         modal.classList.toggle('is-pseudo-fullscreen', !!on);
         syncFullscreenButton();
-        syncCenter();
     }
 
     function exitFullscreen() {
