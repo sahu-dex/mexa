@@ -198,3 +198,90 @@ body #team-page #t3-founder .tm-perk-ic {
     body #team-page #t3-founder .t3-founder-keywords { margin-top: 10px; }
     body #team-page #t3-founder .t3-founder-info > .grid { margin-top: 12px; }
 }
+
+/* Team page members: YouTube-style dark showcase.
+   Colours only - the markup, photos, names, designations, descriptions and
+   skills are untouched. Surfaces follow YouTube's dark UI: #0f0f0f page,
+   #1c1c1c raised cards, #f1f1f1 primary text, #aaa secondary text, translucent
+   white chips and the #3ea6ff accent. No white boxes or borders remain. */
+html body #team-page .t3-members-sec {
+    background: #0f0f0f !important;
+    background-image: none !important;
+    color: #f1f1f1;
+}
+html body #team-page .t3-members-sec .t3-kick {
+    border-color: rgba(255, 255, 255, .14) !important;
+    background: rgba(255, 255, 255, .08) !important;
+    color: #f1f1f1 !important;
+    -webkit-text-fill-color: #f1f1f1 !important;
+    box-shadow: none !important;
+}
+html body #team-page .t3-members-sec .t3-h2 {
+    color: #f1f1f1 !important;
+    -webkit-text-fill-color: #f1f1f1 !important;
+    background: none !important;
+}
+html body #team-page .t3-members-sec .t3-sub {
+    color: #aaa !important;
+    -webkit-text-fill-color: #aaa !important;
+}
+html body #team-page .t3-members-sec .t3-card {
+    border: 1px solid rgba(255, 255, 255, .06) !important;
+    background: #1c1c1c !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: #f1f1f1 !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+html body #team-page .t3-members-sec .t3-card:hover,
+html body #team-page .t3-members-sec .t3-card:focus-within {
+    border-color: rgba(255, 255, 255, .14) !important;
+    background: #242424 !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, .5) !important;
+}
+html body #team-page .t3-members-sec .t3-media {
+    border: 0 !important;
+    background: #181818 !important;
+}
+html body #team-page .t3-members-sec .t3-body {
+    background: transparent !important;
+}
+html body #team-page .t3-members-sec .t3-name {
+    color: #f1f1f1 !important;
+    -webkit-text-fill-color: #f1f1f1 !important;
+}
+html body #team-page .t3-members-sec .t3-role {
+    color: #3ea6ff !important;
+    -webkit-text-fill-color: #3ea6ff !important;
+}
+html body #team-page .t3-members-sec .t3-role::before {
+    background: #3ea6ff !important;
+    box-shadow: none !important;
+}
+html body #team-page .t3-members-sec .t3-desc {
+    color: #aaa !important;
+    -webkit-text-fill-color: #aaa !important;
+}
+html body #team-page .t3-members-sec .t3-skills {
+    border-top-color: rgba(255, 255, 255, .1) !important;
+}
+html body #team-page .t3-members-sec .t3-skills .t3-block-label {
+    color: #8c8c8c !important;
+    -webkit-text-fill-color: #8c8c8c !important;
+}
+html body #team-page .t3-members-sec .t3-chips li {
+    border-color: transparent !important;
+    background: rgba(255, 255, 255, .1) !important;
+    color: #f1f1f1 !important;
+    -webkit-text-fill-color: #f1f1f1 !important;
+}
+html body #team-page .t3-members-sec .t3-initials {
+    background: #272727 !important;
+    color: #f1f1f1 !important;
+}
+html body #team-page .t3-members-sec .t3-empty {
+    border-color: rgba(255, 255, 255, .1) !important;
+    background: #1c1c1c !important;
+    color: #aaa !important;
+}

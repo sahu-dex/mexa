@@ -818,3 +818,18 @@ body.mxvp-open {
         animation-duration: 1.6s;
     }
 }
+
+/* Site themes paint every <input> white with a border and a 12px radius
+   (premium-design-system.css, with !important). Without this the seek and
+   volume sliders render as solid white bars on top of the picture. */
+body .mxvp .mxvp__bar .mxvp__scrub input.mxvp__seek,
+body .mxvp .mxvp__bar .mxvp__vol input.mxvp__volume,
+body .mxvp .mxvp__bar .mxvp__scrub input.mxvp__seek:focus,
+body .mxvp .mxvp__bar .mxvp__vol input.mxvp__volume:focus {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: inherit !important;
+}

@@ -1031,13 +1031,13 @@ function page_stylesheets(string $pageKey): array
     // light-blue palette wins over page-specific theme files.
     $stylesheets[] = 'assets/css/premium-light-blue.css?v=20261112-ice-theme';
     // Shared reference-inspired colour and font grade; leaves page structure intact.
-    $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261114-members-restored';
+    $stylesheets[] = 'assets/css/reference-color-theme.css?v=20261114-members-dark';
     $stylesheets[] = 'assets/css/reference-header.css?v=20261113-services-button-2';
     $stylesheets[] = 'assets/css/desktop-content-width.css?v=20261113-review-full';
     // Gallery-only presentation fixes for the Work/Home video cards.
     $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery';
     // One shared video player for every video on the site.
-    $stylesheets[] = 'assets/css/video-player.css?v=20261114-autohide-1500';
+    $stylesheets[] = 'assets/css/video-player.css?v=20261114-slider-fix';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
