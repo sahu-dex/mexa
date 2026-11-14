@@ -250,10 +250,12 @@
 
 /* ----------------------------------------------------- centre control cluster */
 
-/* -10s · play/pause · +10s, dead centre of the picture.
+/* -10s · play/pause · +10s on one line, dead centre of the picture.
    YouTube-style: soft translucent black discs, no outline ring, one clear
-   hierarchy (the play/pause disc is the biggest), generous even spacing and a
-   gentle scale-in when the controls come back. */
+   hierarchy (the play/pause disc is the biggest), wide even spacing on both
+   sides and a springy scale-in when the controls come back.
+   The wrapper itself never takes clicks, so the gaps between the discs still
+   behave like the picture (tap to pause / reveal). */
 .mxvp__center {
     position: absolute;
     top: 50%;
@@ -262,66 +264,144 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(18px, 3vw, 34px);
+    gap: clamp(30px, 7vw, 76px);
+    margin: 0;
     padding: 0;
     border: 0;
     background: none;
+    pointer-events: none;
     transform: translate(-50%, -50%);
-    transition: opacity .24s ease;
+    transition: opacity .26s ease;
 }
 
-.mxvp__cc {
+/* Portrait clips (Shorts) are narrow: tighter, still even, spacing. */
+.mxvp.is-vertical .mxvp__center {
+    gap: clamp(20px, 3vw, 36px);
+}
+
+/* Soft dark halo so the white icons stay readable on bright footage. */
+.mxvp__center::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: -1;
+    width: 150%;
+    height: 260%;
+    background: radial-gradient(closest-side, rgba(0, 0, 0, .34), rgba(0, 0, 0, 0));
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+}
+
+.mxvp .mxvp__cc {
+    position: relative;
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
+    flex: 0 0 auto;
+    box-sizing: border-box;
+    width: 60px;
+    height: 60px;
+    min-width: 0;
+    margin: 0;
     padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: rgba(8, 8, 8, .45);
-    color: #fff;
+    border: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(8, 8, 8, .5) !important;
+    color: #fff !important;
+    line-height: 1;
     cursor: pointer;
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, .28);
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .32);
+    opacity: 1;
     transform: scale(1);
     transition:
         background .18s ease,
-        transform .26s cubic-bezier(.22, .9, .3, 1),
-        opacity .24s ease;
+        box-shadow .18s ease,
+        transform .34s cubic-bezier(.2, 1.25, .35, 1),
+        opacity .26s ease;
 }
 
-.mxvp__cc svg {
+/* The side buttons arrive a beat after play/pause. */
+.mxvp .mxvp__cc:not(.mxvp__cc-main) {
+    transition-delay: 0s, 0s, .05s, .05s;
+}
+
+.mxvp .mxvp__cc svg {
     display: block;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
+    color: #fff;
     pointer-events: none;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .45));
 }
 
-.mxvp__cc-main {
-    width: 78px;
-    height: 78px;
-    background: rgba(8, 8, 8, .55);
+.mxvp .mxvp__cc-main {
+    width: 88px;
+    height: 88px;
+    background: rgba(8, 8, 8, .6) !important;
+    box-shadow: 0 10px 32px rgba(0, 0, 0, .4);
 }
 
-.mxvp__cc-main svg {
-    width: 34px;
-    height: 34px;
+.mxvp .mxvp__cc-main svg {
+    width: 44px;
+    height: 44px;
 }
 
-.mxvp__cc:hover {
-    background: rgba(8, 8, 8, .78);
-    transform: scale(1.07);
+@media (hover: hover) {
+    .mxvp .mxvp__cc:hover {
+        background: rgba(8, 8, 8, .82) !important;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .45), 0 0 0 6px rgba(255, 255, 255, .1);
+        transform: scale(1.08);
+        transition-delay: 0s;
+    }
 }
 
-.mxvp__cc:active {
-    transform: scale(.95);
+.mxvp .mxvp__cc:active {
+    transform: scale(.92);
     transition-duration: .08s;
+    transition-delay: 0s;
 }
 
-.mxvp__cc:focus-visible {
-    outline: 2px solid #8fbcff;
+.mxvp .mxvp__cc:focus-visible {
+    outline: 2px solid #fff;
     outline-offset: 4px;
+}
+
+/* Tap feedback: a ring ripples out and the arrow nudges its direction. */
+.mxvp .mxvp__cc.is-tapped::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .28);
+    pointer-events: none;
+    animation: mxvp-ripple .45s ease-out forwards;
+}
+
+.mxvp .mxvp__cc[data-mxvp-center-back].is-tapped svg {
+    animation: mxvp-nudge-back .4s ease-out;
+}
+
+.mxvp .mxvp__cc[data-mxvp-center-forward].is-tapped svg {
+    animation: mxvp-nudge-forward .4s ease-out;
+}
+
+@keyframes mxvp-ripple {
+    from { opacity: 1; transform: scale(.6); }
+    to { opacity: 0; transform: scale(1.55); }
+}
+
+@keyframes mxvp-nudge-back {
+    40% { transform: rotate(-38deg); }
+    to { transform: rotate(0); }
+}
+
+@keyframes mxvp-nudge-forward {
+    40% { transform: rotate(38deg); }
+    to { transform: rotate(0); }
 }
 
 /* Fade + shrink together, so the cluster melts into the picture. */
@@ -333,6 +413,8 @@
 .mxvp.is-idle .mxvp__cc {
     transform: scale(.82);
     opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s;
 }
 
 /* ------------------------------------------------------------- control bar */
@@ -476,6 +558,11 @@
 
 .mxvp__btn--fs {
     margin-left: auto;
+}
+
+/* Play/pause and the 10s skips live in the centre cluster only. */
+.mxvp .mxvp__btn--dup {
+    display: none;
 }
 
 .mxvp__vol {
@@ -653,28 +740,33 @@ body.mxvp-open {
         font-size: 11px;
     }
 
-    .mxvp__cc {
-        width: 44px;
-        height: 44px;
+    .mxvp .mxvp__cc {
+        width: 50px;
+        height: 50px;
     }
 
-    .mxvp__cc svg {
-        width: 22px;
-        height: 22px;
+    .mxvp .mxvp__cc svg {
+        width: 27px;
+        height: 27px;
     }
 
-    .mxvp__cc-main {
-        width: 64px;
-        height: 64px;
+    .mxvp .mxvp__cc-main {
+        width: 70px;
+        height: 70px;
     }
 
-    .mxvp__cc-main svg {
-        width: 28px;
-        height: 28px;
+    .mxvp .mxvp__cc-main svg {
+        width: 36px;
+        height: 36px;
     }
 
     .mxvp__center {
-        gap: 16px;
+        gap: clamp(26px, 9vw, 44px);
+    }
+
+    /* Narrow portrait clips (Shorts): keep all three inside the frame. */
+    .mxvp.is-vertical .mxvp__center {
+        gap: clamp(18px, 6vw, 30px);
     }
 }
 
@@ -689,18 +781,24 @@ body.mxvp-open {
         padding-top: 18px;
     }
 
-    .mxvp__cc-main {
-        width: 56px;
-        height: 56px;
+    .mxvp .mxvp__cc-main {
+        width: 60px;
+        height: 60px;
     }
 
-    .mxvp__cc {
-        width: 40px;
-        height: 40px;
+    .mxvp .mxvp__cc-main svg {
+        width: 31px;
+        height: 31px;
     }
 
-    .mxvp__center {
-        gap: 14px;
+    .mxvp .mxvp__cc {
+        width: 44px;
+        height: 44px;
+    }
+
+    .mxvp .mxvp__cc svg {
+        width: 24px;
+        height: 24px;
     }
 }
 
@@ -708,7 +806,10 @@ body.mxvp-open {
     .mxvp__stage,
     .mxvp__bar,
     .mxvp__close,
-    .mxvp__center {
+    .mxvp__center,
+    .mxvp .mxvp__cc,
+    .mxvp .mxvp__cc svg,
+    .mxvp .mxvp__cc::after {
         transition: none !important;
         animation: none !important;
     }

@@ -167,17 +167,22 @@ test('the centre cluster is laid out like the YouTube player', () => {
     assert.match(centre, /left:\s*50%/);
     assert.match(centre, /translate\(-50%,\s*-50%\)/);
     assert.match(centre, /gap:\s*clamp\(/, 'even, responsive spacing');
+    assert.match(centre, /pointer-events:\s*none/, 'gaps between the discs stay part of the picture');
+
+    // Play/pause and the skips exist once, in the centre; the bar copies are hidden.
+    assert.match(css, /\.mxvp \.mxvp__btn--dup \{\s*display:\s*none/);
+    assert.match(js, /touchRevealed/, 'first tap on a playing video only reveals the controls');
 
     // Play/pause is the biggest disc; the side buttons are smaller.
-    const main = css.match(/\n\.mxvp__cc-main \{([^}]*)\}/)[1];
-    const side = css.match(/\n\.mxvp__cc \{([^}]*)\}/)[1];
-    assert.match(main, /width:\s*78px/);
-    assert.match(side, /width:\s*52px/);
+    const main = css.match(/\n\.mxvp \.mxvp__cc-main \{([^}]*)\}/)[1];
+    const side = css.match(/\n\.mxvp \.mxvp__cc \{([^}]*)\}/)[1];
+    assert.match(main, /width:\s*88px/);
+    assert.match(side, /width:\s*60px/);
 
     // Modern look: translucent disc, no hard outline ring.
     assert.doesNotMatch(side, /inset 0 0 0 1px/);
-    assert.match(side, /background:\s*rgba\(8, 8, 8, \.45\)/);
-    assert.match(side, /backdrop-filter:\s*blur\(8px\)/);
+    assert.match(side, /background:\s*rgba\(8, 8, 8, \.5\)/);
+    assert.match(side, /backdrop-filter:\s*blur\(10px\)/);
 
     // Hide after a while, then scale/fade back in on any activity.
     assert.match(css, /\.mxvp\.is-idle \.mxvp__cc \{[^}]*transform:\s*scale\(\.82\)/);

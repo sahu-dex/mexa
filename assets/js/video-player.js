@@ -81,9 +81,9 @@
                         '<input class="mxvp__seek" data-mxvp-seek type="range" min="0" max="' + SEEK_MAX + '" step="1" value="0" aria-label="Video progress">' +
                     '</div>' +
                     '<div class="mxvp__row">' +
-                        '<button type="button" class="mxvp__btn" data-mxvp-play aria-label="Play">' + ICON.play + '</button>' +
-                        '<button type="button" class="mxvp__btn" data-mxvp-back aria-label="Rewind 10 seconds">' + ICON.back + '</button>' +
-                        '<button type="button" class="mxvp__btn" data-mxvp-forward aria-label="Forward 10 seconds">' + ICON.forward + '</button>' +
+                        '<button type="button" class="mxvp__btn mxvp__btn--dup" data-mxvp-play aria-label="Play">' + ICON.play + '</button>' +
+                        '<button type="button" class="mxvp__btn mxvp__btn--dup" data-mxvp-back aria-label="Rewind 10 seconds">' + ICON.back + '</button>' +
+                        '<button type="button" class="mxvp__btn mxvp__btn--dup" data-mxvp-forward aria-label="Forward 10 seconds">' + ICON.forward + '</button>' +
                         '<div class="mxvp__vol">' +
                             '<button type="button" class="mxvp__btn" data-mxvp-mute aria-label="Mute">' + ICON.volume + '</button>' +
                             '<input class="mxvp__volume" data-mxvp-volume type="range" min="0" max="1" step="0.02" value="1" aria-label="Volume">' +
@@ -102,6 +102,7 @@
     var isOpen = false;
     var lastFocus = null;
     var hideTimer = 0;
+    var touchRevealed = false;
     var seeking = false;
     var rememberVolume = 1;
     var prevOverflow = '';
@@ -321,8 +322,8 @@
 
         refs.play.addEventListener('click', togglePlay);
         refs.centerPlay.addEventListener('click', togglePlay);
-        modal.querySelector('[data-mxvp-center-back]').addEventListener('click', function () { skip(-SKIP_SECONDS); });
-        modal.querySelector('[data-mxvp-center-forward]').addEventListener('click', function () { skip(SKIP_SECONDS); });
+        modal.querySelector('[data-mxvp-center-back]').addEventListener('click', function () { tapFeedback(this); skip(-SKIP_SECONDS); });
+        modal.querySelector('[data-mxvp-center-forward]').addEventListener('click', function () { tapFeedback(this); skip(SKIP_SECONDS); });
         refs.back.addEventListener('click', function () { skip(-SKIP_SECONDS); });
         refs.forward.addEventListener('click', function () { skip(SKIP_SECONDS); });
         refs.mute.addEventListener('click', toggleMute);
@@ -357,12 +358,26 @@
         [refs.media, refs.sink].forEach(function (layer) {
             if (!layer) return;
             layer.addEventListener('click', function () {
-                if (hasTransport()) togglePlay();
+                if (!hasTransport()) return;
+                // Touch screens, like YouTube: the first tap on a playing
+                // video only brings the hidden controls back.
+                if (touchRevealed) {
+                    touchRevealed = false;
+                    wake();
+                    return;
+                }
+                togglePlay();
             });
             layer.addEventListener('dblclick', function () {
                 if (hasTransport()) toggleFullscreen();
             });
         });
+
+        // Runs before wake(): remember whether this touch found the controls hidden.
+        refs.stage.addEventListener('pointerdown', function (event) {
+            touchRevealed = event.pointerType === 'touch' &&
+                modal.classList.contains('is-idle') && isPlaying();
+        }, { capture: true, passive: true });
 
         ['pointermove', 'pointerdown', 'touchstart', 'focusin'].forEach(function (type) {
             refs.stage.addEventListener(type, wake, { passive: true });
@@ -546,6 +561,18 @@
                 document.activeElement.closest('.mxvp__bar')) return;
             setControlsVisible(false);
         }, 2800);
+    }
+
+    /** Restartable ripple/nudge animation on a centre skip button. */
+    function tapFeedback(button) {
+        if (!button) return;
+        button.classList.remove('is-tapped');
+        void button.offsetWidth;
+        button.classList.add('is-tapped');
+        window.clearTimeout(button._mxvpTap);
+        button._mxvpTap = window.setTimeout(function () {
+            button.classList.remove('is-tapped');
+        }, 480);
     }
 
     function isEnded() {
