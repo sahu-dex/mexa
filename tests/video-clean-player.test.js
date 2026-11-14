@@ -154,6 +154,38 @@ test('the centre cluster, auto-hide and time label match the brief', () => {
     assert.doesNotMatch(css, /rgba\(255, 255, 255, \.34\)/);
 });
 
+test('the centre cluster is laid out like the YouTube player', () => {
+    const css = read('assets/css/video-player.css');
+    const js = read('assets/js/video-player.js');
+
+    // One row, dead centre, equal spacing on both sides.
+    const centre = css.match(/\n\.mxvp__center \{([^}]*)\}/)[1];
+    assert.match(centre, /display:\s*flex/);
+    assert.match(centre, /align-items:\s*center/);
+    assert.match(centre, /justify-content:\s*center/);
+    assert.match(centre, /top:\s*50%/);
+    assert.match(centre, /left:\s*50%/);
+    assert.match(centre, /translate\(-50%,\s*-50%\)/);
+    assert.match(centre, /gap:\s*clamp\(/, 'even, responsive spacing');
+
+    // Play/pause is the biggest disc; the side buttons are smaller.
+    const main = css.match(/\n\.mxvp__cc-main \{([^}]*)\}/)[1];
+    const side = css.match(/\n\.mxvp__cc \{([^}]*)\}/)[1];
+    assert.match(main, /width:\s*78px/);
+    assert.match(side, /width:\s*52px/);
+
+    // Modern look: translucent disc, no hard outline ring.
+    assert.doesNotMatch(side, /inset 0 0 0 1px/);
+    assert.match(side, /background:\s*rgba\(8, 8, 8, \.45\)/);
+    assert.match(side, /backdrop-filter:\s*blur\(8px\)/);
+
+    // Hide after a while, then scale/fade back in on any activity.
+    assert.match(css, /\.mxvp\.is-idle \.mxvp__cc \{[^}]*transform:\s*scale\(\.82\)/);
+    assert.match(side, /cubic-bezier/, 'smooth spring-like motion');
+    assert.match(js, /data-mxvp-center-back/);
+    assert.match(js, /data-mxvp-center-forward/);
+});
+
 test('the close button sits on the very top-right corner of the player', () => {
     const css = read('assets/css/video-player.css');
     const close = css.match(/\n\.mxvp__close \{([^}]*)\}/);
