@@ -140,3 +140,61 @@ body #team-page #t3-founder .tm-perk-ic {
     body #team-page #t3-founder .tm-perk { padding: 10px 12px !important; gap: 10px; }
     body #team-page #t3-founder .tm-perk-ic { width: 32px; height: 32px; flex-basis: 32px; }
 }
+
+/* Team page founder card: fit one desktop/laptop screen.
+   The portrait used to take half the card as a square (~530px), which made
+   the card ~590px tall - taller than a laptop viewport. On desktop the
+   portrait is now sized from the viewport height and the text column takes
+   the remaining width, so the whole founder section is visible without
+   scrolling. Colours, type, radii and the phone/tablet layout are untouched. */
+@media (min-width: 1024px) {
+    body #team-page #t3-founder.mx-founder-card {
+        --founder-photo: clamp(330px, calc(100vh - 430px), 440px);
+        --founder-photo: clamp(330px, calc(100svh - 430px), 440px);
+        grid-template-columns: var(--founder-photo) minmax(0, 1fr) !important;
+        align-items: center;
+    }
+    html body #team-page #t3-founder .tm-founder-photo {
+        width: var(--founder-photo);
+        height: var(--founder-photo);
+        aspect-ratio: 1 / 1 !important;
+    }
+    body #team-page #t3-founder .tm-founder-bio {
+        max-width: none;
+    }
+    body #team-page #t3-founder .t3-founder-info > .grid {
+        max-width: 640px;
+    }
+}
+
+/* Laptop-height screens: tighten the vertical rhythm (spacing only). */
+@media (min-width: 1024px) and (max-height: 800px) {
+    body #team-page.t3-page {
+        padding-top: 8px;
+    }
+    body #team-page .t3-founder-sec {
+        padding-top: 6px;
+    }
+    body #team-page .t3-sec-head.mh-head {
+        max-width: none;
+        margin-bottom: 16px;
+    }
+    body #team-page .t3-sec-head .mh-line2 {
+        margin-top: 0;
+    }
+    body #team-page .t3-sec-head .mh-desc {
+        max-width: 60rem;
+        margin-top: 10px;
+    }
+    body #team-page #t3-founder.mx-founder-card {
+        --founder-photo: clamp(300px, calc(100vh - 310px), 420px);
+        --founder-photo: clamp(300px, calc(100svh - 310px), 420px);
+        padding: 16px 20px !important;
+    }
+    body #team-page #t3-founder .tm-perk { padding: 7px 12px !important; }
+    body #team-page #t3-founder :is(.tm-perk-title, .tm-perk-text) { margin: 0; }
+    body #team-page #t3-founder .tm-founder-role { margin-top: 6px !important; }
+    body #team-page #t3-founder .tm-founder-bio { margin-top: 10px; }
+    body #team-page #t3-founder .t3-founder-keywords { margin-top: 10px; }
+    body #team-page #t3-founder .t3-founder-info > .grid { margin-top: 12px; }
+}
