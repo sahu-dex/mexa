@@ -11,7 +11,7 @@ require_once dirname(__DIR__) . '/includes/functions.php';
 $pageKey = 'home';
 $pageTitle = setting('meta_title', 'Mexa Motion | Professional Video Editing Agency');
 $pageDescription = setting('meta_description', 'Professional video editing services for YouTubers, Businesses, Agencies, and Content Creators. High-quality edits with fast turnaround.');
-$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return', 'assets/js/home-work-preview.js?v=20261113-clean-player'];
+$pageScripts = ['assets/js/home-extra.js', 'assets/js/home-reference-hero.js?v=20261113-character-return'];
 
 $servicesBundle = get_services_catalog(true);
 $homeServices = $servicesBundle['services'];
@@ -77,16 +77,6 @@ include dirname(__DIR__) . '/includes/header.php';
                 </div>
             </div>
         </section>
-
-        <div id="showreel-modal" class="showreel-modal" aria-hidden="true">
-            <div class="showreel-backdrop" onclick="closeShowreel()"></div>
-            <div class="showreel-box" role="dialog" aria-modal="true" aria-label="Showreel video">
-                <button type="button" class="showreel-close" onclick="closeShowreel()" aria-label="Close video">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <div class="showreel-frame" id="showreel-frame"></div>
-            </div>
-        </div>
 <?php endif; ?>
 
 <?php if (setting_raw('home_section_stats', '1') !== '0'): ?>
@@ -207,26 +197,6 @@ include dirname(__DIR__) . '/includes/header.php';
             </div>
         </section>
 
-        <div id="mm-work-modal" class="mmvp" hidden aria-hidden="true">
-            <div class="mmvp-dialog" role="dialog" aria-modal="true" aria-label="Video preview">
-                <div class="mmvp-stage">
-                    <button type="button" class="mmvp-close" data-mm-close aria-label="Close video preview">&times;</button>
-                    <div class="mmvp-player" data-mm-player></div>
-                    <div class="mmvp-loading" data-mm-loading>
-                        <span class="mmvp-spinner" aria-hidden="true"></span>
-                        <span class="sr-only">Loading video&hellip;</span>
-                    </div>
-                    <div class="mmvp-error" data-mm-error hidden>
-                        <p data-mm-error-text>This video could not be played right now.</p>
-                        <span class="mmvp-error-actions">
-                            <a class="mmvp-external" data-mm-external href="#" target="_blank" rel="noopener noreferrer">Open in a new tab</a>
-                            <button type="button" class="mmvp-retry" data-mm-retry>Try again</button>
-                        </span>
-                    </div>
-                </div>
-                <p class="mmvp-status" role="status" data-mm-status></p>
-            </div>
-        </div>
 <?php endif; ?>
 
 <?php if (setting_raw('home_section_process', '1') !== '0'): ?>

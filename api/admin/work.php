@@ -39,10 +39,6 @@ $title = trim((string) ($_POST['title'] ?? ''));
 $category = trim((string) ($_POST['category'] ?? 'General'));
 $kind = in_array($_POST['kind'] ?? '', ['video', 'image'], true) ? (string) $_POST['kind'] : 'video';
 $section = in_array($_POST['section'] ?? '', ['recent', 'demo', 'short', 'preview'], true) ? (string) $_POST['section'] : 'recent';
-$platform = trim((string) ($_POST['platform'] ?? ''));
-if ($platform === '') {
-    $platform = $kind === 'image' ? 'image' : 'youtube';
-}
 $duration = trim((string) ($_POST['duration'] ?? ''));
 $serviceName = trim((string) ($_POST['service_name'] ?? ''));
 $description = trim((string) ($_POST['description'] ?? ''));
@@ -109,6 +105,12 @@ if ($filePath === '') {
     json_response(['ok' => false, 'error' => 'Please upload a media file or enter a file path / URL.'], 422);
 }
 
+// Where does this video come from? An uploaded file or a provider link.
+// video_source_meta() decides the badge, how the player opens it and which URL
+// it frames, so an admin never has to think about embed types.
+$sourceMeta = video_source_meta($filePath, $kind);
+$platform = $sourceMeta['platform'];
+
 $cleanupUploads = static function () use ($uploadedMediaPath, $uploadedThumbPath): void {
     if ($uploadedMediaPath !== '') {
         delete_uploaded_file($uploadedMediaPath);
@@ -120,8 +122,8 @@ $cleanupUploads = static function () use ($uploadedMediaPath, $uploadedThumbPath
 
 if ($action === 'create') {
     $ins = $pdo->prepare(
-        'INSERT INTO `work_items` (`title`, `category`, `kind`, `platform`, `section`, `duration`, `service_name`, `description`, `file_path`, `thumbnail_path`, `is_featured`, `sort_order`, `status`)
-         VALUES (:title, :category, :kind, :platform, :section, :duration, :service_name, :description, :file_path, :thumbnail_path, :is_featured, :sort_order, :status)'
+        'INSERT INTO `work_items` (`title`, `category`, `kind`, `platform`, `section`, `duration`, `service_name`, `description`, `file_path`, `thumbnail_path`, `embed_type`, `embed_provider`, `embed_url`, `is_featured`, `sort_order`, `status`)
+         VALUES (:title, :category, :kind, :platform, :section, :duration, :service_name, :description, :file_path, :thumbnail_path, :embed_type, :embed_provider, :embed_url, :is_featured, :sort_order, :status)'
     );
     try {
         $ins->execute([
@@ -135,6 +137,9 @@ if ($action === 'create') {
             ':description' => $description !== '' ? $description : null,
             ':file_path' => $filePath,
             ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
+            ':embed_type' => $sourceMeta['embed_type'],
+            ':embed_provider' => $sourceMeta['embed_provider'],
+            ':embed_url' => $sourceMeta['embed_url'] !== '' ? $sourceMeta['embed_url'] : null,
             ':is_featured' => $isFeatured,
             ':sort_order' => $sortOrder,
             ':status' => $status,
@@ -150,8 +155,9 @@ $upd = $pdo->prepare(
     'UPDATE `work_items`
      SET `title` = :title, `category` = :category, `kind` = :kind, `platform` = :platform, `section` = :section,
          `duration` = :duration, `service_name` = :service_name, `description` = :description,
-         `file_path` = :file_path, `thumbnail_path` = :thumbnail_path, `is_featured` = :is_featured,
-         `sort_order` = :sort_order, `status` = :status
+         `file_path` = :file_path, `thumbnail_path` = :thumbnail_path,
+         `embed_type` = :embed_type, `embed_provider` = :embed_provider, `embed_url` = :embed_url,
+         `is_featured` = :is_featured, `sort_order` = :sort_order, `status` = :status
      WHERE `id` = :id'
 );
 try {
@@ -166,6 +172,9 @@ try {
         ':description' => $description !== '' ? $description : null,
         ':file_path' => $filePath,
         ':thumbnail_path' => $thumbPath !== '' ? $thumbPath : null,
+        ':embed_type' => $sourceMeta['embed_type'],
+        ':embed_provider' => $sourceMeta['embed_provider'],
+        ':embed_url' => $sourceMeta['embed_url'] !== '' ? $sourceMeta['embed_url'] : null,
         ':is_featured' => $isFeatured,
         ':sort_order' => $sortOrder,
         ':status' => $status,

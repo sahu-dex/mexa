@@ -14,17 +14,6 @@
         var m = String(url || '').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/i);
         return m ? m[1] : null;
     }
-    function vimeoId(url) {
-        var m = String(url || '').match(/vimeo\.com\/(?:video\/)?(\d+)/i);
-        return m ? m[1] : null;
-    }
-    function playerMarkup(url) {
-        var yt = youtubeId(url), vm = vimeoId(url);
-        if (yt) return '<iframe src="https://www.youtube.com/embed/' + yt + '?rel=0&autoplay=1" title="Service video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
-        if (vm) return '<iframe src="https://player.vimeo.com/video/' + vm + '?autoplay=1" title="Service video" allow="autoplay; fullscreen" allowfullscreen></iframe>';
-        return '<video src="' + esc(url) + '" controls autoplay playsinline preload="metadata"></video>';
-    }
-
     var content = {};
     S.catalog.ensure(SNAP);
 
@@ -114,17 +103,10 @@
             : '<p class="sp-empty">No services are published right now. Please check back soon.</p>';
     }
 
-    var locked = false;
+    /* Videos are played by the shared site-wide player (assets/js/video-player.js);
+       this controller only owns the service image lightbox. */
     function lock(on) {
         document.body.classList.toggle('sv2-locked', !!on);
-        locked = !!on;
-    }
-    function openVideo(url) {
-        var m = el('sv2-video');
-        if (!m) return;
-        el('sv2-video-stage').innerHTML = playerMarkup(url);
-        m.hidden = false; lock(true);
-        var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
     }
     function openImage(url, alt) {
         var m = el('sv2-image');
@@ -134,17 +116,16 @@
         m.hidden = false; lock(true);
         var x = m.querySelector('.sv2-modal-x'); if (x) x.focus({ preventScroll: true });
     }
-    function closeModals() {
-        var v = el('sv2-video'), i = el('sv2-image');
-        if (v && !v.hidden) { v.hidden = true; el('sv2-video-stage').innerHTML = ''; }
-        if (i && !i.hidden) { i.hidden = true; el('sv2-image-img').removeAttribute('src'); }
-        if (!locked) return;
+    function closeImage() {
+        var i = el('sv2-image');
+        if (!i || i.hidden) return;
+        i.hidden = true;
+        el('sv2-image-img').removeAttribute('src');
         lock(false);
     }
 
     document.addEventListener('click', function (e) {
-        var vid = e.target.closest('[data-sv2-video]');
-        if (vid) { e.preventDefault(); openVideo(vid.getAttribute('data-sv2-video')); return; }
+        if (e.target.closest('[data-sv2-video]')) return;
 
         var img = e.target.closest('[data-sv2-image]');
         if (img) {
@@ -153,14 +134,12 @@
             return;
         }
 
-        if (e.target.closest('[data-sv2-close]')) { closeModals(); return; }
-        if (e.target.classList && e.target.classList.contains('sv2-modal')) { closeModals(); return; }
-
-
+        if (e.target.closest('[data-sv2-close]')) { closeImage(); return; }
+        if (e.target.classList && e.target.classList.contains('sv2-modal')) { closeImage(); return; }
     });
 
     document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') closeModals();
+        if (e.key === 'Escape') closeImage();
     });
 
     function boot() {

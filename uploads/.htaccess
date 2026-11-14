@@ -20,3 +20,21 @@ Options -Indexes -ExecCGI
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
 </IfModule>
+
+# Video files are meant to stream: let browsers cache them and ask for ranges
+# so the shared player can start instantly and seek without re-downloading.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType video/mp4 "access plus 30 days"
+    ExpiresByType video/webm "access plus 30 days"
+    ExpiresByType video/quicktime "access plus 30 days"
+    ExpiresByType image/jpeg "access plus 30 days"
+    ExpiresByType image/png "access plus 30 days"
+    ExpiresByType image/webp "access plus 30 days"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(mp4|webm|mov)$">
+        Header set Accept-Ranges "bytes"
+    </FilesMatch>
+</IfModule>

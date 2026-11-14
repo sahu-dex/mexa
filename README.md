@@ -148,12 +148,32 @@ Open **Admin → Videos & Shorts**. The same `work_items` table powers the publi
    - `short` → homepage Shorts tab (9:16)
    - `recent` → Work page “Recently Worked On”
    - `preview` → homepage preview pool
-4. Upload the **video** (MP4, WebM, or MOV, up to `MAX_VIDEO_BYTES`) **or** paste a YouTube/Vimeo/Facebook URL. Uploads use the existing validated `uploads/videos/` pipeline.
+4. Pick **one of the two video systems**:
+   - **Direct upload** — choose an MP4/WebM/MOV up to `MAX_VIDEO_BYTES`. The file is validated (`finfo` MIME check), stored under `uploads/videos/` with a random name and the row keeps that path. An upload always wins over a link.
+   - **Video link** — paste a YouTube, Facebook, Vimeo or any other embeddable URL. `video_source_meta()` detects the platform, so the row is stored with `platform`, `embed_type`, `embed_provider` and the exact `embed_url` (for example `youtube-nocookie.com/embed/<id>`) and the player opens it in the right mode without any manual configuration.
 5. Upload a separate **thumbnail** (JPG, PNG, or WebP) or paste its URL. If a thumbnail is omitted for a YouTube link, the provider thumbnail is used automatically.
 6. Set **Status** to `Published` so the card appears on the website immediately; keep it as `Draft` to hide it. **Edit** and delete actions are available per row, and deleting an item also removes its uploaded video and thumbnail files.
 7. Use the **All / Videos / Shorts** filter tabs to manage each content type quickly. Changes are public on the next page load — no code edits or cache rebuild required.
 
-On the homepage, clicking a card with a playable source opens the preview modal. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
+On the homepage, clicking a card with a playable source opens the shared video player. Videos play in a 16:9 stage, Shorts in a 9:16 stage. Closing with the **X** button, `Esc`, or a click on the backdrop stops playback and returns focus to the card. Image-only items open as a still preview, while cards with no media source at all link to the Work page.
+
+### Shared Video Player (Home, Service & Work)
+
+Every video on the site — Home *Our Work*, Work page videos and Shorts, Service page videos, and the showreel — is played by one reusable component:
+
+- `assets/js/video-player.js` builds a **single** player modal (`#mexa-video-player`) on first use and exposes `MexaVideoPlayer.open()`, `.openFrom(element)`, `.close()` and `.isOpen()`. It is initialised once per page, so a page can never end up with two modals, two close buttons or duplicated listeners.
+- `assets/css/video-player.css` holds all player styling. The close control is one real `<button>` with an inline SVG icon — no `&times;` text and no `::before`/`::after` glyph, so the old double-cross could not return.
+- Controls: a **centre cluster** in the middle of the picture — **−10s**, **play/pause**, **+10s** — plus the bar underneath with play/pause, −10s, +10s, a seekable progress bar, current time / total duration, mute + volume slider and fullscreen. Controls fade out after ~3 seconds of inactivity (the cursor goes with them) and come back on any mouse move, touch or key press. Keyboard shortcuts: `Space`/`K` play-pause, `←`/`→` ±10s, `↑`/`↓` volume, `M` mute, `F` fullscreen, `Esc` close.
+- The close button is pinned to the very top-right corner of the player (it overlaps the corner; inside the picture only while fullscreen, where there is no room outside).
+- **YouTube clips play in a plain iframe with every piece of YouTube chrome switched off** — `controls=0`, `modestbranding=1`, `rel=0`, `showinfo=0`, `iv_load_policy=3`, `disablekb=1`, `fs=0` — so no YouTube logo, channel name, title, share/watch-later/settings buttons, related-video rail or "More videos" end screen is shown. Nothing depends on the blockable `iframe_api` script: the frame is driven over `postMessage` (`enablejsapi=1`) with our own bar sending `playVideo`, `pauseVideo`, `seekTo`, `setVolume`, `mute`/`unMute`, while YouTube pushes `onReady` / `onStateChange` / `infoDelivery` back to feed the progress bar, time label and end plate.
+- **Speed and resilience:** the YouTube hosts are preconnected on load/hover, the frame is only revealed once it answers (the poster covers the boot moment, so no black flash), `autoplay=1&playsinline=1` starts the clip immediately, and a browser that blocked audible autoplay is remembered so the next clip starts muted (a tap restores sound). Transient player errors get one clean retry before the clip is rebuilt with YouTube's own controls, so a video is always watchable.
+- **Every device:** the same player covers mobile, tablet, laptop and desktop; on phones without the Fullscreen API (iOS Safari) fullscreen is produced with CSS so the control never dead-ends.
+- Only the video and the controls are shown: no title, description or extra text, and the aspect ratio is preserved on desktop and mobile.
+- Clicking the picture toggles playback (a transparent sink layer makes this work over a YouTube frame too) and a double click toggles fullscreen.
+- **Shorts** open in a 9:16 stage; in fullscreen the stage stays as wide as the picture (`min(100vw, 100vh * 9 / 16)`), so a vertical clip is never stretched or squeezed, on desktop or on a CSS-fullscreen phone.
+- Uploaded files stream from `uploads/videos/` with `Accept-Ranges` and 30-day caching (see `uploads/.htaccess`), so seeking and repeat views are instant.
+- Cards opt in through data attributes the player already understands: `data-mm-video-url`, `data-mm-video-embed-url`, `data-mm-video-type`, `data-mm-video-poster`, `data-mm-video-title`, `data-mm-vertical="1"` (9:16), or the Home gallery pair `data-mm-media` + `data-mm-src` / `data-mm-embed` / `data-mm-kind`.
+- Closing (X, `Esc` or backdrop) pauses the video, mutes it, releases the source and the scroll lock. Opening another clip stops the previous one first.
 
 ---
 

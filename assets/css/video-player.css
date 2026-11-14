@@ -1,0 +1,719 @@
+/**
+ * MEXA MOTION — shared video player (single close button, custom controls).
+ *
+ * Used by assets/js/video-player.js on every page: Home "Our Work" gallery,
+ * Work page videos + Shorts, Service page videos and the showreel.
+ *
+ * The close control is one real <button> with an inline SVG cross — this file
+ * never injects a "×" through ::before/::after, so the old double-cross
+ * problem cannot come back. No title, description or caption is rendered:
+ * only the video and the player controls.
+ */
+
+.mxvp[hidden],
+.mxvp [hidden] {
+    display: none !important;
+}
+
+.mxvp {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(10px, 3vw, 32px);
+    background: rgba(3, 10, 22, .94);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    overscroll-behavior: contain;
+}
+
+.mxvp *,
+.mxvp *::before,
+.mxvp *::after {
+    box-sizing: border-box;
+}
+
+.mxvp__dialog {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+}
+
+/* ------------------------------------------------------------------ stage */
+
+.mxvp__stage {
+    --mxvp-radius: 16px;
+    position: relative;
+    width: min(100%, 1180px, calc((100dvh - 96px) * 16 / 9));
+    max-height: calc(100dvh - 40px);
+    aspect-ratio: 16 / 9;
+    /* The close button sits on the top-right corner, so the stage itself must
+       not clip it; the media and control bar keep their own rounded corners. */
+    overflow: visible;
+    border-radius: var(--mxvp-radius);
+    background-color: #000;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, .58);
+    isolation: isolate;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.mxvp.is-vertical .mxvp__stage {
+    --mxvp-radius: 18px;
+    width: min(420px, 92vw, calc((100dvh - 96px) * 9 / 16));
+    max-height: calc(100dvh - 40px);
+    aspect-ratio: 9 / 16;
+    border-radius: var(--mxvp-radius);
+}
+
+.mxvp__stage:fullscreen {
+    --mxvp-radius: 0px;
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.mxvp__stage:-webkit-full-screen {
+    --mxvp-radius: 0px;
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    border-radius: 0;
+}
+
+/* Fullscreen has no room outside the picture, so the close control stays inside. */
+.mxvp__stage:fullscreen .mxvp__close,
+.mxvp__stage:-webkit-full-screen .mxvp__close {
+    top: 14px;
+    right: 14px;
+}
+
+/* iOS Safari has no Element.requestFullscreen, so the same picture is produced
+   with CSS: the stage simply becomes the viewport. */
+.mxvp.is-pseudo-fullscreen .mxvp__stage {
+    --mxvp-radius: 0px;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: none;
+    aspect-ratio: auto;
+    border-radius: 0;
+    box-shadow: none;
+    z-index: 3;
+}
+
+.mxvp.is-pseudo-fullscreen .mxvp__close {
+    top: 14px;
+    right: 14px;
+    z-index: 40;
+}
+
+/* Shorts keep their 9:16 box when fullscreen: the player is as wide as the
+   picture, so nothing is stretched and no black bars are baked inside it. */
+.mxvp.is-vertical .mxvp__stage:fullscreen,
+.mxvp.is-vertical .mxvp__stage:-webkit-full-screen,
+.mxvp.is-vertical.is-pseudo-fullscreen .mxvp__stage {
+    width: min(100vw, calc(100vh * 9 / 16));
+    height: 100vh;
+    max-height: none;
+    margin-inline: auto;
+    aspect-ratio: 9 / 16;
+}
+
+/* ------------------------------------------------------------------ media */
+
+.mxvp__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: var(--mxvp-radius);
+    background: #000;
+    transition: opacity .18s ease;
+}
+
+/* A YouTube frame paints its own black box while the player boots. Keep it
+   invisible behind the poster until the frame actually answers, then fade the
+   picture in — no black flash, no half-drawn player. */
+.mxvp.is-youtube .mxvp__media {
+    opacity: 0;
+}
+
+.mxvp.is-youtube.is-yt-live .mxvp__media,
+.mxvp.is-youtube.is-embed .mxvp__media {
+    opacity: 1;
+}
+
+/* After a YouTube clip ends, hide the iframe so YouTube's "More videos"
+   screen never appears; the poster and our replay button take over. */
+.mxvp.is-ended .mxvp__media,
+.mxvp.is-youtube.is-ended .mxvp__media {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Click/tap layer above the picture: YouTube frames swallow their own clicks,
+   so the sink keeps "click the video to pause" working for every provider. */
+.mxvp__sink {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: transparent;
+    cursor: pointer;
+}
+
+.mxvp.is-idle .mxvp__sink {
+    cursor: none;
+}
+
+.mxvp.is-embed .mxvp__sink,
+.mxvp.is-image .mxvp__sink {
+    display: none;
+}
+
+.mxvp__media > video,
+.mxvp__media > iframe,
+.mxvp__media > img {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #000;
+    object-fit: contain;
+}
+
+.mxvp__media > video {
+    cursor: pointer;
+}
+
+.mxvp.is-idle .mxvp__media > video,
+.mxvp.is-idle .mxvp__stage {
+    cursor: none;
+}
+
+/* ------------------------------------------------------------ close button */
+
+.mxvp__close {
+    position: absolute;
+    /* Pinned to the very top-right corner of the player. */
+    top: -15px;
+    right: -15px;
+    z-index: 30;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 50%;
+    background: rgba(10, 18, 32, .62);
+    color: #fff;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.mxvp__close svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    pointer-events: none;
+}
+
+.mxvp__close:hover {
+    background: #1051df;
+    border-color: #4d8bff;
+    transform: scale(1.04);
+}
+
+.mxvp__close:focus-visible {
+    outline: 2px solid #8fbcff;
+    outline-offset: 3px;
+}
+
+/* ----------------------------------------------------- centre control cluster */
+
+/* -10s · play/pause · +10s, dead centre of the picture.
+   YouTube-style: soft translucent black discs, no outline ring, one clear
+   hierarchy (the play/pause disc is the biggest), generous even spacing and a
+   gentle scale-in when the controls come back. */
+.mxvp__center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 15;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(18px, 3vw, 34px);
+    padding: 0;
+    border: 0;
+    background: none;
+    transform: translate(-50%, -50%);
+    transition: opacity .24s ease;
+}
+
+.mxvp__cc {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(8, 8, 8, .45);
+    color: #fff;
+    cursor: pointer;
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, .28);
+    transform: scale(1);
+    transition:
+        background .18s ease,
+        transform .26s cubic-bezier(.22, .9, .3, 1),
+        opacity .24s ease;
+}
+
+.mxvp__cc svg {
+    display: block;
+    width: 26px;
+    height: 26px;
+    pointer-events: none;
+}
+
+.mxvp__cc-main {
+    width: 78px;
+    height: 78px;
+    background: rgba(8, 8, 8, .55);
+}
+
+.mxvp__cc-main svg {
+    width: 34px;
+    height: 34px;
+}
+
+.mxvp__cc:hover {
+    background: rgba(8, 8, 8, .78);
+    transform: scale(1.07);
+}
+
+.mxvp__cc:active {
+    transform: scale(.95);
+    transition-duration: .08s;
+}
+
+.mxvp__cc:focus-visible {
+    outline: 2px solid #8fbcff;
+    outline-offset: 4px;
+}
+
+/* Fade + shrink together, so the cluster melts into the picture. */
+.mxvp.is-idle .mxvp__center {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mxvp.is-idle .mxvp__cc {
+    transform: scale(.82);
+    opacity: 0;
+}
+
+/* ------------------------------------------------------------- control bar */
+
+.mxvp__bar {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    padding: 28px 12px 10px;
+    border-radius: 0 0 var(--mxvp-radius) var(--mxvp-radius);
+    background: linear-gradient(to top, rgba(4, 10, 20, .94), rgba(4, 10, 20, .58) 52%, rgba(4, 10, 20, 0));
+    transition: opacity .2s ease, transform .2s ease;
+}
+
+.mxvp.is-idle .mxvp__bar {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(6px);
+}
+
+.mxvp.is-embed .mxvp__bar,
+.mxvp.is-image .mxvp__bar,
+.mxvp.is-embed .mxvp__center {
+    display: none;
+}
+
+.mxvp__scrub {
+    display: flex;
+    align-items: center;
+    height: 16px;
+}
+
+/* Progress bar ------------------------------------------------------------ */
+
+.mxvp__seek {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 16px;
+    margin: 0;
+    background: transparent;
+    cursor: pointer;
+    --mxvp-played: 0%;
+}
+
+.mxvp__seek:focus-visible {
+    outline: 2px solid #8fbcff;
+    outline-offset: 2px;
+    border-radius: 999px;
+}
+
+.mxvp__seek::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #2f7cf6 0 var(--mxvp-played), rgba(255, 255, 255, .22) var(--mxvp-played) 100%);
+}
+
+.mxvp__seek::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 13px;
+    height: 13px;
+    margin-top: -4.5px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(47, 124, 246, .35);
+    opacity: 0;
+    transition: opacity .15s ease;
+}
+
+.mxvp__scrub:hover .mxvp__seek::-webkit-slider-thumb,
+.mxvp__seek:focus-visible::-webkit-slider-thumb,
+.mxvp__seek:active::-webkit-slider-thumb {
+    opacity: 1;
+}
+
+.mxvp__seek::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .22);
+}
+
+.mxvp__seek::-moz-range-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: #2f7cf6;
+}
+
+.mxvp__seek::-moz-range-thumb {
+    width: 13px;
+    height: 13px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(47, 124, 246, .35);
+}
+
+/* Buttons row ------------------------------------------------------------- */
+
+.mxvp__row {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 2px;
+    color: #fff;
+}
+
+.mxvp__btn {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    transition: background .16s ease, color .16s ease;
+}
+
+.mxvp__btn svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    pointer-events: none;
+}
+
+.mxvp__btn:hover {
+    background: rgba(255, 255, 255, .16);
+}
+
+.mxvp__btn:focus-visible {
+    outline: 2px solid #8fbcff;
+    outline-offset: 2px;
+}
+
+.mxvp__btn--fs {
+    margin-left: auto;
+}
+
+.mxvp__vol {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.mxvp__volume {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 64px;
+    height: 16px;
+    margin: 0 4px 0 0;
+    background: transparent;
+    cursor: pointer;
+    --mxvp-volume: 100%;
+}
+
+.mxvp__volume:focus-visible {
+    outline: 2px solid #8fbcff;
+    outline-offset: 2px;
+    border-radius: 999px;
+}
+
+.mxvp__volume::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #fff 0 var(--mxvp-volume), rgba(255, 255, 255, .22) var(--mxvp-volume) 100%);
+}
+
+.mxvp__volume::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 11px;
+    height: 11px;
+    margin-top: -3.5px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.mxvp__volume::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .22);
+}
+
+.mxvp__volume::-moz-range-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: #fff;
+}
+
+.mxvp__volume::-moz-range-thumb {
+    width: 11px;
+    height: 11px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+}
+
+.mxvp__time {
+    margin-left: 8px;
+    color: rgba(255, 255, 255, .88);
+    font: 500 12px/1 "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .01em;
+    white-space: nowrap;
+}
+
+/* -------------------------------------------------------- loading / errors */
+
+.mxvp__spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 18;
+    width: 38px;
+    height: 38px;
+    margin: -19px 0 0 -19px;
+    border: 3px solid rgba(255, 255, 255, .22);
+    border-top-color: #5aa4ff;
+    border-radius: 50%;
+    animation: mxvp-spin .8s linear infinite;
+    pointer-events: none;
+}
+
+.mxvp__error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 19;
+    width: max-content;
+    max-width: min(320px, 82%);
+    margin: 0;
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: rgba(9, 18, 33, .84);
+    color: #eaf3ff;
+    font: 500 13px/1.45 "Plus Jakarta Sans", system-ui, sans-serif;
+    text-align: center;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes mxvp-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------- adaptations */
+
+body.mxvp-open {
+    overflow: hidden !important;
+}
+
+.mxvp:not([hidden]) .mxvp__stage {
+    animation: mxvp-pop .24s cubic-bezier(.22, .61, .36, 1) both;
+}
+
+@keyframes mxvp-pop {
+    from { opacity: 0; transform: translateY(8px) scale(.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (max-width: 640px) {
+    .mxvp {
+        padding: 14px;
+    }
+
+    .mxvp__stage {
+        --mxvp-radius: 12px;
+        width: 100%;
+        max-height: calc(100dvh - 44px);
+        border-radius: var(--mxvp-radius);
+    }
+
+    .mxvp.is-vertical .mxvp__stage {
+        --mxvp-radius: 14px;
+        width: min(100%, calc((100dvh - 44px) * 9 / 16));
+        border-radius: var(--mxvp-radius);
+    }
+
+    .mxvp__close {
+        top: -13px;
+        right: -13px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .mxvp__close svg {
+        width: 17px;
+        height: 17px;
+    }
+
+    .mxvp__bar {
+        padding: 24px 8px 8px;
+    }
+
+    .mxvp__btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .mxvp__btn svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .mxvp__volume {
+        width: 52px;
+    }
+
+    .mxvp__time {
+        margin-left: 6px;
+        font-size: 11px;
+    }
+
+    .mxvp__cc {
+        width: 44px;
+        height: 44px;
+    }
+
+    .mxvp__cc svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    .mxvp__cc-main {
+        width: 64px;
+        height: 64px;
+    }
+
+    .mxvp__cc-main svg {
+        width: 28px;
+        height: 28px;
+    }
+
+    .mxvp__center {
+        gap: 16px;
+    }
+}
+
+@media (max-width: 380px) {
+    .mxvp__time {
+        display: none;
+    }
+}
+
+@media (max-height: 480px) {
+    .mxvp__bar {
+        padding-top: 18px;
+    }
+
+    .mxvp__cc-main {
+        width: 56px;
+        height: 56px;
+    }
+
+    .mxvp__cc {
+        width: 40px;
+        height: 40px;
+    }
+
+    .mxvp__center {
+        gap: 14px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mxvp__stage,
+    .mxvp__bar,
+    .mxvp__close,
+    .mxvp__center {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .mxvp__spinner {
+        animation-duration: 1.6s;
+    }
+}
