@@ -804,6 +804,26 @@ function get_work_bundle(?string $kind = null, ?string $category = null, ?string
     ];
 }
 
+/** Longest review the site shows or accepts, in words. */
+const MEXA_REVIEW_MAX_WORDS = 100;
+
+function mexa_word_count(string $text): int
+{
+    $words = preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+    return is_array($words) ? count($words) : 0;
+}
+
+// Cuts at display time, so reviews stored before the limit existed keep their
+// full text in the database and only the public cards are shortened.
+function limit_words(string $text, int $max = MEXA_REVIEW_MAX_WORDS): string
+{
+    $words = preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY);
+    if (!is_array($words) || count($words) <= $max) {
+        return trim($text);
+    }
+    return rtrim(implode(' ', array_slice($words, 0, $max)), " \t,;:-") . '…';
+}
+
 function get_reviews_bundle(bool $excludeFeaturedOnly = false): array
 {
     $sql = 'SELECT * FROM `reviews` WHERE `status` = :status';
@@ -834,7 +854,7 @@ function get_reviews_bundle(bool $excludeFeaturedOnly = false): array
             'name' => (string) $r['name'],
             'role' => (string) ($r['role'] ?? ''),
             'rating' => $rating,
-            'body' => (string) $r['body'],
+            'body' => limit_words((string) $r['body']),
             'file_path' => $fp,
             'photo_url' => $fp,
             'is_featured' => (int) $r['is_featured'],
@@ -861,12 +881,16 @@ function get_featured_reviews(): array
     $stmt = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status AND `is_featured` = 1 ORDER BY `id` ASC');
     $stmt->execute([':status' => 'approved']);
     $rows = $stmt->fetchAll();
-    if (!empty($rows)) {
-        return $rows;
+    if (empty($rows)) {
+        $fallback = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status ORDER BY `created_at` DESC LIMIT 10');
+        $fallback->execute([':status' => 'approved']);
+        $rows = $fallback->fetchAll();
     }
-    $fallback = db()->prepare('SELECT * FROM `reviews` WHERE `status` = :status ORDER BY `created_at` DESC LIMIT 10');
-    $fallback->execute([':status' => 'approved']);
-    return $fallback->fetchAll();
+    foreach ($rows as &$row) {
+        $row['body'] = limit_words((string) ($row['body'] ?? ''));
+    }
+    unset($row);
+    return $rows;
 }
 
 // Limit legacy profiles at display time without changing the stored admin content.
@@ -1109,8 +1133,11 @@ function page_stylesheets(string $pageKey): array
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }
+    // Review-card scrolling, the extra "Seen More" rows and the service page's
+    // contact + ticket section.
+    $stylesheets[] = 'assets/css/section-additions.css?v=20261114';
     // Phone sizing pass (hero, buttons, section spacing). Every rule is inside
     // a max-width query, so desktop is untouched. Must stay last.
-    $stylesheets[] = 'assets/css/mobile-responsive.css?v=20261114-phone-sizing';
+    $stylesheets[] = 'assets/css/mobile-responsive.css?v=20261114-reviews';
     return $stylesheets;
 }

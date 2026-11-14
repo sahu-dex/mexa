@@ -85,8 +85,6 @@
             '<div class="sv2-grow">' +
             (svc.description ? '<p class="sv2-body">' + esc(svc.description).replace(/\n/g, '<br>') + '</p>' : '') +
             (feats ? '<ul class="sv2-feats">' + feats + '</ul>' : '') +
-            (svc.deliverables ? '<p class="sv2-deliv"><b>Deliverables</b>' +
-                esc(String(svc.deliverables).replace(/\n/g, ' · ')) + '</p>' : '') +
             '</div></article>';
     }
 

@@ -460,6 +460,11 @@ window.showCustomMessage = function (text) {
     // is a forced layout per move. One read/write per frame instead.
     track.addEventListener('pointerdown', (e) => {
         if (e.pointerType === 'touch') return;          // touch pans natively
+        // A review whose text overflows scrolls inside its own card. A press on
+        // that text box (its scrollbar included) must not start a row drag, or
+        // the scrollbar could never be grabbed.
+        const quote = e.target.closest ? e.target.closest('.rv-quote.is-scrollable') : null;
+        if (quote) return;
         dragStartX = e.clientX; dragStartScroll = track.scrollLeft;
         dragging = true; track.classList.add('is-dragging'); sync();
     });
@@ -491,6 +496,23 @@ window.showCustomMessage = function (text) {
         }, { rootMargin: '120px 0px', threshold: 0 }).observe(section);
     } else { inView = true; start(); }
     document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else start(); });
+
+    // Mark the reviews that actually overflow, so only those behave as scroll
+    // boxes; short ones stay plain text and can still be used to drag the row.
+    const markScrollable = () => {
+        track.querySelectorAll('.rv-quote').forEach(q => {
+            q.classList.toggle('is-scrollable', q.scrollHeight > q.clientHeight + 1);
+        });
+    };
+    markScrollable();
+    window.addEventListener('load', markScrollable);
+    window.addEventListener('resize', markScrollable, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(markScrollable);
+
+    // Mouse wheel is left entirely to the browser (no wheel listener, so
+    // nothing can block scrolling): over an overflowing review it scrolls that
+    // review's text, a sideways wheel / Shift+wheel moves the row, and a plain
+    // vertical wheel anywhere else scrolls the page.
 
     track.setAttribute('tabindex', '0');
     track.addEventListener('keydown', (e) => {

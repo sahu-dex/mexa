@@ -124,6 +124,10 @@ include dirname(__DIR__) . '/includes/header.php';
                     </div>
 <?php endforeach; ?>
                 </div>
+
+                <div class="rs-foot sec-more">
+                    <a href="service" class="seen-more-link" aria-label="See all services">Seen More <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
             </div>
         </section>
 <?php endif; ?>
@@ -193,6 +197,10 @@ include dirname(__DIR__) . '/includes/header.php';
 <?php if (empty($homeShorts)): ?>
                     <p class="pf-empty">Shorts will appear here as soon as they are published from the Admin Panel.</p>
 <?php endif; ?>
+                </div>
+
+                <div class="rs-foot sec-more">
+                    <a href="work" class="seen-more-link" aria-label="See more of our work">Seen More <i class="fa-solid fa-arrow-right"></i></a>
                 </div>
             </div>
         </section>

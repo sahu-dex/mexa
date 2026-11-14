@@ -66,3 +66,49 @@ test('the phone sizing sheet cannot reach desktop', () => {
     assert.match(css, /@layer mx-typography \{\s*@media \(max-width/);
     assert.match(read('includes/functions.php'), /mobile-responsive\.css\?v=/);
 });
+
+test('reviews are capped at 100 words on display, on submit and in the form', () => {
+    const fn = read('includes/functions.php');
+    assert.match(fn, /const MEXA_REVIEW_MAX_WORDS = 100;/);
+    assert.match(fn, /'body' => limit_words\(\(string\) \$r\['body'\]\)/);
+    assert.match(fn, /function get_featured_reviews[\s\S]{0,700}limit_words/);
+    assert.match(read('api/submit-review.php'), /mexa_word_count\(\$body\) > MEXA_REVIEW_MAX_WORDS/);
+    assert.match(read('assets/js/page-review.js'), /wordCount\(bodyVal\) > MAX_WORDS/);
+});
+
+test('review cards scroll: page is never trapped and long text scrolls in place', () => {
+    const css = read('assets/css/section-additions.css');
+    const js = read('assets/js/site-common.js');
+    assert.match(css, /\.reviews-container\s*\{[^}]*overscroll-behavior-y:\s*auto\s*!important/);
+    assert.match(css, /\.rv-quote\s*\{[^}]*overflow-y:\s*auto\s*!important/);
+    // A press on an overflowing review must not start a row drag.
+    assert.match(js, /closest\('\.rv-quote\.is-scrollable'\)/);
+    // Wheel scrolling stays native: the slider adds no wheel listener.
+    assert.doesNotMatch(js.slice(js.indexOf('initReviewSlider')), /addEventListener\('wheel'/);
+});
+
+test('home has Seen More under services and work, in the existing style', () => {
+    const home = read('pages/index.php');
+    const links = [...home.matchAll(/<a href="([^"]+)" class="seen-more-link"/g)].map(m => m[1]);
+    assert.deepEqual(links, ['service', 'work', 'review']);
+});
+
+test('service page: no deliverables, and a contact card with a working ticket form', () => {
+    const page = read('pages/service.php');
+    const js = read('assets/js/page-service.js');
+    assert.doesNotMatch(page, /sv2-deliv|Deliverables|\$s\['deliverables'\]/);
+    assert.doesNotMatch(js, /sv2-deliv|deliverables/i);
+
+    assert.match(page, /WP Message Me/);
+    assert.match(page, /TG Message Me/);
+    assert.match(page, /https:\/\/wa\.me\//);
+    assert.match(page, /id="ticket-form"[^>]*action="api\/submit-ticket\.php"/);
+    for (const name of ['name', 'whatsapp', 'message']) assert.match(page, new RegExp('name="' + name + '"'));
+    assert.match(page, /csrf_field\(\)/);
+
+    const api = read('api/submit-ticket.php');
+    assert.match(api, /require_csrf\(true\)/);
+    assert.match(api, /rate_limit_allow\('ticket_submit'/);
+    assert.match(api, /INSERT INTO `messages`/);
+    assert.match(api, /'ticket' => \$ticketRef/);
+});

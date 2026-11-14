@@ -142,3 +142,72 @@
         }
     }
 }
+
+/* ---------------------------------------------------------- review cards */
+
+/* 288×405px cards with 32px padding filled the whole phone screen one at a
+   time. Compact cards let the next one peek in, so the row reads as a row. */
+@media (max-width: 767.98px) {
+    html body #reviews .reviews-container {
+        gap: 12px !important;
+        padding-bottom: 22px !important;
+    }
+
+    html body #reviews .reviews-container .review-card {
+        width: min(70vw, 248px) !important;
+        min-height: 0 !important;
+        padding: 16px !important;
+        border-radius: 20px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-card-top {
+        margin-bottom: 10px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-story {
+        font-size: 9.5px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-stars {
+        font-size: 11px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-quote {
+        min-height: 0 !important;
+        max-height: 126px !important;
+        margin: 0 0 12px !important;
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-person {
+        margin-top: auto !important;
+        padding-top: 10px !important;
+        gap: 10px !important;
+    }
+
+    html body #reviews .reviews-container .review-card .rv-avatar {
+        width: 36px !important;
+        height: 36px !important;
+        flex: 0 0 36px !important;
+    }
+}
+
+/* The quote's size is also pinned in the typography layer (`p` inside a
+   section), so the 13px has to be stated there to take effect. */
+@layer mx-typography {
+    @media (max-width: 767.98px) {
+        body #reviews .reviews-container .review-card .rv-quote {
+            font-size: 13px !important;
+            line-height: 1.55 !important;
+        }
+        body #reviews .reviews-container .review-card .rv-person h5 {
+            font-size: 13px !important;
+            line-height: 1.3 !important;
+        }
+        body #reviews .reviews-container .review-card .rv-person p {
+            font-size: 11.5px !important;
+            line-height: 1.35 !important;
+        }
+    }
+}

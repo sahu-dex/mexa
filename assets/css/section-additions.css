@@ -1,0 +1,305 @@
+/*
+ * Additions that apply at every width:
+ *   1. long review text scrolls inside its card instead of stretching it;
+ *   2. the "Seen More" row under the home services and work sections;
+ *   3. the contact card + ticket form at the bottom of the service page.
+ * Colours, radii and shadows are the ones the rest of the site already uses.
+ */
+
+/* ------------------------------------------------- 1. review card scrolling */
+
+/* The row only scrolls sideways, but it was `overscroll-behavior: contain` on
+   both axes. On the vertical axis that stops the wheel and a vertical swipe
+   from being handed on to the page, so with the pointer or a finger on a review
+   card the page would not scroll at all. Contain the sideways axis only. */
+html body .reviews-container {
+    overscroll-behavior-x: contain !important;
+    overscroll-behavior-y: auto !important;
+}
+
+/* The card keeps a fixed, compact shape; a review of up to 100 words scrolls
+   inside it with the wheel, a finger, or by dragging the thin scrollbar. */
+html body #reviews .reviews-container .review-card {
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+html body #reviews .reviews-container .review-card .rv-quote {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    max-height: 176px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-right: 6px !important;
+    /* Vertical swipes scroll the text; horizontal ones still move the row. */
+    touch-action: pan-x pan-y !important;
+    overscroll-behavior-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(17, 82, 223, .35) transparent;
+    cursor: auto;
+}
+
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar { width: 5px; }
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar-thumb { background: rgba(17, 82, 223, .32); border-radius: 9px; }
+html body #reviews .reviews-container .review-card .rv-quote::-webkit-scrollbar-track { background: transparent; }
+
+/* While the row is being dragged everything inside it is inert (existing
+   behaviour) — except a review's own text box, so its scrollbar keeps working. */
+html body #reviews .reviews-container.is-dragging .rv-quote.is-scrollable { pointer-events: auto !important; }
+
+/* ------------------------------------------------------- 2. Seen More rows */
+
+html body .rs-foot.sec-more {
+    margin-top: 26px !important;
+}
+
+/* ---------------------------------------- 3. service page: contact + ticket */
+
+.svc-contact { padding: 34px 0 64px; }
+
+.svc-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    max-width: 1030px;
+    margin: 0 auto;
+}
+
+.svc-contact-card,
+.svc-ticket {
+    position: relative;
+    min-width: 0;
+    padding: 26px 22px;
+    border-radius: 24px;
+    border: 1px solid rgba(17, 82, 223, .14);
+    box-shadow: 0 18px 44px rgba(18, 57, 111, .10);
+}
+
+/* Contact card: the site's blue gradient panel (same family as the stats card). */
+.svc-contact-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    background:
+        radial-gradient(420px 260px at 100% 0%, rgba(73, 184, 255, .45), transparent 65%),
+        linear-gradient(135deg, #0a3ccf 0%, #1152df 48%, #2a8cff 100%);
+    border-color: rgba(255, 255, 255, .22);
+    overflow: hidden;
+}
+
+.svc-contact-photo {
+    position: relative;
+    width: 108px;
+    height: 108px;
+    margin-bottom: 16px;
+    border-radius: 50%;
+    background: linear-gradient(160deg, #ffffff, #dcebff);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, .28), 0 14px 30px rgba(4, 22, 78, .35);
+}
+
+.svc-contact-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 12%;
+}
+
+.svc-contact-online {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 3px solid #fff;
+}
+
+.svc-contact-kicker {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.svc-contact-card .svc-contact-kicker { color: #cfe6ff; }
+.svc-ticket .svc-contact-kicker { color: #1152df; }
+
+html body .svc-contact-title,
+html body .svc-ticket-title {
+    margin: 6px 0 8px !important;
+    font-size: clamp(20px, 1.1rem + .8vw, 26px) !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+    letter-spacing: -.01em !important;
+}
+
+html body .svc-contact-title { color: #fff !important; }
+html body .svc-ticket-title { color: #0a2858 !important; }
+
+html body .svc-contact-text,
+html body .svc-ticket-text {
+    margin: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+html body .svc-contact-text { max-width: 34ch; color: rgba(255, 255, 255, .88) !important; }
+html body .svc-ticket-text { color: #5b6b86 !important; }
+
+.svc-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+html body .svc-contact-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 128px;
+    max-width: 220px;
+    min-height: 46px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+
+html body .svc-contact-btn i { font-size: 17px; }
+
+html body .svc-contact-btn.is-wa {
+    background: #fff;
+    color: #0a3185 !important;
+    box-shadow: 0 10px 22px rgba(4, 22, 78, .22);
+}
+
+html body .svc-contact-btn.is-wa i { color: #1fae54; }
+
+html body .svc-contact-btn.is-tg {
+    background: rgba(255, 255, 255, .14);
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, .55);
+}
+
+html body .svc-contact-btn:hover { transform: translateY(-2px); }
+html body .svc-contact-btn.is-tg:hover { background: rgba(255, 255, 255, .24); }
+html body .svc-contact-btn:focus-visible { outline: 3px solid rgba(255, 255, 255, .7); outline-offset: 2px; }
+
+/* Ticket form: the white glass card used across the site. */
+.svc-ticket {
+    background: linear-gradient(180deg, #ffffff, #f6faff);
+}
+
+.svc-field { margin-top: 14px; }
+
+html body .svc-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    color: #22355c !important;
+}
+
+html body .svc-input {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+    font-family: inherit !important;
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+    color: #0b1f4d !important;
+    background: #f7faff !important;
+    border: 1px solid #cfdcf2 !important;
+    border-radius: 14px !important;
+    outline: none;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+
+html body .svc-input::placeholder { color: #93a3bf; }
+
+html body .svc-textarea { min-height: 128px; resize: vertical; }
+
+html body .svc-input:focus {
+    background: #fff !important;
+    border-color: #1152df !important;
+    box-shadow: 0 0 0 3px rgba(17, 82, 223, .15);
+}
+
+html body .svc-input.is-invalid {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, .12);
+}
+
+html body .svc-ticket-msg {
+    margin: 14px 0 0 !important;
+    padding: 11px 13px;
+    border-radius: 12px;
+    font-size: 13.5px !important;
+    font-weight: 500;
+    line-height: 1.5 !important;
+    overflow-wrap: anywhere;
+}
+
+html body .svc-ticket-msg.is-ok { background: #ecfdf3; border: 1px solid #b7ebca; color: #11633a !important; }
+html body .svc-ticket-msg.is-err { background: #fff1f1; border: 1px solid #f6c5c5; color: #a61b1b !important; }
+
+html body .svc-ticket-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 16px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1 !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #0a43d8, #1e6bff);
+    box-shadow: 0 10px 22px rgba(17, 82, 223, .28);
+    transition: filter .15s ease, transform .15s ease;
+}
+
+html body .svc-ticket-submit:hover { filter: brightness(1.06); }
+html body .svc-ticket-submit:active { transform: translateY(1px); }
+html body .svc-ticket-submit:focus-visible { outline: 3px solid rgba(17, 82, 223, .35); outline-offset: 2px; }
+html body .svc-ticket-submit[disabled] { opacity: .65; cursor: progress; }
+
+@media (min-width: 860px) {
+    .svc-contact { padding: 46px 0 84px; }
+    .svc-contact-grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 24px; align-items: stretch; }
+    .svc-contact-card { justify-content: center; padding: 36px 30px; }
+    .svc-ticket { padding: 32px 30px; }
+    .svc-contact-photo { width: 128px; height: 128px; }
+}
+
+@media (max-width: 479.98px) {
+    html body .svc-contact-btn { gap: 6px; font-size: 13px !important; }
+    html body .svc-contact-btn i { font-size: 15px; }
+}
+
+@media (max-width: 359.98px) {
+    .svc-contact-card, .svc-ticket { padding: 22px 16px; border-radius: 20px; }
+    html body .svc-contact-btn { flex-basis: 100%; max-width: none; }
+}
