@@ -1038,6 +1038,8 @@ function page_stylesheets(string $pageKey): array
     $stylesheets[] = 'assets/css/video-clean-player.css?v=20261114-gallery-restore';
     // One shared video player for every video on the site.
     $stylesheets[] = 'assets/css/video-player.css?v=20261114-cascade-fix';
+    // Mobile navigation cards — loaded last so no theme sheet can repaint it.
+    $stylesheets[] = 'assets/css/mobile-menu-cards.css?v=20261114-cards';
     if ($pageKey === 'home') {
         $stylesheets[] = 'assets/css/home-reference-hero.css?v=20261113-hero-scale';
     }

@@ -97,16 +97,14 @@ $navItems = [
                     <button type="button" id="mobile-menu-close" class="ref-menu-close" aria-label="Close menu"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <nav class="mm-nav" aria-label="Mobile navigation">
-<?php $mobileIcons = [
-    'home' => '<path d="M3 10.5 12 3l9 7.5v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
-    'service' => '<path d="m4 20 11-11M14 3l.7 2.3L17 6l-2.3.7L14 9l-.7-2.3L11 6l2.3-.7zM19 11l.5 1.5L21 13l-1.5.5L19 15l-.5-1.5L17 13l1.5-.5z"/>',
-    'work' => '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M3 11h18M7 3l3 4M14 3l3 4M3 7h18"/>',
-    'review' => '<path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.3-5.7-3-5.7 3 1.1-6.3-4.5-4.4 6.3-.9z"/>',
-    'team' => '<circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2zM16 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1"/>',
-]; ?>
 <?php foreach ($navItems as $item): $active = ($pageKey === $item['key']); ?>
-                    <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="mobile-nav-item mm-item<?= $active ? ' is-active' : '' ?>"><span class="mm-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><?= $mobileIcons[$item['key']] ?? '' ?></svg></span><span class="mm-label" data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span><span class="mm-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
+                    <a href="<?= e($item['href']) ?>" data-nav="<?= e($item['key']) ?>"<?= $active ? ' aria-current="page"' : '' ?> class="mobile-nav-item mm-item<?= $active ? ' is-active' : '' ?>"><span class="mm-label" data-i18n="<?= e($item['i18n']) ?>"><?= e($item['label']) ?></span><span class="mm-chev" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></span></a>
 <?php endforeach; ?>
+                    <a href="service.php" class="mm-action-button">
+                        <span class="mm-action-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5 20.5 4l2 6.5L5 16z"/><path d="M7.5 17.5V21h4"/><path d="m9 8 4 3M14 6.8l4 3"/></svg></span>
+                        <span class="mm-action-label" data-i18n="header.ourServices">Our Services</span>
+                        <span class="mm-action-arrow" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></svg></span>
+                    </a>
                 </nav>
             </div>
         </div>

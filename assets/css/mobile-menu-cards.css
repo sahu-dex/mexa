@@ -1,0 +1,277 @@
+/*
+ * Mobile navigation sheet.
+ *
+ * Full-width ice-blue panel that drops under the header and holds one white
+ * card per page, plus the primary action at the bottom. Every card is the full
+ * width, the label sits on the left and the chevron on the right, and the
+ * current page's card is tinted blue with brand-blue text.
+ *
+ * Several theme sheets restyle this drawer (mobile-menu.css paints it dark
+ * navy, reference-header.css turns it into a right-hand white sheet, and the
+ * light-blue themes repaint the items), all of them with !important. This file
+ * is loaded last and pins every property with an id-scoped selector so the
+ * cascade cannot pull the panel back to any of those looks.
+ */
+
+@media (max-width: 1023.98px) {
+    /* ------------------------------------------------------------- the panel */
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer {
+        position: absolute !important;
+        /* visual-refresh.css makes the mobile header 66px tall; the sheet starts
+           right under it and never taller than the space that is left. */
+        top: 66px !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
+        height: auto !important;
+        max-height: calc(100dvh - 66px) !important;
+        padding: 14px !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        overscroll-behavior: contain !important;
+        background: #e9f3fc !important;
+        border: 0 !important;
+        border-top: 1px solid rgba(163, 199, 236, .55) !important;
+        border-radius: 0 0 20px 20px !important;
+        box-shadow: 0 20px 44px rgba(15, 51, 116, .18) !important;
+        z-index: 1 !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        transform: translateY(0) !important;
+        transition: transform 340ms cubic-bezier(.32, .72, 0, 1) !important;
+    }
+
+    /* The sheet drops down from under the header, it does not slide in from
+       the right — reference-header.css turned it into a side sheet. */
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer.-translate-y-full {
+        transform: translateY(-100%) !important;
+    }
+
+    html body #mobile-menu #mobile-menu-backdrop.mm-backdrop {
+        background: transparent !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+
+    /* The header keeps the brand and the menu toggle, so the sheet itself does
+       not repeat them — it starts straight with the page cards. The heading row
+       collapses to nothing but the close button stays in the DOM, reachable by
+       keyboard (Tab / Escape), so the menu can still be dismissed. */
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-heading {
+        display: flex !important;
+        align-items: center !important;
+        position: absolute !important;
+        top: 6px !important;
+        right: 6px !important;
+        gap: 0 !important;
+        width: auto !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        overflow: visible !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-heading-brand {
+        display: none !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .ref-menu-close {
+        opacity: 0 !important;
+        pointer-events: none !important;
+        transition: opacity .15s ease !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .ref-menu-close:focus-visible {
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        outline: 2px solid #1940e6 !important;
+        outline-offset: 2px !important;
+    }
+
+    /* -------------------------------------------------------------- the list */
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav {
+        display: flex !important;
+        flex-direction: column !important;
+        flex: 0 0 auto !important;
+        gap: clamp(9px, 1.2vw, 14px) !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border: 0 !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 12px !important;
+        position: relative !important;
+        width: 100% !important;
+        height: clamp(46px, 5.1vw, 54px) !important;
+        min-height: 46px !important;
+        flex: 0 0 auto !important;
+        padding: 0 clamp(15px, 1.7vw, 20px) !important;
+        border: 1px solid rgba(205, 226, 246, .95) !important;
+        border-radius: clamp(11px, 1.3vw, 15px) !important;
+        background: #ffffff !important;
+        color: #0e1a33 !important;
+        font-size: clamp(15px, 1.75vw, 18px) !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        text-decoration: none !important;
+        box-shadow: 0 3px 10px rgba(24, 68, 140, .06) !important;
+        transition: background .18s ease, border-color .18s ease, transform .18s ease !important;
+    }
+
+    /* The page you are on: tinted card, brand-blue label. */
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item[aria-current="page"] {
+        background: #d8eafb !important;
+        border-color: #bcd5f2 !important;
+        color: #1633b1 !important;
+        box-shadow: 0 4px 12px rgba(24, 68, 140, .08) !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:hover,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:focus-visible {
+        background: #f4f9ff !important;
+        border-color: #bcd5f2 !important;
+        color: #1633b1 !important;
+        outline: none !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active:hover,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item.is-active:focus-visible {
+        background: #d8eafb !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item:active {
+        transform: scale(.995) !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-label {
+        flex: 1 1 auto !important;
+        color: inherit !important;
+        font: inherit !important;
+        letter-spacing: 0 !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-chev {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 auto !important;
+        margin-left: auto !important;
+        width: 14px !important;
+        height: 14px !important;
+        color: #64748b !important;
+        opacity: 1 !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-chev svg {
+        display: block !important;
+        width: 14px !important;
+        height: 14px !important;
+    }
+
+    /* ------------------------------------------------------- primary action */
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 10px !important;
+        width: 100% !important;
+        height: clamp(46px, 5.1vw, 54px) !important;
+        min-height: 46px !important;
+        margin: clamp(3px, .5vw, 6px) 0 0 !important;
+        padding: 0 clamp(15px, 1.7vw, 20px) !important;
+        border: 0 !important;
+        border-radius: 999px !important;
+        background: #1940e6 !important;
+        color: #ffffff !important;
+        font-size: clamp(15px, 1.75vw, 18px) !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+        text-decoration: none !important;
+        box-shadow: 0 10px 24px rgba(25, 64, 230, .28) !important;
+        transition: background .18s ease, box-shadow .18s ease, transform .18s ease !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:hover,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:focus-visible {
+        background: #1435ce !important;
+        color: #ffffff !important;
+        box-shadow: 0 12px 28px rgba(25, 64, 230, .34) !important;
+        outline: 2px solid rgba(25, 64, 230, .35) !important;
+        outline-offset: 3px !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button:active {
+        transform: translateY(1px) !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-label {
+        color: #ffffff !important;
+        font: inherit !important;
+        white-space: nowrap !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-icon,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-arrow {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 auto !important;
+        color: #ffffff !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-icon svg,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-arrow svg {
+        display: block !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-action-arrow {
+        margin-left: 2px !important;
+    }
+}
+
+/* Slightly tighter cards on very small phones so five of them plus the action
+   still fit without the panel running past the fold. */
+@media (max-width: 359.98px) {
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav {
+        gap: 8px !important;
+    }
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
+        height: 45px !important;
+        min-height: 45px !important;
+        font-size: 15px !important;
+    }
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item {
+        padding: 0 14px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-item,
+    html body #mobile-menu #mobile-menu-drawer.mm-drawer .mm-nav .mm-action-button {
+        transition: none !important;
+    }
+}
